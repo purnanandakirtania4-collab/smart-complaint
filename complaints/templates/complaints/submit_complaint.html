@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Submit Complaint | Smart Complaint</title>
+
+    {% include "complaints/base_style.html" %}
+
+    <!-- Leaflet CSS -->
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    >
+
+    <style>
+        .wrap {
+            padding: 32px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .header-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 20px;
+            background: #dbeafe;
+            display: grid;
+            place-items: center;
+            font-size: 32px;
+            margin: auto;
+        }
+
+        .header h1 {
+            margin: 14px 0 8px;
+        }
+
+        .section {
+            margin-bottom: 25px;
+        }
+
+        .search {
+            position: relative;
+        }
+
+        .search input {
+            padding-left: 44px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 13px;
+        }
+
+        .workers {
+            display: grid;
+            grid-template-columns: repeat(
+                auto-fit,
+                minmax(220px, 1fr)
+            );
+            gap: 12px;
+            margin-top: 14px;
+        }
+
+        .worker {
+            border: 1px solid #dbeafe;
+            background: #f8fafc;
+            border-radius: 14px;
+            padding: 16px;
+            cursor: pointer;
+            transition: .2s;
+            position: relative;
+        }
+
+        .worker:hover,
+        .worker.selected {
+            border-color: #2563eb;
+            background: #eff6ff;
+            transform: translateY(-2px);
+        }
+
+        .worker input {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #dbeafe;
+            display: grid;
+            place-items: center;
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+
+        .worker-name {
+            font-weight: 800;
+        }
+
+        .worker-id {
+            font-size: 13px;
+            color: #2563eb;
+            font-weight: 800;
+            margin: 4px 0;
+        }
+
+        .worker-exp {
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .selected {
+            margin-top: 14px;
+            padding: 12px;
+            background: #ecfdf5;
+            border: 1px solid #bbf7d0;
+            border-radius: 10px;
+            color: #166534;
+        }
+
+        .divider {
+            height: 1px;
+            background: #e2e8f0;
+            margin: 28px 0;
+        }
+
+        .photo-box {
+            border: 2px dashed #bfdbfe;
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .photo-input {
+            margin-top: 15px;
+        }
+
+        .photo-preview {
+            display: none;
+            margin-top: 18px;
+        }
+
+        .photo-preview img {
+            width: 100%;
+            max-width: 420px;
+            max-height: 350px;
+            object-fit: cover;
+            border-radius: 14px;
+            border: 1px solid #dbeafe;
+        }
+
+        .map-box {
+            margin-top: 12px;
+        }
+
+        #map {
+            width: 100%;
+            height: 350px;
+            border-radius: 14px;
+            border: 1px solid #dbeafe;
+            overflow: hidden;
+        }
+
+        .location-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .location-info {
+            margin-top: 12px;
+            padding: 12px;
+            border-radius: 10px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            font-size: 14px;
+        }
+
+        .bottom {
+            text-align: center;
+            margin-top: 24px;
+        }
+
+        @media(max-width: 650px) {
+            .wrap {
+                padding: 24px 18px;
+            }
+
+            #map {
+                height: 280px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page">
+    <div class="card wrap">
+
+        <div class="header">
+
+            <div class="header-icon">
+                📝
+            </div>
+
+            <h1>
+                Submit Your Complaint
+            </h1>
+
+            <p class="muted">
+                Add complaint details, photo and exact location.
+            </p>
+
+        </div>
+
+
+        {% if messages %}
+
+            {% for message in messages %}
+
+                <div class="message">
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+
+        <form
+            method="post"
+            enctype="multipart/form-data"
+            id="complaintForm"
+        >
+
+            {% csrf_token %}
+
+
+            <!-- ========================================= -->
+            <!-- WORKER -->
+            <!-- ========================================= -->
+
+            <div class="section">
+
+                <h2>
+                    👷 Select Worker
+                </h2>
+
+                <p class="muted">
+                    Search by worker name, username or Worker ID.
+                </p>
+
+
+                <div
+                    class="search"
+                    style="margin-top:14px"
+                >
+
+                    <span class="search-icon">
+                        🔎
+                    </span>
+
+                    <input
+                        class="input"
+                        id="workerSearch"
+                        placeholder="Search worker..."
+                        autocomplete="off"
+                    >
+
+                </div>
+
+
+                <div
+                    class="workers"
+                    id="workerList"
+                >
+
+                    {% for worker in workers %}
+
+                        <label
+                            class="worker"
+                            data-search="{{ worker.name|lower }} {{ worker.user.username|lower }} {{ worker.worker_id|lower }}"
+                        >
+
+                            <input
+                                type="radio"
+                                name="worker"
+                                value="{{ worker.id }}"
+                            >
+
+                            <div class="avatar">
+                                👷
+                            </div>
+
+                            <div class="worker-name">
+                                {{ worker.name }}
+                            </div>
+
+                            <div class="worker-id">
+                                {{ worker.worker_id }}
+                            </div>
+
+                            <div class="worker-exp">
+                                Experience:
+                                {{ worker.experience }}
+                            </div>
+
+                        </label>
+
+                    {% empty %}
+
+                        <div class="message">
+                            No approved workers are currently available.
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+
+                <div
+                    id="noWorker"
+                    class="message"
+                    style="display:none;margin-top:12px"
+                >
+                    No worker found.
+                </div>
+
+
+                <div
+                    id="selectedWorker"
+                    class="selected"
+                    style="display:none"
+                >
+
+                    ✅ Selected:
+
+                    <strong id="selectedWorkerName">
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="divider"></div>
+
+
+            <!-- ========================================= -->
+            <!-- DETAILS -->
+            <!-- ========================================= -->
+
+            <div class="section">
+
+                <h2>
+                    📋 Complaint Details
+                </h2>
+
+
+                <div class="form-group">
+
+                    <label class="label">
+                        Your Name
+                    </label>
+
+                    <input
+                        class="input"
+                        name="name"
+                        value="{{ request.user.get_full_name }}"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label class="label">
+                        Email Address
+                    </label>
+
+                    <input
+                        class="input"
+                        type="email"
+                        name="email"
+                        value="{{ request.user.email }}"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label class="label">
+                        Complaint Subject
+                    </label>
+
+                    <input
+                        class="input"
+                        name="subject"
+                        placeholder="Example: Road light not working"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label class="label">
+                        Complaint Description
+                    </label>
+
+                    <textarea
+                        class="textarea"
+                        name="description"
+                        placeholder="Explain your problem in detail..."
+                        required
+                    ></textarea>
+
+                </div>
+
+            </div>
+
+
+            <div class="divider"></div>
+
+
+            <!-- ========================================= -->
+            <!-- PHOTO -->
+            <!-- ========================================= -->
+
+            <div class="section">
+
+                <h2>
+                    📷 Complaint Photo
+                </h2>
+
+                <p class="muted">
+                    Take a photo or choose an image showing the problem.
+                </p>
+
+
+                <div class="photo-box">
+
+                    <div style="font-size:45px">
+                        📸
+                    </div>
+
+                    <strong>
+                        Add Problem Photo
+                    </strong>
+
+                    <br>
+
+
+                    <input
+                        class="photo-input"
+                        type="file"
+                        name="photo"
+                        id="photoInput"
+                        accept="image/*"
+                        capture="environment"
+                        required
+                    >
+
+
+                    <div
+                        class="photo-preview"
+                        id="photoPreviewBox"
+                    >
+
+                        <p>
+                            ✅ Photo Preview
+                        </p>
+
+                        <img
+                            id="photoPreview"
+                            alt="Complaint Photo Preview"
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="divider"></div>
+
+
+            <!-- ========================================= -->
+            <!-- LOCATION -->
+            <!-- ========================================= -->
+
+            <div class="section">
+
+                <h2>
+                    📍 Complaint Location
+                </h2>
+
+                <p class="muted">
+                    Use your current location or tap the exact place on the map.
+                </p>
+
+
+                <div class="location-buttons">
+
+                    <button
+                        type="button"
+                        class="btn btn-primary"
+                        id="currentLocationBtn"
+                    >
+                        📍 Use My Current Location
+                    </button>
+
+                </div>
+
+
+                <div class="map-box">
+                    <div id="map"></div>
+                </div>
+
+
+                <div class="location-info">
+
+                    Latitude:
+                    <strong id="latitudeText">
+                        Not selected
+                    </strong>
+
+                    <br>
+
+                    Longitude:
+                    <strong id="longitudeText">
+                        Not selected
+                    </strong>
+
+                </div>
+
+
+                <input
+                    type="hidden"
+                    name="latitude"
+                    id="latitude"
+                >
+
+                <input
+                    type="hidden"
+                    name="longitude"
+                    id="longitude"
+                >
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+                style="width:100%;font-size:16px"
+            >
+                🚀 Continue to Payment
+            </button>
+
+        </form>
+
+
+        <div class="bottom">
+
+            <a
+                class="btn btn-dark"
+                href="{% url 'check_status' %}"
+            >
+                🔎 Check Complaint Status
+            </a>
+
+            <br>
+
+            <a
+                href="{% url 'home' %}"
+                style="
+                    display:inline-block;
+                    margin-top:15px;
+                    color:#2563eb;
+                    font-weight:700;
+                "
+            >
+                ← Back to Home
+            </a>
+
+        </div>
+
+    </div>
+</div>
+
+
+<!-- Leaflet JavaScript -->
+<script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+></script>
+
+
+<script>
+
+/* =========================================
+   WORKER SEARCH
+========================================= */
+
+const search =
+    document.getElementById('workerSearch');
+
+const cards = [
+    ...document.querySelectorAll('.worker')
+];
+
+const noWorker =
+    document.getElementById('noWorker');
+
+
+search.addEventListener(
+    'input',
+    function () {
+
+        const q =
+            search.value
+                .toLowerCase()
+                .trim();
+
+        let count = 0;
+
+
+        cards.forEach(
+            function (card) {
+
+                const ok =
+                    card.dataset.search.includes(q);
+
+                card.style.display =
+                    ok ? 'block' : 'none';
+
+                if (ok) {
+                    count++;
+                }
+
+            }
+        );
+
+
+        noWorker.style.display =
+            count ? 'none' : 'block';
+
+    }
+);
+
+
+/* =========================================
+   WORKER SELECT
+========================================= */
+
+cards.forEach(
+    function (card) {
+
+        const radio =
+            card.querySelector('input');
+
+
+        radio.addEventListener(
+            'change',
+            function () {
+
+                cards.forEach(
+                    function (c) {
+
+                        c.classList.remove(
+                            'selected'
+                        );
+
+                    }
+                );
+
+
+                card.classList.add(
+                    'selected'
+                );
+
+
+                const name =
+                    card.querySelector(
+                        '.worker-name'
+                    ).textContent.trim();
+
+
+                const workerId =
+                    card.querySelector(
+                        '.worker-id'
+                    ).textContent.trim();
+
+
+                document.getElementById(
+                    'selectedWorkerName'
+                ).textContent =
+                    name + ' (' + workerId + ')';
+
+
+                document.getElementById(
+                    'selectedWorker'
+                ).style.display =
+                    'block';
+
+            }
+        );
+
+    }
+);
+
+
+/* =========================================
+   PHOTO PREVIEW
+========================================= */
+
+const photoInput =
+    document.getElementById('photoInput');
+
+const photoPreview =
+    document.getElementById('photoPreview');
+
+const photoPreviewBox =
+    document.getElementById('photoPreviewBox');
+
+
+photoInput.addEventListener(
+    'change',
+    function () {
+
+        const file =
+            this.files[0];
+
+
+        if (!file) {
+
+            photoPreviewBox.style.display =
+                'none';
+
+            return;
+        }
+
+
+        if (!file.type.startsWith('image/')) {
+
+            alert(
+                'Please select an image file.'
+            );
+
+            this.value = '';
+
+            photoPreviewBox.style.display =
+                'none';
+
+            return;
+        }
+
+
+        const maxSize =
+            5 * 1024 * 1024;
+
+
+        if (file.size > maxSize) {
+
+            alert(
+                'Photo size should be less than 5 MB.'
+            );
+
+            this.value = '';
+
+            photoPreviewBox.style.display =
+                'none';
+
+            return;
+        }
+
+
+        const reader =
+            new FileReader();
+
+
+        reader.onload =
+            function (event) {
+
+                photoPreview.src =
+                    event.target.result;
+
+                photoPreviewBox.style.display =
+                    'block';
+
+            };
+
+
+        reader.readAsDataURL(file);
+
+    }
+);
+
+
+/* =========================================
+   MAP
+========================================= */
+
+const map =
+    L.map('map').setView(
+        [20.5937, 78.9629],
+        5
+    );
+
+
+L.tileLayer(
+    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    {
+        attribution:
+            '&copy; OpenStreetMap contributors'
+    }
+).addTo(map);
+
+
+let marker = null;
+
+
+/* =========================================
+   SET LOCATION
+========================================= */
+
+function setLocation(lat, lng) {
+
+    lat = Number(lat);
+    lng = Number(lng);
+
+
+    if (
+        !Number.isFinite(lat) ||
+        !Number.isFinite(lng)
+    ) {
+
+        alert(
+            'Invalid location received.'
+        );
+
+        return;
+    }
+
+
+    document.getElementById(
+        'latitude'
+    ).value = lat;
+
+
+    document.getElementById(
+        'longitude'
+    ).value = lng;
+
+
+    document.getElementById(
+        'latitudeText'
+    ).textContent =
+        lat.toFixed(6);
+
+
+    document.getElementById(
+        'longitudeText'
+    ).textContent =
+        lng.toFixed(6);
+
+
+    if (marker) {
+
+        marker.setLatLng(
+            [lat, lng]
+        );
+
+    } else {
+
+        marker =
+            L.marker(
+                [lat, lng],
+                {
+                    draggable: true
+                }
+            ).addTo(map);
+
+
+        marker.on(
+            'dragend',
+            function () {
+
+                const position =
+                    marker.getLatLng();
+
+
+                setLocation(
+                    position.lat,
+                    position.lng
+                );
+
+            }
+        );
+
+    }
+
+
+    map.setView(
+        [lat, lng],
+        16
+    );
+
+}
+
+
+/* =========================================
+   ANDROID NATIVE LOCATION RECEIVER
+
+   MainActivity.kt calls:
+   window.receiveAndroidLocation(lat, lng)
+========================================= */
+
+window.receiveAndroidLocation =
+    function (lat, lng) {
+
+        setLocation(
+            Number(lat),
+            Number(lng)
+        );
+
+
+        const button =
+            document.getElementById(
+                'currentLocationBtn'
+            );
+
+
+        button.textContent =
+            '✅ Current Location Selected';
+
+        button.disabled = false;
+
+    };
+
+
+/* =========================================
+   MAP CLICK
+========================================= */
+
+map.on(
+    'click',
+    function (event) {
+
+        setLocation(
+            event.latlng.lat,
+            event.latlng.lng
+        );
+
+    }
+);
+
+
+/* =========================================
+   NORMAL BROWSER LOCATION
+========================================= */
+
+function useBrowserLocation() {
+
+    const button =
+        document.getElementById(
+            'currentLocationBtn'
+        );
+
+
+    if (!navigator.geolocation) {
+
+        alert(
+            'Location is not supported in this browser.'
+        );
+
+        button.textContent =
+            '📍 Use My Current Location';
+
+        button.disabled = false;
+
+        return;
+    }
+
+
+    navigator.geolocation.getCurrentPosition(
+
+        function (position) {
+
+            const lat =
+                position.coords.latitude;
+
+            const lng =
+                position.coords.longitude;
+
+
+            setLocation(
+                lat,
+                lng
+            );
+
+
+            button.textContent =
+                '✅ Current Location Selected';
+
+            button.disabled = false;
+
+        },
+
+
+        function () {
+
+            alert(
+                'Unable to get location. Please allow location permission or select location manually on the map.'
+            );
+
+
+            button.textContent =
+                '📍 Use My Current Location';
+
+            button.disabled = false;
+
+        },
+
+
+        {
+            enableHighAccuracy: true,
+            timeout: 15000,
+            maximumAge: 0
+        }
+
+    );
+
+}
+
+
+/* =========================================
+   CURRENT LOCATION BUTTON
+
+   Android app:
+       Android.getCurrentLocation()
+
+   Normal browser:
+       navigator.geolocation
+========================================= */
+
+document.getElementById(
+    'currentLocationBtn'
+).addEventListener(
+    'click',
+    function () {
+
+        const button = this;
+
+
+        button.textContent =
+            '📍 Finding Location...';
+
+        button.disabled = true;
+
+
+        /*
+         * Check whether page is running
+         * inside our Android WebView.
+         */
+        if (
+            typeof Android !== 'undefined' &&
+            typeof Android.getCurrentLocation === 'function'
+        ) {
+
+            try {
+
+                Android.getCurrentLocation();
+
+            } catch (error) {
+
+                button.textContent =
+                    '📍 Use My Current Location';
+
+                button.disabled = false;
+
+                alert(
+                    'Unable to request Android location.'
+                );
+
+            }
+
+            return;
+        }
+
+
+        /*
+         * Normal browser fallback.
+         */
+        useBrowserLocation();
+
+    }
+);
+
+
+/* =========================================
+   FORM CHECK
+========================================= */
+
+document.getElementById(
+    'complaintForm'
+).addEventListener(
+    'submit',
+    function (event) {
+
+        const latitude =
+            document.getElementById(
+                'latitude'
+            ).value;
+
+
+        const longitude =
+            document.getElementById(
+                'longitude'
+            ).value;
+
+
+        if (!latitude || !longitude) {
+
+            event.preventDefault();
+
+
+            alert(
+                'Please select complaint location on the map.'
+            );
+
+        }
+
+    }
+);
+
+</script>
+
+</body>
+</html>

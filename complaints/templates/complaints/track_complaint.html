@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Track Complaint</title>
+</head>
+
+<body>
+
+<h2>Track Your Complaint</h2>
+
+<form method="POST">
+    {% csrf_token %}
+
+    <input type="text" name="tracking_id" placeholder="Enter Tracking ID" required>
+
+    <button type="submit">Check Status</button>
+
+</form>
+
+
+{% if complaint %}
+
+<hr>
+
+<h3>Complaint Details</h3>
+
+<p><b>Name:</b> {{ complaint.name }}</p>
+
+<p><b>Email:</b> {{ complaint.email }}</p>
+
+<p><b>Subject:</b> {{ complaint.subject }}</p>
+
+<p><b>Description:</b> {{ complaint.description }}</p>
+
+<p><b>Status:</b> {{ complaint.status }}</p>
+
+{% endif %}
+
+</body>
+</html>

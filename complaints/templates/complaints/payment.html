@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Payment | Smart Complaint System
+    </title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+
+        body {
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            min-height: 100vh;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #0f172a,
+                    #1d4ed8,
+                    #2563eb
+                );
+
+            padding: 40px 20px;
+
+        }
+
+
+        /* =================================================
+           PAGE CONTAINER
+           ================================================= */
+
+        .page-container {
+
+            max-width: 850px;
+
+            margin: auto;
+
+        }
+
+
+        /* =================================================
+           PAYMENT CARD
+           ================================================= */
+
+        .payment-card {
+
+            background: #ffffff;
+
+            border-radius: 22px;
+
+            padding: 40px;
+
+            box-shadow:
+                0 20px 50px
+                rgba(0, 0, 0, 0.30);
+
+        }
+
+
+        /* =================================================
+           HEADER
+           ================================================= */
+
+        .header {
+
+            text-align: center;
+
+            margin-bottom: 30px;
+
+        }
+
+
+        .payment-icon {
+
+            width: 75px;
+
+            height: 75px;
+
+            margin: auto;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 50%;
+
+            background: #dbeafe;
+
+            font-size: 34px;
+
+        }
+
+
+        h1 {
+
+            margin-top: 15px;
+
+            color: #172554;
+
+            font-size: 30px;
+
+        }
+
+
+        .subtitle {
+
+            margin-top: 8px;
+
+            color: #64748b;
+
+            line-height: 1.5;
+
+        }
+
+
+        /* =================================================
+           MESSAGE
+           ================================================= */
+
+        .message {
+
+            padding: 13px 15px;
+
+            margin-bottom: 20px;
+
+            border-radius: 10px;
+
+            background: #fee2e2;
+
+            color: #991b1b;
+
+            font-size: 14px;
+
+        }
+
+
+        /* =================================================
+           TEST MODE BADGE
+           ================================================= */
+
+        .test-badge {
+
+            width: fit-content;
+
+            margin:
+                0 auto
+                25px auto;
+
+            padding: 8px 15px;
+
+            border-radius: 20px;
+
+            background: #fef3c7;
+
+            color: #92400e;
+
+            font-size: 13px;
+
+            font-weight: bold;
+
+        }
+
+
+        /* =================================================
+           SUMMARY
+           ================================================= */
+
+        .summary {
+
+            background: #f8fafc;
+
+            border: 1px solid #e2e8f0;
+
+            border-radius: 14px;
+
+            padding: 20px;
+
+            margin-bottom: 28px;
+
+        }
+
+
+        .summary-title {
+
+            color: #172554;
+
+            font-size: 18px;
+
+            font-weight: bold;
+
+            margin-bottom: 15px;
+
+        }
+
+
+        .summary-row {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            gap: 20px;
+
+            padding: 10px 0;
+
+            border-bottom: 1px solid #e2e8f0;
+
+        }
+
+
+        .summary-row:last-child {
+
+            border-bottom: none;
+
+        }
+
+
+        .summary-label {
+
+            color: #64748b;
+
+            font-size: 14px;
+
+        }
+
+
+        .summary-value {
+
+            color: #172554;
+
+            font-weight: bold;
+
+            font-size: 14px;
+
+            text-align: right;
+
+            word-break: break-word;
+
+        }
+
+
+        /* =================================================
+           WORKER
+           ================================================= */
+
+        .worker-box {
+
+            margin-bottom: 25px;
+
+            padding: 16px;
+
+            border-radius: 12px;
+
+            border: 1px solid #bfdbfe;
+
+            background: #eff6ff;
+
+        }
+
+
+        .worker-title {
+
+            color: #1e3a8a;
+
+            font-size: 14px;
+
+            margin-bottom: 7px;
+
+        }
+
+
+        .worker-name {
+
+            color: #172554;
+
+            font-weight: bold;
+
+        }
+
+
+        /* =================================================
+           RAZORPAY INFO
+           ================================================= */
+
+        .payment-info {
+
+            text-align: center;
+
+            margin-bottom: 25px;
+
+        }
+
+
+        .payment-info h2 {
+
+            color: #172554;
+
+            font-size: 22px;
+
+            margin-bottom: 8px;
+
+        }
+
+
+        .payment-info p {
+
+            color: #64748b;
+
+            font-size: 14px;
+
+            line-height: 1.6;
+
+        }
+
+
+        /* =================================================
+           PAY BUTTON
+           ================================================= */
+
+        .pay-button {
+
+            width: 100%;
+
+            padding: 16px;
+
+            border: none;
+
+            border-radius: 11px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #1d4ed8,
+                    #2563eb
+                );
+
+            color: #ffffff;
+
+            font-size: 17px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition: 0.25s;
+
+        }
+
+
+        .pay-button:hover {
+
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 10px 20px
+                rgba(37, 99, 235, 0.30);
+
+        }
+
+
+        .pay-button:disabled {
+
+            cursor: not-allowed;
+
+            opacity: 0.65;
+
+            transform: none;
+
+        }
+
+
+        /* =================================================
+           SECURITY
+           ================================================= */
+
+        .security-note {
+
+            text-align: center;
+
+            margin-top: 18px;
+
+            padding: 14px;
+
+            border-radius: 10px;
+
+            background: #f1f5f9;
+
+            color: #64748b;
+
+            font-size: 12px;
+
+            line-height: 1.6;
+
+        }
+
+
+        /* =================================================
+           BACK
+           ================================================= */
+
+        .back-link {
+
+            display: block;
+
+            margin-top: 20px;
+
+            text-align: center;
+
+            color: #2563eb;
+
+            text-decoration: none;
+
+            font-weight: bold;
+
+            font-size: 14px;
+
+        }
+
+
+        .back-link:hover {
+
+            text-decoration: underline;
+
+        }
+
+
+        /* =================================================
+           LOADING
+           ================================================= */
+
+        .loading {
+
+            display: none;
+
+            text-align: center;
+
+            margin-top: 15px;
+
+            color: #475569;
+
+            font-size: 13px;
+
+        }
+
+
+        .loading.active {
+
+            display: block;
+
+        }
+
+
+        /* =================================================
+           HIDDEN FORM
+           ================================================= */
+
+        #razorpaySuccessForm {
+
+            display: none;
+
+        }
+
+
+        /* =================================================
+           MOBILE
+           ================================================= */
+
+        @media (max-width: 650px) {
+
+            body {
+
+                padding: 20px 12px;
+
+            }
+
+
+            .payment-card {
+
+                padding: 25px 18px;
+
+                border-radius: 16px;
+
+            }
+
+
+            h1 {
+
+                font-size: 25px;
+
+            }
+
+
+            .summary-row {
+
+                flex-direction: column;
+
+                gap: 5px;
+
+            }
+
+
+            .summary-value {
+
+                text-align: left;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="page-container">
+
+
+    <div class="payment-card">
+
+
+        <!-- =================================================
+             HEADER
+             ================================================= -->
+
+        <div class="header">
+
+            <div class="payment-icon">
+                💳
+            </div>
+
+            <h1>
+                Complete Payment
+            </h1>
+
+            <p class="subtitle">
+                Complete the payment securely
+                using Razorpay.
+            </p>
+
+        </div>
+
+
+        <!-- =================================================
+             TEST MODE
+             ================================================= -->
+
+        <div class="test-badge">
+            🧪 Razorpay Test Mode
+        </div>
+
+
+        <!-- =================================================
+             DJANGO MESSAGES
+             ================================================= -->
+
+        {% if messages %}
+
+            {% for message in messages %}
+
+                <div class="message">
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+
+        <!-- =================================================
+             COMPLAINT SUMMARY
+             ================================================= -->
+
+        <div class="summary">
+
+            <div class="summary-title">
+                📋 Complaint Summary
+            </div>
+
+
+            <div class="summary-row">
+
+                <span class="summary-label">
+                    Name
+                </span>
+
+                <span class="summary-value">
+                    {{ complaint_data.name }}
+                </span>
+
+            </div>
+
+
+            <div class="summary-row">
+
+                <span class="summary-label">
+                    Email
+                </span>
+
+                <span class="summary-value">
+                    {{ complaint_data.email }}
+                </span>
+
+            </div>
+
+
+            <div class="summary-row">
+
+                <span class="summary-label">
+                    Subject
+                </span>
+
+                <span class="summary-value">
+                    {{ complaint_data.subject }}
+                </span>
+
+            </div>
+
+
+            <div class="summary-row">
+
+                <span class="summary-label">
+                    Payment Amount
+                </span>
+
+                <span class="summary-value">
+                    ₹{{ amount }}
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             SELECTED WORKER
+             ================================================= -->
+
+        {% if selected_worker %}
+
+            <div class="worker-box">
+
+                <div class="worker-title">
+                    👷 Selected Worker
+                </div>
+
+                <div class="worker-name">
+                    {{ selected_worker.name }}
+                    -
+                    {{ selected_worker.worker_id }}
+                </div>
+
+            </div>
+
+        {% endif %}
+
+
+        <!-- =================================================
+             PAYMENT INFO
+             ================================================= -->
+
+        <div class="payment-info">
+
+            <h2>
+                Pay ₹{{ amount }}
+            </h2>
+
+            <p>
+                Click the button below.
+                Razorpay Checkout will open where you can
+                select an available payment method such as
+                UPI, card or net banking.
+            </p>
+
+        </div>
+
+
+        <!-- =================================================
+             PAY BUTTON
+             ================================================= -->
+
+        <button
+            type="button"
+            class="pay-button"
+            id="razorpayButton"
+        >
+            🔒 Pay ₹{{ amount }} with Razorpay
+        </button>
+
+
+        <div
+            class="loading"
+            id="paymentLoading"
+        >
+            Verifying payment...
+        </div>
+
+
+        <!-- =================================================
+             SECURITY NOTE
+             ================================================= -->
+
+        <div class="security-note">
+
+            🔐 Payment details are entered directly
+            inside Razorpay Checkout.
+
+            <br><br>
+
+            Your Django website does not collect or store
+            card number, CVV, UPI PIN or net banking password.
+
+            <br><br>
+
+            Test Mode is currently being used,
+            so no real money will be deducted.
+
+        </div>
+
+
+        <!-- =================================================
+             BACK
+             ================================================= -->
+
+        <a
+            href="{% url 'submit_complaint' %}"
+            class="back-link"
+        >
+            ← Back to Complaint
+        </a>
+
+
+        <!-- =================================================
+             PAYMENT SUCCESS FORM
+             ================================================= -->
+
+        <form
+            method="POST"
+            action="{% url 'payment_success' %}"
+            id="razorpaySuccessForm"
+        >
+
+            {% csrf_token %}
+
+            <input
+                type="hidden"
+                name="razorpay_payment_id"
+                id="razorpayPaymentId"
+            >
+
+            <input
+                type="hidden"
+                name="razorpay_order_id"
+                id="razorpayOrderId"
+            >
+
+            <input
+                type="hidden"
+                name="razorpay_signature"
+                id="razorpaySignature"
+            >
+
+        </form>
+
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     RAZORPAY CHECKOUT
+     ===================================================== -->
+
+<script
+    src="https://checkout.razorpay.com/v1/checkout.js"
+></script>
+
+
+<script>
+
+    /* =====================================================
+       BUTTON
+       ===================================================== */
+
+    const razorpayButton =
+        document.getElementById(
+            "razorpayButton"
+        );
+
+
+    const paymentLoading =
+        document.getElementById(
+            "paymentLoading"
+        );
+
+
+    /* =====================================================
+       RAZORPAY OPTIONS
+       ===================================================== */
+
+    const options = {
+
+        key:
+            "{{ razorpay_key_id|escapejs }}",
+
+        amount:
+            "{{ amount_paise }}",
+
+        currency:
+            "INR",
+
+        name:
+            "Smart Complaint System",
+
+        description:
+            "Complaint Submission Fee",
+
+        order_id:
+            "{{ razorpay_order_id|escapejs }}",
+
+
+        /* =================================================
+           PAYMENT SUCCESS HANDLER
+           ================================================= */
+
+        handler: function (response) {
+
+            razorpayButton.disabled = true;
+
+            paymentLoading.classList.add(
+                "active"
+            );
+
+
+            document.getElementById(
+                "razorpayPaymentId"
+            ).value =
+                response.razorpay_payment_id;
+
+
+            document.getElementById(
+                "razorpayOrderId"
+            ).value =
+                response.razorpay_order_id;
+
+
+            document.getElementById(
+                "razorpaySignature"
+            ).value =
+                response.razorpay_signature;
+
+
+            document.getElementById(
+                "razorpaySuccessForm"
+            ).submit();
+
+        },
+
+
+        /* =================================================
+           PREFILL
+           ================================================= */
+
+        prefill: {
+
+            name:
+                "{{ complaint_data.name|escapejs }}",
+
+            email:
+                "{{ complaint_data.email|escapejs }}"
+
+        },
+
+
+        /* =================================================
+           NOTES
+           ================================================= */
+
+        notes: {
+
+            subject:
+                "{{ complaint_data.subject|escapejs }}"
+
+        },
+
+
+        /* =================================================
+           THEME
+           ================================================= */
+
+        theme: {
+
+            color:
+                "#2563eb"
+
+        },
+
+
+        /* =================================================
+           MODAL
+           ================================================= */
+
+        modal: {
+
+            ondismiss: function () {
+
+                razorpayButton.disabled = false;
+
+                paymentLoading.classList.remove(
+                    "active"
+                );
+
+            }
+
+        }
+
+    };
+
+
+    /* =====================================================
+       CREATE RAZORPAY OBJECT
+       ===================================================== */
+
+    const razorpayCheckout =
+        new Razorpay(
+            options
+        );
+
+
+    /* =====================================================
+       OPEN CHECKOUT
+       ===================================================== */
+
+    razorpayButton.addEventListener(
+        "click",
+        function (event) {
+
+            event.preventDefault();
+
+            razorpayCheckout.open();
+
+        }
+    );
+
+
+    /* =====================================================
+       PAYMENT FAILED EVENT
+       ===================================================== */
+
+    razorpayCheckout.on(
+        "payment.failed",
+        function (response) {
+
+            razorpayButton.disabled = false;
+
+            paymentLoading.classList.remove(
+                "active"
+            );
+
+            let message =
+                "Payment failed. Please try again.";
+
+
+            if (
+                response.error &&
+                response.error.description
+            ) {
+
+                message =
+                    response.error.description;
+
+            }
+
+
+            alert(
+                message
+            );
+
+        }
+    );
+
+</script>
+
+
+</body>
+
+</html>

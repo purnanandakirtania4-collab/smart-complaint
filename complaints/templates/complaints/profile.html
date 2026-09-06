@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <title>
+        My Profile | Smart Complaint
+    </title>
+
+    {% include "complaints/base_style.html" %}
+
+    <style>
+
+        .profile {
+            max-width: 720px;
+            margin: 35px auto;
+            padding: 35px;
+        }
+
+        .head {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: auto;
+            overflow: hidden;
+            background: #dbeafe;
+            display: grid;
+            place-items: center;
+            font-size: 50px;
+            border: 4px solid #eff6ff;
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .head h1 {
+            margin: 14px 0 5px;
+        }
+
+        .username {
+            color: #2563eb;
+            font-weight: 800;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .full {
+            grid-column: 1 / -1;
+        }
+
+        .photo-section {
+            margin-bottom: 22px;
+            padding: 18px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+        }
+
+        .readonly {
+            background: #f1f5f9;
+            cursor: not-allowed;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 25px;
+        }
+
+        .message {
+            margin-bottom: 18px;
+        }
+
+        @media(max-width: 650px) {
+
+            .profile {
+                padding: 25px 18px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .full {
+                grid-column: auto;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<main class="page">
+
+    <div class="card profile">
+
+
+        {% if messages %}
+
+            {% for message in messages %}
+
+                <div class="message">
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+
+        <div class="head">
+
+            <div class="avatar">
+
+                {% if user_profile.photo %}
+
+                    <img
+                        src="{{ user_profile.photo.url }}"
+                        alt="Profile Photo"
+                    >
+
+                {% else %}
+
+                    👤
+
+                {% endif %}
+
+            </div>
+
+            <h1>
+                My Profile
+            </h1>
+
+            <div class="username">
+                @{{ profile_user.username }}
+            </div>
+
+            <p class="muted">
+                Manage your personal information
+            </p>
+
+        </div>
+
+
+        <form
+            method="post"
+            enctype="multipart/form-data"
+        >
+
+            {% csrf_token %}
+
+
+            <div class="photo-section">
+
+                <label class="label">
+                    📷 Profile Photo
+                </label>
+
+                <input
+                    class="input"
+                    type="file"
+                    name="photo"
+                    accept="image/*"
+                >
+
+                <p
+                    class="muted"
+                    style="margin-top:8px"
+                >
+                    Maximum photo size: 5 MB
+                </p>
+
+            </div>
+
+
+            <div class="form-grid">
+
+
+                <div class="form-group full">
+
+                    <label class="label">
+                        Username
+                    </label>
+
+                    <input
+                        class="input readonly"
+                        value="{{ profile_user.username }}"
+                        readonly
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label class="label">
+                        First Name
+                    </label>
+
+                    <input
+                        class="input"
+                        type="text"
+                        name="first_name"
+                        value="{{ profile_user.first_name }}"
+                        placeholder="First name"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label class="label">
+                        Last Name
+                    </label>
+
+                    <input
+                        class="input"
+                        type="text"
+                        name="last_name"
+                        value="{{ profile_user.last_name }}"
+                        placeholder="Last name"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label class="label">
+                        Email
+                    </label>
+
+                    <input
+                        class="input"
+                        type="email"
+                        name="email"
+                        value="{{ profile_user.email }}"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label class="label">
+                        Phone Number
+                    </label>
+
+                    <input
+                        class="input"
+                        type="tel"
+                        name="phone"
+                        maxlength="15"
+                        value="{{ user_profile.phone }}"
+                        placeholder="Enter phone number"
+                    >
+
+                </div>
+
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+                style="
+                    width:100%;
+                    margin-top:20px;
+                    font-size:16px;
+                "
+            >
+                💾 Save Profile
+            </button>
+
+        </form>
+
+
+        <div class="actions">
+
+            <a
+                class="btn btn-dark"
+                href="{% url 'home' %}"
+            >
+                🏠 Home
+            </a>
+
+            <a
+                class="btn btn-danger"
+                href="{% url 'logout' %}"
+            >
+                Logout
+            </a>
+
+        </div>
+
+    </div>
+
+</main>
+
+</body>
+
+</html>

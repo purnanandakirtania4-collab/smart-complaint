@@ -1,0 +1,9 @@
+<nav style="background:rgba(255,255,255,.96);padding:14px 22px;display:flex;justify-content:space-between;align-items:center;gap:15px;box-shadow:0 5px 20px rgba(0,0,0,.12);position:sticky;top:0;z-index:20">
+    <a href="{% url 'home' %}" style="font-size:19px;font-weight:800;color:#172554">Smart Complaint</a>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <a href="{% url 'worker_details' %}" style="color:#334155;font-weight:700">Workers</a>
+        <a href="{% url 'my_complaints' %}" style="color:#334155;font-weight:700">My Complaints</a>
+        <a href="{% url 'profile' %}" style="color:#334155;font-weight:700">Profile</a>
+        <a href="{% url 'logout' %}" style="background:#fee2e2;color:#b91c1c;padding:9px 14px;border-radius:9px;font-weight:700">Logout</a>
+    </div>
+</nav>
