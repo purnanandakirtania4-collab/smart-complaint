@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>My Complaints | Smart Complaint</title>
+
+    {% include 'complaints/base_style.html' %}
+
+    <style>
+      .head {
+        color: #fff;
+        text-align: center;
+        margin-bottom: 25px;
+      }
+      
+      .back-area {
+        max-width: 100%;
+        margin-bottom: 18px;
+      }
+      
+      .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+      
+        padding: 10px 16px;
+      
+        border-radius: 10px;
+      
+        background: #ffffff;
+        color: #1e3a8a;
+      
+        text-decoration: none;
+      
+        font-size: 14px;
+        font-weight: 800;
+      
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+      }
+      
+      .back-btn:hover {
+        transform: translateY(-1px);
+      
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+      }
+      
+      .list {
+        display: grid;
+        gap: 14px;
+      }
+      
+      .item {
+        padding: 22px;
+      }
+      
+      .top {
+        display: flex;
+        justify-content: space-between;
+      
+        gap: 12px;
+      
+        align-items: flex-start;
+      }
+      
+      .id {
+        font-size: 13px;
+        color: #64748b;
+        margin-top: 5px;
+      }
+      
+      .status {
+        padding: 7px 12px;
+      
+        border-radius: 20px;
+      
+        font-size: 12px;
+        font-weight: 800;
+      }
+      
+      .pending {
+        background: #fef3c7;
+        color: #92400e;
+      }
+      
+      .progress {
+        background: #dbeafe;
+        color: #1d4ed8;
+      }
+      
+      .resolved {
+        background: #dcfce7;
+        color: #166534;
+      }
+      
+      .meta {
+        display: grid;
+      
+        grid-template-columns: 1fr 1fr;
+      
+        gap: 10px;
+      
+        margin-top: 16px;
+      }
+      
+      .box {
+        background: #f8fafc;
+      
+        padding: 13px;
+      
+        border-radius: 10px;
+      }
+      
+      .empty {
+        text-align: center;
+        padding: 45px;
+      }
+      
+      /* =====================================================
+                 COMPLETION OTP
+              ===================================================== */
+      
+      .otp-box {
+        margin-top: 18px;
+      
+        padding: 20px;
+      
+        border-radius: 14px;
+      
+        border: 2px solid #2563eb;
+      
+        background: linear-gradient(135deg, #eff6ff, #ffffff);
+      
+        text-align: center;
+      }
+      
+      .otp-title {
+        color: #1e3a8a;
+      
+        font-size: 18px;
+        font-weight: 800;
+      
+        margin-bottom: 6px;
+      }
+      
+      .otp-text {
+        color: #64748b;
+      
+        font-size: 13px;
+      
+        line-height: 1.6;
+      }
+      
+      .otp-code {
+        display: inline-block;
+      
+        margin: 15px 0 10px;
+      
+        padding: 12px 24px;
+      
+        border-radius: 12px;
+      
+        background: #1d4ed8;
+        color: #ffffff;
+      
+        font-size: 30px;
+        font-weight: 900;
+      
+        letter-spacing: 7px;
+      
+        box-shadow: 0 5px 15px rgba(37, 99, 235, 0.25);
+      }
+      
+      .otp-warning {
+        margin-top: 8px;
+      
+        color: #b45309;
+      
+        font-size: 12px;
+        font-weight: 700;
+      }
+      
+      .otp-success {
+        margin-top: 18px;
+      
+        padding: 14px;
+      
+        border-radius: 12px;
+      
+        background: #f0fdf4;
+      
+        border: 1px solid #bbf7d0;
+      
+        color: #166534;
+      
+        font-weight: 800;
+      }
+      
+      /* =====================================================
+                 RATING BOX
+              ===================================================== */
+      
+      .rating-box {
+        margin-top: 18px;
+      
+        padding: 18px;
+      
+        border: 1px solid #dbeafe;
+      
+        border-radius: 14px;
+      
+        background: linear-gradient(135deg, #eff6ff, #ffffff);
+      }
+      
+      .rating-title {
+        margin-bottom: 5px;
+      
+        color: #172554;
+      
+        font-size: 17px;
+        font-weight: 800;
+      }
+      
+      .rating-subtitle {
+        margin-bottom: 13px;
+      
+        color: #64748b;
+      
+        font-size: 13px;
+      }
+      
+      /* =====================================================
+                 STARS
+              ===================================================== */
+      
+      .stars {
+        display: inline-flex;
+      
+        flex-direction: row-reverse;
+      
+        justify-content: flex-end;
+      
+        gap: 4px;
+      
+        margin-bottom: 14px;
+      }
+      
+      .stars input {
+        display: none;
+      }
+      
+      .stars label {
+        color: #cbd5e1;
+      
+        font-size: 34px;
+      
+        line-height: 1;
+      
+        cursor: pointer;
+      
+        transition: transform 0.15s ease, color 0.15s ease;
+      }
+      
+      .stars label:hover,
+      .stars label:hover ~ label,
+      .stars input:checked ~ label {
+        color: #fbbf24;
+      }
+      
+      .stars label:hover {
+        transform: scale(1.12);
+      }
+      
+      /* =====================================================
+                 FEEDBACK
+              ===================================================== */
+      
+      .problem-label {
+        display: block;
+      
+        margin-bottom: 7px;
+      
+        color: #334155;
+      
+        font-size: 13px;
+        font-weight: 700;
+      }
+      
+      .problem-box {
+        width: 100%;
+      
+        min-height: 90px;
+      
+        padding: 12px;
+      
+        resize: vertical;
+      
+        border: 1px solid #cbd5e1;
+      
+        border-radius: 10px;
+      
+        outline: none;
+      
+        color: #334155;
+      
+        background: white;
+      
+        font-family: inherit;
+      
+        font-size: 14px;
+      }
+      
+      .problem-box:focus {
+        border-color: #2563eb;
+      
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+      }
+      
+      .rating-submit {
+        margin-top: 12px;
+      }
+      
+      /* =====================================================
+                 SUBMITTED RATING
+              ===================================================== */
+      
+      .submitted-rating {
+        margin-top: 18px;
+      
+        padding: 17px;
+      
+        border-radius: 14px;
+      
+        background: #f0fdf4;
+      
+        border: 1px solid #bbf7d0;
+      }
+      
+      .submitted-stars {
+        margin: 7px 0;
+      
+        color: #f59e0b;
+      
+        font-size: 24px;
+      
+        letter-spacing: 2px;
+      }
+      
+      .submitted-problem {
+        margin-top: 10px;
+      
+        padding: 11px;
+      
+        border-radius: 9px;
+      
+        color: #475569;
+      
+        background: white;
+      
+        line-height: 1.5;
+      }
+      
+      @media (max-width: 600px) {
+        .top {
+          flex-direction: column;
+        }
+      
+        .meta {
+          grid-template-columns: 1fr;
+        }
+      
+        .stars label {
+          font-size: 31px;
+        }
+      
+        .back-btn {
+          width: 100%;
+          justify-content: center;
+        }
+      
+        .otp-code {
+          font-size: 25px;
+          letter-spacing: 5px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    {% include 'complaints/User_Folder/navbar.html' %}
+
+    <main class="page">
+      <!--  =====================================================
+         BACK TO HOME
+    ======================================================  -->
+
+      <div class="back-area">
+        <a class="back-btn" href="{% url 'home' %}">← Back to Home</a>
+      </div>
+
+      <div class="head">
+        <h1>📋 My Complaints</h1>
+
+        <p style="
+                color:#dbeafe;
+                margin-top:7px;
+            ">All complaints submitted from your account.</p>
+      </div>
+
+      <div class="list">
+        {% for complaint in complaints %}
+          <article class="card item">
+            <div class="top">
+              <div>
+                <h2>{{ complaint.subject }}</h2>
+
+                <div class="id">{{ complaint.tracking_id }}</div>
+              </div>
+
+              <span class="
+                            status
+
+                            {% if complaint.status == 'Pending' %}
+                  
+                                pending
+
+
+                {% elif complaint.status == 'In Progress' %}
+                  
+                                progress
+
+
+                {% else %}
+                  
+                                resolved
+
+                {% endif %}
+                        ">
+                {{ complaint.status }}
+              </span>
+            </div>
+
+            <div class="meta">
+              <div class="box">
+                <small>Worker</small>
+
+                <br />
+
+                <b>
+                  {% if complaint.assigned_worker %}
+                    {{ complaint.assigned_worker.name }}
+                  {% else %}
+                    Not assigned
+                  {% endif %}
+                </b>
+              </div>
+
+              <div class="box">
+                <small>Submitted</small>
+
+                <br />
+
+                <b>{{ complaint.created_at|date:'d M Y, h:i A' }}</b>
+              </div>
+            </div>
+
+            <div style="margin-top:14px">
+              <a class="btn btn-light" href="{% url 'check_status' %}">Track Status</a>
+            </div>
+
+            <!--  =================================================
+                     COMPLETION OTP
+                ==================================================  -->
+
+            {% if complaint.completion_otp and not complaint.otp_verified %}
+              <div class="otp-box">
+                <div class="otp-title">🔐 Completion OTP</div>
+
+                <div class="otp-text">
+                  Worker wants to complete this complaint.
+
+                  <br />
+
+                  Check the work first, then give this OTP to the worker.
+                </div>
+
+                <div class="otp-code">{{ complaint.completion_otp }}</div>
+
+                {% if complaint.otp_created_at %}
+                  <div class="otp-text">
+                    Generated:
+
+                    <b>{{ complaint.otp_created_at|date:'d M Y, h:i A' }}</b>
+                  </div>
+                {% endif %}
+
+                <div class="otp-warning">⚠️ OTP is valid for 10 minutes. Do not share it before checking the completed work.</div>
+              </div>
+            {% elif complaint.otp_verified and complaint.status == 'Resolved' %}
+              <div class="otp-success">✅ Completion OTP verified. Complaint successfully resolved.</div>
+            {% endif %}
+
+            <!--  =================================================
+                     USER → WORKER RATING
+                ==================================================  -->
+
+            {% if complaint.status == 'Resolved' and complaint.assigned_worker %}
+              {% if complaint.user_rating %}
+                <div class="submitted-rating">
+                  <b>✅ You rated {{ complaint.assigned_worker.name }}</b>
+
+                  <div class="submitted-stars">
+                    {% if complaint.user_rating.stars >= 1 %}
+                      ★
+                    {% else %}
+                      ☆
+                    {% endif %}
+
+                    {% if complaint.user_rating.stars >= 2 %}
+                      ★
+                    {% else %}
+                      ☆
+                    {% endif %}
+
+                    {% if complaint.user_rating.stars >= 3 %}
+                      ★
+                    {% else %}
+                      ☆
+                    {% endif %}
+
+                    {% if complaint.user_rating.stars >= 4 %}
+                      ★
+                    {% else %}
+                      ☆
+                    {% endif %}
+
+                    {% if complaint.user_rating.stars >= 5 %}
+                      ★
+                    {% else %}
+                      ☆
+                    {% endif %}
+                  </div>
+
+                  <div class="muted">{{ complaint.user_rating.stars }}
+                    out of 5 stars</div>
+
+                  {% if complaint.user_rating.problem %}
+                    <div class="submitted-problem">
+                      <b>Your feedback:</b>
+
+                      <br />
+
+                      {{ complaint.user_rating.problem }}
+                    </div>
+                  {% endif %}
+                </div>
+              {% else %}
+                <div class="rating-box">
+                  <div class="rating-title">⭐ Rate Worker</div>
+
+                  <div class="rating-subtitle">
+                    How was your experience with
+
+                    <b>{{ complaint.assigned_worker.name }}</b>?
+                  </div>
+
+                  <form method="post" action="{% url 'rate_worker' complaint.id %}">
+                    {% csrf_token %}
+
+                    <div class="stars">
+                      <input type="radio" id="worker-star-5-{{ complaint.id }}" name="stars" value="5" required />
+
+                      <label for="worker-star-5-{{ complaint.id }}">★</label>
+
+                      <input type="radio" id="worker-star-4-{{ complaint.id }}" name="stars" value="4" />
+
+                      <label for="worker-star-4-{{ complaint.id }}">★</label>
+
+                      <input type="radio" id="worker-star-3-{{ complaint.id }}" name="stars" value="3" />
+
+                      <label for="worker-star-3-{{ complaint.id }}">★</label>
+
+                      <input type="radio" id="worker-star-2-{{ complaint.id }}" name="stars" value="2" />
+
+                      <label for="worker-star-2-{{ complaint.id }}">★</label>
+
+                      <input type="radio" id="worker-star-1-{{ complaint.id }}" name="stars" value="1" />
+
+                      <label for="worker-star-1-{{ complaint.id }}">★</label>
+                    </div>
+
+                    <label class="problem-label">
+                      Any problem or feedback?
+
+                      <span class="muted">(Optional)</span>
+                    </label>
+
+                    <textarea class="problem-box" name="problem" maxlength="1000" placeholder="If you faced any problem, write it here..."></textarea>
+
+                    <button type="submit" class="btn btn-primary rating-submit">⭐ Submit Rating</button>
+                  </form>
+                </div>
+              {% endif %}
+            {% endif %}
+          </article>
+        {% empty %}
+          <div class="card empty">
+            <div style="font-size:50px">📭</div>
+
+            <h2 style="margin:10px">No Complaints Yet</h2>
+
+            <p class="muted">You have not submitted any complaint.</p>
+
+            <a class="btn btn-primary" style="margin-top:18px" href="{% url 'submit_complaint' %}">Submit Complaint</a>
+          </div>
+        {% endfor %}
+      </div>
+    </main>
+  </body>
+</html>

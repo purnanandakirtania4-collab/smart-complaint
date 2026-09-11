@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Worker Subscription Payment | Smart Complaint</title>
+
+    {% include 'complaints/base_style.html' %}
+
+    <style>
+      body {
+        margin: 0;
+        min-height: 100vh;
+      
+        font-family: Arial, Helvetica, sans-serif;
+      
+        background: linear-gradient(135deg, #0f172a, #1d4ed8, #2563eb);
+      
+        padding: 30px 15px;
+      }
+      
+      /* =========================================
+                 MAIN CONTAINER
+              ========================================= */
+      
+      .payment-container {
+        max-width: 720px;
+        margin: auto;
+      }
+      
+      /* =========================================
+                 PAYMENT CARD
+              ========================================= */
+      
+      .payment-card {
+        background: #ffffff;
+      
+        border-radius: 22px;
+      
+        padding: 35px;
+      
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+      }
+      
+      /* =========================================
+                 HEADER
+              ========================================= */
+      
+      .header {
+        text-align: center;
+      
+        margin-bottom: 25px;
+      }
+      
+      .payment-icon {
+        width: 75px;
+        height: 75px;
+      
+        margin: auto;
+      
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      
+        border-radius: 50%;
+      
+        background: #dbeafe;
+      
+        font-size: 34px;
+      }
+      
+      .header h1 {
+        margin-top: 15px;
+        margin-bottom: 7px;
+      
+        color: #172554;
+      
+        font-size: 29px;
+      }
+      
+      .header p {
+        margin: 0;
+      
+        color: #64748b;
+      
+        line-height: 1.5;
+      }
+      
+      /* =========================================
+                 TEST MODE BADGE
+              ========================================= */
+      
+      .test-badge {
+        width: fit-content;
+      
+        margin: 0 auto 25px auto;
+      
+        padding: 7px 14px;
+      
+        border-radius: 20px;
+      
+        background: #fef3c7;
+        color: #92400e;
+      
+        font-size: 13px;
+        font-weight: bold;
+      }
+      
+      /* =========================================
+                 WORKER DETAILS
+              ========================================= */
+      
+      .worker-box {
+        margin-bottom: 22px;
+      
+        padding: 18px;
+      
+        border-radius: 14px;
+      
+        border: 1px solid #bfdbfe;
+      
+        background: #eff6ff;
+      }
+      
+      .worker-label {
+        margin-bottom: 7px;
+      
+        color: #64748b;
+      
+        font-size: 13px;
+        font-weight: 700;
+      }
+      
+      .worker-name {
+        color: #172554;
+      
+        font-size: 18px;
+        font-weight: 800;
+      }
+      
+      .worker-id {
+        margin-top: 4px;
+      
+        color: #475569;
+      
+        font-size: 13px;
+      }
+      
+      /* =========================================
+                 PLAN BOX
+              ========================================= */
+      
+      .plan-box {
+        padding: 22px;
+      
+        border-radius: 16px;
+      
+        border: 1px solid #dbeafe;
+      
+        background: linear-gradient(135deg, #eff6ff, #ffffff);
+      
+        margin-bottom: 25px;
+      }
+      
+      .plan-title {
+        color: #1e3a8a;
+      
+        font-size: 20px;
+        font-weight: 900;
+      
+        margin-bottom: 20px;
+      }
+      
+      /* =========================================
+                 FIRST MONTH
+              ========================================= */
+      
+      .first-box {
+        padding-bottom: 18px;
+      
+        border-bottom: 1px solid #dbeafe;
+      }
+      
+      .small-label {
+        color: #64748b;
+      
+        font-size: 13px;
+        font-weight: 700;
+      }
+      
+      .first-price {
+        margin-top: 5px;
+      
+        color: #16a34a;
+      
+        font-size: 40px;
+        font-weight: 900;
+      }
+      
+      .first-text {
+        color: #475569;
+      
+        font-size: 14px;
+        font-weight: 700;
+      }
+      
+      /* =========================================
+                 RECURRING PRICE
+              ========================================= */
+      
+      .recurring-box {
+        margin-top: 20px;
+      }
+      
+      .price-row {
+        display: flex;
+      
+        align-items: center;
+      
+        gap: 10px;
+      
+        flex-wrap: wrap;
+      
+        margin-top: 7px;
+      }
+      
+      .old-price {
+        color: #94a3b8;
+      
+        font-size: 23px;
+        font-weight: 800;
+      
+        text-decoration: line-through;
+        text-decoration-thickness: 2px;
+      }
+      
+      .new-price {
+        color: #2563eb;
+      
+        font-size: 36px;
+        font-weight: 900;
+      }
+      
+      .per-month {
+        color: #64748b;
+      
+        font-size: 14px;
+        font-weight: 700;
+      }
+      
+      .discount {
+        padding: 6px 11px;
+      
+        border-radius: 20px;
+      
+        background: #dcfce7;
+      
+        color: #166534;
+      
+        font-size: 12px;
+        font-weight: 900;
+      }
+      
+      .autopay-text {
+        margin-top: 10px;
+      
+        color: #475569;
+      
+        font-size: 14px;
+        line-height: 1.6;
+      }
+      
+      /* =========================================
+                 TODAY PAYMENT
+              ========================================= */
+      
+      .today-box {
+        display: flex;
+      
+        justify-content: space-between;
+        align-items: center;
+      
+        gap: 15px;
+      
+        margin-bottom: 22px;
+      
+        padding: 18px;
+      
+        border-radius: 14px;
+      
+        background: #f8fafc;
+      
+        border: 1px solid #e2e8f0;
+      }
+      
+      .today-label {
+        color: #475569;
+      
+        font-weight: 700;
+      }
+      
+      .today-price {
+        color: #16a34a;
+      
+        font-size: 27px;
+        font-weight: 900;
+      }
+      
+      /* =========================================
+                 AUTOPAY NOTICE
+              ========================================= */
+      
+      .notice {
+        margin-bottom: 22px;
+      
+        padding: 17px;
+      
+        border-radius: 12px;
+      
+        border-left: 5px solid #f59e0b;
+      
+        background: #fffbeb;
+      
+        color: #92400e;
+      
+        line-height: 1.6;
+      
+        font-size: 14px;
+      }
+      
+      /* =========================================
+                 ERROR MESSAGE
+              ========================================= */
+      
+      .error-box {
+        margin-bottom: 20px;
+      
+        padding: 15px;
+      
+        border-radius: 12px;
+      
+        background: #fee2e2;
+      
+        border: 1px solid #fecaca;
+      
+        color: #991b1b;
+      
+        font-size: 14px;
+        font-weight: 700;
+      
+        line-height: 1.5;
+      }
+      
+      /* =========================================
+                 PAYMENT BUTTON
+              ========================================= */
+      
+      .pay-form {
+        margin: 0;
+      }
+      
+      .pay-button {
+        width: 100%;
+      
+        padding: 16px;
+      
+        border: none;
+      
+        border-radius: 12px;
+      
+        background: linear-gradient(135deg, #1d4ed8, #2563eb);
+      
+        color: #ffffff;
+      
+        font-size: 17px;
+        font-weight: 900;
+      
+        cursor: pointer;
+      
+        transition: 0.2s;
+      }
+      
+      .pay-button:hover {
+        transform: translateY(-2px);
+      
+        box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
+      }
+      
+      .pay-button:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+        transform: none;
+      }
+      
+      /* =========================================
+                 SECURITY
+              ========================================= */
+      
+      .security {
+        margin-top: 18px;
+      
+        padding: 15px;
+      
+        text-align: center;
+      
+        border-radius: 12px;
+      
+        background: #f1f5f9;
+      
+        color: #64748b;
+      
+        font-size: 12px;
+      
+        line-height: 1.7;
+      }
+      
+      /* =========================================
+                 BACK LINK
+              ========================================= */
+      
+      .back-link {
+        display: block;
+      
+        margin-top: 20px;
+      
+        text-align: center;
+      
+        color: #2563eb;
+      
+        text-decoration: none;
+      
+        font-weight: 800;
+      
+        font-size: 14px;
+      }
+      
+      .back-link:hover {
+        text-decoration: underline;
+      }
+      
+      /* =========================================
+                 MOBILE
+              ========================================= */
+      
+      @media (max-width: 600px) {
+        body {
+          padding: 15px 10px;
+        }
+      
+        .payment-card {
+          padding: 25px 18px;
+        }
+      
+        .header h1 {
+          font-size: 24px;
+        }
+      
+        .first-price {
+          font-size: 34px;
+        }
+      
+        .new-price {
+          font-size: 31px;
+        }
+      
+        .today-price {
+          font-size: 24px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="payment-container">
+      <div class="payment-card">
+        <!--  =====================================
+                 HEADER
+            ======================================  -->
+
+        <div class="header">
+          <div class="payment-icon">💳</div>
+
+          <h1>Worker Subscription</h1>
+
+          <p>Activate your Smart Complaint worker subscription securely.</p>
+        </div>
+
+        <!--  =====================================
+                 TEST MODE
+            ======================================  -->
+
+        <div class="test-badge">🧪 Razorpay Test Mode</div>
+
+        <!--  =====================================
+                 DJANGO MESSAGES
+            ======================================  -->
+
+        {% if messages %}
+          {% for message in messages %}
+            <div class="error-box">{{ message }}</div>
+          {% endfor %}
+        {% endif %}
+
+        <!--  =====================================
+                 WORKER DETAILS
+            ======================================  -->
+
+        <div class="worker-box">
+          <div class="worker-label">SUBSCRIPTION FOR</div>
+
+          <div class="worker-name">{{ worker.name }}</div>
+
+          <div class="worker-id">Worker ID:
+            {{ worker.worker_id }}</div>
+        </div>
+
+        <!--  =====================================
+                 PLAN
+            ======================================  -->
+
+        <div class="plan-box">
+          <div class="plan-title">⭐ Smart Complaint Worker Plan</div>
+
+          <!-- FIRST MONTH -->
+
+          <div class="first-box">
+            <div class="small-label">FIRST MONTH</div>
+
+            <div class="first-price">₹49</div>
+
+            <div class="first-text">Special introductory price</div>
+          </div>
+
+          <!-- SECOND MONTH -->
+
+          <div class="recurring-box">
+            <div class="small-label">FROM SECOND MONTH</div>
+
+            <div class="price-row">
+              <span class="old-price">₹499</span>
+
+              <span class="new-price">₹149</span>
+
+              <span class="per-month">/ month</span>
+
+              <span class="discount">🔥 70% OFF</span>
+            </div>
+
+            <div class="autopay-text">₹149 will be charged every month through AutoPay after successful recurring mandate authorization.</div>
+          </div>
+        </div>
+
+        <!--  =====================================
+                 TODAY PAYMENT
+            ======================================  -->
+
+        <div class="today-box">
+          <div class="today-label">Amount payable today</div>
+
+          <div class="today-price">₹49</div>
+        </div>
+
+        <!--  =====================================
+                 AUTOPAY INFORMATION
+            ======================================  -->
+
+        <div class="notice">
+          <strong>⚠️ AutoPay Information</strong>
+
+          <br /><br />
+
+          By continuing, you will be asked to authorize a recurring AutoPay mandate.
+
+          <br /><br />
+
+          Today you pay only
+          <strong>₹49</strong>.
+
+          After the first month,
+          <strong>₹149 per month</strong>
+          may be automatically charged according to the authorized mandate until the subscription is cancelled.
+        </div>
+
+        <!--  =====================================
+                 REAL BACKEND POST FORM
+            ======================================  -->
+
+        <form method="post" action="{% url 'worker_subscription_payment' %}" class="pay-form" id="subscriptionForm">
+          {% csrf_token %}
+
+          <button type="submit" class="pay-button" id="subscribeButton">🔒 Pay ₹49 & Activate AutoPay</button>
+        </form>
+
+        <!--  =====================================
+                 SECURITY
+            ======================================  -->
+
+        <div class="security">
+          🔐 Payment and AutoPay authorization will be handled securely through Razorpay.
+
+          <br /><br />
+
+          Smart Complaint does not collect or store your UPI PIN, card CVV or net banking password.
+
+          <br /><br />
+
+          🧪 Test Mode is currently active, so no real money will be deducted.
+        </div>
+
+        <!--  =====================================
+                 BACK
+            ======================================  -->
+
+        <a href="{% url 'terms_conditions' %}" class="back-link">← Back to Terms & Conditions</a>
+      </div>
+    </div>
+
+    <!--  =========================================
+         PREVENT DOUBLE CLICK
+    =========================================  -->
+
+    <script>
+      const subscriptionForm = document.getElementById('subscriptionForm')
+      
+      const subscribeButton = document.getElementById('subscribeButton')
+      
+      subscriptionForm.addEventListener('submit', function () {
+        subscribeButton.disabled = true
+      
+        subscribeButton.innerText = '⏳ Opening Razorpay...'
+      })
+    </script>
+  </body>
+</html>

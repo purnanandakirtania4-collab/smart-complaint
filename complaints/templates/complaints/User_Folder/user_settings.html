@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>User Settings | Smart Complaint</title>
+
+    {% include 'complaints/base_style.html' %}
+
+    <style>
+      /* =========================================
+                 SETTINGS WRAPPER
+              ========================================= */
+      
+      .settings-wrapper {
+        max-width: 850px;
+        margin: 30px auto;
+        padding: 0 15px 40px;
+      }
+      
+      /* =========================================
+                 SETTINGS HEADER
+              ========================================= */
+      
+      .settings-header {
+        color: white;
+        margin-bottom: 20px;
+      }
+      
+      .settings-header h1 {
+        margin-bottom: 6px;
+      }
+      
+      /* =========================================
+                 SETTINGS CARD
+              ========================================= */
+      
+      .settings-card {
+        background: white;
+        border-radius: 16px;
+        padding: 22px;
+        margin-bottom: 15px;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+      }
+      
+      /* =========================================
+                 SETTINGS ITEM
+              ========================================= */
+      
+      .settings-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      
+        gap: 15px;
+      
+        padding: 16px 0;
+      
+        border-bottom: 1px solid #e2e8f0;
+      }
+      
+      .settings-item:last-child {
+        border-bottom: none;
+      }
+      
+      /* =========================================
+                 LEFT SIDE
+              ========================================= */
+      
+      .settings-left {
+        display: flex;
+        align-items: center;
+      
+        gap: 14px;
+      }
+      
+      .settings-icon {
+        width: 44px;
+        height: 44px;
+      
+        border-radius: 12px;
+      
+        background: #eff6ff;
+      
+        display: grid;
+        place-items: center;
+      
+        font-size: 22px;
+      
+        flex-shrink: 0;
+      }
+      
+      /* =========================================
+                 TEXT
+              ========================================= */
+      
+      .settings-text h3 {
+        margin: 0 0 4px;
+      
+        font-size: 16px;
+      
+        color: #0f172a;
+      }
+      
+      .settings-text p {
+        margin: 0;
+      
+        color: #64748b;
+      
+        font-size: 13px;
+      }
+      
+      /* =========================================
+                 ACTION BUTTON
+              ========================================= */
+      
+      .settings-action {
+        text-decoration: none;
+      
+        background: #2563eb;
+        color: white;
+      
+        padding: 9px 14px;
+      
+        border-radius: 9px;
+      
+        font-size: 13px;
+        font-weight: 700;
+      
+        white-space: nowrap;
+      }
+      
+      .settings-action:hover {
+        background: #1d4ed8;
+      }
+      
+      /* =========================================
+                 COMING SOON
+              ========================================= */
+      
+      .coming-soon {
+        background: #e2e8f0;
+        color: #475569;
+      
+        cursor: default;
+      }
+      
+      /* =========================================
+                 DANGER
+              ========================================= */
+      
+      .danger-action {
+        background: #dc2626;
+      }
+      
+      .danger-action:hover {
+        background: #b91c1c;
+      }
+      
+      /* =========================================
+                 BACK BUTTON
+              ========================================= */
+      
+      .back-box {
+        margin-top: 20px;
+      }
+      
+      /* =========================================
+                 DARK MODE
+              ========================================= */
+      
+      body.dark-mode .settings-card {
+        background: #1e293b;
+      }
+      
+      body.dark-mode .settings-text h3 {
+        color: #f8fafc;
+      }
+      
+      body.dark-mode .settings-text p {
+        color: #cbd5e1;
+      }
+      
+      body.dark-mode .settings-item {
+        border-color: #334155;
+      }
+      
+      body.dark-mode .settings-icon {
+        background: #334155;
+      }
+      
+      /* =========================================
+                 MOBILE
+              ========================================= */
+      
+      @media (max-width: 600px) {
+        .settings-item {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+      
+        .settings-action {
+          width: 100%;
+          text-align: center;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!--  =========================================
+         USER NAVBAR
+    =========================================  -->
+
+    {% include 'complaints/User_Folder/navbar.html' %}
+
+    <!--  =========================================
+         SETTINGS PAGE
+    =========================================  -->
+
+    <div class="settings-wrapper">
+      <!-- HEADER -->
+
+      <div class="settings-header">
+        <h1>⚙️ User Settings</h1>
+
+        <p>Manage your account and preferences.</p>
+      </div>
+
+      <!-- SETTINGS CARD -->
+
+      <div class="settings-card">
+        <!--  =================================
+                 PROFILE
+            ==================================  -->
+
+        <div class="settings-item">
+          <div class="settings-left">
+            <div class="settings-icon">👤</div>
+
+            <div class="settings-text">
+              <h3>Profile</h3>
+
+              <p>View or update your personal profile.</p>
+            </div>
+          </div>
+
+          <a href="{% url 'profile' %}" class="settings-action">Open</a>
+        </div>
+
+        <!--  =================================
+                 CHANGE PASSWORD
+            ==================================  -->
+
+        <div class="settings-item">
+          <div class="settings-left">
+            <div class="settings-icon">🔐</div>
+
+            <div class="settings-text">
+              <h3>Change Password</h3>
+
+              <p>Change your account password.</p>
+            </div>
+          </div>
+
+          <span class="settings-action coming-soon">Coming Soon</span>
+        </div>
+
+        <!--  =================================
+                 NOTIFICATIONS
+            ==================================  -->
+
+        <div class="settings-item">
+          <div class="settings-left">
+            <div class="settings-icon">🔔</div>
+
+            <div class="settings-text">
+              <h3>Notifications</h3>
+
+              <p>Manage complaint notifications.</p>
+            </div>
+          </div>
+
+          <span class="settings-action coming-soon">Coming Soon</span>
+        </div>
+
+        <!--  =================================
+                 ADDRESS / LOCATION
+            ==================================  -->
+
+        <div class="settings-item">
+          <div class="settings-left">
+            <div class="settings-icon">📍</div>
+
+            <div class="settings-text">
+              <h3>Address / Location</h3>
+
+              <p>Manage your saved address and location.</p>
+            </div>
+          </div>
+
+          <span class="settings-action coming-soon">Coming Soon</span>
+        </div>
+
+        <!--  =================================
+                 PHONE NUMBER
+            ==================================  -->
+
+        <div class="settings-item">
+          <div class="settings-left">
+            <div class="settings-icon">📞</div>
+
+            <div class="settings-text">
+              <h3>Phone Number</h3>
+
+              <p>Update your registered phone number.</p>
+            </div>
+          </div>
+
+          <span class="settings-action coming-soon">Coming Soon</span>
+        </div>
+
+        <!--  =================================
+                 DARK MODE
+            ==================================  -->
+
+        <div class="settings-item">
+          <div class="settings-left">
+            <div class="settings-icon">🌙</div>
+
+            <div class="settings-text">
+              <h3>Dark Mode</h3>
+
+              <p>Use the Dark Mode option from the sidebar.</p>
+            </div>
+          </div>
+
+          <span class="settings-action coming-soon">Sidebar</span>
+        </div>
+
+        <!--  =================================
+                 PRIVACY / TERMS
+            ==================================  -->
+
+        <div class="settings-item">
+          <div class="settings-left">
+            <div class="settings-icon">📄</div>
+
+            <div class="settings-text">
+              <h3>Privacy Policy & Terms</h3>
+
+              <p>Read important account policies.</p>
+            </div>
+          </div>
+
+          <span class="settings-action coming-soon">Coming Soon</span>
+        </div>
+
+        <!--  =================================
+                 DELETE ACCOUNT
+            ==================================  -->
+
+        <div class="settings-item">
+          <div class="settings-left">
+            <div class="settings-icon">🗑️</div>
+
+            <div class="settings-text">
+              <h3>Delete Account</h3>
+
+              <p>Permanently delete your Smart Complaint account.</p>
+            </div>
+          </div>
+
+          <span class="settings-action danger-action">Coming Soon</span>
+        </div>
+      </div>
+
+      <!--  =====================================
+             BACK TO HOME
+        ======================================  -->
+
+      <div class="back-box">
+        <a href="{% url 'home' %}" class="btn btn-light">← Back to Home</a>
+      </div>
+    </div>
+  </body>
+</html>

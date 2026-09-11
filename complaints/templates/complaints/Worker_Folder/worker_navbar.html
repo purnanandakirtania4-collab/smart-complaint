@@ -1,0 +1,449 @@
+{% load static %}
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    /* =========================
+       TOP NAVBAR
+    ========================= */
+    .worker-topbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 64px;
+        background: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+        z-index: 9998;
+    }
+
+    .worker-menu-btn {
+        width: 42px;
+        height: 42px;
+        border: none;
+        border-radius: 10px;
+        background: #f1f5f9;
+        cursor: pointer;
+        font-size: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .worker-menu-btn:hover {
+        background: #e2e8f0;
+    }
+
+    .worker-topbar-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #0f172a;
+    }
+
+    .worker-topbar-name {
+        font-size: 14px;
+        font-weight: 600;
+        color: #475569;
+    }
+
+    /* =========================
+       SIDEBAR
+    ========================= */
+    .worker-sidebar {
+        position: fixed;
+        top: 0;
+        left: -300px;
+        width: 285px;
+        height: 100vh;
+        background: #ffffff;
+        z-index: 10000;
+        box-shadow: 5px 0 25px rgba(0, 0, 0, 0.18);
+        transition: left 0.3s ease;
+        overflow-y: auto;
+    }
+
+    .worker-sidebar.active {
+        left: 0;
+    }
+
+    .worker-sidebar-header {
+        padding: 28px 20px 22px;
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        color: white;
+    }
+
+    .worker-sidebar-header h2 {
+        margin: 0 0 6px;
+        font-size: 21px;
+    }
+
+    .worker-sidebar-header p {
+        margin: 0;
+        font-size: 13px;
+        opacity: 0.9;
+    }
+
+    .worker-sidebar-menu {
+        padding: 18px 12px;
+    }
+
+    .worker-nav-link,
+    .worker-dark-button {
+        width: 100%;
+        min-height: 50px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 12px 15px;
+        margin-bottom: 7px;
+        border: none;
+        border-radius: 10px;
+        background: transparent;
+        color: #1e293b;
+        text-decoration: none;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        text-align: left;
+        font-family: inherit;
+    }
+
+    .worker-nav-link:hover,
+    .worker-dark-button:hover {
+        background: #eff6ff;
+        color: #2563eb;
+    }
+
+    .worker-nav-icon {
+        width: 28px;
+        text-align: center;
+        font-size: 20px;
+    }
+
+    .worker-logout-link {
+        color: #dc2626;
+    }
+
+    .worker-logout-link:hover {
+        color: #dc2626;
+        background: #fef2f2;
+    }
+
+    .worker-divider {
+        height: 1px;
+        background: #e2e8f0;
+        margin: 12px 5px;
+    }
+
+    /* =========================
+       OVERLAY
+    ========================= */
+    .worker-sidebar-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.55);
+        z-index: 9999;
+        display: none;
+    }
+
+    .worker-sidebar-overlay.active {
+        display: block;
+    }
+
+    /* =========================
+       DARK MODE
+    ========================= */
+    body.worker-dark-mode {
+        background: #0f172a !important;
+        color: #e2e8f0 !important;
+    }
+
+    body.worker-dark-mode .worker-topbar {
+        background: #1e293b;
+    }
+
+    body.worker-dark-mode .worker-topbar-title,
+    body.worker-dark-mode .worker-topbar-name {
+        color: #f8fafc;
+    }
+
+    body.worker-dark-mode .worker-menu-btn {
+        background: #334155;
+        color: white;
+    }
+
+    body.worker-dark-mode .worker-sidebar {
+        background: #1e293b;
+    }
+
+    body.worker-dark-mode .worker-nav-link,
+    body.worker-dark-mode .worker-dark-button {
+        color: #e2e8f0;
+    }
+
+    body.worker-dark-mode .worker-nav-link:hover,
+    body.worker-dark-mode .worker-dark-button:hover {
+        background: #334155;
+        color: #60a5fa;
+    }
+
+    body.worker-dark-mode .worker-logout-link {
+        color: #f87171;
+    }
+
+    body.worker-dark-mode .worker-divider {
+        background: #475569;
+    }
+
+    /* Navbar fixed hai, page content uske niche rahe */
+    body {
+        padding-top: 64px;
+    }
+
+    @media (max-width: 600px) {
+        .worker-topbar {
+            padding: 0 12px;
+        }
+
+        .worker-topbar-title {
+            font-size: 15px;
+        }
+
+        .worker-topbar-name {
+            display: none;
+        }
+
+        .worker-sidebar {
+            width: 280px;
+        }
+    }
+</style>
+
+
+<!-- =========================
+     TOP BAR
+========================= -->
+<div class="worker-topbar">
+
+    <button
+        type="button"
+        class="worker-menu-btn"
+        id="workerMenuButton"
+        aria-label="Open worker menu"
+    >
+        ☰
+    </button>
+
+    <div class="worker-topbar-title">
+        Smart Complaint - Worker
+    </div>
+
+    <div class="worker-topbar-name">
+        {{ worker.name|default:request.user.username }}
+    </div>
+
+</div>
+
+
+<!-- =========================
+     OVERLAY
+========================= -->
+<div
+    class="worker-sidebar-overlay"
+    id="workerSidebarOverlay"
+></div>
+
+
+<!-- =========================
+     WORKER SIDEBAR
+========================= -->
+<aside
+    class="worker-sidebar"
+    id="workerSidebar"
+>
+
+    <div class="worker-sidebar-header">
+
+        <h2>
+            👷 Worker Panel
+        </h2>
+
+        <p>
+            {{ worker.name|default:request.user.username }}
+        </p>
+
+    </div>
+
+
+    <div class="worker-sidebar-menu">
+
+        <!-- PROFILE -->
+        {% if worker %}
+            <a
+                href="{% url 'worker_profile' worker.id %}"
+                class="worker-nav-link"
+            >
+                <span class="worker-nav-icon">👤</span>
+                <span>Profile</span>
+            </a>
+        {% endif %}
+
+
+        <!-- SUBSCRIPTION -->
+        <a
+            href="{% url 'terms_conditions' %}"
+            class="worker-nav-link"
+        >
+            <span class="worker-nav-icon">💳</span>
+            <span>Subscription</span>
+        </a>
+
+
+        <!-- SETTINGS -->
+        <a
+            href="{% url 'worker_settings' %}"
+            class="worker-nav-link"
+        >
+            <span class="worker-nav-icon">⚙️</span>
+            <span>Settings</span>
+        </a>
+
+
+        <!-- DARK MODE -->
+        <button
+            type="button"
+            class="worker-dark-button"
+            id="workerDarkModeButton"
+        >
+            <span class="worker-nav-icon">🌙</span>
+
+            <span id="workerDarkModeText">
+                Dark Mode
+            </span>
+        </button>
+
+
+        <div class="worker-divider"></div>
+
+
+        <!-- LOGOUT -->
+        <a
+            href="{% url 'worker_logout' %}"
+            class="worker-nav-link worker-logout-link"
+        >
+            <span class="worker-nav-icon">🚪</span>
+            <span>Logout</span>
+        </a>
+
+    </div>
+
+</aside>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const menuButton =
+            document.getElementById("workerMenuButton");
+
+        const sidebar =
+            document.getElementById("workerSidebar");
+
+        const overlay =
+            document.getElementById("workerSidebarOverlay");
+
+        const darkButton =
+            document.getElementById("workerDarkModeButton");
+
+        const darkText =
+            document.getElementById("workerDarkModeText");
+
+
+        function openWorkerMenu() {
+            sidebar.classList.add("active");
+            overlay.classList.add("active");
+        }
+
+
+        function closeWorkerMenu() {
+            sidebar.classList.remove("active");
+            overlay.classList.remove("active");
+        }
+
+
+        menuButton.addEventListener(
+            "click",
+            openWorkerMenu
+        );
+
+
+        overlay.addEventListener(
+            "click",
+            closeWorkerMenu
+        );
+
+
+        /* =========================
+           DARK MODE SAVE
+        ========================= */
+
+        const savedDarkMode =
+            localStorage.getItem("workerDarkMode");
+
+
+        if (savedDarkMode === "enabled") {
+
+            document.body.classList.add(
+                "worker-dark-mode"
+            );
+
+            darkText.textContent =
+                "Light Mode";
+        }
+
+
+        darkButton.addEventListener(
+            "click",
+            function () {
+
+                document.body.classList.toggle(
+                    "worker-dark-mode"
+                );
+
+
+                if (
+                    document.body.classList.contains(
+                        "worker-dark-mode"
+                    )
+                ) {
+
+                    localStorage.setItem(
+                        "workerDarkMode",
+                        "enabled"
+                    );
+
+                    darkText.textContent =
+                        "Light Mode";
+
+                } else {
+
+                    localStorage.setItem(
+                        "workerDarkMode",
+                        "disabled"
+                    );
+
+                    darkText.textContent =
+                        "Dark Mode";
+                }
+
+            }
+        );
+
+    });
+</script>

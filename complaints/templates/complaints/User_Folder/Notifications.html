@@ -1,0 +1,368 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Notifications | Smart Complaint</title>
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      
+      body {
+        margin: 0;
+      
+        font-family: Arial, Helvetica, sans-serif;
+      
+        background: #f8fafc;
+        color: #0f172a;
+      
+        min-height: 100vh;
+      }
+      
+      .notification-page {
+        width: min(900px, calc(100% - 28px));
+      
+        margin: 0 auto;
+      
+        padding: 90px 0 50px;
+      }
+      
+      .notification-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      
+        margin-bottom: 22px;
+      }
+      
+      .notification-title-box h1 {
+        margin: 0;
+      
+        color: #172554;
+      
+        font-size: clamp(26px, 4vw, 38px);
+      }
+      
+      .notification-title-box p {
+        margin: 8px 0 0;
+      
+        color: #64748b;
+      
+        line-height: 1.6;
+      }
+      
+      .mark-read-button {
+        border: none;
+        border-radius: 12px;
+      
+        padding: 12px 16px;
+      
+        background: #2563eb;
+        color: #ffffff;
+      
+        font-size: 14px;
+        font-weight: 800;
+      
+        cursor: pointer;
+      
+        box-shadow: 0 6px 18px rgba(37, 99, 235, 0.22);
+      }
+      
+      .notification-summary {
+        margin-bottom: 20px;
+      
+        padding: 14px 16px;
+      
+        border-radius: 14px;
+      
+        background: #eef2ff;
+        color: #3730a3;
+      
+        font-weight: 700;
+      }
+      
+      .messages {
+        margin-bottom: 18px;
+      }
+      
+      .message-item {
+        padding: 12px 14px;
+      
+        margin-bottom: 10px;
+      
+        border-radius: 12px;
+      
+        background: #dcfce7;
+        color: #166534;
+      
+        font-weight: 700;
+      }
+      
+      .notification-list {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      
+      .notification-card {
+        padding: 18px;
+      
+        border: 1px solid #e2e8f0;
+      
+        border-radius: 16px;
+      
+        background: #ffffff;
+      
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+      }
+      
+      .notification-card.unread {
+        border-left: 5px solid #2563eb;
+      
+        background: #f8fbff;
+      }
+      
+      .notification-card-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      
+      .notification-title {
+        margin: 0;
+      
+        color: #172554;
+      
+        font-size: 17px;
+        font-weight: 800;
+      }
+      
+      .notification-time {
+        color: #94a3b8;
+      
+        font-size: 12px;
+      
+        white-space: nowrap;
+      }
+      
+      .notification-message {
+        margin: 10px 0 0;
+      
+        color: #475569;
+      
+        line-height: 1.65;
+      }
+      
+      .notification-tracking {
+        margin-top: 12px;
+      
+        color: #64748b;
+      
+        font-size: 13px;
+        font-weight: 700;
+      }
+      
+      .unread-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      
+        margin-left: 8px;
+      
+        padding: 4px 8px;
+      
+        border-radius: 999px;
+      
+        background: #dbeafe;
+        color: #1d4ed8;
+      
+        font-size: 11px;
+        font-weight: 800;
+      }
+      
+      .empty-box {
+        padding: 40px 20px;
+      
+        border: 1px dashed #cbd5e1;
+      
+        border-radius: 18px;
+      
+        background: #ffffff;
+      
+        text-align: center;
+      }
+      
+      .empty-icon {
+        font-size: 44px;
+      }
+      
+      .empty-box h2 {
+        margin: 14px 0 8px;
+      
+        color: #172554;
+      }
+      
+      .empty-box p {
+        margin: 0;
+      
+        color: #64748b;
+      }
+      
+      .back-link {
+        display: inline-flex;
+      
+        margin-top: 22px;
+      
+        color: #2563eb;
+      
+        font-weight: 800;
+      
+        text-decoration: none;
+      }
+      
+      /* DARK MODE */
+      
+      body.dark-mode {
+        background: #0f172a !important;
+        color: #e2e8f0;
+      }
+      
+      body.dark-mode .notification-title-box h1,
+      body.dark-mode .notification-title,
+      body.dark-mode .empty-box h2 {
+        color: #f8fafc;
+      }
+      
+      body.dark-mode .notification-title-box p,
+      body.dark-mode .notification-message,
+      body.dark-mode .notification-tracking,
+      body.dark-mode .empty-box p {
+        color: #cbd5e1;
+      }
+      
+      body.dark-mode .notification-card,
+      body.dark-mode .empty-box {
+        background: #111827;
+      
+        border-color: #334155;
+      }
+      
+      body.dark-mode .notification-card.unread {
+        background: #172033;
+      }
+      
+      body.dark-mode .notification-summary {
+        background: #312e81;
+        color: #e0e7ff;
+      }
+      
+      @media (max-width: 650px) {
+        .notification-page {
+          width: min(100% - 20px, 900px);
+      
+          padding-top: 82px;
+        }
+      
+        .notification-header {
+          align-items: stretch;
+          flex-direction: column;
+        }
+      
+        .mark-read-button {
+          width: 100%;
+        }
+      
+        .notification-card-top {
+          flex-direction: column;
+          gap: 6px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    {% include 'complaints/User_Folder/navbar.html' %}
+
+    <main class="notification-page">
+      <div class="notification-header">
+        <div class="notification-title-box">
+          <h1>🔔 Notifications</h1>
+
+          <p>Complaint updates aur completion alerts yahan milenge.</p>
+        </div>
+
+        {% if unread_count > 0 %}
+          <form method="post">
+            {% csrf_token %}
+
+            <button type="submit" class="mark-read-button">✓ Mark All as Read</button>
+          </form>
+        {% endif %}
+      </div>
+
+      {% if messages %}
+        <div class="messages">
+          {% for message in messages %}
+            <div class="message-item">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% if unread_count > 0 %}
+        <div class="notification-summary">{{ unread_count }} unread notification{{ unread_count|pluralize }}</div>
+      {% endif %}
+
+      {% if notifications %}
+        <div class="notification-list">
+          {% for notification in notifications %}
+            <div class="
+                            notification-card
+                            {% if not notification.is_read %}
+                                unread
+                            {% endif %}
+                        ">
+              <div class="notification-card-top">
+                <div>
+                  <h2 class="notification-title">
+                    {{ notification.title }}
+
+                    {% if not notification.is_read %}
+                      <span class="unread-badge">NEW</span>
+                    {% endif %}
+                  </h2>
+                </div>
+
+                <div class="notification-time">{{ notification.created_at|date:'d M Y, h:i A' }}</div>
+              </div>
+
+              <p class="notification-message">{{ notification.message }}</p>
+
+              {% if notification.complaint %}
+                <div class="notification-tracking">Tracking ID:
+                  {{ notification.complaint.tracking_id }}</div>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="empty-box">
+          <div class="empty-icon">🔕</div>
+
+          <h2>No notifications yet</h2>
+
+          <p>Complaint status update hone par notification yahan dikhega.</p>
+        </div>
+      {% endif %}
+
+      <a href="{% url 'home' %}" class="back-link">← Back to Home</a>
+    </main>
+  </body>
+</html>

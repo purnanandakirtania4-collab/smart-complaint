@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Home | Smart Complaint</title>
+
+    {% include 'complaints/base_style.html' %}
+
+    <style>
+      /* =========================================
+                       ORIGINAL HOME PAGE DESIGN
+                    ========================================= */
+      
+      .hero {
+        padding: 55px 40px;
+      
+        color: #ffffff;
+      
+        text-align: center;
+      }
+      
+      .hero h1 {
+        font-size: 42px;
+      
+        margin-bottom: 12px;
+      }
+      
+      .hero p {
+        max-width: 680px;
+      
+        margin: auto;
+      
+        color: #dbeafe;
+      
+        line-height: 1.7;
+      }
+      
+      /* =========================================
+                       HOME ACTIONS
+                    ========================================= */
+      
+      .actions {
+        display: grid;
+      
+        grid-template-columns: repeat(3, 1fr);
+      
+        gap: 15px;
+      
+        margin-top: 30px;
+      }
+      
+      .action {
+        background: #ffffff;
+      
+        color: #172554;
+      
+        padding: 22px;
+      
+        border-radius: 16px;
+      
+        font-weight: 800;
+      
+        text-decoration: none;
+      
+        transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s ease, color 0.3s ease;
+      }
+      
+      .action:hover {
+        transform: translateY(-4px);
+      
+        box-shadow: 0 10px 25px rgba(15, 23, 42, 0.15);
+      }
+      
+      .action span {
+        display: block;
+      
+        font-size: 28px;
+      
+        margin-bottom: 8px;
+      }
+      
+      /* =========================================
+                       HOW IT WORKS PANEL
+                    ========================================= */
+      
+      .panel {
+        margin-top: 22px;
+      
+        padding: 28px;
+      
+        transition: background 0.3s ease, color 0.3s ease;
+      }
+      
+      .panel h2 {
+        margin-bottom: 10px;
+      }
+      
+      .grid {
+        display: grid;
+      
+        grid-template-columns: repeat(3, 1fr);
+      
+        gap: 15px;
+      
+        margin-top: 20px;
+      }
+      
+      .feature {
+        background: #f8fafc;
+      
+        border: 1px solid #e2e8f0;
+      
+        padding: 20px;
+      
+        border-radius: 14px;
+      
+        transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+      }
+      
+      .feature b {
+        display: block;
+      
+        margin-bottom: 6px;
+      }
+      
+      /* =========================================
+                       DARK MODE FOR HOME
+                    ========================================= */
+      
+      body.dark-mode .action {
+        background: #111827;
+      
+        color: #f8fafc;
+      
+        border: 1px solid #263247;
+      }
+      
+      body.dark-mode .panel {
+        background: #111827 !important;
+      
+        color: #f8fafc;
+      
+        border-color: #263247 !important;
+      }
+      
+      body.dark-mode .panel h2 {
+        color: #f8fafc;
+      }
+      
+      body.dark-mode .feature {
+        background: #172033;
+      
+        border-color: #263247;
+      
+        color: #f8fafc;
+      }
+      
+      body.dark-mode .muted {
+        color: #94a3b8 !important;
+      }
+      
+      /* =========================================
+                       MOBILE
+                    ========================================= */
+      
+      @media (max-width: 700px) {
+        .hero {
+          padding: 45px 20px 35px;
+        }
+      
+        .hero h1 {
+          font-size: 30px;
+        }
+      
+        .actions,
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!--  =========================================
+         USER SLIDE MENU
+    =========================================  -->
+
+    {% include 'complaints/User_Folder/navbar.html' %}
+
+    <!--  =========================================
+         HOME PAGE
+    =========================================  -->
+
+    <main class="page">
+      <!-- HERO -->
+
+      <section class="hero">
+        <h1>Smart Complaint Management</h1>
+
+        <p>Submit complaints, choose an approved worker, track progress, and view your complaint history from one place.</p>
+
+        <!-- ORIGINAL THREE OPTIONS -->
+
+        <div class="actions">
+          <!-- SUBMIT COMPLAINT -->
+
+          <a class="action" href="{% url 'submit_complaint' %}">
+            <span>📝</span>
+
+            Submit Complaint
+          </a>
+
+          <!-- CHECK STATUS -->
+
+          <a class="action" href="{% url 'check_status' %}">
+            <span>🔎</span>
+
+            Check Status
+          </a>
+
+          <!-- FIND WORKER -->
+
+          <a class="action" href="{% url 'worker_details' %}">
+            <span>👷</span>
+
+            Find Worker
+          </a>
+        </div>
+      </section>
+
+      <!--  =========================================
+           HOW IT WORKS
+      =========================================  -->
+
+      <section class="card panel">
+        <h2>How it works</h2>
+
+        <p class="muted">Choose a worker, describe the problem and keep the Tracking ID for future status checks.</p>
+
+        <div class="grid">
+          <!-- STEP 1 -->
+
+          <div class="feature">
+            <b>1. Select Worker</b>
+
+            <span class="muted">Search by name, username or Worker ID.</span>
+          </div>
+
+          <!-- STEP 2 -->
+
+          <div class="feature">
+            <b>2. Submit Complaint</b>
+
+            <span class="muted">Add the subject and a clear description.</span>
+          </div>
+
+          <!-- STEP 3 -->
+
+          <div class="feature">
+            <b>3. Track Progress</b>
+
+            <span class="muted">Follow Pending, In Progress and Resolved status.</span>
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

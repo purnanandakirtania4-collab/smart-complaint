@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 import uuid
 
@@ -96,10 +97,6 @@ class WorkerProfile(models.Model):
         blank=True,
     )
 
-    # =====================================================
-    # WORKER SERVICE LOCATION
-    # =====================================================
-
     city = models.CharField(
         max_length=100,
         blank=True,
@@ -149,6 +146,113 @@ class WorkerProfile(models.Model):
 
         return (
             f"{self.worker_id} - {self.name}"
+        )
+
+
+# =========================================================
+# WORKER SUBSCRIPTION
+# =========================================================
+
+class WorkerSubscription(models.Model):
+
+    STATUS_CHOICES = [
+        ("inactive", "Inactive"),
+        ("pending", "Pending"),
+        ("active", "Active"),
+        ("cancelled", "Cancelled"),
+        ("expired", "Expired"),
+    ]
+
+    worker = models.OneToOneField(
+        WorkerProfile,
+        on_delete=models.CASCADE,
+        related_name="subscription",
+    )
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default="inactive",
+    )
+
+    first_month_price = models.PositiveIntegerField(
+        default=49
+    )
+
+    monthly_price = models.PositiveIntegerField(
+        default=149
+    )
+
+    razorpay_customer_id = models.CharField(
+        max_length=100,
+        blank=True,
+        default="",
+    )
+
+    razorpay_subscription_id = models.CharField(
+        max_length=100,
+        blank=True,
+        default="",
+    )
+
+    razorpay_plan_id = models.CharField(
+        max_length=100,
+        blank=True,
+        default="",
+    )
+
+    terms_accepted = models.BooleanField(
+        default=False
+    )
+
+    terms_accepted_at = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
+    terms_version = models.CharField(
+        max_length=20,
+        default="1.0",
+    )
+
+    started_at = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
+    current_period_start = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
+    current_period_end = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
+    next_billing_at = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
+    cancelled_at = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )
+
+    def __str__(self):
+
+        return (
+            f"{self.worker.worker_id} - "
+            f"{self.status}"
         )
 
 
@@ -214,6 +318,25 @@ class Complaint(models.Model):
         decimal_places=7,
         null=True,
         blank=True,
+    )
+
+    # =====================================================
+    # OTP COMPLETION
+    # =====================================================
+
+    completion_otp = models.CharField(
+        max_length=6,
+        blank=True,
+        default="",
+    )
+
+    otp_created_at = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+    otp_verified = models.BooleanField(
+        default=False
     )
 
     status = models.CharField(
@@ -309,4 +432,143 @@ class ComplaintStatusHistory(models.Model):
             f"{self.complaint.tracking_id} : "
             f"{self.old_status} → "
             f"{self.new_status}"
+        )
+
+
+# =========================================================
+# RATING
+# =========================================================
+
+class Rating(models.Model):
+
+    RATING_TYPE_CHOICES = [
+        (
+            "user_to_worker",
+            "User to Worker"
+        ),
+        (
+            "worker_to_user",
+            "Worker to User"
+        ),
+    ]
+
+    complaint = models.ForeignKey(
+        Complaint,
+        on_delete=models.CASCADE,
+        related_name="ratings",
+    )
+
+    rater = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="given_ratings",
+    )
+
+    rating_type = models.CharField(
+        max_length=30,
+        choices=RATING_TYPE_CHOICES,
+    )
+
+    stars = models.PositiveSmallIntegerField(
+        validators=[
+            MinValueValidator(1),
+            MaxValueValidator(5),
+        ]
+    )
+
+    problem = models.TextField(
+        blank=True,
+        default="",
+        max_length=1000,
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    class Meta:
+
+        constraints = [
+
+            models.UniqueConstraint(
+                fields=[
+                    "complaint",
+                    "rating_type",
+                ],
+                name="unique_complaint_rating_type",
+            ),
+
+        ]
+
+        ordering = [
+            "-created_at"
+        ]
+
+    def __str__(self):
+
+        return (
+            f"{self.complaint.tracking_id} - "
+            f"{self.rating_type} - "
+            f"{self.stars} Stars"
+        )
+
+
+# =========================================================
+# NOTIFICATION
+# =========================================================
+
+class Notification(models.Model):
+
+    NOTIFICATION_TYPE_CHOICES = [
+        ("status_update", "Status Update"),
+        ("assignment", "Assignment"),
+        ("otp", "OTP"),
+        ("system", "System"),
+    ]
+
+    recipient = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="notifications",
+    )
+
+    complaint = models.ForeignKey(
+        Complaint,
+        on_delete=models.CASCADE,
+        related_name="notifications",
+        null=True,
+        blank=True,
+    )
+
+    notification_type = models.CharField(
+        max_length=30,
+        choices=NOTIFICATION_TYPE_CHOICES,
+        default="system",
+    )
+
+    title = models.CharField(
+        max_length=150
+    )
+
+    message = models.TextField()
+
+    is_read = models.BooleanField(
+        default=False
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    class Meta:
+
+        ordering = [
+            "-created_at"
+        ]
+
+    def __str__(self):
+
+        return (
+            f"{self.recipient.username} - "
+            f"{self.title}"
         )

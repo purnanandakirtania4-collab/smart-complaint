@@ -1,4 +1,6 @@
 import calendar
+import secrets
+from datetime import timedelta
 
 import razorpay
 
@@ -18,6 +20,7 @@ from .models import (
     UserProfile,
     Rating,
     WorkerSubscription,
+    Notification,
 )
 
 
@@ -975,6 +978,54 @@ def rate_worker(request, complaint_id):
 
 
 # =========================================================
+# USER NOTIFICATIONS
+# =========================================================
+
+@login_required(login_url='login')
+def notifications(request):
+
+    user_notifications = (
+        Notification.objects
+        .filter(recipient=request.user)
+        .select_related('complaint')
+        .order_by('-created_at')
+    )
+
+    unread_count = (
+        user_notifications
+        .filter(is_read=False)
+        .count()
+    )
+
+    if request.method == 'POST':
+
+        Notification.objects.filter(
+            recipient=request.user,
+            is_read=False,
+        ).update(
+            is_read=True
+        )
+
+        messages.success(
+            request,
+            'All notifications marked as read.'
+        )
+
+        return redirect(
+            'notifications'
+        )
+
+    return render(
+        request,
+        'complaints/User_Folder/notifications.html',
+        {
+            'notifications': user_notifications,
+            'unread_count': unread_count,
+        }
+    )
+
+
+# =========================================================
 # WORKER DETAILS
 # =========================================================
 
@@ -1515,38 +1566,21 @@ def worker_dashboard(request):
 
     if request.method == 'POST':
 
+        action = request.POST.get(
+            'action',
+            'status_update'
+        ).strip()
+
         complaint_id = request.POST.get(
             'complaint_id',
             ''
         ).strip()
-
-        new_status = request.POST.get(
-            'status',
-            ''
-        ).strip()
-
-        valid_statuses = [
-            'Pending',
-            'In Progress',
-            'Resolved',
-        ]
 
         if not complaint_id:
 
             messages.error(
                 request,
                 'Complaint not found.'
-            )
-
-            return redirect(
-                'worker_dashboard'
-            )
-
-        if new_status not in valid_statuses:
-
-            messages.error(
-                request,
-                'Invalid complaint status.'
             )
 
             return redirect(
@@ -1577,6 +1611,147 @@ def worker_dashboard(request):
                 'worker_dashboard'
             )
 
+        # =====================================================
+        # VERIFY COMPLETION OTP
+        # =====================================================
+
+        if action == 'verify_otp':
+
+            entered_otp = request.POST.get(
+                'completion_otp',
+                ''
+            ).strip()
+
+            if complaint.status == 'Resolved':
+
+                messages.info(
+                    request,
+                    'This complaint is already resolved.'
+                )
+
+                return redirect(
+                    'worker_dashboard'
+                )
+
+            if not entered_otp:
+
+                messages.error(
+                    request,
+                    'Please enter the completion OTP.'
+                )
+
+                return redirect(
+                    'worker_dashboard'
+                )
+
+            if (
+                not complaint.completion_otp
+                or not complaint.otp_created_at
+            ):
+
+                messages.error(
+                    request,
+                    'No active completion OTP found. Select Resolved first to generate a new OTP.'
+                )
+
+                return redirect(
+                    'worker_dashboard'
+                )
+
+            otp_expiry_time = (
+                complaint.otp_created_at
+                + timedelta(minutes=10)
+            )
+
+            if timezone.now() > otp_expiry_time:
+
+                complaint.completion_otp = ''
+                complaint.otp_created_at = None
+                complaint.otp_verified = False
+
+                complaint.save(
+                    update_fields=[
+                        'completion_otp',
+                        'otp_created_at',
+                        'otp_verified',
+                        'updated_at',
+                    ]
+                )
+
+                messages.error(
+                    request,
+                    'OTP expired. Select Resolved again to generate a new OTP.'
+                )
+
+                return redirect(
+                    'worker_dashboard'
+                )
+
+            if entered_otp != complaint.completion_otp:
+
+                messages.error(
+                    request,
+                    'Incorrect completion OTP.'
+                )
+
+                return redirect(
+                    'worker_dashboard'
+                )
+
+            complaint.otp_verified = True
+            complaint.completion_otp = ''
+            complaint.status = 'Resolved'
+            complaint.save()
+
+            Notification.objects.create(
+                recipient=complaint.user,
+                complaint=complaint,
+                notification_type='status_update',
+                title='Complaint Resolved',
+                message=(
+                    f'Your complaint {complaint.tracking_id} '
+                    f'has been successfully resolved.'
+                ),
+            )
+
+            messages.success(
+                request,
+                (
+                    f'OTP verified successfully. '
+                    f'Complaint {complaint.tracking_id} is now Resolved.'
+                )
+            )
+
+            return redirect(
+                'worker_dashboard'
+            )
+
+        # =====================================================
+        # NORMAL STATUS UPDATE
+        # =====================================================
+
+        new_status = request.POST.get(
+            'status',
+            ''
+        ).strip()
+
+        valid_statuses = [
+            'Pending',
+            'In Progress',
+            'Resolved',
+        ]
+
+        if new_status not in valid_statuses:
+
+            messages.error(
+                request,
+                'Invalid complaint status.'
+            )
+
+            return redirect(
+                'worker_dashboard'
+            )
+
         if complaint.status == new_status:
 
             messages.info(
@@ -1588,8 +1763,93 @@ def worker_dashboard(request):
                 'worker_dashboard'
             )
 
+        # =====================================================
+        # RESOLVED REQUIRES USER OTP
+        # =====================================================
+
+        if new_status == 'Resolved':
+
+            otp_is_active = False
+
+            if (
+                complaint.completion_otp
+                and complaint.otp_created_at
+                and not complaint.otp_verified
+            ):
+
+                otp_expiry_time = (
+                    complaint.otp_created_at
+                    + timedelta(minutes=10)
+                )
+
+                if timezone.now() <= otp_expiry_time:
+                    otp_is_active = True
+
+            if not otp_is_active:
+
+                complaint.completion_otp = str(
+                    100000
+                    + secrets.randbelow(900000)
+                )
+
+                complaint.otp_created_at = (
+                    timezone.now()
+                )
+
+                complaint.otp_verified = False
+
+                complaint.save(
+                    update_fields=[
+                        'completion_otp',
+                        'otp_created_at',
+                        'otp_verified',
+                        'updated_at',
+                    ]
+                )
+
+                Notification.objects.create(
+                    recipient=complaint.user,
+                    complaint=complaint,
+                    notification_type='otp',
+                    title='Completion OTP Ready',
+                    message=(
+                        f'Worker requested completion for complaint '
+                        f'{complaint.tracking_id}. '
+                        f'Open My Complaints to view the OTP. '
+                        f'The OTP is valid for 10 minutes.'
+                    ),
+                )
+
+            messages.info(
+                request,
+                (
+                    'Completion OTP is ready. '
+                    'Ask the user for the OTP and enter it on the dashboard. '
+                    'The OTP is valid for 10 minutes.'
+                )
+            )
+
+            return redirect(
+                'worker_dashboard'
+            )
+
+        # Moving back to Pending / In Progress invalidates any old OTP.
         complaint.status = new_status
+        complaint.completion_otp = ''
+        complaint.otp_created_at = None
+        complaint.otp_verified = False
         complaint.save()
+
+        Notification.objects.create(
+            recipient=complaint.user,
+            complaint=complaint,
+            notification_type='status_update',
+            title='Complaint Status Updated',
+            message=(
+                f'Your complaint {complaint.tracking_id} '
+                f'status is now {new_status}.'
+            ),
+        )
 
         messages.success(
             request,
@@ -1634,6 +1894,8 @@ def worker_dashboard(request):
         for rating in ratings
     }
 
+    now = timezone.now()
+
     for complaint in complaints:
 
         complaint.worker_rating = (
@@ -1641,6 +1903,23 @@ def worker_dashboard(request):
                 complaint.id
             )
         )
+
+        complaint.otp_active = False
+
+        if (
+            complaint.completion_otp
+            and complaint.otp_created_at
+            and not complaint.otp_verified
+        ):
+
+            otp_expiry_time = (
+                complaint.otp_created_at
+                + timedelta(minutes=10)
+            )
+
+            complaint.otp_active = (
+                now <= otp_expiry_time
+            )
 
     return render(
         request,
@@ -1866,7 +2145,6 @@ def worker_subscription_payment(request):
             'RAZORPAY_WORKER_PLAN_ID',
             ''
         )
-        print("PLAN ID USED:", razorpay_plan_id)
 
         if (
             not razorpay_key_id

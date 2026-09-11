@@ -57,6 +57,55 @@
             font-weight: 800;
         }
 
+
+        /* =====================================================
+           USER RATING
+        ===================================================== */
+
+        .rating-card {
+            max-width: 420px;
+
+            margin:
+                20px auto
+                5px;
+
+            padding: 18px;
+
+            text-align: center;
+
+            border:
+                1px solid
+                #fde68a;
+
+            border-radius: 15px;
+
+            background: #fffbeb;
+        }
+
+        .rating-stars {
+            color: #f59e0b;
+            font-size: 28px;
+            letter-spacing: 2px;
+        }
+
+        .rating-number {
+            margin-top: 7px;
+
+            color: #1e293b;
+
+            font-size: 19px;
+            font-weight: 800;
+        }
+
+        .rating-count {
+            margin-top: 4px;
+
+            color: #64748b;
+
+            font-size: 13px;
+        }
+
+
         .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -151,17 +200,74 @@
 
             </div>
 
+
             <h1>
                 My Profile
             </h1>
+
 
             <div class="username">
                 @{{ profile_user.username }}
             </div>
 
+
             <p class="muted">
                 Manage your personal information
             </p>
+
+
+            <!-- =============================================
+                 USER AVERAGE RATING
+            ============================================== -->
+
+            <div class="rating-card">
+
+                {% if user_rating_count > 0 %}
+
+                    <div class="rating-stars">
+                        ⭐
+                    </div>
+
+                    <div class="rating-number">
+
+                        {{ user_average_rating|floatformat:1 }}
+                        / 5
+
+                    </div>
+
+                    <div class="rating-count">
+
+                        {{ user_rating_count }}
+
+                        {% if user_rating_count == 1 %}
+
+                            Rating
+
+                        {% else %}
+
+                            Ratings
+
+                        {% endif %}
+
+                    </div>
+
+                {% else %}
+
+                    <div class="rating-stars">
+                        ☆
+                    </div>
+
+                    <div class="rating-number">
+                        No Rating Yet
+                    </div>
+
+                    <div class="rating-count">
+                        Rating will appear after a worker rates you.
+                    </div>
+
+                {% endif %}
+
+            </div>
 
         </div>
 

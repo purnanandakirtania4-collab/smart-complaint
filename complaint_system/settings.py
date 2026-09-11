@@ -1,11 +1,24 @@
 from pathlib import Path
 import os
 
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
+# =========================================================
+# BASIC SETTINGS
+# =========================================================
+
 SECRET_KEY = "django-insecure-change-this-in-production"
+
 DEBUG = True
+
 ALLOWED_HOSTS = ["*"]
+
+
+# =========================================================
+# INSTALLED APPS
+# =========================================================
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -17,9 +30,19 @@ INSTALLED_APPS = [
     "complaints",
 ]
 
+
+# =========================================================
+# LOGIN / LOGOUT
+# =========================================================
+
 LOGIN_URL = "/login/"
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/login/"
+
+
+# =========================================================
+# MIDDLEWARE
+# =========================================================
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -31,7 +54,19 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+
+# =========================================================
+# URL / WSGI
+# =========================================================
+
 ROOT_URLCONF = "complaint_system.urls"
+
+WSGI_APPLICATION = "complaint_system.wsgi.application"
+
+
+# =========================================================
+# TEMPLATES
+# =========================================================
 
 TEMPLATES = [
     {
@@ -49,7 +84,10 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "complaint_system.wsgi.application"
+
+# =========================================================
+# DATABASE
+# =========================================================
 
 DATABASES = {
     "default": {
@@ -61,6 +99,11 @@ DATABASES = {
         "PORT": "3306",
     }
 }
+
+
+# =========================================================
+# PASSWORD VALIDATION
+# =========================================================
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -77,16 +120,48 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
+# =========================================================
+# LANGUAGE / TIMEZONE
+# =========================================================
+
 LANGUAGE_CODE = "en-us"
+
 TIME_ZONE = "Asia/Kolkata"
+
 USE_I18N = True
+
 USE_TZ = True
 
+
+# =========================================================
+# STATIC / MEDIA
+# =========================================================
+
 STATIC_URL = "static/"
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-RAZORPAY_KEY_ID = os.environ.get("RAZORPAY_KEY_ID", "")
-RAZORPAY_KEY_SECRET = os.environ.get("RAZORPAY_KEY_SECRET", "")
+MEDIA_URL = "/media/"
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = BASE_DIR / "media"
+
+
+# =========================================================
+# RAZORPAY
+# =========================================================
+
+RAZORPAY_KEY_ID = os.environ.get(
+    "RAZORPAY_KEY_ID",
+    ""
+)
+
+RAZORPAY_KEY_SECRET = os.environ.get(
+    "RAZORPAY_KEY_SECRET",
+    ""
+)
+
+RAZORPAY_WORKER_PLAN_ID = os.environ.get(
+    "RAZORPAY_WORKER_PLAN_ID",
+    ""
+)

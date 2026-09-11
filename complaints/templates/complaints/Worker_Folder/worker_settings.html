@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Worker Settings | Smart Complaint</title>
+
+    {% include 'complaints/base_style.html' %}
+
+    <style>
+      .settings-wrapper {
+        max-width: 850px;
+        margin: 30px auto;
+        padding: 0 15px 40px;
+      }
+      
+      .settings-header {
+        color: white;
+        margin-bottom: 20px;
+      }
+      
+      .settings-header h1 {
+        margin-bottom: 6px;
+      }
+      
+      .settings-card {
+        background: white;
+        border-radius: 16px;
+        padding: 22px;
+        margin-bottom: 15px;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+      }
+      
+      .settings-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        padding: 16px 0;
+        border-bottom: 1px solid #e2e8f0;
+      }
+      
+      .settings-item:last-child {
+        border-bottom: none;
+      }
+      
+      .settings-left {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      
+      .settings-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: #eff6ff;
+        display: grid;
+        place-items: center;
+        font-size: 22px;
+        flex-shrink: 0;
+      }
+      
+      .settings-text h3 {
+        margin: 0 0 4px;
+        font-size: 16px;
+        color: #0f172a;
+      }
+      
+      .settings-text p {
+        margin: 0;
+        color: #64748b;
+        font-size: 13px;
+      }
+      
+      .settings-action {
+        text-decoration: none;
+        background: #2563eb;
+        color: white;
+        padding: 9px 14px;
+        border-radius: 9px;
+        font-size: 13px;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+      
+      .settings-action:hover {
+        background: #1d4ed8;
+      }
+      
+      .coming-soon {
+        background: #e2e8f0;
+        color: #475569;
+        cursor: default;
+      }
+      
+      .subscription-action {
+        background: #16a34a;
+      }
+      
+      .subscription-action:hover {
+        background: #15803d;
+      }
+      
+      .danger-action {
+        background: #dc2626;
+      }
+      
+      .danger-action:hover {
+        background: #b91c1c;
+      }
+      
+      .back-box {
+        margin-top: 20px;
+      }
+      
+      body.worker-dark-mode .settings-card {
+        background: #1e293b;
+      }
+      
+      body.worker-dark-mode .settings-text h3 {
+        color: #f8fafc;
+      }
+      
+      body.worker-dark-mode .settings-text p {
+        color: #cbd5e1;
+      }
+      
+      body.worker-dark-mode .settings-item {
+        border-color: #334155;
+      }
+      
+      body.worker-dark-mode .settings-icon {
+        background: #334155;
+      }
+      
+      @media (max-width: 600px) {
+        .settings-item {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+      
+        .settings-action {
+          width: 100%;
+          text-align: center;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!--  =====================================================
+         WORKER NAVBAR
+    =====================================================  -->
+
+    {% include 'complaints/Worker_Folder/worker_navbar.html' %}
+
+    <div class="settings-wrapper">
+      <div class="settings-header">
+        <h1>⚙️ Worker Settings</h1>
+
+        <p>Manage your worker account and service preferences.</p>
+      </div>
+
+      <div class="settings-card">
+        <!-- WORKER PROFILE -->
+
+        <div class="settings-item">
+          <div class="settings-left">
+            <div class="settings-icon">👷</div>
+
+            <div class="settings-text">
+              <h3>Worker Profile</h3>
+
+              <p>View or edit your worker profile.</p>
+            </div>
+          </div>
+
+          {% if worker %}
+            <a href="{% url 'worker_profile' worker.id %}" class="settings-action">Open</a>
+          {% endif %}
+        </div>
+
+        <!-- SUBSCRIPTION -->
+
+        <div class="settings-item">
+          <div class="settings-left">
+            <div class="settings-icon">💳</div>
+
+            <div class="settings-text">
+              <h3>Subscription / AutoPay</h3>
+
+              <p>Manage your worker subscription and billing.</p>
+            </div>
+          </div>
+
+          <a href="{% url 'terms_conditions' %}" class="settings-action subscription-action">Manage</a>
+        </div>
+
+        <!-- CHANGE PASSWORD -->
+
+        <div class="settings-item">
+          <div class="settings-left">
+            <div class="settings-icon">🔐</div>
+
+            <div class="settings-text">
+              <h3>Change Password</h3>
+
+              <p>Change your worker account password.</p>
+            </div>
+          </div>
+
+          <span class="settings-action coming-soon">Coming Soon</span>
+        </div>
+
+        <!-- NOTIFICATIONS -->
+
+        <div class="settings-item">
+          <div class="settings-left">
+            <div class="settings-icon">🔔</div>
+
+            <div class="settings-text">
+              <h3>Complaint Notifications</h3>
+
+              <p>Manage notifications for newly assigned complaints.</p>
+            </div>
+          </div>
+
+          <span class="settings-action coming-soon">Coming Soon</span>
+        </div>
+
+        <!-- SERVICE CATEGORY -->
+
+        <div class="settings-item">
+          <div class="settings-left">
+            <div class="settings-icon">🛠️</div>
+
+            <div class="settings-text">
+              <h3>Service Category / Skills</h3>
+
+              <p>Manage the services and skills you provide.</p>
+            </div>
+          </div>
+
+          <span class="settings-action coming-soon">Coming Soon</span>
+        </div>
+
+        <!-- WORKING AREA -->
+
+        <div class="settings-item">
+          <div class="settings-left">
+            <div class="settings-icon">📍</div>
+
+            <div class="settings-text">
+              <h3>Working Area</h3>
+
+              <p>Manage your working location and service area.</p>
+            </div>
+          </div>
+
+          <span class="settings-action coming-soon">Coming Soon</span>
+        </div>
+
+        <!-- AVAILABILITY -->
+
+        <div class="settings-item">
+          <div class="settings-left">
+            <div class="settings-icon">🟢</div>
+
+            <div class="settings-text">
+              <h3>Availability</h3>
+
+              <p>Set yourself as available or unavailable for work.</p>
+            </div>
+          </div>
+
+          <span class="settings-action coming-soon">Coming Soon</span>
+        </div>
+
+        <!-- PAYMENT / PAYOUT -->
+
+        <div class="settings-item">
+          <div class="settings-left">
+            <div class="settings-icon">🏦</div>
+
+            <div class="settings-text">
+              <h3>Payment / Payout Details</h3>
+
+              <p>Manage payout or payment information.</p>
+            </div>
+          </div>
+
+          <span class="settings-action coming-soon">Coming Soon</span>
+        </div>
+
+        <!-- DARK MODE -->
+
+        <div class="settings-item">
+          <div class="settings-left">
+            <div class="settings-icon">🌙</div>
+
+            <div class="settings-text">
+              <h3>Dark Mode</h3>
+
+              <p>Use the Dark Mode option from the worker sidebar.</p>
+            </div>
+          </div>
+
+          <span class="settings-action coming-soon">Sidebar</span>
+        </div>
+
+        <!-- TERMS -->
+
+        <div class="settings-item">
+          <div class="settings-left">
+            <div class="settings-icon">📄</div>
+
+            <div class="settings-text">
+              <h3>Terms & Conditions</h3>
+
+              <p>View worker subscription terms and conditions.</p>
+            </div>
+          </div>
+
+          <a href="{% url 'terms_conditions' %}" class="settings-action">View</a>
+        </div>
+
+        <!-- DELETE ACCOUNT -->
+
+        <div class="settings-item">
+          <div class="settings-left">
+            <div class="settings-icon">🗑️</div>
+
+            <div class="settings-text">
+              <h3>Delete Worker Account</h3>
+
+              <p>Permanently delete your worker account.</p>
+            </div>
+          </div>
+
+          <span class="settings-action danger-action">Coming Soon</span>
+        </div>
+      </div>
+
+      <!-- BACK BUTTON -->
+
+      <div class="back-box">
+        <a href="{% url 'worker_dashboard' %}" class="btn btn-light">← Back to Worker Dashboard</a>
+      </div>
+    </div>
+  </body>
+</html>

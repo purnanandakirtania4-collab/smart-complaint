@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <title>
+        Worker Dashboard | Smart Complaint
+    </title>
+
+    {% include "complaints/base_style.html" %}
+
+    <style>
+
+        .header {
+            padding: 28px;
+            color: #fff;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .header h1 {
+            font-size: 30px;
+        }
+
+        .worker-card,
+        .complaint {
+            padding: 25px;
+            margin-bottom: 18px;
+        }
+
+        .worker-top {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 22px;
+        }
+
+        .worker-avatar {
+            width: 80px;
+            height: 80px;
+
+            border-radius: 50%;
+            overflow: hidden;
+
+            background: #dbeafe;
+
+            display: grid;
+            place-items: center;
+
+            font-size: 38px;
+            flex-shrink: 0;
+        }
+
+        .worker-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .worker-name h2 {
+            margin-bottom: 5px;
+        }
+
+        .worker-id {
+            color: #2563eb;
+            font-weight: 800;
+        }
+
+        .approved {
+            display: inline-block;
+
+            margin-top: 7px;
+            padding: 5px 10px;
+
+            border-radius: 20px;
+
+            background: #dcfce7;
+            color: #166534;
+
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .info-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 12px;
+        }
+
+        .info {
+            background: #f8fafc;
+
+            padding: 14px;
+
+            border-radius: 11px;
+        }
+
+        .info small {
+            display: block;
+            color: #64748b;
+            margin-bottom: 5px;
+        }
+
+        .info b {
+            word-break: break-word;
+        }
+
+        .profile-action {
+            margin-top: 18px;
+        }
+
+        .section-title {
+            color: #fff;
+            margin: 25px 0 12px;
+        }
+
+        .complaint-head {
+            display: flex;
+            justify-content: space-between;
+
+            gap: 15px;
+
+            align-items: flex-start;
+        }
+
+        .status {
+            padding: 7px 12px;
+
+            border-radius: 20px;
+
+            font-size: 12px;
+            font-weight: 800;
+
+            white-space: nowrap;
+        }
+
+        .pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .progress {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .resolved {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .desc {
+            background: #eff6ff;
+
+            padding: 16px;
+
+            border-radius: 11px;
+
+            color: #334155;
+
+            line-height: 1.6;
+
+            margin: 15px 0;
+        }
+
+        /* =====================================================
+           LOCATION
+        ===================================================== */
+
+        .location-box {
+            margin-top: 18px;
+
+            padding: 18px;
+
+            border: 1px solid #bfdbfe;
+
+            border-radius: 14px;
+
+            background: #eff6ff;
+        }
+
+        .location-title {
+            font-size: 17px;
+            font-weight: 800;
+
+            color: #1e3a8a;
+
+            margin-bottom: 8px;
+        }
+
+        .location-coordinates {
+            font-size: 13px;
+
+            color: #64748b;
+
+            margin-bottom: 13px;
+
+            line-height: 1.6;
+        }
+
+        .map-button {
+            display: inline-flex;
+
+            align-items: center;
+            justify-content: center;
+
+            gap: 7px;
+
+            text-decoration: none;
+        }
+
+        .no-location {
+            margin-top: 18px;
+
+            padding: 14px;
+
+            border-radius: 11px;
+
+            background: #f8fafc;
+
+            border: 1px solid #e2e8f0;
+
+            color: #64748b;
+        }
+
+        /* =====================================================
+           OTP VERIFICATION
+        ===================================================== */
+
+        .otp-box {
+            margin-top: 18px;
+            padding: 18px;
+
+            border: 2px solid #2563eb;
+            border-radius: 14px;
+
+            background: linear-gradient(
+                135deg,
+                #eff6ff,
+                #ffffff
+            );
+        }
+
+        .otp-title {
+            color: #1e3a8a;
+
+            font-size: 18px;
+            font-weight: 800;
+
+            margin-bottom: 6px;
+        }
+
+        .otp-subtitle {
+            color: #64748b;
+
+            font-size: 13px;
+
+            line-height: 1.6;
+        }
+
+        .otp-form {
+            display: flex;
+
+            gap: 10px;
+
+            align-items: center;
+
+            margin-top: 14px;
+        }
+
+        .otp-input {
+            width: 180px;
+
+            padding: 12px 14px;
+
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+
+            outline: none;
+
+            font-size: 20px;
+            font-weight: 800;
+
+            letter-spacing: 4px;
+
+            text-align: center;
+
+            background: #ffffff;
+            color: #0f172a;
+        }
+
+        .otp-input:focus {
+            border-color: #2563eb;
+
+            box-shadow:
+                0 0 0 3px
+                rgba(37, 99, 235, 0.10);
+        }
+
+        .otp-note {
+            margin-top: 10px;
+
+            color: #b45309;
+
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .otp-verified {
+            margin-top: 18px;
+
+            padding: 14px;
+
+            border-radius: 12px;
+
+            background: #f0fdf4;
+
+            border: 1px solid #bbf7d0;
+
+            color: #166534;
+
+            font-weight: 800;
+        }
+
+        .update {
+            display: flex;
+
+            gap: 10px;
+
+            align-items: center;
+
+            margin-top: 16px;
+        }
+
+        .update select {
+            max-width: 220px;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .message {
+            margin-bottom: 15px;
+        }
+
+        /* =====================================================
+           RATING BOX
+        ===================================================== */
+
+        .rating-box {
+            margin-top: 20px;
+
+            padding: 18px;
+
+            border: 1px solid #dbeafe;
+
+            border-radius: 14px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #eff6ff,
+                    #ffffff
+                );
+        }
+
+        .rating-title {
+            margin-bottom: 5px;
+
+            color: #172554;
+
+            font-size: 17px;
+            font-weight: 800;
+        }
+
+        .rating-subtitle {
+            color: #64748b;
+
+            margin-bottom: 13px;
+
+            font-size: 13px;
+        }
+
+        /* =====================================================
+           STARS
+        ===================================================== */
+
+        .stars {
+            display: inline-flex;
+
+            flex-direction: row-reverse;
+
+            justify-content: flex-end;
+
+            gap: 4px;
+
+            margin-bottom: 14px;
+        }
+
+        .stars input {
+            display: none;
+        }
+
+        .stars label {
+            color: #cbd5e1;
+
+            font-size: 34px;
+
+            cursor: pointer;
+
+            line-height: 1;
+
+            transition:
+                color .15s ease,
+                transform .15s ease;
+        }
+
+        .stars label:hover,
+        .stars label:hover ~ label,
+        .stars input:checked ~ label {
+            color: #fbbf24;
+        }
+
+        .stars label:hover {
+            transform: scale(1.12);
+        }
+
+        /* =====================================================
+           PROBLEM BOX
+        ===================================================== */
+
+        .problem-label {
+            display: block;
+
+            margin-bottom: 7px;
+
+            color: #334155;
+
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .problem-box {
+            width: 100%;
+
+            min-height: 90px;
+
+            padding: 12px;
+
+            resize: vertical;
+
+            border: 1px solid #cbd5e1;
+
+            border-radius: 10px;
+
+            outline: none;
+
+            background: white;
+
+            color: #334155;
+
+            font-family: inherit;
+            font-size: 14px;
+        }
+
+        .problem-box:focus {
+            border-color: #2563eb;
+
+            box-shadow:
+                0 0 0 3px
+                rgba(37, 99, 235, .10);
+        }
+
+        .rating-submit {
+            margin-top: 12px;
+        }
+
+        /* =====================================================
+           SUBMITTED RATING
+        ===================================================== */
+
+        .submitted-rating {
+            margin-top: 20px;
+
+            padding: 17px;
+
+            border: 1px solid #bbf7d0;
+
+            border-radius: 14px;
+
+            background: #f0fdf4;
+        }
+
+        .submitted-stars {
+            margin: 7px 0;
+
+            color: #f59e0b;
+
+            font-size: 24px;
+
+            letter-spacing: 2px;
+        }
+
+        .submitted-problem {
+            margin-top: 10px;
+
+            padding: 11px;
+
+            border-radius: 9px;
+
+            background: white;
+
+            color: #475569;
+
+            line-height: 1.5;
+        }
+
+        /* =====================================================
+           DARK MODE
+        ===================================================== */
+
+        body.worker-dark-mode .worker-card,
+        body.worker-dark-mode .complaint,
+        body.worker-dark-mode .empty {
+            background: #1e293b;
+            color: #e2e8f0;
+        }
+
+        body.worker-dark-mode .info {
+            background: #334155;
+            color: #f8fafc;
+        }
+
+        body.worker-dark-mode .info small {
+            color: #cbd5e1;
+        }
+
+        body.worker-dark-mode .desc {
+            background: #334155;
+            color: #e2e8f0;
+        }
+
+        body.worker-dark-mode .section-title {
+            color: #f8fafc;
+        }
+
+        body.worker-dark-mode .location-box {
+            background: #334155;
+            border-color: #475569;
+        }
+
+        body.worker-dark-mode .location-title {
+            color: #f8fafc;
+        }
+
+        body.worker-dark-mode .location-coordinates {
+            color: #cbd5e1;
+        }
+
+        body.worker-dark-mode .no-location {
+            background: #334155;
+            border-color: #475569;
+            color: #cbd5e1;
+        }
+
+        body.worker-dark-mode .otp-box {
+            background: #334155;
+            border-color: #60a5fa;
+        }
+
+        body.worker-dark-mode .otp-title {
+            color: #f8fafc;
+        }
+
+        body.worker-dark-mode .otp-subtitle {
+            color: #cbd5e1;
+        }
+
+        body.worker-dark-mode .otp-input {
+            background: #1e293b;
+            color: #f8fafc;
+            border-color: #64748b;
+        }
+
+        body.worker-dark-mode .otp-verified {
+            background: #14532d;
+            border-color: #166534;
+            color: #dcfce7;
+        }
+
+        body.worker-dark-mode .rating-box {
+            background: #1e293b;
+            border-color: #475569;
+        }
+
+        body.worker-dark-mode .rating-title {
+            color: #f8fafc;
+        }
+
+        body.worker-dark-mode .rating-subtitle,
+        body.worker-dark-mode .muted {
+            color: #cbd5e1;
+        }
+
+        body.worker-dark-mode .problem-label {
+            color: #e2e8f0;
+        }
+
+        body.worker-dark-mode .problem-box {
+            background: #334155;
+            color: #f8fafc;
+            border-color: #64748b;
+        }
+
+        @media(max-width: 800px) {
+
+            .info-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+        }
+
+        @media(max-width: 600px) {
+
+            .header {
+                padding: 20px 5px;
+            }
+
+            .worker-top {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .complaint-head {
+                flex-direction: column;
+            }
+
+            .update,
+            .otp-form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .update select {
+                max-width: none;
+            }
+
+            .otp-input {
+                width: 100%;
+            }
+
+            .stars label {
+                font-size: 31px;
+            }
+
+            .map-button {
+                width: 100%;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<!-- =====================================================
+     WORKER NAVBAR
+===================================================== -->
+
+{% include "complaints/Worker_Folder/worker_navbar.html" %}
+
+<main class="page">
+
+    <!-- =====================================================
+         HEADER
+    ===================================================== -->
+
+    <div class="header">
+
+        <div>
+
+            <h1>
+                👷 Worker Dashboard
+            </h1>
+
+            <p
+                style="
+                    color:#dbeafe;
+                    margin-top:5px;
+                "
+            >
+                Manage complaints assigned to you.
+            </p>
+
+        </div>
+
+    </div>
+
+    <!-- =====================================================
+         MESSAGES
+    ===================================================== -->
+
+    {% if messages %}
+
+        {% for message in messages %}
+
+            <div class="message">
+                {{ message }}
+            </div>
+
+        {% endfor %}
+
+    {% endif %}
+
+    <!-- =====================================================
+         WORKER INFORMATION
+    ===================================================== -->
+
+    <section class="card worker-card">
+
+        <div class="worker-top">
+
+            <div class="worker-avatar">
+
+                {% if worker.photo %}
+
+                    <img
+                        src="{{ worker.photo.url }}"
+                        alt="{{ worker.name }}"
+                    >
+
+                {% else %}
+
+                    👷
+
+                {% endif %}
+
+            </div>
+
+            <div class="worker-name">
+
+                <h2>
+                    {{ worker.name }}
+                </h2>
+
+                <div class="worker-id">
+                    {{ worker.worker_id }}
+                </div>
+
+                {% if worker.is_approved %}
+
+                    <div class="approved">
+                        🟢 Approved Worker
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        <div class="info-grid">
+
+            <div class="info">
+                <small>Worker ID</small>
+                <b>{{ worker.worker_id }}</b>
+            </div>
+
+            <div class="info">
+                <small>Name</small>
+                <b>{{ worker.name }}</b>
+            </div>
+
+            <div class="info">
+                <small>Experience</small>
+                <b>{{ worker.experience }}</b>
+            </div>
+
+            <div class="info">
+                <small>Email</small>
+                <b>{{ worker.user.email }}</b>
+            </div>
+
+            <div class="info">
+                <small>Phone</small>
+                <b>{{ worker.phone }}</b>
+            </div>
+
+        </div>
+
+        <div class="profile-action">
+
+            <a
+                class="btn btn-primary"
+                href="{% url 'worker_profile' worker.id %}"
+            >
+                ✏️ View / Edit My Profile
+            </a>
+
+        </div>
+
+    </section>
+
+    <!-- =====================================================
+         ASSIGNED COMPLAINTS
+    ===================================================== -->
+
+    <h2 class="section-title">
+        📋 Assigned Complaints
+    </h2>
+
+    {% for complaint in complaints %}
+
+        <article class="card complaint">
+
+            <div class="complaint-head">
+
+                <div>
+
+                    <h2>
+                        {{ complaint.subject }}
+                    </h2>
+
+                    <div
+                        class="muted"
+                        style="
+                            font-size:13px;
+                            margin-top:5px;
+                        "
+                    >
+                        Tracking ID:
+
+                        <b>
+                            {{ complaint.tracking_id }}
+                        </b>
+
+                    </div>
+
+                </div>
+
+                <span
+                    class="
+                        status
+
+                        {% if complaint.status == 'Pending' %}
+                            pending
+                        {% elif complaint.status == 'In Progress' %}
+                            progress
+                        {% else %}
+                            resolved
+                        {% endif %}
+                    "
+                >
+                    {{ complaint.status }}
+                </span>
+
+            </div>
+
+            <div class="desc">
+
+                <b>
+                    Complaint:
+                </b>
+
+                <br>
+
+                {{ complaint.description }}
+
+            </div>
+
+            {% if complaint.photo %}
+
+                <div style="margin:15px 0;">
+
+                    <small class="muted">
+                        Complaint Photo
+                    </small>
+
+                    <br>
+
+                    <img
+                        src="{{ complaint.photo.url }}"
+                        alt="Complaint Photo"
+                        style="
+                            margin-top:8px;
+                            max-width:320px;
+                            width:100%;
+                            border-radius:12px;
+                        "
+                    >
+
+                </div>
+
+            {% endif %}
+
+            <div class="info-grid">
+
+                <div class="info">
+                    <small>Complainant</small>
+                    <b>{{ complaint.name }}</b>
+                </div>
+
+                <div class="info">
+                    <small>Email</small>
+                    <b>{{ complaint.email }}</b>
+                </div>
+
+                <div class="info">
+                    <small>Submitted</small>
+                    <b>
+                        {{ complaint.created_at|date:"d M Y, h:i A" }}
+                    </b>
+                </div>
+
+                <div class="info">
+                    <small>Updated</small>
+                    <b>
+                        {{ complaint.updated_at|date:"d M Y, h:i A" }}
+                    </b>
+                </div>
+
+            </div>
+
+            <!-- =================================================
+                 COMPLAINT LOCATION
+            ================================================== -->
+
+            {% if complaint.latitude and complaint.longitude %}
+
+                <div class="location-box">
+
+                    <div class="location-title">
+                        📍 Complaint Location
+                    </div>
+
+                    <div class="location-coordinates">
+
+                        Latitude:
+                        <b>{{ complaint.latitude }}</b>
+
+                        <br>
+
+                        Longitude:
+                        <b>{{ complaint.longitude }}</b>
+
+                    </div>
+
+                    <a
+                        class="btn btn-primary map-button"
+                        href="https://www.google.com/maps?q={{ complaint.latitude }},{{ complaint.longitude }}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        🗺️ Open Location in Google Maps
+                    </a>
+
+                </div>
+
+            {% else %}
+
+                <div class="no-location">
+                    📍 Location was not provided for this complaint.
+                </div>
+
+            {% endif %}
+
+            <!-- =================================================
+                 STATUS UPDATE
+            ================================================== -->
+
+            {% if complaint.status != 'Resolved' %}
+
+                <form
+                    method="post"
+                    class="update"
+                >
+
+                    {% csrf_token %}
+
+                    <input
+                        type="hidden"
+                        name="action"
+                        value="status_update"
+                    >
+
+                    <input
+                        type="hidden"
+                        name="complaint_id"
+                        value="{{ complaint.id }}"
+                    >
+
+                    <select
+                        class="select"
+                        name="status"
+                    >
+
+                        <option
+                            value="Pending"
+                            {% if complaint.status == "Pending" %}
+                                selected
+                            {% endif %}
+                        >
+                            Pending
+                        </option>
+
+                        <option
+                            value="In Progress"
+                            {% if complaint.status == "In Progress" %}
+                                selected
+                            {% endif %}
+                        >
+                            In Progress
+                        </option>
+
+                        <option value="Resolved">
+                            Resolved
+                        </option>
+
+                    </select>
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                    >
+                        Update Status
+                    </button>
+
+                </form>
+
+            {% endif %}
+
+            <!-- =================================================
+                 OTP VERIFY & RESOLVE
+            ================================================== -->
+
+            {% if complaint.otp_active and complaint.status != 'Resolved' %}
+
+                <div class="otp-box">
+
+                    <div class="otp-title">
+                        🔐 Verify Completion OTP
+                    </div>
+
+                    <div class="otp-subtitle">
+                        User ke My Complaints page par 6-digit OTP dikh raha hai.
+                        Work complete hone ke baad user se OTP lekar yahan enter karein.
+                    </div>
+
+                    <form
+                        method="post"
+                        class="otp-form"
+                    >
+
+                        {% csrf_token %}
+
+                        <input
+                            type="hidden"
+                            name="action"
+                            value="verify_otp"
+                        >
+
+                        <input
+                            type="hidden"
+                            name="complaint_id"
+                            value="{{ complaint.id }}"
+                        >
+
+                        <input
+                            class="otp-input"
+                            type="text"
+                            name="completion_otp"
+                            inputmode="numeric"
+                            pattern="[0-9]{6}"
+                            maxlength="6"
+                            placeholder="000000"
+                            autocomplete="one-time-code"
+                            required
+                        >
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary"
+                        >
+                            ✅ Verify & Resolve
+                        </button>
+
+                    </form>
+
+                    <div class="otp-note">
+                        ⏱️ OTP 10 minutes tak valid hai.
+                    </div>
+
+                </div>
+
+            {% elif complaint.otp_verified and complaint.status == 'Resolved' %}
+
+                <div class="otp-verified">
+                    ✅ Completion OTP verified. Complaint successfully resolved.
+                </div>
+
+            {% endif %}
+
+            <!-- =================================================
+                 WORKER -> USER RATING
+            ================================================== -->
+
+            {% if complaint.status == 'Resolved' %}
+
+                {% if complaint.worker_rating %}
+
+                    <div class="submitted-rating">
+
+                        <b>
+                            ✅ You rated {{ complaint.name }}
+                        </b>
+
+                        <div class="submitted-stars">
+
+                            {% if complaint.worker_rating.stars >= 1 %}★{% else %}☆{% endif %}
+                            {% if complaint.worker_rating.stars >= 2 %}★{% else %}☆{% endif %}
+                            {% if complaint.worker_rating.stars >= 3 %}★{% else %}☆{% endif %}
+                            {% if complaint.worker_rating.stars >= 4 %}★{% else %}☆{% endif %}
+                            {% if complaint.worker_rating.stars >= 5 %}★{% else %}☆{% endif %}
+
+                        </div>
+
+                        <div class="muted">
+
+                            {{ complaint.worker_rating.stars }}
+                            out of 5 stars
+
+                        </div>
+
+                        {% if complaint.worker_rating.problem %}
+
+                            <div class="submitted-problem">
+
+                                <b>
+                                    Your feedback:
+                                </b>
+
+                                <br>
+
+                                {{ complaint.worker_rating.problem }}
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                {% else %}
+
+                    <div class="rating-box">
+
+                        <div class="rating-title">
+                            ⭐ Rate User
+                        </div>
+
+                        <div class="rating-subtitle">
+
+                            How was your experience with
+
+                            <b>
+                                {{ complaint.name }}
+                            </b>?
+
+                        </div>
+
+                        <form
+                            method="post"
+                            action="{% url 'rate_user' complaint.id %}"
+                        >
+
+                            {% csrf_token %}
+
+                            <div class="stars">
+
+                                <input
+                                    type="radio"
+                                    id="user-star-5-{{ complaint.id }}"
+                                    name="stars"
+                                    value="5"
+                                    required
+                                >
+
+                                <label
+                                    for="user-star-5-{{ complaint.id }}"
+                                >
+                                    ★
+                                </label>
+
+                                <input
+                                    type="radio"
+                                    id="user-star-4-{{ complaint.id }}"
+                                    name="stars"
+                                    value="4"
+                                >
+
+                                <label
+                                    for="user-star-4-{{ complaint.id }}"
+                                >
+                                    ★
+                                </label>
+
+                                <input
+                                    type="radio"
+                                    id="user-star-3-{{ complaint.id }}"
+                                    name="stars"
+                                    value="3"
+                                >
+
+                                <label
+                                    for="user-star-3-{{ complaint.id }}"
+                                >
+                                    ★
+                                </label>
+
+                                <input
+                                    type="radio"
+                                    id="user-star-2-{{ complaint.id }}"
+                                    name="stars"
+                                    value="2"
+                                >
+
+                                <label
+                                    for="user-star-2-{{ complaint.id }}"
+                                >
+                                    ★
+                                </label>
+
+                                <input
+                                    type="radio"
+                                    id="user-star-1-{{ complaint.id }}"
+                                    name="stars"
+                                    value="1"
+                                >
+
+                                <label
+                                    for="user-star-1-{{ complaint.id }}"
+                                >
+                                    ★
+                                </label>
+
+                            </div>
+
+                            <label class="problem-label">
+
+                                Any problem or feedback?
+
+                                <span class="muted">
+                                    (Optional)
+                                </span>
+
+                            </label>
+
+                            <textarea
+                                class="problem-box"
+                                name="problem"
+                                maxlength="1000"
+                                placeholder="If you faced any problem with this user, write it here..."
+                            ></textarea>
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary rating-submit"
+                            >
+                                ⭐ Submit Rating
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                {% endif %}
+
+            {% endif %}
+
+        </article>
+
+    {% empty %}
+
+        <section class="card empty">
+
+            <div style="font-size:50px">
+                📭
+            </div>
+
+            <h2 style="margin:10px 0">
+                No Complaints Assigned
+            </h2>
+
+            <p class="muted">
+                New complaints assigned to you will appear here.
+            </p>
+
+        </section>
+
+    {% endfor %}
+
+</main>
+
+</body>
+
+</html>

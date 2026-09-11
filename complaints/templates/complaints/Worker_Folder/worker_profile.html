@@ -67,6 +67,41 @@
             margin-top: 12px;
         }
 
+
+        /* =====================================================
+           WORKER RATING
+        ===================================================== */
+
+        .rating-card {
+            margin: 22px auto 5px;
+            max-width: 420px;
+            padding: 18px;
+            border-radius: 15px;
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            text-align: center;
+        }
+
+        .rating-stars {
+            color: #f59e0b;
+            font-size: 28px;
+            letter-spacing: 2px;
+        }
+
+        .rating-number {
+            margin-top: 7px;
+            font-size: 19px;
+            font-weight: 800;
+            color: #1e293b;
+        }
+
+        .rating-count {
+            margin-top: 4px;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+
         .grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -217,6 +252,53 @@
                 </div>
 
             {% endif %}
+
+
+            <!-- =============================================
+                 AVERAGE WORKER RATING
+            ============================================== -->
+
+            <div class="rating-card">
+
+                {% if worker_rating_count > 0 %}
+
+                    <div class="rating-stars">
+                        ⭐
+                    </div>
+
+                    <div class="rating-number">
+                        {{ worker_average_rating|floatformat:1 }} / 5
+                    </div>
+
+                    <div class="rating-count">
+
+                        {{ worker_rating_count }}
+
+                        {% if worker_rating_count == 1 %}
+                            Rating
+                        {% else %}
+                            Ratings
+                        {% endif %}
+
+                    </div>
+
+                {% else %}
+
+                    <div class="rating-stars">
+                        ☆
+                    </div>
+
+                    <div class="rating-number">
+                        No Rating Yet
+                    </div>
+
+                    <div class="rating-count">
+                        Ratings will appear after completed jobs.
+                    </div>
+
+                {% endif %}
+
+            </div>
 
         </div>
 

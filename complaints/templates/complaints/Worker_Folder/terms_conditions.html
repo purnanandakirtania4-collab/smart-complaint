@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Worker Subscription Terms & Conditions</title>
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      
+      body {
+        margin: 0;
+      
+        padding: 30px 15px;
+      
+        font-family: Arial, Helvetica, sans-serif;
+      
+        min-height: 100vh;
+      
+        background: linear-gradient(135deg, #0f172a, #1e3a8a, #2563eb);
+      }
+      
+      .container {
+        max-width: 850px;
+      
+        margin: auto;
+      }
+      
+      .card {
+        background: #ffffff;
+      
+        border-radius: 22px;
+      
+        padding: 35px;
+      
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+      }
+      
+      /* HEADER */
+      
+      .header {
+        text-align: center;
+      
+        margin-bottom: 25px;
+      }
+      
+      .icon {
+        width: 75px;
+        height: 75px;
+      
+        margin: auto;
+      
+        display: flex;
+      
+        align-items: center;
+      
+        justify-content: center;
+      
+        border-radius: 50%;
+      
+        background: #dbeafe;
+      
+        font-size: 34px;
+      }
+      
+      .header h1 {
+        margin-top: 15px;
+      
+        margin-bottom: 8px;
+      
+        color: #172554;
+      
+        font-size: 29px;
+      }
+      
+      .header p {
+        margin: 0;
+      
+        color: #64748b;
+      
+        line-height: 1.6;
+      }
+      
+      /* WORKER */
+      
+      .worker-box {
+        margin-bottom: 22px;
+      
+        padding: 16px;
+      
+        border-radius: 12px;
+      
+        background: #eff6ff;
+      
+        border: 1px solid #bfdbfe;
+      }
+      
+      .worker-box strong {
+        color: #1e3a8a;
+      }
+      
+      /* PLAN */
+      
+      .plan-box {
+        margin-bottom: 25px;
+      
+        padding: 22px;
+      
+        border-radius: 16px;
+      
+        background: linear-gradient(135deg, #eff6ff, #ffffff);
+      
+        border: 1px solid #bfdbfe;
+      }
+      
+      .plan-title {
+        margin-bottom: 18px;
+      
+        color: #172554;
+      
+        font-size: 20px;
+      
+        font-weight: bold;
+      }
+      
+      .first-month {
+        margin-bottom: 18px;
+      }
+      
+      .label {
+        color: #64748b;
+      
+        font-size: 13px;
+      
+        font-weight: bold;
+      }
+      
+      .first-price {
+        margin-top: 5px;
+      
+        color: #16a34a;
+      
+        font-size: 38px;
+      
+        font-weight: 900;
+      }
+      
+      .price-row {
+        display: flex;
+      
+        align-items: center;
+      
+        gap: 10px;
+      
+        flex-wrap: wrap;
+      
+        margin-top: 7px;
+      }
+      
+      .old-price {
+        color: #94a3b8;
+      
+        font-size: 22px;
+      
+        text-decoration: line-through;
+      
+        font-weight: bold;
+      }
+      
+      .new-price {
+        color: #2563eb;
+      
+        font-size: 34px;
+      
+        font-weight: 900;
+      }
+      
+      .per-month {
+        color: #64748b;
+      
+        font-weight: bold;
+      }
+      
+      .discount {
+        padding: 6px 10px;
+      
+        border-radius: 20px;
+      
+        background: #dcfce7;
+      
+        color: #166534;
+      
+        font-size: 12px;
+      
+        font-weight: bold;
+      }
+      
+      .plan-note {
+        margin-top: 10px;
+      
+        color: #475569;
+      
+        font-size: 14px;
+      
+        line-height: 1.6;
+      }
+      
+      /* TERMS */
+      
+      .terms {
+        color: #334155;
+      
+        line-height: 1.7;
+      }
+      
+      .term-section {
+        margin-bottom: 22px;
+      }
+      
+      .term-section h3 {
+        margin-bottom: 7px;
+      
+        color: #172554;
+      
+        font-size: 17px;
+      }
+      
+      .term-section p {
+        margin: 0;
+      
+        color: #475569;
+      }
+      
+      /* IMPORTANT */
+      
+      .important {
+        margin-top: 25px;
+      
+        margin-bottom: 25px;
+      
+        padding: 20px;
+      
+        border-radius: 13px;
+      
+        border-left: 5px solid #ea580c;
+      
+        background: #fff7ed;
+      
+        color: #7c2d12;
+      
+        line-height: 1.7;
+      }
+      
+      /* AGREEMENT */
+      
+      .agreement-box {
+        margin-top: 25px;
+      
+        padding: 20px;
+      
+        border-radius: 14px;
+      
+        background: #f8fafc;
+      
+        border: 1px solid #cbd5e1;
+      }
+      
+      .agreement-label {
+        display: flex;
+      
+        align-items: flex-start;
+      
+        gap: 10px;
+      
+        cursor: pointer;
+      
+        color: #1e293b;
+      
+        font-weight: bold;
+      
+        line-height: 1.6;
+      }
+      
+      .agreement-label input {
+        width: 19px;
+      
+        height: 19px;
+      
+        margin-top: 3px;
+      
+        cursor: pointer;
+      
+        flex-shrink: 0;
+      }
+      
+      /* BUTTONS */
+      
+      .buttons {
+        display: flex;
+      
+        justify-content: center;
+      
+        gap: 12px;
+      
+        flex-wrap: wrap;
+      
+        margin-top: 28px;
+      }
+      
+      .back-button,
+      .continue-button {
+        padding: 13px 20px;
+      
+        border-radius: 10px;
+      
+        font-size: 15px;
+      
+        font-weight: bold;
+      
+        text-decoration: none;
+      }
+      
+      .back-button {
+        background: #e2e8f0;
+      
+        color: #1e3a8a;
+      }
+      
+      .continue-button {
+        border: none;
+      
+        background: #1d4ed8;
+      
+        color: #ffffff;
+      
+        cursor: pointer;
+      }
+      
+      .continue-button:disabled {
+        background: #94a3b8;
+      
+        cursor: not-allowed;
+      
+        opacity: 0.7;
+      }
+      
+      /* MOBILE */
+      
+      @media (max-width: 600px) {
+        body {
+          padding: 15px 10px;
+        }
+      
+        .card {
+          padding: 25px 18px;
+      
+          border-radius: 17px;
+        }
+      
+        .header h1 {
+          font-size: 24px;
+        }
+      
+        .first-price {
+          font-size: 33px;
+        }
+      
+        .new-price {
+          font-size: 30px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="card">
+        <!-- HEADER -->
+
+        <div class="header">
+          <div class="icon">📜</div>
+
+          <h1>Worker Subscription Terms & Conditions</h1>
+
+          <p>Please read the subscription details carefully before continuing.</p>
+        </div>
+
+        <!-- WORKER -->
+
+        <div class="worker-box">
+          <strong>Worker:</strong>
+
+          {{ worker.name }}
+
+          <br />
+
+          <strong>Worker ID:</strong>
+
+          {{ worker.worker_id }}
+        </div>
+
+        <!-- PLAN -->
+
+        <div class="plan-box">
+          <div class="plan-title">⭐ Smart Complaint Worker Plan</div>
+
+          <div class="first-month">
+            <div class="label">FIRST MONTH</div>
+
+            <div class="first-price">₹49</div>
+
+            <div class="plan-note">Special introductory price for the first month.</div>
+          </div>
+
+          <div>
+            <div class="label">FROM SECOND MONTH</div>
+
+            <div class="price-row">
+              <span class="old-price">₹499</span>
+
+              <span class="new-price">₹149</span>
+
+              <span class="per-month">/ month</span>
+
+              <span class="discount">🔥 70% OFF</span>
+            </div>
+
+            <div class="plan-note">Current discounted subscription price is ₹149 every month through authorized AutoPay.</div>
+          </div>
+        </div>
+
+        <!-- TERMS -->
+
+        <div class="terms">
+          <div class="term-section">
+            <h3>1. Subscription Activation</h3>
+
+            <p>The worker subscription becomes active only after successful payment and successful payment verification.</p>
+          </div>
+
+          <div class="term-section">
+            <h3>2. AutoPay Authorization</h3>
+
+            <p>The first month subscription price is ₹49. After the first month, the current discounted subscription price is ₹149 per month. The displayed regular price is ₹499. Recurring payments will only be processed after the worker successfully authorizes the AutoPay mandate through the payment provider.</p>
+          </div>
+
+          <div class="term-section">
+            <h3>3. Monthly Billing</h3>
+
+            <p>The first payment is ₹49. From the second month onward, the current discounted subscription price is ₹149 per month and may be automatically charged using the authorized recurring payment mandate.</p>
+          </div>
+
+          <div class="term-section">
+            <h3>4. Failed Payment</h3>
+
+            <p>If a recurring payment fails because of insufficient balance, bank restrictions, UPI issues, expired payment authorization, or another payment-related reason, subscription access may be interrupted until payment is successfully completed.</p>
+          </div>
+
+          <div class="term-section">
+            <h3>5. Cancellation</h3>
+
+            <p>The worker may cancel the subscription or recurring AutoPay mandate according to the cancellation options provided by Smart Complaint or the applicable payment provider.</p>
+          </div>
+
+          <div class="term-section">
+            <h3>6. Refunds</h3>
+
+            <p>Payments already successfully processed may be non-refundable except where a refund is approved by Smart Complaint or required under applicable law.</p>
+          </div>
+
+          <div class="term-section">
+            <h3>7. Subscription Access</h3>
+
+            <p>Subscription-related worker features may remain available only while the worker has an active and valid subscription.</p>
+          </div>
+
+          <div class="term-section">
+            <h3>8. Price Changes</h3>
+
+            <p>Smart Complaint may change subscription pricing or promotional discounts in the future. Where required, applicable changes will be communicated before they take effect.</p>
+          </div>
+
+          <div class="term-section">
+            <h3>9. Worker Responsibility</h3>
+
+            <p>The worker is responsible for reviewing subscription details, maintaining a valid payment method, and managing or cancelling the recurring payment authorization when they no longer wish to continue.</p>
+          </div>
+
+          <div class="term-section">
+            <h3>10. Payment Provider</h3>
+
+            <p>Payments and recurring payment authorization may be processed through Razorpay or another authorized third-party payment provider. Payment processing may also be subject to the rules, checks, and terms of the relevant payment provider, bank, card network, or UPI service.</p>
+          </div>
+        </div>
+
+        <!-- IMPORTANT -->
+
+        <div class="important">
+          <strong>Important:</strong>
+
+          <br /><br />
+
+          Smart Complaint will not automatically deduct ₹149 unless the worker has successfully authorized the recurring AutoPay mandate through the payment provider.
+
+          <br /><br />
+
+          The worker is responsible for reviewing the subscription details, maintaining a valid payment method, and cancelling AutoPay before the next billing date if they do not wish to continue the subscription.
+
+          <br /><br />
+
+          Smart Complaint will not be responsible for charges caused by the worker's failure to cancel an active AutoPay mandate, insufficient balance, incorrect payment details, bank or UPI processing issues, or other payment-provider related problems, except where responsibility cannot be excluded under applicable law.
+        </div>
+
+        <!-- FORM -->
+
+        <form method="POST">
+          {% csrf_token %}
+
+          <!-- AGREEMENT -->
+
+          <div class="agreement-box">
+            <label class="agreement-label">
+              <input type="checkbox" id="agreeTerms" name="agree_terms" value="yes" />
+
+              <span>
+                I have read and agree to the Terms & Conditions.
+
+                I understand that the first payment is ₹49.
+
+                After the first month, the current discounted subscription price is ₹149 per month through AutoPay, after I authorize the recurring payment mandate.
+              </span>
+            </label>
+          </div>
+
+          <!-- BUTTONS -->
+
+          <div class="buttons">
+            <a href="{% url 'worker_dashboard' %}" class="back-button">← Back</a>
+
+            <button type="submit" class="continue-button" id="continueBtn" disabled>Agree & Continue</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      const agreeTerms = document.getElementById('agreeTerms')
+      
+      const continueBtn = document.getElementById('continueBtn')
+      
+      agreeTerms.addEventListener('change', function () {
+        continueBtn.disabled = !agreeTerms.checked
+      })
+    </script>
+  </body>
+</html>

@@ -1,14 +1,1089 @@
+{% load static %}
+
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Login | Smart Complaint</title>{% include "complaints/base_style.html" %}<style>
-.auth{min-height:100vh;display:grid;place-items:center;padding:20px}.auth-card{width:min(430px,100%);padding:34px}.logo{width:72px;height:72px;border-radius:20px;background:#dbeafe;display:grid;place-items:center;font-size:35px;margin:0 auto 16px}.tabs{display:grid;grid-template-columns:1fr 1fr;background:#f1f5f9;border-radius:11px;padding:4px;margin:20px 0}.tab{padding:10px;text-align:center;border:0;background:transparent;border-radius:8px;font-weight:700;color:#64748b;cursor:pointer}.tab.active{background:#fff;color:#1d4ed8;box-shadow:0 2px 8px rgba(0,0,0,.08)}h1{text-align:center;color:#172554}.subtitle{text-align:center;margin:8px 0 22px}
-</style></head><body><div class="auth"><div class="card auth-card">
-<div class="logo">🛡️</div><h1>Smart Complaint</h1><p class="subtitle muted">Login or create your user account</p>
-{% if messages %}{% for message in messages %}<div class="message {% if message.tags == 'success' %}success{% endif %}">{{ message }}</div>{% endfor %}{% endif %}
-<div class="tabs"><button class="tab active" id="loginTab" onclick="showLogin()">Login</button><button class="tab" id="registerTab" onclick="showRegister()">Register</button></div>
-<div id="loginPanel"><form method="post" action="{% url 'login' %}">{% csrf_token %}<div class="form-group"><label class="label">Username</label><input class="input" name="username" required autocomplete="username"></div><div class="form-group"><label class="label">Password</label><input class="input" type="password" name="password" required autocomplete="current-password"></div><button class="btn btn-primary" style="width:100%">🔐 Login</button></form></div>
-<div id="registerPanel" style="display:none"><form method="post" action="{% url 'register' %}">{% csrf_token %}<div class="form-group"><label class="label">Username</label><input class="input" name="username" required></div><div class="form-group"><label class="label">Email</label><input class="input" type="email" name="email" required></div><div class="form-group"><label class="label">Password</label><input class="input" type="password" name="password" minlength="6" required></div><button class="btn btn-primary" style="width:100%">Create Account</button></form></div>
-<div style="text-align:center;margin-top:22px"><a href="{% url 'worker_login' %}" style="color:#1d4ed8;font-weight:700">👷 Worker Login</a></div>
-</div></div><script>
-function showLogin(){loginPanel.style.display='block';registerPanel.style.display='none';loginTab.classList.add('active');registerTab.classList.remove('active')}
-function showRegister(){loginPanel.style.display='none';registerPanel.style.display='block';loginTab.classList.remove('active');registerTab.classList.add('active')}
-</script></body></html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Login | Smart Complaint</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100%;
+        }
+
+        body {
+            min-height: 100vh;
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            background:
+                radial-gradient(
+                    circle at top,
+                    #3b82f6 0%,
+                    #2864ef 45%,
+                    #1d4ed8 100%
+                );
+        }
+
+        button,
+        input {
+            font: inherit;
+        }
+
+
+        /* =========================================================
+           PAGE
+        ========================================================= */
+
+        .login-page {
+            width: 100%;
+            min-height: 100vh;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 18px;
+        }
+
+
+        /* =========================================================
+           FULL SCREEN AUTH CARD
+        ========================================================= */
+
+        .auth-card {
+            width: 100%;
+            min-height: calc(100vh - 36px);
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+
+            padding: 32px 22px;
+
+            border-radius: 24px;
+
+            background:
+                rgba(255, 255, 255, 0.98);
+
+            box-shadow:
+                0 20px 50px
+                rgba(15, 23, 42, 0.22);
+
+            overflow-y: auto;
+        }
+
+
+        .auth-content {
+            width: min(420px, 100%);
+
+            margin: auto;
+        }
+
+
+        /* =========================================================
+           LOGO
+        ========================================================= */
+
+        .logo {
+            width: 72px;
+            height: 72px;
+
+            margin:
+                0 auto
+                14px;
+
+            display: grid;
+            place-items: center;
+
+            border-radius: 22px;
+
+            color: white;
+
+            font-size: 32px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #4f46e5
+                );
+
+            box-shadow:
+                0 10px 25px
+                rgba(37, 99, 235, 0.25);
+        }
+
+
+        /* =========================================================
+           TITLE
+        ========================================================= */
+
+        .main-title {
+            margin: 0;
+
+            text-align: center;
+
+            color: #172554;
+
+            font-size: 28px;
+            font-weight: 800;
+        }
+
+
+        .main-subtitle {
+            margin:
+                7px 0
+                22px;
+
+            text-align: center;
+
+            color: #64748b;
+
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+
+        /* =========================================================
+           MESSAGES
+        ========================================================= */
+
+        .message {
+            margin-bottom: 14px;
+
+            padding: 11px 12px;
+
+            border-radius: 10px;
+
+            color: #991b1b;
+
+            background: #fee2e2;
+
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+
+        .message.success {
+            color: #166534;
+
+            background: #dcfce7;
+        }
+
+
+        /* =========================================================
+           TABS
+        ========================================================= */
+
+        .tabs {
+            display: grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            gap: 4px;
+
+            margin-bottom: 22px;
+
+            padding: 4px;
+
+            border-radius: 12px;
+
+            background: #eef2f7;
+        }
+
+
+        .tab {
+            padding: 11px;
+
+            border: 0;
+            border-radius: 9px;
+
+            color: #64748b;
+
+            background: transparent;
+
+            font-size: 14px;
+            font-weight: 700;
+
+            cursor: pointer;
+
+            transition:
+                background 0.2s ease,
+                color 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+
+        .tab.active {
+            color: #2563eb;
+
+            background: white;
+
+            box-shadow:
+                0 3px 10px
+                rgba(15, 23, 42, 0.08);
+        }
+
+
+        /* =========================================================
+           PANEL
+        ========================================================= */
+
+        .panel {
+            animation:
+                panelShow 0.3s ease;
+        }
+
+
+        .panel-title {
+            margin:
+                0 0
+                6px;
+
+            text-align: center;
+
+            color: #172554;
+
+            font-size: 22px;
+            font-weight: 800;
+        }
+
+
+        .panel-subtitle {
+            margin:
+                0 0
+                20px;
+
+            text-align: center;
+
+            color: #64748b;
+
+            font-size: 13px;
+        }
+
+
+        /* =========================================================
+           FORM
+        ========================================================= */
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+
+        .label {
+            display: block;
+
+            margin-bottom: 6px;
+
+            color: #334155;
+
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+
+        .input-wrap {
+            position: relative;
+        }
+
+
+        .input-icon {
+            position: absolute;
+
+            left: 13px;
+            top: 50%;
+
+            transform:
+                translateY(-50%);
+
+            font-size: 15px;
+
+            pointer-events: none;
+        }
+
+
+        .input {
+            width: 100%;
+            height: 48px;
+
+            padding:
+                0 44px;
+
+            border:
+                1px solid #dbe3ef;
+
+            border-radius: 12px;
+
+            outline: none;
+
+            color: #172554;
+
+            background: #f8fafc;
+
+            font-size: 14px;
+
+            transition:
+                border-color 0.2s ease,
+                box-shadow 0.2s ease,
+                background 0.2s ease;
+        }
+
+
+        .input:focus {
+            border-color: #3b82f6;
+
+            background: white;
+
+            box-shadow:
+                0 0 0 4px
+                rgba(59, 130, 246, 0.10);
+        }
+
+
+        .input::placeholder {
+            color: #94a3b8;
+        }
+
+
+        /* =========================================================
+           PASSWORD BUTTON
+        ========================================================= */
+
+        .password-btn {
+            position: absolute;
+
+            width: 36px;
+            height: 36px;
+
+            right: 6px;
+            top: 50%;
+
+            transform:
+                translateY(-50%);
+
+            border: 0;
+
+            border-radius: 8px;
+
+            background: transparent;
+
+            cursor: pointer;
+
+            font-size: 16px;
+        }
+
+
+        /* =========================================================
+           SUBMIT BUTTON
+        ========================================================= */
+
+        .submit-btn {
+            width: 100%;
+            height: 48px;
+
+            margin-top: 3px;
+
+            border: 0;
+            border-radius: 12px;
+
+            color: white;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #4f46e5
+                );
+
+            box-shadow:
+                0 10px 20px
+                rgba(37, 99, 235, 0.22);
+
+            font-size: 14px;
+            font-weight: 800;
+
+            cursor: pointer;
+
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+
+        .submit-btn:hover {
+            transform:
+                translateY(-1px);
+
+            box-shadow:
+                0 13px 25px
+                rgba(37, 99, 235, 0.28);
+        }
+
+
+        .submit-btn:active {
+            transform:
+                scale(0.98);
+        }
+
+
+        /* =========================================================
+           WORKER LOGIN
+        ========================================================= */
+
+        .worker-login {
+            margin-top: 22px;
+            padding-top: 17px;
+
+            border-top:
+                1px solid #e2e8f0;
+
+            text-align: center;
+        }
+
+
+        .worker-login a {
+            color: #2563eb;
+
+            text-decoration: none;
+
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+
+        /* =========================================================
+           PANEL ANIMATION
+        ========================================================= */
+
+        @keyframes panelShow {
+
+            from {
+                opacity: 0;
+
+                transform:
+                    translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+
+                transform:
+                    translateY(0);
+            }
+        }
+
+
+        /* =========================================================
+           MOBILE
+        ========================================================= */
+
+        @media (max-width: 600px) {
+
+            .login-page {
+                padding: 0;
+            }
+
+
+            .auth-card {
+                min-height: 100vh;
+
+                border-radius: 0;
+
+                padding:
+                    28px 20px;
+            }
+
+
+            .logo {
+                width: 62px;
+                height: 62px;
+
+                border-radius: 19px;
+
+                font-size: 27px;
+            }
+
+
+            .main-title {
+                font-size: 24px;
+            }
+
+
+            .main-subtitle {
+                font-size: 13px;
+            }
+
+
+            .panel-title {
+                font-size: 21px;
+            }
+
+
+            .input {
+                height: 47px;
+            }
+
+
+            .submit-btn {
+                height: 47px;
+            }
+        }
+
+
+        /* =========================================================
+           SMALL MOBILE
+        ========================================================= */
+
+        @media (max-width: 360px) {
+
+            .auth-card {
+                padding:
+                    22px 16px;
+            }
+
+
+            .main-title {
+                font-size: 22px;
+            }
+
+
+            .main-subtitle {
+                margin-bottom: 17px;
+
+                font-size: 12px;
+            }
+
+
+            .tabs {
+                margin-bottom: 17px;
+            }
+
+
+            .form-group {
+                margin-bottom: 12px;
+            }
+
+
+            .input {
+                height: 44px;
+            }
+
+
+            .submit-btn {
+                height: 44px;
+            }
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+    <main class="login-page">
+
+        <section class="auth-card">
+
+            <div class="auth-content">
+
+
+                <!-- LOGO -->
+
+                <div class="logo">
+                    🛡️
+                </div>
+
+
+                <h1 class="main-title">
+                    Smart Complaint
+                </h1>
+
+
+                <p class="main-subtitle">
+                    Login or create your user account
+                </p>
+
+
+                <!-- DJANGO MESSAGES -->
+
+                {% if messages %}
+
+                    {% for message in messages %}
+
+                        <div
+                            class="message {% if message.tags == 'success' %}success{% endif %}"
+                        >
+                            {{ message }}
+                        </div>
+
+                    {% endfor %}
+
+                {% endif %}
+
+
+                <!-- LOGIN / REGISTER TABS -->
+
+                <div class="tabs">
+
+                    <button
+                        type="button"
+                        class="tab active"
+                        id="loginTab"
+                        onclick="showLogin()"
+                    >
+                        Login
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="tab"
+                        id="registerTab"
+                        onclick="showRegister()"
+                    >
+                        Register
+                    </button>
+
+                </div>
+
+
+                <!-- LOGIN PANEL -->
+
+                <div
+                    id="loginPanel"
+                    class="panel"
+                >
+
+                    <h2 class="panel-title">
+                        Welcome Back
+                    </h2>
+
+
+                    <p class="panel-subtitle">
+                        Login to continue
+                    </p>
+
+
+                    <form
+                        method="post"
+                        action="{% url 'login' %}"
+                    >
+
+                        {% csrf_token %}
+
+
+                        <div class="form-group">
+
+                            <label
+                                class="label"
+                                for="loginUsername"
+                            >
+                                Username
+                            </label>
+
+
+                            <div class="input-wrap">
+
+                                <span class="input-icon">
+                                    👤
+                                </span>
+
+
+                                <input
+                                    class="input"
+                                    id="loginUsername"
+                                    type="text"
+                                    name="username"
+                                    placeholder="Enter username"
+                                    autocomplete="username"
+                                    required
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label
+                                class="label"
+                                for="loginPassword"
+                            >
+                                Password
+                            </label>
+
+
+                            <div class="input-wrap">
+
+                                <span class="input-icon">
+                                    🔒
+                                </span>
+
+
+                                <input
+                                    class="input"
+                                    id="loginPassword"
+                                    type="password"
+                                    name="password"
+                                    placeholder="Enter password"
+                                    autocomplete="current-password"
+                                    required
+                                >
+
+
+                                <button
+                                    type="button"
+                                    class="password-btn"
+                                    onclick="togglePassword(
+                                        'loginPassword',
+                                        this
+                                    )"
+                                >
+                                    👁️
+                                </button>
+
+                            </div>
+
+                        </div>
+
+
+                        <button
+                            type="submit"
+                            class="submit-btn"
+                        >
+                            🔐 User Login
+                        </button>
+
+                    </form>
+
+                </div>
+
+
+                <!-- REGISTER PANEL -->
+
+                <div
+                    id="registerPanel"
+                    class="panel"
+                    style="display:none;"
+                >
+
+                    <h2 class="panel-title">
+                        Create Account
+                    </h2>
+
+
+                    <p class="panel-subtitle">
+                        Create your Smart Complaint account
+                    </p>
+
+
+                    <form
+                        method="post"
+                        action="{% url 'register' %}"
+                    >
+
+                        {% csrf_token %}
+
+
+                        <div class="form-group">
+
+                            <label
+                                class="label"
+                                for="registerUsername"
+                            >
+                                Username
+                            </label>
+
+
+                            <div class="input-wrap">
+
+                                <span class="input-icon">
+                                    👤
+                                </span>
+
+
+                                <input
+                                    class="input"
+                                    id="registerUsername"
+                                    type="text"
+                                    name="username"
+                                    placeholder="Choose username"
+                                    autocomplete="username"
+                                    required
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label
+                                class="label"
+                                for="registerEmail"
+                            >
+                                Email
+                            </label>
+
+
+                            <div class="input-wrap">
+
+                                <span class="input-icon">
+                                    ✉️
+                                </span>
+
+
+                                <input
+                                    class="input"
+                                    id="registerEmail"
+                                    type="email"
+                                    name="email"
+                                    placeholder="Enter email address"
+                                    autocomplete="email"
+                                    required
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label
+                                class="label"
+                                for="registerPassword"
+                            >
+                                Password
+                            </label>
+
+
+                            <div class="input-wrap">
+
+                                <span class="input-icon">
+                                    🔒
+                                </span>
+
+
+                                <input
+                                    class="input"
+                                    id="registerPassword"
+                                    type="password"
+                                    name="password"
+                                    placeholder="Minimum 6 characters"
+                                    minlength="6"
+                                    autocomplete="new-password"
+                                    required
+                                >
+
+
+                                <button
+                                    type="button"
+                                    class="password-btn"
+                                    onclick="togglePassword(
+                                        'registerPassword',
+                                        this
+                                    )"
+                                >
+                                    👁️
+                                </button>
+
+                            </div>
+
+                        </div>
+
+
+                        <button
+                            type="submit"
+                            class="submit-btn"
+                        >
+                            Create Account
+                        </button>
+
+                    </form>
+
+                </div>
+
+
+                <!-- WORKER LOGIN -->
+
+                <div class="worker-login">
+
+                    <a href="{% url 'worker_login' %}">
+                        👷 Worker Login
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script>
+
+        function showLogin() {
+
+            const loginPanel =
+                document.getElementById(
+                    "loginPanel"
+                );
+
+            const registerPanel =
+                document.getElementById(
+                    "registerPanel"
+                );
+
+            const loginTab =
+                document.getElementById(
+                    "loginTab"
+                );
+
+            const registerTab =
+                document.getElementById(
+                    "registerTab"
+                );
+
+
+            loginPanel.style.display =
+                "block";
+
+            registerPanel.style.display =
+                "none";
+
+
+            loginTab.classList.add(
+                "active"
+            );
+
+            registerTab.classList.remove(
+                "active"
+            );
+
+
+            restartPanelAnimation(
+                loginPanel
+            );
+        }
+
+
+        function showRegister() {
+
+            const loginPanel =
+                document.getElementById(
+                    "loginPanel"
+                );
+
+            const registerPanel =
+                document.getElementById(
+                    "registerPanel"
+                );
+
+            const loginTab =
+                document.getElementById(
+                    "loginTab"
+                );
+
+            const registerTab =
+                document.getElementById(
+                    "registerTab"
+                );
+
+
+            loginPanel.style.display =
+                "none";
+
+            registerPanel.style.display =
+                "block";
+
+
+            loginTab.classList.remove(
+                "active"
+            );
+
+            registerTab.classList.add(
+                "active"
+            );
+
+
+            restartPanelAnimation(
+                registerPanel
+            );
+        }
+
+
+        function restartPanelAnimation(
+            panel
+        ) {
+
+            panel.style.animation =
+                "none";
+
+            void panel.offsetWidth;
+
+            panel.style.animation =
+                "panelShow .3s ease";
+        }
+
+
+        function togglePassword(
+            inputId,
+            button
+        ) {
+
+            const input =
+                document.getElementById(
+                    inputId
+                );
+
+
+            if (
+                input.type ===
+                "password"
+            ) {
+
+                input.type =
+                    "text";
+
+                button.textContent =
+                    "🙈";
+
+            } else {
+
+                input.type =
+                    "password";
+
+                button.textContent =
+                    "👁️";
+            }
+        }
+
+    </script>
+
+</body>
+</html>
