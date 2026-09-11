@@ -36,4 +36,10 @@ urlpatterns = [
         views.worker_subscription_payment,
         name="worker_subscription_payment",
     ),
+    
+    path(
+        "save-device-token/",
+        views.save_device_token,
+        name="save_device_token",
+    ),
 ]

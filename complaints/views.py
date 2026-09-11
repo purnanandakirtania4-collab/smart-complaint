@@ -13,6 +13,8 @@ from django.contrib import messages
 from django.core.files.storage import default_storage
 from django.db.models import Avg, Count
 from django.utils import timezone
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
 
 from .models import (
     Complaint,
@@ -21,6 +23,16 @@ from .models import (
     Rating,
     WorkerSubscription,
     Notification,
+)
+
+from .models import (
+    Complaint,
+    WorkerProfile,
+    UserProfile,
+    Rating,
+    WorkerSubscription,
+    Notification,
+    DeviceToken,
 )
 
 
@@ -2582,4 +2594,54 @@ def worker_logout(request):
 
     return redirect(
         'worker_login'
+    )
+
+
+# =========================================================
+# SAVE FIREBASE DEVICE TOKEN
+# USER + WORKER
+# =========================================================
+
+@login_required(login_url='login')
+@require_POST
+def save_device_token(request):
+
+    token = request.POST.get(
+        'token',
+        ''
+    ).strip()
+
+    if not token:
+
+        return JsonResponse(
+            {
+                'success': False,
+                'message': 'FCM token is required.',
+            },
+            status=400,
+        )
+
+    try:
+
+        request.user.worker_profile
+        role = 'worker'
+
+    except WorkerProfile.DoesNotExist:
+
+        role = 'user'
+
+    DeviceToken.objects.update_or_create(
+        token=token,
+        defaults={
+            'user': request.user,
+            'role': role,
+            'is_active': True,
+        },
+    )
+
+    return JsonResponse(
+        {
+            'success': True,
+            'role': role,
+        }
     )

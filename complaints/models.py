@@ -572,3 +572,50 @@ class Notification(models.Model):
             f"{self.recipient.username} - "
             f"{self.title}"
         )
+
+
+# =========================================================
+# DEVICE TOKEN - FIREBASE PUSH NOTIFICATIONS
+# =========================================================
+
+class DeviceToken(models.Model):
+
+    ROLE_CHOICES = [
+        ("user", "User"),
+        ("worker", "Worker"),
+    ]
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="device_tokens",
+    )
+
+    token = models.TextField(
+        unique=True
+    )
+
+    role = models.CharField(
+        max_length=20,
+        choices=ROLE_CHOICES,
+        default="user",
+    )
+
+    is_active = models.BooleanField(
+        default=True
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )
+
+    def __str__(self):
+
+        return (
+            f"{self.user.username} - "
+            f"{self.role}"
+        )
