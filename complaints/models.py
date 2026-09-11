@@ -591,7 +591,8 @@ class DeviceToken(models.Model):
         related_name="device_tokens",
     )
 
-    token = models.TextField(
+    token = models.CharField(
+        max_length=255,
         unique=True
     )
 
