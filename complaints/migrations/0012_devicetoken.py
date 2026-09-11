@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
             name='DeviceToken',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('token', models.TextField(unique=True)),
+                ('token', models.CharField(max_length=255, unique=True)),
                 ('role', models.CharField(choices=[('user', 'User'), ('worker', 'Worker')], default='user', max_length=20)),
                 ('is_active', models.BooleanField(default=True)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
