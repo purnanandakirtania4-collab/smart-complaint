@@ -15,6 +15,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://smart-complaint-production.up.railway.app",
+]
+
 
 # =========================================================
 # INSTALLED APPS
