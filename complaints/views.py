@@ -1,15 +1,56 @@
+import calendar
+
+import razorpay
+
+from django.conf import settings
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.core.files.storage import default_storage
+from django.db.models import Avg, Count
+from django.utils import timezone
 
 from .models import (
     Complaint,
     WorkerProfile,
     UserProfile,
+    Rating,
+    WorkerSubscription,
 )
+
+
+# =========================================================
+# HELPER - ADD ONE CALENDAR MONTH
+# =========================================================
+
+def add_one_month(dt):
+
+    local_dt = timezone.localtime(dt)
+
+    year = local_dt.year
+    month = local_dt.month + 1
+
+    if month == 13:
+        month = 1
+        year += 1
+
+    last_day = calendar.monthrange(
+        year,
+        month
+    )[1]
+
+    day = min(
+        local_dt.day,
+        last_day
+    )
+
+    return local_dt.replace(
+        year=year,
+        month=month,
+        day=day
+    )
 
 
 # =========================================================
@@ -21,7 +62,7 @@ def home(request):
 
     return render(
         request,
-        'complaints/home.html'
+        'complaints/User_Folder/home.html'
     )
 
 
@@ -34,11 +75,18 @@ def user_login(request):
     if request.user.is_authenticated:
 
         try:
+
             request.user.worker_profile
-            return redirect('worker_dashboard')
+
+            return redirect(
+                'worker_dashboard'
+            )
 
         except WorkerProfile.DoesNotExist:
-            return redirect('home')
+
+            return redirect(
+                'home'
+            )
 
     if request.method == 'POST':
 
@@ -59,7 +107,9 @@ def user_login(request):
                 'Please enter username and password.'
             )
 
-            return redirect('login')
+            return redirect(
+                'login'
+            )
 
         user = authenticate(
             request,
@@ -69,8 +119,8 @@ def user_login(request):
 
         if user is not None:
 
-            # Worker ko normal user login se login nahi karayenge
             try:
+
                 user.worker_profile
 
                 messages.error(
@@ -78,7 +128,9 @@ def user_login(request):
                     'Worker account detected. Please use Worker Login.'
                 )
 
-                return redirect('worker_login')
+                return redirect(
+                    'worker_login'
+                )
 
             except WorkerProfile.DoesNotExist:
                 pass
@@ -88,14 +140,18 @@ def user_login(request):
                 user
             )
 
-            return redirect('home')
+            return redirect(
+                'home'
+            )
 
         messages.error(
             request,
             'Invalid username or password.'
         )
 
-        return redirect('login')
+        return redirect(
+            'login'
+        )
 
     return render(
         request,
@@ -110,7 +166,10 @@ def user_login(request):
 def register(request):
 
     if request.method != 'POST':
-        return redirect('login')
+
+        return redirect(
+            'login'
+        )
 
     username = request.POST.get(
         'username',
@@ -134,7 +193,9 @@ def register(request):
             'Please fill all fields.'
         )
 
-        return redirect('login')
+        return redirect(
+            'login'
+        )
 
     if User.objects.filter(
         username=username
@@ -145,7 +206,9 @@ def register(request):
             'Username already exists.'
         )
 
-        return redirect('login')
+        return redirect(
+            'login'
+        )
 
     if User.objects.filter(
         email=email
@@ -156,7 +219,9 @@ def register(request):
             'This email is already registered.'
         )
 
-        return redirect('login')
+        return redirect(
+            'login'
+        )
 
     user = User.objects.create_user(
         username=username,
@@ -173,7 +238,9 @@ def register(request):
         'Registration successful. Please login.'
     )
 
-    return redirect('login')
+    return redirect(
+        'login'
+    )
 
 
 # =========================================================
@@ -189,6 +256,26 @@ def profile(request):
         UserProfile.objects.get_or_create(
             user=user
         )
+    )
+
+    user_rating_data = (
+        Rating.objects
+        .filter(
+            complaint__user=user,
+            rating_type='worker_to_user'
+        )
+        .aggregate(
+            average=Avg('stars'),
+            total=Count('id')
+        )
+    )
+
+    user_average_rating = (
+        user_rating_data['average']
+    )
+
+    user_rating_count = (
+        user_rating_data['total']
     )
 
     if request.method == 'POST':
@@ -224,12 +311,18 @@ def profile(request):
                 'Email address is required.'
             )
 
-            return redirect('profile')
+            return redirect(
+                'profile'
+            )
 
         if (
             User.objects
-            .filter(email=email)
-            .exclude(id=user.id)
+            .filter(
+                email=email
+            )
+            .exclude(
+                id=user.id
+            )
             .exists()
         ):
 
@@ -238,7 +331,9 @@ def profile(request):
                 'This email is already registered.'
             )
 
-            return redirect('profile')
+            return redirect(
+                'profile'
+            )
 
         if phone and len(phone) > 15:
 
@@ -247,7 +342,9 @@ def profile(request):
                 'Phone number is too long.'
             )
 
-            return redirect('profile')
+            return redirect(
+                'profile'
+            )
 
         if photo:
 
@@ -258,7 +355,9 @@ def profile(request):
                     'Profile photo must be less than 5 MB.'
                 )
 
-                return redirect('profile')
+                return redirect(
+                    'profile'
+                )
 
             if not photo.content_type.startswith(
                 'image/'
@@ -269,11 +368,15 @@ def profile(request):
                     'Please select a valid image.'
                 )
 
-                return redirect('profile')
+                return redirect(
+                    'profile'
+                )
 
             if user_profile.photo:
 
-                old_photo = user_profile.photo.name
+                old_photo = (
+                    user_profile.photo.name
+                )
 
                 if default_storage.exists(
                     old_photo
@@ -292,7 +395,6 @@ def profile(request):
         user.save()
 
         user_profile.phone = phone
-
         user_profile.save()
 
         messages.success(
@@ -300,13 +402,50 @@ def profile(request):
             'Profile updated successfully.'
         )
 
-        return redirect('profile')
+        return redirect(
+            'profile'
+        )
 
     return render(
         request,
-        'complaints/profile.html',
+        'complaints/User_Folder/profile.html',
         {
             'profile_user': user,
+            'user_profile': user_profile,
+            'user_average_rating': user_average_rating,
+            'user_rating_count': user_rating_count,
+        }
+    )
+
+
+# =========================================================
+# USER SETTINGS
+# =========================================================
+
+@login_required(login_url='login')
+def user_settings(request):
+
+    try:
+
+        request.user.worker_profile
+
+        return redirect(
+            'worker_settings'
+        )
+
+    except WorkerProfile.DoesNotExist:
+        pass
+
+    user_profile, created = (
+        UserProfile.objects.get_or_create(
+            user=request.user
+        )
+    )
+
+    return render(
+        request,
+        'complaints/User_Folder/user_settings.html',
+        {
             'user_profile': user_profile,
         }
     )
@@ -318,14 +457,17 @@ def profile(request):
 
 def user_logout(request):
 
-    logout(request)
+    logout(
+        request
+    )
 
-    return redirect('login')
+    return redirect(
+        'login'
+    )
 
 
 # =========================================================
 # SUBMIT COMPLAINT
-# NO PAYMENT - DIRECT SUBMIT
 # =========================================================
 
 @login_required(login_url='login')
@@ -333,9 +475,15 @@ def submit_complaint(request):
 
     workers = (
         WorkerProfile.objects
-        .filter(is_approved=True)
-        .select_related('user')
-        .order_by('-created_at')
+        .filter(
+            is_approved=True
+        )
+        .select_related(
+            'user'
+        )
+        .order_by(
+            '-created_at'
+        )
     )
 
     if request.method == 'POST':
@@ -379,10 +527,6 @@ def submit_complaint(request):
             'photo'
         )
 
-        # -------------------------------------------------
-        # BASIC VALIDATION
-        # -------------------------------------------------
-
         if (
             not name
             or not email
@@ -397,15 +541,11 @@ def submit_complaint(request):
 
             return render(
                 request,
-                'complaints/submit_complaint.html',
+                'complaints/User_Folder/submit_complaint.html',
                 {
                     'workers': workers
                 }
             )
-
-        # -------------------------------------------------
-        # LOCATION VALIDATION
-        # -------------------------------------------------
 
         if not latitude or not longitude:
 
@@ -416,7 +556,7 @@ def submit_complaint(request):
 
             return render(
                 request,
-                'complaints/submit_complaint.html',
+                'complaints/User_Folder/submit_complaint.html',
                 {
                     'workers': workers
                 }
@@ -437,9 +577,13 @@ def submit_complaint(request):
                 and
                 -180 <= longitude_value <= 180
             ):
+
                 raise ValueError
 
-        except (ValueError, TypeError):
+        except (
+            ValueError,
+            TypeError
+        ):
 
             messages.error(
                 request,
@@ -448,15 +592,11 @@ def submit_complaint(request):
 
             return render(
                 request,
-                'complaints/submit_complaint.html',
+                'complaints/User_Folder/submit_complaint.html',
                 {
                     'workers': workers
                 }
             )
-
-        # -------------------------------------------------
-        # PHOTO VALIDATION
-        # -------------------------------------------------
 
         if not photo:
 
@@ -467,7 +607,7 @@ def submit_complaint(request):
 
             return render(
                 request,
-                'complaints/submit_complaint.html',
+                'complaints/User_Folder/submit_complaint.html',
                 {
                     'workers': workers
                 }
@@ -482,7 +622,7 @@ def submit_complaint(request):
 
             return render(
                 request,
-                'complaints/submit_complaint.html',
+                'complaints/User_Folder/submit_complaint.html',
                 {
                     'workers': workers
                 }
@@ -499,15 +639,11 @@ def submit_complaint(request):
 
             return render(
                 request,
-                'complaints/submit_complaint.html',
+                'complaints/User_Folder/submit_complaint.html',
                 {
                     'workers': workers
                 }
             )
-
-        # -------------------------------------------------
-        # WORKER
-        # -------------------------------------------------
 
         selected_worker = None
 
@@ -535,36 +671,22 @@ def submit_complaint(request):
 
                 return render(
                     request,
-                    'complaints/submit_complaint.html',
+                    'complaints/User_Folder/submit_complaint.html',
                     {
                         'workers': workers
                     }
                 )
 
-        # -------------------------------------------------
-        # DIRECT COMPLAINT SAVE
-        # -------------------------------------------------
-
         complaint = Complaint.objects.create(
-
             user=request.user,
-
             assigned_worker=selected_worker,
-
             name=name,
-
             email=email,
-
             subject=subject,
-
             description=description,
-
             photo=photo,
-
             latitude=latitude,
-
             longitude=longitude,
-
             status='Pending',
         )
 
@@ -575,7 +697,7 @@ def submit_complaint(request):
 
         return render(
             request,
-            'complaints/success.html',
+            'complaints/User_Folder/success.html',
             {
                 'complaint': complaint
             }
@@ -583,7 +705,7 @@ def submit_complaint(request):
 
     return render(
         request,
-        'complaints/submit_complaint.html',
+        'complaints/User_Folder/submit_complaint.html',
         {
             'workers': workers
         }
@@ -599,7 +721,7 @@ def success(request):
 
     return render(
         request,
-        'complaints/success.html'
+        'complaints/User_Folder/success.html'
     )
 
 
@@ -645,7 +767,7 @@ def check_status(request):
 
     return render(
         request,
-        'complaints/check_status.html',
+        'complaints/User_Folder/check_status.html',
         {
             'complaint': complaint,
             'status': status,
@@ -660,7 +782,7 @@ def check_status(request):
 @login_required(login_url='login')
 def my_complaints(request):
 
-    complaints = (
+    complaints = list(
         Complaint.objects
         .filter(
             user=request.user
@@ -674,12 +796,181 @@ def my_complaints(request):
         )
     )
 
+    complaint_ids = [
+        complaint.id
+        for complaint in complaints
+    ]
+
+    ratings = (
+        Rating.objects
+        .filter(
+            complaint_id__in=complaint_ids,
+            rating_type='user_to_worker'
+        )
+    )
+
+    rating_map = {
+        rating.complaint_id: rating
+        for rating in ratings
+    }
+
+    for complaint in complaints:
+
+        complaint.user_rating = (
+            rating_map.get(
+                complaint.id
+            )
+        )
+
     return render(
         request,
-        'complaints/my_complaints.html',
+        'complaints/User_Folder/my_complaints.html',
         {
             'complaints': complaints
         }
+    )
+
+
+# =========================================================
+# USER -> WORKER RATING
+# =========================================================
+
+@login_required(login_url='login')
+def rate_worker(request, complaint_id):
+
+    if request.method != 'POST':
+
+        return redirect(
+            'my_complaints'
+        )
+
+    try:
+
+        complaint = (
+            Complaint.objects
+            .select_related(
+                'assigned_worker'
+            )
+            .get(
+                id=complaint_id,
+                user=request.user
+            )
+        )
+
+    except Complaint.DoesNotExist:
+
+        messages.error(
+            request,
+            'Complaint not found.'
+        )
+
+        return redirect(
+            'my_complaints'
+        )
+
+    if complaint.status != 'Resolved':
+
+        messages.error(
+            request,
+            'You can rate the worker only after the complaint is resolved.'
+        )
+
+        return redirect(
+            'my_complaints'
+        )
+
+    if not complaint.assigned_worker:
+
+        messages.error(
+            request,
+            'No worker is assigned to this complaint.'
+        )
+
+        return redirect(
+            'my_complaints'
+        )
+
+    if Rating.objects.filter(
+        complaint=complaint,
+        rating_type='user_to_worker'
+    ).exists():
+
+        messages.info(
+            request,
+            'You have already rated this worker for this complaint.'
+        )
+
+        return redirect(
+            'my_complaints'
+        )
+
+    stars = request.POST.get(
+        'stars',
+        ''
+    ).strip()
+
+    problem = request.POST.get(
+        'problem',
+        ''
+    ).strip()
+
+    try:
+
+        stars = int(
+            stars
+        )
+
+    except (
+        ValueError,
+        TypeError
+    ):
+
+        messages.error(
+            request,
+            'Please select a star rating.'
+        )
+
+        return redirect(
+            'my_complaints'
+        )
+
+    if stars < 1 or stars > 5:
+
+        messages.error(
+            request,
+            'Rating must be between 1 and 5 stars.'
+        )
+
+        return redirect(
+            'my_complaints'
+        )
+
+    if len(problem) > 1000:
+
+        messages.error(
+            request,
+            'Problem / feedback must be less than 1000 characters.'
+        )
+
+        return redirect(
+            'my_complaints'
+        )
+
+    Rating.objects.create(
+        complaint=complaint,
+        rater=request.user,
+        rating_type='user_to_worker',
+        stars=stars,
+        problem=problem,
+    )
+
+    messages.success(
+        request,
+        'Worker rating submitted successfully.'
+    )
+
+    return redirect(
+        'my_complaints'
     )
 
 
@@ -705,7 +996,7 @@ def worker_details(request):
 
     return render(
         request,
-        'complaints/worker_details.html',
+        'complaints/Worker_Folder/worker_details.html',
         {
             'workers': workers
         }
@@ -723,7 +1014,9 @@ def worker_profile(request, worker_id):
 
         worker = (
             WorkerProfile.objects
-            .select_related('user')
+            .select_related(
+                'user'
+            )
             .get(
                 id=worker_id,
                 is_approved=True
@@ -744,6 +1037,26 @@ def worker_profile(request, worker_id):
     is_owner = (
         request.user.id
         == worker.user.id
+    )
+
+    worker_rating_data = (
+        Rating.objects
+        .filter(
+            complaint__assigned_worker=worker,
+            rating_type='user_to_worker'
+        )
+        .aggregate(
+            average=Avg('stars'),
+            total=Count('id')
+        )
+    )
+
+    worker_average_rating = (
+        worker_rating_data['average']
+    )
+
+    worker_rating_count = (
+        worker_rating_data['total']
     )
 
     if request.method == 'POST':
@@ -803,8 +1116,12 @@ def worker_profile(request, worker_id):
 
         if (
             User.objects
-            .filter(email=email)
-            .exclude(id=worker.user.id)
+            .filter(
+                email=email
+            )
+            .exclude(
+                id=worker.user.id
+            )
             .exists()
         ):
 
@@ -866,7 +1183,9 @@ def worker_profile(request, worker_id):
 
             if worker.photo:
 
-                old_photo = worker.photo.name
+                old_photo = (
+                    worker.photo.name
+                )
 
                 if default_storage.exists(
                     old_photo
@@ -883,8 +1202,8 @@ def worker_profile(request, worker_id):
         worker.experience = experience
 
         worker.user.email = email
-
         worker.user.save()
+
         worker.save()
 
         messages.success(
@@ -899,12 +1218,16 @@ def worker_profile(request, worker_id):
 
     return render(
         request,
-        'complaints/worker_profile.html',
+        'complaints/Worker_Folder/worker_profile.html',
         {
             'worker': worker,
             'is_owner': is_owner,
             'experience_choices':
                 WorkerProfile.EXPERIENCE_CHOICES,
+            'worker_average_rating':
+                worker_average_rating,
+            'worker_rating_count':
+                worker_rating_count,
         }
     )
 
@@ -1033,7 +1356,7 @@ def worker_register(request):
 
     return render(
         request,
-        'complaints/worker_register.html',
+        'complaints/Worker_Folder/worker_register.html',
         {
             'experience_choices':
                 WorkerProfile.EXPERIENCE_CHOICES
@@ -1051,7 +1374,9 @@ def worker_login(request):
 
         try:
 
-            worker = request.user.worker_profile
+            worker = (
+                request.user.worker_profile
+            )
 
             if worker.is_approved:
 
@@ -1060,7 +1385,6 @@ def worker_login(request):
                 )
 
         except WorkerProfile.DoesNotExist:
-
             pass
 
     if request.method == 'POST':
@@ -1105,7 +1429,9 @@ def worker_login(request):
 
         try:
 
-            worker = user.worker_profile
+            worker = (
+                user.worker_profile
+            )
 
         except WorkerProfile.DoesNotExist:
 
@@ -1140,7 +1466,7 @@ def worker_login(request):
 
     return render(
         request,
-        'complaints/worker_login.html'
+        'complaints/Worker_Folder/worker_login.html'
     )
 
 
@@ -1153,7 +1479,9 @@ def worker_dashboard(request):
 
     try:
 
-        worker = request.user.worker_profile
+        worker = (
+            request.user.worker_profile
+        )
 
     except WorkerProfile.DoesNotExist:
 
@@ -1162,7 +1490,9 @@ def worker_dashboard(request):
             'Worker access required.'
         )
 
-        logout(request)
+        logout(
+            request
+        )
 
         return redirect(
             'worker_login'
@@ -1175,15 +1505,13 @@ def worker_dashboard(request):
             'Your worker account is not approved.'
         )
 
-        logout(request)
+        logout(
+            request
+        )
 
         return redirect(
             'worker_login'
         )
-
-    # -----------------------------------------------------
-    # UPDATE COMPLAINT STATUS
-    # -----------------------------------------------------
 
     if request.method == 'POST':
 
@@ -1261,7 +1589,6 @@ def worker_dashboard(request):
             )
 
         complaint.status = new_status
-
         complaint.save()
 
         messages.success(
@@ -1276,11 +1603,7 @@ def worker_dashboard(request):
             'worker_dashboard'
         )
 
-    # -----------------------------------------------------
-    # ASSIGNED COMPLAINTS
-    # -----------------------------------------------------
-
-    complaints = (
+    complaints = list(
         Complaint.objects
         .filter(
             assigned_worker=worker
@@ -1293,13 +1616,679 @@ def worker_dashboard(request):
         )
     )
 
+    complaint_ids = [
+        complaint.id
+        for complaint in complaints
+    ]
+
+    ratings = (
+        Rating.objects
+        .filter(
+            complaint_id__in=complaint_ids,
+            rating_type='worker_to_user'
+        )
+    )
+
+    rating_map = {
+        rating.complaint_id: rating
+        for rating in ratings
+    }
+
+    for complaint in complaints:
+
+        complaint.worker_rating = (
+            rating_map.get(
+                complaint.id
+            )
+        )
+
     return render(
         request,
-        'complaints/worker_dashboard.html',
+        'complaints/Worker_Folder/worker_dashboard.html',
         {
             'worker': worker,
             'complaints': complaints,
         }
+    )
+
+
+# =========================================================
+# WORKER SETTINGS
+# =========================================================
+
+@login_required(login_url='worker_login')
+def worker_settings(request):
+
+    try:
+
+        worker = (
+            request.user.worker_profile
+        )
+
+    except WorkerProfile.DoesNotExist:
+
+        messages.error(
+            request,
+            'Worker access required.'
+        )
+
+        return redirect(
+            'worker_login'
+        )
+
+    if not worker.is_approved:
+
+        messages.error(
+            request,
+            'Your worker account is not approved.'
+        )
+
+        return redirect(
+            'worker_login'
+        )
+
+    subscription, created = (
+        WorkerSubscription.objects.get_or_create(
+            worker=worker
+        )
+    )
+
+    return render(
+        request,
+        'complaints/Worker_Folder/worker_settings.html',
+        {
+            'worker': worker,
+            'subscription': subscription,
+        }
+    )
+
+
+# =========================================================
+# WORKER SUBSCRIPTION TERMS & CONDITIONS
+# =========================================================
+
+@login_required(login_url='worker_login')
+def terms_conditions(request):
+
+    try:
+
+        worker = (
+            request.user.worker_profile
+        )
+
+    except WorkerProfile.DoesNotExist:
+
+        messages.error(
+            request,
+            'Worker access required.'
+        )
+
+        return redirect(
+            'worker_login'
+        )
+
+    if not worker.is_approved:
+
+        messages.error(
+            request,
+            'Your worker account is not approved.'
+        )
+
+        return redirect(
+            'worker_login'
+        )
+
+    subscription, created = (
+        WorkerSubscription.objects.get_or_create(
+            worker=worker
+        )
+    )
+
+    if request.method == 'POST':
+
+        agree = request.POST.get(
+            'agree_terms'
+        )
+
+        if agree != 'yes':
+
+            messages.error(
+                request,
+                'Please accept the Terms & Conditions.'
+            )
+
+            return redirect(
+                'terms_conditions'
+            )
+
+        subscription.terms_accepted = True
+        subscription.terms_accepted_at = (
+            timezone.now()
+        )
+
+        subscription.terms_version = '1.0'
+
+        if subscription.status == 'inactive':
+
+            subscription.status = (
+                'pending'
+            )
+
+        subscription.save()
+
+        return redirect(
+            'worker_subscription_payment'
+        )
+
+    return render(
+        request,
+        'complaints/Worker_Folder/terms_conditions.html',
+        {
+            'worker': worker,
+            'subscription': subscription,
+        }
+    )
+
+
+# =========================================================
+# WORKER SUBSCRIPTION PAYMENT
+# ₹49 NOW + ₹149/MONTH FROM NEXT MONTH
+# =========================================================
+
+@login_required(login_url='worker_login')
+def worker_subscription_payment(request):
+
+    try:
+
+        worker = (
+            request.user.worker_profile
+        )
+
+    except WorkerProfile.DoesNotExist:
+
+        messages.error(
+            request,
+            'Worker access required.'
+        )
+
+        return redirect(
+            'worker_login'
+        )
+
+    if not worker.is_approved:
+
+        messages.error(
+            request,
+            'Your worker account is not approved.'
+        )
+
+        return redirect(
+            'worker_login'
+        )
+
+    subscription, created = (
+        WorkerSubscription.objects.get_or_create(
+            worker=worker
+        )
+    )
+
+    if not subscription.terms_accepted:
+
+        messages.error(
+            request,
+            'Please accept the Terms & Conditions first.'
+        )
+
+        return redirect(
+            'terms_conditions'
+        )
+
+    # =====================================================
+    # CREATE RAZORPAY SUBSCRIPTION
+    # =====================================================
+
+    if request.method == 'POST':
+
+        razorpay_key_id = getattr(
+            settings,
+            'RAZORPAY_KEY_ID',
+            ''
+        )
+
+        razorpay_key_secret = getattr(
+            settings,
+            'RAZORPAY_KEY_SECRET',
+            ''
+        )
+
+        razorpay_plan_id = getattr(
+            settings,
+            'RAZORPAY_WORKER_PLAN_ID',
+            ''
+        )
+        print("PLAN ID USED:", razorpay_plan_id)
+
+        if (
+            not razorpay_key_id
+            or not razorpay_key_secret
+            or not razorpay_plan_id
+        ):
+
+            messages.error(
+                request,
+                'Razorpay subscription configuration is missing.'
+            )
+
+            return redirect(
+                'worker_subscription_payment'
+            )
+
+        try:
+
+            client = razorpay.Client(
+                auth=(
+                    razorpay_key_id,
+                    razorpay_key_secret
+                )
+            )
+
+            # =================================================
+            # REUSE EXISTING SUBSCRIPTION
+            # =================================================
+
+            if (
+                subscription
+                .razorpay_subscription_id
+            ):
+
+                try:
+
+                    existing_subscription = (
+                        client.subscription.fetch(
+                            subscription
+                            .razorpay_subscription_id
+                        )
+                    )
+
+                    razorpay_status = (
+                        existing_subscription.get(
+                            'status',
+                            ''
+                        )
+                    )
+
+                    short_url = (
+                        existing_subscription.get(
+                            'short_url'
+                        )
+                    )
+
+                    if (
+                        razorpay_status
+                        in [
+                            'created',
+                            'authenticated',
+                            'active',
+                            'pending',
+                            'halted',
+                        ]
+                        and short_url
+                    ):
+
+                        return redirect(
+                            short_url
+                        )
+
+                except Exception:
+                    pass
+
+            # =================================================
+            # ₹149 BILLING STARTS AFTER ONE MONTH
+            # =================================================
+
+            now = (
+                timezone.now()
+            )
+
+            first_regular_billing_date = (
+                add_one_month(
+                    now
+                )
+            )
+
+            start_at_timestamp = int(
+                first_regular_billing_date
+                .timestamp()
+            )
+
+            # =================================================
+            # CREATE RAZORPAY SUBSCRIPTION
+            # =================================================
+
+            razorpay_subscription = (
+                client.subscription.create(
+                    {
+                        'plan_id':
+                            razorpay_plan_id,
+
+                        'total_count':
+                            12,
+
+                        'quantity':
+                            1,
+
+                        'customer_notify':
+                            True,
+
+                        'start_at':
+                            start_at_timestamp,
+
+                        'addons': [
+                            {
+                                'item': {
+                                    'name':
+                                        'First Month Subscription Fee',
+
+                                    'amount':
+                                        4900,
+
+                                    'currency':
+                                        'INR',
+                                }
+                            }
+                        ],
+
+                        'notes': {
+                            'worker_id':
+                                str(worker.id),
+
+                            'worker_name':
+                                worker.name,
+
+                            'django_user_id':
+                                str(request.user.id),
+
+                            'subscription_type':
+                                'worker_monthly',
+                        },
+                    }
+                )
+            )
+
+            razorpay_subscription_id = (
+                razorpay_subscription.get(
+                    'id',
+                    ''
+                )
+            )
+
+            razorpay_short_url = (
+                razorpay_subscription.get(
+                    'short_url',
+                    ''
+                )
+            )
+
+            if not razorpay_subscription_id:
+
+                messages.error(
+                    request,
+                    'Razorpay did not return a subscription ID.'
+                )
+
+                return redirect(
+                    'worker_subscription_payment'
+                )
+
+            # =================================================
+            # SAVE SUBSCRIPTION
+            # =================================================
+
+            subscription.razorpay_subscription_id = (
+                razorpay_subscription_id
+            )
+
+            subscription.razorpay_plan_id = (
+                razorpay_plan_id
+            )
+
+            subscription.first_month_price = 49
+            subscription.monthly_price = 149
+            subscription.status = 'pending'
+
+            subscription.next_billing_at = (
+                first_regular_billing_date
+            )
+
+            subscription.save()
+
+            # =================================================
+            # OPEN RAZORPAY PAYMENT PAGE
+            # =================================================
+
+            if razorpay_short_url:
+
+                return redirect(
+                    razorpay_short_url
+                )
+
+            messages.success(
+                request,
+                'Subscription created successfully.'
+            )
+
+            return redirect(
+                'worker_subscription_payment'
+            )
+
+        except razorpay.errors.BadRequestError as e:
+
+            print("RAZORPAY BAD REQUEST ERROR:", e)
+
+            messages.error(
+                request,
+                'Razorpay rejected the subscription request. Please check the subscription settings.'
+            )
+
+            return redirect(
+                'worker_subscription_payment'
+            )
+
+        except razorpay.errors.ServerError as e:
+
+            print("RAZORPAY SERVER ERROR:", e)
+
+            messages.error(
+                request,
+                'Razorpay server is temporarily unavailable. Please try again.'
+            )
+
+            return redirect(
+                'worker_subscription_payment'
+            )
+
+        except Exception as e:
+
+            print("RAZORPAY GENERAL ERROR:", e)
+
+            messages.error(
+                request,
+                'Unable to start subscription payment. Please try again.'
+            )
+
+            return redirect(
+                'worker_subscription_payment'
+            )
+
+    return render(
+        request,
+        'complaints/Worker_Folder/worker_subscription_payment.html',
+        {
+            'worker': worker,
+            'subscription': subscription,
+            'first_month_price': 49,
+            'monthly_price': 149,
+        }
+    )
+
+
+# =========================================================
+# WORKER -> USER RATING
+# =========================================================
+
+@login_required(login_url='worker_login')
+def rate_user(request, complaint_id):
+
+    if request.method != 'POST':
+
+        return redirect(
+            'worker_dashboard'
+        )
+
+    try:
+
+        worker = (
+            request.user.worker_profile
+        )
+
+    except WorkerProfile.DoesNotExist:
+
+        messages.error(
+            request,
+            'Worker access required.'
+        )
+
+        return redirect(
+            'worker_login'
+        )
+
+    if not worker.is_approved:
+
+        messages.error(
+            request,
+            'Your worker account is not approved.'
+        )
+
+        return redirect(
+            'worker_login'
+        )
+
+    try:
+
+        complaint = (
+            Complaint.objects
+            .select_related(
+                'user'
+            )
+            .get(
+                id=complaint_id,
+                assigned_worker=worker
+            )
+        )
+
+    except Complaint.DoesNotExist:
+
+        messages.error(
+            request,
+            'Complaint not found.'
+        )
+
+        return redirect(
+            'worker_dashboard'
+        )
+
+    if complaint.status != 'Resolved':
+
+        messages.error(
+            request,
+            'You can rate the user only after the complaint is resolved.'
+        )
+
+        return redirect(
+            'worker_dashboard'
+        )
+
+    if Rating.objects.filter(
+        complaint=complaint,
+        rating_type='worker_to_user'
+    ).exists():
+
+        messages.info(
+            request,
+            'You have already rated this user for this complaint.'
+        )
+
+        return redirect(
+            'worker_dashboard'
+        )
+
+    stars = request.POST.get(
+        'stars',
+        ''
+    ).strip()
+
+    problem = request.POST.get(
+        'problem',
+        ''
+    ).strip()
+
+    try:
+
+        stars = int(
+            stars
+        )
+
+    except (
+        ValueError,
+        TypeError
+    ):
+
+        messages.error(
+            request,
+            'Please select a star rating.'
+        )
+
+        return redirect(
+            'worker_dashboard'
+        )
+
+    if stars < 1 or stars > 5:
+
+        messages.error(
+            request,
+            'Rating must be between 1 and 5 stars.'
+        )
+
+        return redirect(
+            'worker_dashboard'
+        )
+
+    if len(problem) > 1000:
+
+        messages.error(
+            request,
+            'Problem / feedback must be less than 1000 characters.'
+        )
+
+        return redirect(
+            'worker_dashboard'
+        )
+
+    Rating.objects.create(
+        complaint=complaint,
+        rater=request.user,
+        rating_type='worker_to_user',
+        stars=stars,
+        problem=problem,
+    )
+
+    messages.success(
+        request,
+        'User rating submitted successfully.'
+    )
+
+    return redirect(
+        'worker_dashboard'
     )
 
 
@@ -1309,7 +2298,9 @@ def worker_dashboard(request):
 
 def worker_logout(request):
 
-    logout(request)
+    logout(
+        request
+    )
 
     return redirect(
         'worker_login'
