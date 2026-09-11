@@ -93,17 +93,20 @@ TEMPLATES = [
 # DATABASE
 # =========================================================
 
+# =========================================================
+# DATABASE
+# =========================================================
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "complaint_db",
-        "USER": "root",
-        "PASSWORD": "",
-        "HOST": "127.0.0.1",
-        "PORT": "3306",
+        "NAME": os.environ.get("MYSQL_DATABASE", "complaint_db"),
+        "USER": os.environ.get("MYSQLUSER", "root"),
+        "PASSWORD": os.environ.get("MYSQLPASSWORD", ""),
+        "HOST": os.environ.get("MYSQLHOST", "127.0.0.1"),
+        "PORT": os.environ.get("MYSQLPORT", "3306"),
     }
 }
-
 
 # =========================================================
 # PASSWORD VALIDATION
