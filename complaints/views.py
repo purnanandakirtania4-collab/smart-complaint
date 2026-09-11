@@ -35,6 +35,8 @@ from .models import (
     DeviceToken,
 )
 
+from .firebase_push import send_push_to_user
+
 
 # =========================================================
 # HELPER - ADD ONE CALENDAR MONTH
@@ -1724,6 +1726,13 @@ def worker_dashboard(request):
                     f'Your complaint {complaint.tracking_id} '
                     f'has been successfully resolved.'
                 ),
+                
+            )
+            
+            send_push_to_user(
+                complaint.user,
+                "Complaint Resolved",
+                f"Your complaint {complaint.tracking_id} has been successfully resolved."
             )
 
             messages.success(
@@ -1831,6 +1840,11 @@ def worker_dashboard(request):
                         f'The OTP is valid for 10 minutes.'
                     ),
                 )
+                send_push_to_user(
+                    complaint.user,
+                    "Completion OTP Ready",
+                    f"Completion OTP for complaint {complaint.tracking_id} is ready. Open My Complaints to view the OTP."
+                )
 
             messages.info(
                 request,
@@ -1861,6 +1875,11 @@ def worker_dashboard(request):
                 f'Your complaint {complaint.tracking_id} '
                 f'status is now {new_status}.'
             ),
+        )
+        send_push_to_user(
+            complaint.user,
+            "Complaint Status Updated",
+            f"Your complaint {complaint.tracking_id} status is now {new_status}."
         )
 
         messages.success(
