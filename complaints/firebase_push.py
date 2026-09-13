@@ -7,6 +7,10 @@ from firebase_admin import credentials, messaging
 from .models import DeviceToken
 
 
+# =========================================================
+# FIREBASE APP
+# =========================================================
+
 def get_firebase_app():
 
     try:
@@ -21,22 +25,42 @@ def get_firebase_app():
     ).strip()
 
     if not service_account_json:
-        raise RuntimeError(
-            "FIREBASE_SERVICE_ACCOUNT_JSON is missing."
+
+        print(
+            "FCM WARNING: "
+            "FIREBASE_SERVICE_ACCOUNT_JSON is missing. "
+            "Push notification skipped."
         )
 
-    service_account_info = json.loads(
-        service_account_json
-    )
+        return None
 
-    credential = credentials.Certificate(
-        service_account_info
-    )
+    try:
 
-    return firebase_admin.initialize_app(
-        credential
-    )
+        service_account_info = json.loads(
+            service_account_json
+        )
 
+        credential = credentials.Certificate(
+            service_account_info
+        )
+
+        return firebase_admin.initialize_app(
+            credential
+        )
+
+    except Exception as error:
+
+        print(
+            "FCM INITIALIZATION ERROR:",
+            error,
+        )
+
+        return None
+
+
+# =========================================================
+# SEND PUSH NOTIFICATION
+# =========================================================
 
 def send_push_to_user(
     user,
@@ -45,7 +69,19 @@ def send_push_to_user(
     data=None,
 ):
 
-    get_firebase_app()
+    firebase_app = get_firebase_app()
+
+    # Firebase local environment me configured nahi hai
+    # to website crash nahi karega.
+    if firebase_app is None:
+
+        print(
+            "FCM PUSH SKIPPED:",
+            user.username,
+            title,
+        )
+
+        return 0
 
     device_tokens = (
         DeviceToken.objects
@@ -60,6 +96,7 @@ def send_push_to_user(
     push_data = {}
 
     if data:
+
         push_data = {
             str(key): str(value)
             for key, value in data.items()

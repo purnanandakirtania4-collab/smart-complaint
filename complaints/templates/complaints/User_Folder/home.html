@@ -11,87 +11,109 @@
     {% include 'complaints/base_style.html' %}
 
     <style>
-      /* =========================================
-                       ORIGINAL HOME PAGE DESIGN
-                    ========================================= */
+      .home-icon {
+        width: 34px;
+        height: 34px;
+        display: block;
+        margin: 0 auto 10px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.8;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
       
       .hero {
         padding: 55px 40px;
-      
         color: #ffffff;
-      
         text-align: center;
       }
       
       .hero h1 {
         font-size: 42px;
-      
         margin-bottom: 12px;
       }
       
       .hero p {
         max-width: 680px;
-      
         margin: auto;
-      
         color: #dbeafe;
-      
         line-height: 1.7;
       }
       
-      /* =========================================
-                       HOME ACTIONS
-                    ========================================= */
-      
       .actions {
         display: grid;
-      
         grid-template-columns: repeat(3, 1fr);
-      
+        grid-template-areas:
+          'submit status worker'
+          'complaints . .';
         gap: 15px;
-      
         margin-top: 30px;
+      }
+      
+      .action-submit {
+        grid-area: submit;
+      }
+      
+      .action-complaints {
+        grid-area: complaints;
+      }
+      
+      .action-status {
+        grid-area: status;
+      }
+      
+      .action-worker {
+        grid-area: worker;
       }
       
       .action {
         background: #ffffff;
-      
         color: #172554;
-      
         padding: 22px;
-      
         border-radius: 16px;
-      
         font-weight: 800;
-      
         text-decoration: none;
-      
         transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s ease, color 0.3s ease;
       }
       
       .action:hover {
         transform: translateY(-4px);
-      
         box-shadow: 0 10px 25px rgba(15, 23, 42, 0.15);
       }
       
-      .action span {
+      .action-subtext {
         display: block;
-      
-        font-size: 28px;
-      
-        margin-bottom: 8px;
+        margin-top: 6px;
+        color: #64748b;
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 1.45;
       }
       
-      /* =========================================
-                       HOW IT WORKS PANEL
-                    ========================================= */
+      .action-submit {
+        color: #1d4ed8;
+      }
+      
+      .action-complaints {
+        color: #4338ca;
+      }
+      
+      .action-status {
+        color: #0f766e;
+      }
+      
+      .action-worker {
+        color: #9a3412;
+      }
+      
+      .action-title {
+        color: #172554;
+      }
       
       .panel {
         margin-top: 22px;
-      
         padding: 28px;
-      
         transition: background 0.3s ease, color 0.3s ease;
       }
       
@@ -101,49 +123,55 @@
       
       .grid {
         display: grid;
-      
         grid-template-columns: repeat(3, 1fr);
-      
         gap: 15px;
-      
         margin-top: 20px;
       }
       
       .feature {
         background: #f8fafc;
-      
         border: 1px solid #e2e8f0;
-      
         padding: 20px;
-      
         border-radius: 14px;
-      
         transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+      }
+      
+      .feature-number {
+        width: 34px;
+        height: 34px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 10px;
+        border-radius: 10px;
+        background: #e0e7ff;
+        color: #3730a3;
+        font-size: 14px;
+        font-weight: 900;
       }
       
       .feature b {
         display: block;
-      
         margin-bottom: 6px;
       }
       
-      /* =========================================
-                       DARK MODE FOR HOME
-                    ========================================= */
-      
       body.dark-mode .action {
         background: #111827;
-      
         color: #f8fafc;
-      
         border: 1px solid #263247;
+      }
+      
+      body.dark-mode .action-title {
+        color: #f8fafc;
+      }
+      
+      body.dark-mode .action-subtext {
+        color: #94a3b8;
       }
       
       body.dark-mode .panel {
         background: #111827 !important;
-      
         color: #f8fafc;
-      
         border-color: #263247 !important;
       }
       
@@ -153,19 +181,18 @@
       
       body.dark-mode .feature {
         background: #172033;
-      
         border-color: #263247;
-      
         color: #f8fafc;
+      }
+      
+      body.dark-mode .feature-number {
+        background: #312e81;
+        color: #e0e7ff;
       }
       
       body.dark-mode .muted {
         color: #94a3b8 !important;
       }
-      
-      /* =========================================
-                       MOBILE
-                    ========================================= */
       
       @media (max-width: 700px) {
         .hero {
@@ -176,7 +203,15 @@
           font-size: 30px;
         }
       
-        .actions,
+        .actions {
+          grid-template-columns: 1fr;
+          grid-template-areas:
+            'submit'
+            'complaints'
+            'status'
+            'worker';
+        }
+      
         .grid {
           grid-template-columns: 1fr;
         }
@@ -185,56 +220,64 @@
   </head>
 
   <body>
-    <!--  =========================================
-         USER SLIDE MENU
-    =========================================  -->
-
     {% include 'complaints/User_Folder/navbar.html' %}
 
-    <!--  =========================================
-         HOME PAGE
-    =========================================  -->
-
     <main class="page">
-      <!-- HERO -->
-
       <section class="hero">
         <h1>Smart Complaint Management</h1>
 
         <p>Submit complaints, choose an approved worker, track progress, and view your complaint history from one place.</p>
 
-        <!-- ORIGINAL THREE OPTIONS -->
-
         <div class="actions">
-          <!-- SUBMIT COMPLAINT -->
+          <a class="action action-submit" href="{% url 'submit_complaint' %}">
+            <svg class="home-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 20h9"></path>
+              <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4z"></path>
+            </svg>
 
-          <a class="action" href="{% url 'submit_complaint' %}">
-            <span>📝</span>
-
-            Submit Complaint
+            <span class="action-title">Submit Complaint</span>
+            <span class="action-subtext">Create a new complaint with photo and location.</span>
           </a>
 
-          <!-- CHECK STATUS -->
+          <a class="action action-complaints" href="{% url 'my_complaints' %}">
+            <svg class="home-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M9 5h11"></path>
+              <path d="M9 12h11"></path>
+              <path d="M9 19h11"></path>
+              <path d="M4 5h.01"></path>
+              <path d="M4 12h.01"></path>
+              <path d="M4 19h.01"></path>
+            </svg>
 
-          <a class="action" href="{% url 'check_status' %}">
-            <span>🔎</span>
-
-            Check Status
+            <span class="action-title">My Complaints</span>
+            <span class="action-subtext">View all complaints submitted from your account.</span>
           </a>
 
-          <!-- FIND WORKER -->
+          <a class="action action-status" href="{% url 'check_status' %}">
+            <svg class="home-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="11" cy="11" r="7"></circle>
+              <path d="M20 20l-4-4"></path>
+              <path d="M8.5 11l1.7 1.7 3.5-3.5"></path>
+            </svg>
 
-          <a class="action" href="{% url 'worker_details' %}">
-            <span>👷</span>
+            <span class="action-title">Check Status</span>
+            <span class="action-subtext">Track complaint progress using your Tracking ID.</span>
+          </a>
 
-            Find Worker
+          <a class="action action-worker" href="{% url 'worker_details' %}">
+            <svg class="home-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="7" r="4"></circle>
+              <path d="M5 21v-2a7 7 0 0 1 14 0v2"></path>
+              <path d="M8 3h8"></path>
+              <path d="M9 3l-1 3"></path>
+              <path d="M15 3l1 3"></path>
+            </svg>
+
+            <span class="action-title">Find Worker</span>
+            <span class="action-subtext">Browse approved workers and choose the right one.</span>
           </a>
         </div>
       </section>
-
-      <!--  =========================================
-           HOW IT WORKS
-      =========================================  -->
 
       <section class="card panel">
         <h2>How it works</h2>
@@ -242,27 +285,21 @@
         <p class="muted">Choose a worker, describe the problem and keep the Tracking ID for future status checks.</p>
 
         <div class="grid">
-          <!-- STEP 1 -->
-
           <div class="feature">
-            <b>1. Select Worker</b>
-
+            <span class="feature-number">01</span>
+            <b>Select Worker</b>
             <span class="muted">Search by name, username or Worker ID.</span>
           </div>
 
-          <!-- STEP 2 -->
-
           <div class="feature">
-            <b>2. Submit Complaint</b>
-
+            <span class="feature-number">02</span>
+            <b>Submit Complaint</b>
             <span class="muted">Add the subject and a clear description.</span>
           </div>
 
-          <!-- STEP 3 -->
-
           <div class="feature">
-            <b>3. Track Progress</b>
-
+            <span class="feature-number">03</span>
+            <b>Track Progress</b>
             <span class="muted">Follow Pending, In Progress and Resolved status.</span>
           </div>
         </div>

@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 
+
 urlpatterns = [
     path("", views.home, name="home"),
     path("login/", views.user_login, name="login"),
@@ -9,23 +10,91 @@ urlpatterns = [
     path("profile/", views.profile, name="profile"),
     path("settings/", views.user_settings, name="user_settings"),
 
-    path("submit_complaint/", views.submit_complaint, name="submit_complaint"),
-    path("check-status/", views.check_status, name="check_status"),
-    path("my-complaints/", views.my_complaints, name="my_complaints"),
-    path("notifications/", views.notifications, name="notifications"),
-    path("success/", views.success, name="success"),
+    path(
+        "submit_complaint/",
+        views.submit_complaint,
+        name="submit_complaint",
+    ),
+    path(
+        "check-status/",
+        views.check_status,
+        name="check_status",
+    ),
+    path(
+        "my-complaints/",
+        views.my_complaints,
+        name="my_complaints",
+    ),
+    path(
+        "notifications/",
+        views.notifications,
+        name="notifications",
+    ),
+    path(
+        "success/",
+        views.success,
+        name="success",
+    ),
 
-    path("rate-worker/<int:complaint_id>/", views.rate_worker, name="rate_worker"),
-    path("rate-user/<int:complaint_id>/", views.rate_user, name="rate_user"),
+    path(
+        "rate-worker/<int:complaint_id>/",
+        views.rate_worker,
+        name="rate_worker",
+    ),
+    path(
+        "rate-user/<int:complaint_id>/",
+        views.rate_user,
+        name="rate_user",
+    ),
 
-    path("worker-details/", views.worker_details, name="worker_details"),
-    path("worker-profile/<int:worker_id>/", views.worker_profile, name="worker_profile"),
-    path("worker-register/", views.worker_register, name="worker_register"),
-    path("worker-login/", views.worker_login, name="worker_login"),
-    path("worker-logout/", views.worker_logout, name="worker_logout"),
-    path("worker-dashboard/", views.worker_dashboard, name="worker_dashboard"),
-    path("worker-settings/", views.worker_settings, name="worker_settings"),
+    path(
+        "worker-details/",
+        views.worker_details,
+        name="worker_details",
+    ),
+    path(
+        "worker-profile/<int:worker_id>/",
+        views.worker_profile,
+        name="worker_profile",
+    ),
+    path(
+        "worker-register/",
+        views.worker_register,
+        name="worker_register",
+    ),
+    path(
+        "worker-login/",
+        views.worker_login,
+        name="worker_login",
+    ),
+    path(
+        "worker-logout/",
+        views.worker_logout,
+        name="worker_logout",
+    ),
+    path(
+        "worker-dashboard/",
+        views.worker_dashboard,
+        name="worker_dashboard",
+    ),
+    path(
+        "worker-settings/",
+        views.worker_settings,
+        name="worker_settings",
+    ),
 
+    # -----------------------------------------------------
+    # WORKER APP TERMS - READ ONLY
+    # -----------------------------------------------------
+    path(
+        "worker/app-terms/",
+        views.worker_app_terms,
+        name="worker_app_terms",
+    ),
+
+    # -----------------------------------------------------
+    # WORKER SUBSCRIPTION
+    # -----------------------------------------------------
     path(
         "worker-subscription/terms/",
         views.terms_conditions,
@@ -36,10 +105,16 @@ urlpatterns = [
         views.worker_subscription_payment,
         name="worker_subscription_payment",
     ),
-    
+
     path(
         "save-device-token/",
         views.save_device_token,
         name="save_device_token",
+    ),
+
+    path(
+        "complaint-chat/<int:complaint_id>/",
+        views.complaint_chat,
+        name="complaint_chat",
     ),
 ]

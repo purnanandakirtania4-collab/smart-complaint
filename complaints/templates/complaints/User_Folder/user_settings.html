@@ -10,9 +10,55 @@
     {% include 'complaints/base_style.html' %}
 
     <style>
+      .ui-icon {
+        width: 21px;
+        height: 21px;
+        display: inline-block;
+        vertical-align: middle;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        flex-shrink: 0;
+      }
+      
+      .icon-title {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+      }
+      
+      .icon-button {
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+      
+      .settings-header h1 {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      
+      .settings-icon {
+        color: #2563eb;
+      }
+      
+      .settings-icon .ui-icon {
+        width: 22px;
+        height: 22px;
+      }
+      
+      body.dark-mode .settings-icon {
+        color: #bfdbfe;
+      }
+      
       /* =========================================
-                 SETTINGS WRAPPER
-              ========================================= */
+                       SETTINGS WRAPPER
+                    ========================================= */
       
       .settings-wrapper {
         max-width: 850px;
@@ -21,8 +67,8 @@
       }
       
       /* =========================================
-                 SETTINGS HEADER
-              ========================================= */
+                       SETTINGS HEADER
+                    ========================================= */
       
       .settings-header {
         color: white;
@@ -34,8 +80,8 @@
       }
       
       /* =========================================
-                 SETTINGS CARD
-              ========================================= */
+                       SETTINGS CARD
+                    ========================================= */
       
       .settings-card {
         background: white;
@@ -46,8 +92,8 @@
       }
       
       /* =========================================
-                 SETTINGS ITEM
-              ========================================= */
+                       SETTINGS ITEM
+                    ========================================= */
       
       .settings-item {
         display: flex;
@@ -66,8 +112,8 @@
       }
       
       /* =========================================
-                 LEFT SIDE
-              ========================================= */
+                       LEFT SIDE
+                    ========================================= */
       
       .settings-left {
         display: flex;
@@ -93,8 +139,8 @@
       }
       
       /* =========================================
-                 TEXT
-              ========================================= */
+                       TEXT
+                    ========================================= */
       
       .settings-text h3 {
         margin: 0 0 4px;
@@ -113,8 +159,8 @@
       }
       
       /* =========================================
-                 ACTION BUTTON
-              ========================================= */
+                       ACTION BUTTON
+                    ========================================= */
       
       .settings-action {
         text-decoration: none;
@@ -137,8 +183,8 @@
       }
       
       /* =========================================
-                 COMING SOON
-              ========================================= */
+                       COMING SOON
+                    ========================================= */
       
       .coming-soon {
         background: #e2e8f0;
@@ -148,8 +194,8 @@
       }
       
       /* =========================================
-                 DANGER
-              ========================================= */
+                       DANGER
+                    ========================================= */
       
       .danger-action {
         background: #dc2626;
@@ -160,16 +206,16 @@
       }
       
       /* =========================================
-                 BACK BUTTON
-              ========================================= */
+                       BACK BUTTON
+                    ========================================= */
       
       .back-box {
         margin-top: 20px;
       }
       
       /* =========================================
-                 DARK MODE
-              ========================================= */
+                       DARK MODE
+                    ========================================= */
       
       body.dark-mode .settings-card {
         background: #1e293b;
@@ -192,8 +238,8 @@
       }
       
       /* =========================================
-                 MOBILE
-              ========================================= */
+                       MOBILE
+                    ========================================= */
       
       @media (max-width: 600px) {
         .settings-item {
@@ -210,21 +256,26 @@
   </head>
 
   <body>
-    <!--  =========================================
+    <!--   =========================================
          USER NAVBAR
-    =========================================  -->
+    =========================================   -->
 
     {% include 'complaints/User_Folder/navbar.html' %}
 
-    <!--  =========================================
+    <!--   =========================================
          SETTINGS PAGE
-    =========================================  -->
+    =========================================   -->
 
     <div class="settings-wrapper">
       <!-- HEADER -->
 
       <div class="settings-header">
-        <h1>⚙️ User Settings</h1>
+        <h1>
+          <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21h-4v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H3v-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6V3h4v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.1v4H21a1.7 1.7 0 0 0-1.6 1z"></path>
+          </svg>User Settings
+        </h1>
 
         <p>Manage your account and preferences.</p>
       </div>
@@ -232,13 +283,18 @@
       <!-- SETTINGS CARD -->
 
       <div class="settings-card">
-        <!--  =================================
+        <!--   =================================
                  PROFILE
-            ==================================  -->
+            ==================================   -->
 
         <div class="settings-item">
           <div class="settings-left">
-            <div class="settings-icon">👤</div>
+            <div class="settings-icon">
+              <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="8" r="4"></circle>
+                <path d="M4.5 21a7.5 7.5 0 0 1 15 0"></path>
+              </svg>
+            </div>
 
             <div class="settings-text">
               <h3>Profile</h3>
@@ -250,13 +306,19 @@
           <a href="{% url 'profile' %}" class="settings-action">Open</a>
         </div>
 
-        <!--  =================================
+        <!--   =================================
                  CHANGE PASSWORD
-            ==================================  -->
+            ==================================   -->
 
         <div class="settings-item">
           <div class="settings-left">
-            <div class="settings-icon">🔐</div>
+            <div class="settings-icon">
+              <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="8" cy="15" r="4"></circle>
+                <path d="m11 12 9-9"></path>
+                <path d="m17 3 4 4"></path>
+              </svg>
+            </div>
 
             <div class="settings-text">
               <h3>Change Password</h3>
@@ -268,13 +330,18 @@
           <span class="settings-action coming-soon">Coming Soon</span>
         </div>
 
-        <!--  =================================
+        <!--   =================================
                  NOTIFICATIONS
-            ==================================  -->
+            ==================================   -->
 
         <div class="settings-item">
           <div class="settings-left">
-            <div class="settings-icon">🔔</div>
+            <div class="settings-icon">
+              <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
+                <path d="M10 21h4"></path>
+              </svg>
+            </div>
 
             <div class="settings-text">
               <h3>Notifications</h3>
@@ -286,13 +353,18 @@
           <span class="settings-action coming-soon">Coming Soon</span>
         </div>
 
-        <!--  =================================
+        <!--   =================================
                  ADDRESS / LOCATION
-            ==================================  -->
+            ==================================   -->
 
         <div class="settings-item">
           <div class="settings-left">
-            <div class="settings-icon">📍</div>
+            <div class="settings-icon">
+              <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 21s7-5.1 7-12a7 7 0 1 0-14 0c0 6.9 7 12 7 12z"></path>
+                <circle cx="12" cy="9" r="2.5"></circle>
+              </svg>
+            </div>
 
             <div class="settings-text">
               <h3>Address / Location</h3>
@@ -304,13 +376,17 @@
           <span class="settings-action coming-soon">Coming Soon</span>
         </div>
 
-        <!--  =================================
+        <!--   =================================
                  PHONE NUMBER
-            ==================================  -->
+            ==================================   -->
 
         <div class="settings-item">
           <div class="settings-left">
-            <div class="settings-icon">📞</div>
+            <div class="settings-icon">
+              <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7l.5 3a2 2 0 0 1-.6 1.8L7.7 9.8a16 16 0 0 0 6.5 6.5l1.3-1.3a2 2 0 0 1 1.8-.6l3 .5a2 2 0 0 1 1.7 2z"></path>
+              </svg>
+            </div>
 
             <div class="settings-text">
               <h3>Phone Number</h3>
@@ -322,13 +398,17 @@
           <span class="settings-action coming-soon">Coming Soon</span>
         </div>
 
-        <!--  =================================
+        <!--   =================================
                  DARK MODE
-            ==================================  -->
+            ==================================   -->
 
         <div class="settings-item">
           <div class="settings-left">
-            <div class="settings-icon">🌙</div>
+            <div class="settings-icon">
+              <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"></path>
+              </svg>
+            </div>
 
             <div class="settings-text">
               <h3>Dark Mode</h3>
@@ -340,13 +420,20 @@
           <span class="settings-action coming-soon">Sidebar</span>
         </div>
 
-        <!--  =================================
+        <!--   =================================
                  PRIVACY / TERMS
-            ==================================  -->
+            ==================================   -->
 
         <div class="settings-item">
           <div class="settings-left">
-            <div class="settings-icon">📄</div>
+            <div class="settings-icon">
+              <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M6 2h8l4 4v16H6z"></path>
+                <path d="M14 2v5h5"></path>
+                <path d="M9 13h6"></path>
+                <path d="M9 17h6"></path>
+              </svg>
+            </div>
 
             <div class="settings-text">
               <h3>Privacy Policy & Terms</h3>
@@ -358,13 +445,21 @@
           <span class="settings-action coming-soon">Coming Soon</span>
         </div>
 
-        <!--  =================================
+        <!--   =================================
                  DELETE ACCOUNT
-            ==================================  -->
+            ==================================   -->
 
         <div class="settings-item">
           <div class="settings-left">
-            <div class="settings-icon">🗑️</div>
+            <div class="settings-icon">
+              <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M3 6h18"></path>
+                <path d="M8 6V4h8v2"></path>
+                <path d="M19 6l-1 15H6L5 6"></path>
+                <path d="M10 11v6"></path>
+                <path d="M14 11v6"></path>
+              </svg>
+            </div>
 
             <div class="settings-text">
               <h3>Delete Account</h3>
@@ -377,9 +472,9 @@
         </div>
       </div>
 
-      <!--  =====================================
+      <!--   =====================================
              BACK TO HOME
-        ======================================  -->
+        ======================================   -->
 
       <div class="back-box">
         <a href="{% url 'home' %}" class="btn btn-light">← Back to Home</a>

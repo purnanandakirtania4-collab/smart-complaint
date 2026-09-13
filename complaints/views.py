@@ -11,7 +11,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.core.files.storage import default_storage
-from django.db.models import Avg, Count
+from django.db import transaction
+from django.db.models import Avg, Count, Case, When, Value, IntegerField
 from django.utils import timezone
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
@@ -23,16 +24,8 @@ from .models import (
     Rating,
     WorkerSubscription,
     Notification,
-)
-
-from .models import (
-    Complaint,
-    WorkerProfile,
-    UserProfile,
-    Rating,
-    WorkerSubscription,
-    Notification,
     DeviceToken,
+    ChatMessage,
 )
 
 from .firebase_push import send_push_to_user
@@ -484,6 +477,166 @@ def user_logout(request):
 
 
 # =========================================================
+# SMART WORKER ASSIGNMENT HELPERS
+# =========================================================
+
+def _worker_experience_score(experience):
+    experience_scores = {
+        "1 Month": 1,
+        "2 Months": 2,
+        "3 Months": 3,
+        "6 Months": 6,
+        "1 Year": 12,
+        "2 Years": 24,
+        "3 Years": 36,
+        "4 Years": 48,
+        "5 Years": 60,
+        "More than 5 Years": 72,
+    }
+
+    return experience_scores.get(
+        experience,
+        0,
+    )
+
+
+def get_smart_worker():
+    """
+    Choose the best approved worker.
+
+    Priority:
+    1. Fewer Pending / In Progress complaints
+    2. Better average user rating
+    3. More experience
+    4. More resolved complaints
+    """
+
+    workers = (
+        WorkerProfile.objects
+        .filter(
+            is_approved=True,
+            verification_status="Approved",
+        )
+        .select_related("user")
+        .order_by("created_at", "id")
+    )
+
+    best_worker = None
+    best_rank = None
+
+    for worker in workers:
+
+        active_complaints = (
+            Complaint.objects
+            .filter(
+                assigned_worker=worker,
+                status__in=[
+                    "Pending",
+                    "In Progress",
+                ],
+            )
+            .count()
+        )
+
+        rating_data = (
+            Rating.objects
+            .filter(
+                complaint__assigned_worker=worker,
+                rating_type="user_to_worker",
+            )
+            .aggregate(
+                average=Avg("stars"),
+            )
+        )
+
+        average_rating = (
+            rating_data["average"]
+            or 0
+        )
+
+        resolved_complaints = (
+            Complaint.objects
+            .filter(
+                assigned_worker=worker,
+                status="Resolved",
+            )
+            .count()
+        )
+
+        experience_score = (
+            _worker_experience_score(
+                worker.experience
+            )
+        )
+
+        rank = (
+            active_complaints,
+            -float(average_rating),
+            -experience_score,
+            -resolved_complaints,
+            worker.created_at,
+            worker.id,
+        )
+
+        if (
+            best_rank is None
+            or rank < best_rank
+        ):
+            best_rank = rank
+            best_worker = worker
+
+    return best_worker
+
+
+def notify_worker_about_assignment(
+    worker,
+    complaint,
+    smart_assigned=False,
+):
+    if not worker:
+        return
+
+    if smart_assigned:
+        title = "New Smart Assignment"
+        message = (
+            f"{complaint.tracking_id} was automatically assigned to you. "
+            f"Priority: {complaint.priority}."
+        )
+    else:
+        title = "New Complaint Assigned"
+        message = (
+            f"{complaint.tracking_id} was assigned to you. "
+            f"Priority: {complaint.priority}."
+        )
+
+    Notification.objects.create(
+        recipient=worker.user,
+        complaint=complaint,
+        notification_type="assignment",
+        title=title,
+        message=message,
+    )
+
+    try:
+        send_push_to_user(
+            worker.user,
+            title,
+            message,
+            data={
+                "type": "assignment",
+                "complaint_id": str(complaint.id),
+                "tracking_id": complaint.tracking_id,
+            },
+        )
+
+    except Exception as error:
+        print(
+            "Assignment push notification failed:",
+            error,
+        )
+
+
+# =========================================================
 # SUBMIT COMPLAINT
 # =========================================================
 
@@ -492,206 +645,149 @@ def submit_complaint(request):
 
     workers = (
         WorkerProfile.objects
-        .filter(
-            is_approved=True
-        )
-        .select_related(
-            'user'
-        )
-        .order_by(
-            '-created_at'
-        )
+        .filter(is_approved=True)
+        .select_related('user')
+        .order_by('-created_at')
     )
 
     if request.method == 'POST':
 
-        name = request.POST.get(
-            'name',
-            ''
+        name = request.POST.get('name', '').strip()
+        email = request.POST.get('email', '').strip()
+        subject = request.POST.get('subject', '').strip()
+        description = request.POST.get('description', '').strip()
+        priority = request.POST.get('priority', 'Normal').strip()
+        assignment_mode = request.POST.get(
+            'assignment_mode',
+            'smart',
         ).strip()
+        worker_id = request.POST.get('worker', '').strip()
+        latitude = request.POST.get('latitude', '').strip()
+        longitude = request.POST.get('longitude', '').strip()
+        photo = request.FILES.get('photo')
 
-        email = request.POST.get(
-            'email',
-            ''
-        ).strip()
+        valid_priorities = [
+            choice[0]
+            for choice in Complaint.PRIORITY_CHOICES
+        ]
 
-        subject = request.POST.get(
-            'subject',
-            ''
-        ).strip()
-
-        description = request.POST.get(
-            'description',
-            ''
-        ).strip()
-
-        worker_id = request.POST.get(
-            'worker',
-            ''
-        ).strip()
-
-        latitude = request.POST.get(
-            'latitude',
-            ''
-        ).strip()
-
-        longitude = request.POST.get(
-            'longitude',
-            ''
-        ).strip()
-
-        photo = request.FILES.get(
-            'photo'
-        )
-
-        if (
-            not name
-            or not email
-            or not subject
-            or not description
-        ):
-
-            messages.error(
-                request,
-                'Please fill all complaint fields.'
-            )
-
+        if not name or not email or not subject or not description:
+            messages.error(request, 'Please fill all complaint fields.')
             return render(
                 request,
                 'complaints/User_Folder/submit_complaint.html',
-                {
-                    'workers': workers
-                }
+                {'workers': workers},
+            )
+
+        if priority not in valid_priorities:
+            messages.error(request, 'Please select a valid complaint priority.')
+            return render(
+                request,
+                'complaints/User_Folder/submit_complaint.html',
+                {'workers': workers},
+            )
+
+        if assignment_mode not in ['smart', 'manual']:
+            messages.error(request, 'Please select a valid worker assignment option.')
+            return render(
+                request,
+                'complaints/User_Folder/submit_complaint.html',
+                {'workers': workers},
             )
 
         if not latitude or not longitude:
-
-            messages.error(
-                request,
-                'Please select complaint location.'
-            )
-
+            messages.error(request, 'Please select complaint location.')
             return render(
                 request,
                 'complaints/User_Folder/submit_complaint.html',
-                {
-                    'workers': workers
-                }
+                {'workers': workers},
             )
 
         try:
-
-            latitude_value = float(
-                latitude
-            )
-
-            longitude_value = float(
-                longitude
-            )
+            latitude_value = float(latitude)
+            longitude_value = float(longitude)
 
             if not (
                 -90 <= latitude_value <= 90
-                and
-                -180 <= longitude_value <= 180
+                and -180 <= longitude_value <= 180
             ):
-
                 raise ValueError
 
-        except (
-            ValueError,
-            TypeError
-        ):
-
-            messages.error(
-                request,
-                'Invalid complaint location.'
-            )
-
+        except (ValueError, TypeError):
+            messages.error(request, 'Invalid complaint location.')
             return render(
                 request,
                 'complaints/User_Folder/submit_complaint.html',
-                {
-                    'workers': workers
-                }
+                {'workers': workers},
             )
 
         if not photo:
-
-            messages.error(
-                request,
-                'Please upload complaint photo.'
-            )
-
+            messages.error(request, 'Please upload complaint photo.')
             return render(
                 request,
                 'complaints/User_Folder/submit_complaint.html',
-                {
-                    'workers': workers
-                }
+                {'workers': workers},
+            )
+
+        allowed_types = [
+            'image/jpeg',
+            'image/png',
+            'image/webp',
+        ]
+
+        if photo.content_type not in allowed_types:
+            messages.error(request, 'Only JPG, PNG or WEBP images are allowed.')
+            return render(
+                request,
+                'complaints/User_Folder/submit_complaint.html',
+                {'workers': workers},
             )
 
         if photo.size > 5 * 1024 * 1024:
-
-            messages.error(
-                request,
-                'Complaint photo must be less than 5 MB.'
-            )
-
+            messages.error(request, 'Complaint photo must be less than 5 MB.')
             return render(
                 request,
                 'complaints/User_Folder/submit_complaint.html',
-                {
-                    'workers': workers
-                }
-            )
-
-        if not photo.content_type.startswith(
-            'image/'
-        ):
-
-            messages.error(
-                request,
-                'Please upload a valid image.'
-            )
-
-            return render(
-                request,
-                'complaints/User_Folder/submit_complaint.html',
-                {
-                    'workers': workers
-                }
+                {'workers': workers},
             )
 
         selected_worker = None
+        smart_assigned = False
 
-        if worker_id:
+        if assignment_mode == 'smart':
+
+            selected_worker = get_smart_worker()
+            smart_assigned = selected_worker is not None
+
+        else:
+
+            if not worker_id:
+                messages.error(
+                    request,
+                    'Please select a worker or choose Smart Auto Assign.',
+                )
+                return render(
+                    request,
+                    'complaints/User_Folder/submit_complaint.html',
+                    {'workers': workers},
+                )
 
             try:
-
-                selected_worker = (
-                    WorkerProfile.objects.get(
-                        id=worker_id,
-                        is_approved=True
-                    )
+                selected_worker = WorkerProfile.objects.get(
+                    id=worker_id,
+                    is_approved=True,
                 )
 
             except (
                 WorkerProfile.DoesNotExist,
                 ValueError,
-                TypeError
+                TypeError,
             ):
-
-                messages.error(
-                    request,
-                    'Selected worker is not available.'
-                )
-
+                messages.error(request, 'Selected worker is not available.')
                 return render(
                     request,
                     'complaints/User_Folder/submit_complaint.html',
-                    {
-                        'workers': workers
-                    }
+                    {'workers': workers},
                 )
 
         complaint = Complaint.objects.create(
@@ -701,31 +797,60 @@ def submit_complaint(request):
             email=email,
             subject=subject,
             description=description,
+            priority=priority,
             photo=photo,
-            latitude=latitude,
-            longitude=longitude,
+            latitude=latitude_value,
+            longitude=longitude_value,
             status='Pending',
         )
 
-        messages.success(
-            request,
-            'Complaint submitted successfully.'
-        )
+        if selected_worker:
+
+            notify_worker_about_assignment(
+                worker=selected_worker,
+                complaint=complaint,
+                smart_assigned=smart_assigned,
+            )
+
+            if smart_assigned:
+                messages.success(
+                    request,
+                    (
+                        f'Complaint submitted successfully with {priority} priority. '
+                        f'Smart Assignment selected {selected_worker.name} '
+                        f'({selected_worker.worker_id}).'
+                    ),
+                )
+            else:
+                messages.success(
+                    request,
+                    (
+                        f'Complaint submitted successfully with {priority} priority. '
+                        f'{selected_worker.name} ({selected_worker.worker_id}) '
+                        f'was assigned.'
+                    ),
+                )
+
+        else:
+
+            messages.warning(
+                request,
+                (
+                    f'Complaint submitted successfully with {priority} priority, '
+                    'but no approved worker is available right now.'
+                ),
+            )
 
         return render(
             request,
             'complaints/User_Folder/success.html',
-            {
-                'complaint': complaint
-            }
+            {'complaint': complaint},
         )
 
     return render(
         request,
         'complaints/User_Folder/submit_complaint.html',
-        {
-            'workers': workers
-        }
+        {'workers': workers},
     )
 
 
@@ -1330,23 +1455,98 @@ def worker_register(request):
             ''
         ).strip()
 
+        skill_category = request.POST.get(
+            'skill_category',
+            ''
+        ).strip()
+
+        city = request.POST.get(
+            'city',
+            ''
+        ).strip()
+
+        area = request.POST.get(
+            'area',
+            ''
+        ).strip()
+
+        pincode = request.POST.get(
+            'pincode',
+            ''
+        ).strip()
+
+        aadhaar_number = request.POST.get(
+            'aadhaar_number',
+            ''
+        ).replace(' ', '').strip()
+
         password = request.POST.get(
             'password',
             ''
         )
 
-        if (
-            not username
-            or not email
-            or not phone
-            or not name
-            or not experience
-            or not password
-        ):
+        declaration = request.POST.get(
+            'verification_declaration',
+            ''
+        ).strip()
+
+        profile_photo = request.FILES.get(
+            'photo'
+        )
+
+        aadhaar_front_photo = request.FILES.get(
+            'aadhaar_front_photo'
+        )
+
+        aadhaar_back_photo = request.FILES.get(
+            'aadhaar_back_photo'
+        )
+
+        required_text_fields = [
+            username,
+            email,
+            phone,
+            name,
+            experience,
+            skill_category,
+            city,
+            area,
+            pincode,
+            aadhaar_number,
+            password,
+        ]
+
+        if not all(required_text_fields):
 
             messages.error(
                 request,
                 'Please fill all worker registration fields.'
+            )
+
+            return redirect(
+                'worker_register'
+            )
+
+        if declaration != 'yes':
+
+            messages.error(
+                request,
+                'Please confirm that your verification information is genuine.'
+            )
+
+            return redirect(
+                'worker_register'
+            )
+
+        if (
+            not profile_photo
+            or not aadhaar_front_photo
+            or not aadhaar_back_photo
+        ):
+
+            messages.error(
+                request,
+                'Profile photo and both Aadhaar proof images are required.'
             )
 
             return redirect(
@@ -1396,23 +1596,175 @@ def worker_register(request):
                 'worker_register'
             )
 
-        user = User.objects.create_user(
-            username=username,
-            email=email,
-            password=password
+        valid_skills = [
+            choice[0]
+            for choice
+            in WorkerProfile.SKILL_CHOICES
+        ]
+
+        if skill_category not in valid_skills:
+
+            messages.error(
+                request,
+                'Please select a valid skill category.'
+            )
+
+            return redirect(
+                'worker_register'
+            )
+
+        if (
+            not aadhaar_number.isdigit()
+            or len(aadhaar_number) != 12
+        ):
+
+            messages.error(
+                request,
+                'Please enter a valid 12-digit Aadhaar number.'
+            )
+
+            return redirect(
+                'worker_register'
+            )
+
+        if (
+            not pincode.isdigit()
+            or len(pincode) != 6
+        ):
+
+            messages.error(
+                request,
+                'Please enter a valid 6-digit pincode.'
+            )
+
+            return redirect(
+                'worker_register'
+            )
+
+        phone_digits = ''.join(
+            character
+            for character in phone
+            if character.isdigit()
         )
 
-        WorkerProfile.objects.create(
-            user=user,
-            name=name,
-            phone=phone,
-            experience=experience,
-            is_approved=True
-        )
+        if len(phone_digits) < 10 or len(phone_digits) > 15:
+
+            messages.error(
+                request,
+                'Please enter a valid mobile number.'
+            )
+
+            return redirect(
+                'worker_register'
+            )
+
+        if len(password) < 6:
+
+            messages.error(
+                request,
+                'Password must be at least 6 characters.'
+            )
+
+            return redirect(
+                'worker_register'
+            )
+
+        allowed_image_types = [
+            'image/jpeg',
+            'image/png',
+            'image/webp',
+        ]
+
+        verification_images = [
+            (
+                profile_photo,
+                'Profile photo',
+            ),
+            (
+                aadhaar_front_photo,
+                'Aadhaar front photo',
+            ),
+            (
+                aadhaar_back_photo,
+                'Aadhaar back photo',
+            ),
+        ]
+
+        for image_file, image_label in verification_images:
+
+            if image_file.content_type not in allowed_image_types:
+
+                messages.error(
+                    request,
+                    f'{image_label} must be JPG, PNG or WEBP.'
+                )
+
+                return redirect(
+                    'worker_register'
+                )
+
+            if image_file.size > 5 * 1024 * 1024:
+
+                messages.error(
+                    request,
+                    f'{image_label} must be less than 5 MB.'
+                )
+
+                return redirect(
+                    'worker_register'
+                )
+
+        try:
+
+            with transaction.atomic():
+
+                user = User.objects.create_user(
+                    username=username,
+                    email=email,
+                    password=password
+                )
+
+                WorkerProfile.objects.create(
+                    user=user,
+                    name=name,
+                    phone=phone,
+                    experience=experience,
+                    skill_category=skill_category,
+                    photo=profile_photo,
+                    city=city,
+                    area=area,
+                    pincode=pincode,
+                    aadhaar_last4=aadhaar_number[-4:],
+                    aadhaar_front_photo=aadhaar_front_photo,
+                    aadhaar_back_photo=aadhaar_back_photo,
+                    verification_status='Pending',
+                    is_approved=False,
+                    probation_completed=False,
+                )
+
+        except Exception as error:
+
+            print(
+                'WORKER REGISTRATION ERROR:',
+                error
+            )
+
+            messages.error(
+                request,
+                'Unable to create worker registration. Please try again.'
+            )
+
+            return redirect(
+                'worker_register'
+            )
 
         messages.success(
             request,
-            'Worker registration successful. Please login.'
+            (
+                'Worker registration submitted successfully. '
+                'Your Aadhaar proof and worker details are now pending admin verification. '
+                'You can login only after approval.'
+            )
         )
 
         return redirect(
@@ -1424,7 +1776,10 @@ def worker_register(request):
         'complaints/Worker_Folder/worker_register.html',
         {
             'experience_choices':
-                WorkerProfile.EXPERIENCE_CHOICES
+                WorkerProfile.EXPERIENCE_CHOICES,
+
+            'skill_choices':
+                WorkerProfile.SKILL_CHOICES,
         }
     )
 
@@ -1511,10 +1866,42 @@ def worker_login(request):
 
         if not worker.is_approved:
 
-            messages.error(
-                request,
-                'Your worker account is not approved yet.'
-            )
+            if worker.verification_status == 'Pending':
+
+                messages.info(
+                    request,
+                    (
+                        'Your worker registration is still under verification. '
+                        'You can login after admin approval.'
+                    )
+                )
+
+            elif worker.verification_status == 'Rejected':
+
+                messages.error(
+                    request,
+                    (
+                        'Your worker verification was rejected. '
+                        'Please contact support or the administrator for details.'
+                    )
+                )
+
+            elif worker.verification_status == 'Suspended':
+
+                messages.error(
+                    request,
+                    (
+                        'Your worker account is suspended. '
+                        'Please contact the administrator.'
+                    )
+                )
+
+            else:
+
+                messages.error(
+                    request,
+                    'Your worker account is not approved yet.'
+                )
 
             return redirect(
                 'worker_login'
@@ -1543,10 +1930,7 @@ def worker_login(request):
 def worker_dashboard(request):
 
     try:
-
-        worker = (
-            request.user.worker_profile
-        )
+        worker = request.user.worker_profile
 
     except WorkerProfile.DoesNotExist:
 
@@ -1555,9 +1939,7 @@ def worker_dashboard(request):
             'Worker access required.'
         )
 
-        logout(
-            request
-        )
+        logout(request)
 
         return redirect(
             'worker_login'
@@ -1570,9 +1952,7 @@ def worker_dashboard(request):
             'Your worker account is not approved.'
         )
 
-        logout(
-            request
-        )
+        logout(request)
 
         return redirect(
             'worker_login'
@@ -1602,12 +1982,9 @@ def worker_dashboard(request):
             )
 
         try:
-
-            complaint = (
-                Complaint.objects.get(
-                    id=complaint_id,
-                    assigned_worker=worker
-                )
+            complaint = Complaint.objects.get(
+                id=complaint_id,
+                assigned_worker=worker
             )
 
         except (
@@ -1619,6 +1996,96 @@ def worker_dashboard(request):
             messages.error(
                 request,
                 'You cannot update this complaint.'
+            )
+
+            return redirect(
+                'worker_dashboard'
+            )
+
+        # =====================================================
+        # UPLOAD / REPLACE AFTER PHOTO
+        # =====================================================
+
+        if action == 'upload_after_photo':
+
+            if complaint.status == 'Resolved':
+
+                messages.error(
+                    request,
+                    'Resolved complaint photo cannot be changed.'
+                )
+
+                return redirect(
+                    'worker_dashboard'
+                )
+
+            after_photo = request.FILES.get(
+                'after_photo'
+            )
+
+            if not after_photo:
+
+                messages.error(
+                    request,
+                    'Please select an after photo.'
+                )
+
+                return redirect(
+                    'worker_dashboard'
+                )
+
+            allowed_types = [
+                'image/jpeg',
+                'image/png',
+                'image/webp',
+            ]
+
+            if after_photo.content_type not in allowed_types:
+
+                messages.error(
+                    request,
+                    'Only JPG, PNG or WEBP images are allowed.'
+                )
+
+                return redirect(
+                    'worker_dashboard'
+                )
+
+            if after_photo.size > 5 * 1024 * 1024:
+
+                messages.error(
+                    request,
+                    'After photo must be less than 5 MB.'
+                )
+
+                return redirect(
+                    'worker_dashboard'
+                )
+
+            if complaint.after_photo:
+
+                old_photo = complaint.after_photo.name
+
+                if (
+                    old_photo
+                    and default_storage.exists(old_photo)
+                ):
+                    default_storage.delete(old_photo)
+
+            complaint.after_photo = after_photo
+            complaint.after_photo_uploaded_at = timezone.now()
+
+            complaint.save(
+                update_fields=[
+                    'after_photo',
+                    'after_photo_uploaded_at',
+                    'updated_at',
+                ]
+            )
+
+            messages.success(
+                request,
+                'After photo uploaded successfully.'
             )
 
             return redirect(
@@ -1641,6 +2108,17 @@ def worker_dashboard(request):
                 messages.info(
                     request,
                     'This complaint is already resolved.'
+                )
+
+                return redirect(
+                    'worker_dashboard'
+                )
+
+            if not complaint.after_photo:
+
+                messages.error(
+                    request,
+                    'Please upload the After Photo before resolving the complaint.'
                 )
 
                 return redirect(
@@ -1717,6 +2195,28 @@ def worker_dashboard(request):
             complaint.status = 'Resolved'
             complaint.save()
 
+            resolved_count = (
+                Complaint.objects
+                .filter(
+                    assigned_worker=worker,
+                    status='Resolved'
+                )
+                .count()
+            )
+
+            if (
+                not worker.probation_completed
+                and resolved_count >= worker.probation_target
+            ):
+
+                worker.probation_completed = True
+
+                worker.save(
+                    update_fields=[
+                        'probation_completed',
+                    ]
+                )
+
             Notification.objects.create(
                 recipient=complaint.user,
                 complaint=complaint,
@@ -1726,20 +2226,23 @@ def worker_dashboard(request):
                     f'Your complaint {complaint.tracking_id} '
                     f'has been successfully resolved.'
                 ),
-                
             )
-            
+
             send_push_to_user(
                 complaint.user,
-                "Complaint Resolved",
-                f"Your complaint {complaint.tracking_id} has been successfully resolved."
+                'Complaint Resolved',
+                (
+                    f'Your complaint {complaint.tracking_id} '
+                    f'has been successfully resolved.'
+                )
             )
 
             messages.success(
                 request,
                 (
                     f'OTP verified successfully. '
-                    f'Complaint {complaint.tracking_id} is now Resolved.'
+                    f'Complaint {complaint.tracking_id} '
+                    f'is now Resolved.'
                 )
             )
 
@@ -1748,110 +2251,167 @@ def worker_dashboard(request):
             )
 
         # =====================================================
-        # NORMAL STATUS UPDATE
+        # STATUS UPDATE
         # =====================================================
 
-        new_status = request.POST.get(
-            'status',
-            ''
-        ).strip()
+        if action == 'status_update':
 
-        valid_statuses = [
-            'Pending',
-            'In Progress',
-            'Resolved',
-        ]
+            new_status = request.POST.get(
+                'status',
+                ''
+            ).strip()
 
-        if new_status not in valid_statuses:
+            valid_statuses = [
+                'Pending',
+                'In Progress',
+                'Resolved',
+            ]
 
-            messages.error(
-                request,
-                'Invalid complaint status.'
+            if new_status not in valid_statuses:
+
+                messages.error(
+                    request,
+                    'Invalid complaint status.'
+                )
+
+                return redirect(
+                    'worker_dashboard'
+                )
+
+            if complaint.status == new_status:
+
+                messages.info(
+                    request,
+                    f'Complaint is already {new_status}.'
+                )
+
+                return redirect(
+                    'worker_dashboard'
+                )
+
+            # =================================================
+            # RESOLVED REQUIRES AFTER PHOTO + USER OTP
+            # =================================================
+
+            if new_status == 'Resolved':
+
+                if not complaint.after_photo:
+
+                    messages.error(
+                        request,
+                        'Please upload the After Photo before selecting Resolved.'
+                    )
+
+                    return redirect(
+                        'worker_dashboard'
+                    )
+
+                otp_is_active = False
+
+                if (
+                    complaint.completion_otp
+                    and complaint.otp_created_at
+                    and not complaint.otp_verified
+                ):
+
+                    otp_expiry_time = (
+                        complaint.otp_created_at
+                        + timedelta(minutes=10)
+                    )
+
+                    if timezone.now() <= otp_expiry_time:
+                        otp_is_active = True
+
+                if not otp_is_active:
+
+                    complaint.completion_otp = str(
+                        100000
+                        + secrets.randbelow(900000)
+                    )
+
+                    complaint.otp_created_at = timezone.now()
+                    complaint.otp_verified = False
+
+                    complaint.save(
+                        update_fields=[
+                            'completion_otp',
+                            'otp_created_at',
+                            'otp_verified',
+                            'updated_at',
+                        ]
+                    )
+
+                    Notification.objects.create(
+                        recipient=complaint.user,
+                        complaint=complaint,
+                        notification_type='otp',
+                        title='Completion OTP Ready',
+                        message=(
+                            f'Worker requested completion for complaint '
+                            f'{complaint.tracking_id}. '
+                            f'Open My Complaints to view the OTP. '
+                            f'The OTP is valid for 10 minutes.'
+                        ),
+                    )
+
+                    send_push_to_user(
+                        complaint.user,
+                        'Completion OTP Ready',
+                        (
+                            f'Completion OTP for complaint '
+                            f'{complaint.tracking_id} is ready. '
+                            f'Open My Complaints to view the OTP.'
+                        )
+                    )
+
+                messages.info(
+                    request,
+                    (
+                        'Completion OTP is ready. '
+                        'Ask the user for the OTP and enter it on the dashboard. '
+                        'The OTP is valid for 10 minutes.'
+                    )
+                )
+
+                return redirect(
+                    'worker_dashboard'
+                )
+
+            # =================================================
+            # PENDING / IN PROGRESS
+            # =================================================
+
+            complaint.status = new_status
+            complaint.completion_otp = ''
+            complaint.otp_created_at = None
+            complaint.otp_verified = False
+            complaint.save()
+
+            Notification.objects.create(
+                recipient=complaint.user,
+                complaint=complaint,
+                notification_type='status_update',
+                title='Complaint Status Updated',
+                message=(
+                    f'Your complaint {complaint.tracking_id} '
+                    f'status is now {new_status}.'
+                ),
             )
 
-            return redirect(
-                'worker_dashboard'
+            send_push_to_user(
+                complaint.user,
+                'Complaint Status Updated',
+                (
+                    f'Your complaint {complaint.tracking_id} '
+                    f'status is now {new_status}.'
+                )
             )
 
-        if complaint.status == new_status:
-
-            messages.info(
-                request,
-                f'Complaint is already {new_status}.'
-            )
-
-            return redirect(
-                'worker_dashboard'
-            )
-
-        # =====================================================
-        # RESOLVED REQUIRES USER OTP
-        # =====================================================
-
-        if new_status == 'Resolved':
-
-            otp_is_active = False
-
-            if (
-                complaint.completion_otp
-                and complaint.otp_created_at
-                and not complaint.otp_verified
-            ):
-
-                otp_expiry_time = (
-                    complaint.otp_created_at
-                    + timedelta(minutes=10)
-                )
-
-                if timezone.now() <= otp_expiry_time:
-                    otp_is_active = True
-
-            if not otp_is_active:
-
-                complaint.completion_otp = str(
-                    100000
-                    + secrets.randbelow(900000)
-                )
-
-                complaint.otp_created_at = (
-                    timezone.now()
-                )
-
-                complaint.otp_verified = False
-
-                complaint.save(
-                    update_fields=[
-                        'completion_otp',
-                        'otp_created_at',
-                        'otp_verified',
-                        'updated_at',
-                    ]
-                )
-
-                Notification.objects.create(
-                    recipient=complaint.user,
-                    complaint=complaint,
-                    notification_type='otp',
-                    title='Completion OTP Ready',
-                    message=(
-                        f'Worker requested completion for complaint '
-                        f'{complaint.tracking_id}. '
-                        f'Open My Complaints to view the OTP. '
-                        f'The OTP is valid for 10 minutes.'
-                    ),
-                )
-                send_push_to_user(
-                    complaint.user,
-                    "Completion OTP Ready",
-                    f"Completion OTP for complaint {complaint.tracking_id} is ready. Open My Complaints to view the OTP."
-                )
-
-            messages.info(
+            messages.success(
                 request,
                 (
-                    'Completion OTP is ready. '
-                    'Ask the user for the OTP and enter it on the dashboard. '
-                    'The OTP is valid for 10 minutes.'
+                    f'Complaint {complaint.tracking_id} '
+                    f'status updated to {new_status}.'
                 )
             )
 
@@ -1859,35 +2419,9 @@ def worker_dashboard(request):
                 'worker_dashboard'
             )
 
-        # Moving back to Pending / In Progress invalidates any old OTP.
-        complaint.status = new_status
-        complaint.completion_otp = ''
-        complaint.otp_created_at = None
-        complaint.otp_verified = False
-        complaint.save()
-
-        Notification.objects.create(
-            recipient=complaint.user,
-            complaint=complaint,
-            notification_type='status_update',
-            title='Complaint Status Updated',
-            message=(
-                f'Your complaint {complaint.tracking_id} '
-                f'status is now {new_status}.'
-            ),
-        )
-        send_push_to_user(
-            complaint.user,
-            "Complaint Status Updated",
-            f"Your complaint {complaint.tracking_id} status is now {new_status}."
-        )
-
-        messages.success(
+        messages.error(
             request,
-            (
-                f'Complaint {complaint.tracking_id} '
-                f'status updated to {new_status}.'
-            )
+            'Invalid action.'
         )
 
         return redirect(
@@ -1902,7 +2436,16 @@ def worker_dashboard(request):
         .select_related(
             'user'
         )
+        .annotate(
+            priority_rank=Case(
+                When(priority='Emergency', then=Value(0)),
+                When(priority='High', then=Value(1)),
+                default=Value(2),
+                output_field=IntegerField(),
+            )
+        )
         .order_by(
+            'priority_rank',
             '-created_at'
         )
     )
@@ -2009,6 +2552,50 @@ def worker_settings(request):
         {
             'worker': worker,
             'subscription': subscription,
+        }
+    )
+
+
+# =========================================================
+# WORKER APP TERMS & CONDITIONS - READ ONLY
+# =========================================================
+
+@login_required(login_url='worker_login')
+def worker_app_terms(request):
+
+    try:
+
+        worker = (
+            request.user.worker_profile
+        )
+
+    except WorkerProfile.DoesNotExist:
+
+        messages.error(
+            request,
+            'Worker access required.'
+        )
+
+        return redirect(
+            'worker_login'
+        )
+
+    if not worker.is_approved:
+
+        messages.error(
+            request,
+            'Your worker account is not approved.'
+        )
+
+        return redirect(
+            'worker_login'
+        )
+
+    return render(
+        request,
+        'complaints/Worker_Folder/app_terms_conditions.html',
+        {
+            'worker': worker,
         }
     )
 
@@ -2153,10 +2740,6 @@ def worker_subscription_payment(request):
             'terms_conditions'
         )
 
-    # =====================================================
-    # CREATE RAZORPAY SUBSCRIPTION
-    # =====================================================
-
     if request.method == 'POST':
 
         razorpay_key_id = getattr(
@@ -2200,10 +2783,6 @@ def worker_subscription_payment(request):
                     razorpay_key_secret
                 )
             )
-
-            # =================================================
-            # REUSE EXISTING SUBSCRIPTION
-            # =================================================
 
             if (
                 subscription
@@ -2251,10 +2830,6 @@ def worker_subscription_payment(request):
                 except Exception:
                     pass
 
-            # =================================================
-            # ₹149 BILLING STARTS AFTER ONE MONTH
-            # =================================================
-
             now = (
                 timezone.now()
             )
@@ -2269,10 +2844,6 @@ def worker_subscription_payment(request):
                 first_regular_billing_date
                 .timestamp()
             )
-
-            # =================================================
-            # CREATE RAZORPAY SUBSCRIPTION
-            # =================================================
 
             razorpay_subscription = (
                 client.subscription.create(
@@ -2349,10 +2920,6 @@ def worker_subscription_payment(request):
                     'worker_subscription_payment'
                 )
 
-            # =================================================
-            # SAVE SUBSCRIPTION
-            # =================================================
-
             subscription.razorpay_subscription_id = (
                 razorpay_subscription_id
             )
@@ -2370,10 +2937,6 @@ def worker_subscription_payment(request):
             )
 
             subscription.save()
-
-            # =================================================
-            # OPEN RAZORPAY PAYMENT PAGE
-            # =================================================
 
             if razorpay_short_url:
 
@@ -2662,5 +3225,414 @@ def save_device_token(request):
         {
             'success': True,
             'role': role,
+        }
+    )
+
+
+# =========================================================
+# USER + WORKER COMPLAINT CHAT
+# =========================================================
+
+@login_required(login_url='login')
+def complaint_chat(request, complaint_id):
+
+    try:
+
+        complaint = (
+            Complaint.objects
+            .select_related(
+                'user',
+                'assigned_worker',
+                'assigned_worker__user',
+            )
+            .get(
+                id=complaint_id
+            )
+        )
+
+    except Complaint.DoesNotExist:
+
+        messages.error(
+            request,
+            'Complaint not found.'
+        )
+
+        return redirect(
+            'home'
+        )
+
+    # =====================================================
+    # CHAT PERMISSION
+    # =====================================================
+
+    is_complaint_user = (
+        complaint.user_id
+        == request.user.id
+    )
+
+    is_assigned_worker = (
+        complaint.assigned_worker
+        and
+        complaint.assigned_worker.user_id
+        == request.user.id
+    )
+
+    if (
+        not is_complaint_user
+        and not is_assigned_worker
+    ):
+
+        messages.error(
+            request,
+            'You do not have permission to open this chat.'
+        )
+
+        return redirect(
+            'home'
+        )
+
+    # =====================================================
+    # POST ACTIONS
+    # =====================================================
+
+    if request.method == 'POST':
+
+        action = request.POST.get(
+            'action',
+            'send'
+        ).strip()
+
+        # =================================================
+        # SEND MESSAGE / IMAGE
+        # =================================================
+
+        if action == 'send':
+
+            message_text = request.POST.get(
+                'message',
+                ''
+            ).strip()
+
+            chat_image = request.FILES.get(
+                'image'
+            )
+
+            if (
+                not message_text
+                and not chat_image
+            ):
+
+                messages.error(
+                    request,
+                    'Please type a message or select an image.'
+                )
+
+                return redirect(
+                    'complaint_chat',
+                    complaint_id=complaint.id
+                )
+
+            if len(message_text) > 2000:
+
+                messages.error(
+                    request,
+                    'Message cannot be longer than 2000 characters.'
+                )
+
+                return redirect(
+                    'complaint_chat',
+                    complaint_id=complaint.id
+                )
+
+            # =================================================
+            # IMAGE VALIDATION
+            # =================================================
+
+            if chat_image:
+
+                allowed_types = [
+                    'image/jpeg',
+                    'image/png',
+                    'image/webp',
+                    'image/gif',
+                ]
+
+                if (
+                    chat_image.content_type
+                    not in allowed_types
+                ):
+
+                    messages.error(
+                        request,
+                        'Only JPG, PNG, WEBP or GIF images are allowed.'
+                    )
+
+                    return redirect(
+                        'complaint_chat',
+                        complaint_id=complaint.id
+                    )
+
+                if (
+                    chat_image.size
+                    > 5 * 1024 * 1024
+                ):
+
+                    messages.error(
+                        request,
+                        'Image size cannot be more than 5 MB.'
+                    )
+
+                    return redirect(
+                        'complaint_chat',
+                        complaint_id=complaint.id
+                    )
+
+            ChatMessage.objects.create(
+                complaint=complaint,
+                sender=request.user,
+                message=message_text,
+                image=chat_image,
+            )
+
+            return redirect(
+                'complaint_chat',
+                complaint_id=complaint.id
+            )
+
+        # =================================================
+        # EDIT OWN MESSAGE - ONLY ONE TIME
+        # =================================================
+
+        elif action == 'edit':
+
+            message_id = request.POST.get(
+                'message_id',
+                ''
+            ).strip()
+
+            new_message = request.POST.get(
+                'message',
+                ''
+            ).strip()
+
+            try:
+
+                chat_message = (
+                    ChatMessage.objects.get(
+                        id=message_id,
+                        complaint=complaint,
+                        sender=request.user,
+                    )
+                )
+
+            except (
+                ChatMessage.DoesNotExist,
+                ValueError,
+                TypeError
+            ):
+
+                messages.error(
+                    request,
+                    'Message not found.'
+                )
+
+                return redirect(
+                    'complaint_chat',
+                    complaint_id=complaint.id
+                )
+
+            if (
+                chat_message.edit_count
+                >= 1
+            ):
+
+                messages.error(
+                    request,
+                    'This message has already been edited once.'
+                )
+
+                return redirect(
+                    'complaint_chat',
+                    complaint_id=complaint.id
+                )
+
+            if not new_message:
+
+                messages.error(
+                    request,
+                    'Edited message cannot be empty.'
+                )
+
+                return redirect(
+                    'complaint_chat',
+                    complaint_id=complaint.id
+                )
+
+            if len(new_message) > 2000:
+
+                messages.error(
+                    request,
+                    'Message cannot be longer than 2000 characters.'
+                )
+
+                return redirect(
+                    'complaint_chat',
+                    complaint_id=complaint.id
+                )
+
+            chat_message.message = (
+                new_message
+            )
+
+            chat_message.is_edited = True
+
+            chat_message.edit_count += 1
+
+            chat_message.edited_at = (
+                timezone.now()
+            )
+
+            chat_message.save(
+                update_fields=[
+                    'message',
+                    'is_edited',
+                    'edit_count',
+                    'edited_at',
+                ]
+            )
+
+            messages.success(
+                request,
+                'Message edited successfully.'
+            )
+
+            return redirect(
+                'complaint_chat',
+                complaint_id=complaint.id
+            )
+
+        # =================================================
+        # DELETE OWN MESSAGE
+        # =================================================
+
+        elif action == 'delete':
+
+            message_id = request.POST.get(
+                'message_id',
+                ''
+            ).strip()
+
+            try:
+
+                chat_message = (
+                    ChatMessage.objects.get(
+                        id=message_id,
+                        complaint=complaint,
+                        sender=request.user,
+                    )
+                )
+
+            except (
+                ChatMessage.DoesNotExist,
+                ValueError,
+                TypeError
+            ):
+
+                messages.error(
+                    request,
+                    'Message not found.'
+                )
+
+                return redirect(
+                    'complaint_chat',
+                    complaint_id=complaint.id
+                )
+
+            # Image file bhi storage se delete hoga.
+            if chat_message.image:
+
+                image_name = (
+                    chat_message.image.name
+                )
+
+                if (
+                    image_name
+                    and default_storage.exists(
+                        image_name
+                    )
+                ):
+
+                    default_storage.delete(
+                        image_name
+                    )
+
+            chat_message.delete()
+
+            messages.success(
+                request,
+                'Message deleted successfully.'
+            )
+
+            return redirect(
+                'complaint_chat',
+                complaint_id=complaint.id
+            )
+
+        # =================================================
+        # INVALID ACTION
+        # =================================================
+
+        else:
+
+            messages.error(
+                request,
+                'Invalid chat action.'
+            )
+
+            return redirect(
+                'complaint_chat',
+                complaint_id=complaint.id
+            )
+
+    # =====================================================
+    # GET CHAT MESSAGES
+    # =====================================================
+
+    chat_messages = (
+        ChatMessage.objects
+        .filter(
+            complaint=complaint
+        )
+        .select_related(
+            'sender'
+        )
+        .order_by(
+            'created_at'
+        )
+    )
+
+    # =====================================================
+    # MARK RECEIVED MESSAGES AS READ
+    # =====================================================
+
+    ChatMessage.objects.filter(
+        complaint=complaint,
+        is_read=False,
+    ).exclude(
+        sender=request.user
+    ).update(
+        is_read=True
+    )
+
+    return render(
+        request,
+        'complaints/chat.html',
+        {
+            'complaint': complaint,
+            'chat_messages': chat_messages,
+            'is_complaint_user':
+                is_complaint_user,
+            'is_assigned_worker':
+                is_assigned_worker,
         }
     )

@@ -16,20 +16,28 @@
       
       body {
         margin: 0;
-      
         font-family: Arial, Helvetica, sans-serif;
-      
         background: #f8fafc;
         color: #0f172a;
-      
         min-height: 100vh;
+      }
+      
+      .ui-icon {
+        width: 21px;
+        height: 21px;
+        display: inline-block;
+        vertical-align: middle;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        flex-shrink: 0;
       }
       
       .notification-page {
         width: min(900px, calc(100% - 28px));
-      
         margin: 0 auto;
-      
         padding: 90px 0 50px;
       }
       
@@ -38,53 +46,51 @@
         align-items: center;
         justify-content: space-between;
         gap: 16px;
-      
         margin-bottom: 22px;
       }
       
       .notification-title-box h1 {
         margin: 0;
-      
         color: #172554;
-      
         font-size: clamp(26px, 4vw, 38px);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      
+      .notification-title-box h1 .ui-icon {
+        width: 30px;
+        height: 30px;
       }
       
       .notification-title-box p {
         margin: 8px 0 0;
-      
         color: #64748b;
-      
         line-height: 1.6;
       }
       
       .mark-read-button {
         border: none;
         border-radius: 12px;
-      
         padding: 12px 16px;
-      
         background: #2563eb;
         color: #ffffff;
-      
         font-size: 14px;
         font-weight: 800;
-      
         cursor: pointer;
-      
         box-shadow: 0 6px 18px rgba(37, 99, 235, 0.22);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
       }
       
       .notification-summary {
         margin-bottom: 20px;
-      
         padding: 14px 16px;
-      
         border-radius: 14px;
-      
         background: #eef2ff;
         color: #3730a3;
-      
         font-weight: 700;
       }
       
@@ -94,14 +100,10 @@
       
       .message-item {
         padding: 12px 14px;
-      
         margin-bottom: 10px;
-      
         border-radius: 12px;
-      
         background: #dcfce7;
         color: #166534;
-      
         font-weight: 700;
       }
       
@@ -113,19 +115,14 @@
       
       .notification-card {
         padding: 18px;
-      
         border: 1px solid #e2e8f0;
-      
         border-radius: 16px;
-      
         background: #ffffff;
-      
         box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
       }
       
       .notification-card.unread {
         border-left: 5px solid #2563eb;
-      
         background: #f8fbff;
       }
       
@@ -138,34 +135,26 @@
       
       .notification-title {
         margin: 0;
-      
         color: #172554;
-      
         font-size: 17px;
         font-weight: 800;
       }
       
       .notification-time {
         color: #94a3b8;
-      
         font-size: 12px;
-      
         white-space: nowrap;
       }
       
       .notification-message {
         margin: 10px 0 0;
-      
         color: #475569;
-      
         line-height: 1.65;
       }
       
       .notification-tracking {
         margin-top: 12px;
-      
         color: #64748b;
-      
         font-size: 13px;
         font-weight: 700;
       }
@@ -174,61 +163,58 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-      
         margin-left: 8px;
-      
         padding: 4px 8px;
-      
         border-radius: 999px;
-      
         background: #dbeafe;
         color: #1d4ed8;
-      
         font-size: 11px;
         font-weight: 800;
       }
       
       .empty-box {
         padding: 40px 20px;
-      
         border: 1px dashed #cbd5e1;
-      
         border-radius: 18px;
-      
         background: #ffffff;
-      
         text-align: center;
       }
       
       .empty-icon {
-        font-size: 44px;
+        width: 68px;
+        height: 68px;
+        margin: 0 auto;
+        display: grid;
+        place-items: center;
+        border-radius: 20px;
+        background: #eef2ff;
+        color: #4338ca;
+      }
+      
+      .empty-icon .ui-icon {
+        width: 34px;
+        height: 34px;
       }
       
       .empty-box h2 {
         margin: 14px 0 8px;
-      
         color: #172554;
       }
       
       .empty-box p {
         margin: 0;
-      
         color: #64748b;
       }
       
       .back-link {
         display: inline-flex;
-      
+        align-items: center;
+        gap: 7px;
         margin-top: 22px;
-      
         color: #2563eb;
-      
         font-weight: 800;
-      
         text-decoration: none;
       }
-      
-      /* DARK MODE */
       
       body.dark-mode {
         background: #0f172a !important;
@@ -251,7 +237,6 @@
       body.dark-mode .notification-card,
       body.dark-mode .empty-box {
         background: #111827;
-      
         border-color: #334155;
       }
       
@@ -267,7 +252,6 @@
       @media (max-width: 650px) {
         .notification-page {
           width: min(100% - 20px, 900px);
-      
           padding-top: 82px;
         }
       
@@ -294,7 +278,12 @@
     <main class="notification-page">
       <div class="notification-header">
         <div class="notification-title-box">
-          <h1>🔔 Notifications</h1>
+          <h1>
+            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
+              <path d="M10 21h4"></path>
+            </svg>Notifications
+          </h1>
 
           <p>Complaint updates aur completion alerts yahan milenge.</p>
         </div>
@@ -303,7 +292,12 @@
           <form method="post">
             {% csrf_token %}
 
-            <button type="submit" class="mark-read-button">✓ Mark All as Read</button>
+            <button type="submit" class="mark-read-button">
+              <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="9"></circle>
+                <path d="m8 12 2.5 2.5L16 9"></path>
+              </svg>Mark All as Read
+            </button>
           </form>
         {% endif %}
       </div>
@@ -323,12 +317,7 @@
       {% if notifications %}
         <div class="notification-list">
           {% for notification in notifications %}
-            <div class="
-                            notification-card
-                            {% if not notification.is_read %}
-                                unread
-                            {% endif %}
-                        ">
+            <div class="notification-card {% if not notification.is_read %}unread{% endif %}">
               <div class="notification-card-top">
                 <div>
                   <h2 class="notification-title">
@@ -346,15 +335,21 @@
               <p class="notification-message">{{ notification.message }}</p>
 
               {% if notification.complaint %}
-                <div class="notification-tracking">Tracking ID:
-                  {{ notification.complaint.tracking_id }}</div>
+                <div class="notification-tracking">Tracking ID: {{ notification.complaint.tracking_id }}</div>
               {% endif %}
             </div>
           {% endfor %}
         </div>
       {% else %}
         <div class="empty-box">
-          <div class="empty-icon">🔕</div>
+          <div class="empty-icon">
+            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M13.7 21h-3.4"></path>
+              <path d="M18 8a6 6 0 0 0-9.7-4.7"></path>
+              <path d="M6 8c0 7-3 7-3 9h14"></path>
+              <path d="m3 3 18 18"></path>
+            </svg>
+          </div>
 
           <h2>No notifications yet</h2>
 
@@ -362,7 +357,12 @@
         </div>
       {% endif %}
 
-      <a href="{% url 'home' %}" class="back-link">← Back to Home</a>
+      <a href="{% url 'home' %}" class="back-link">
+        <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m15 18-6-6 6-6"></path>
+          <path d="M9 12h11"></path>
+        </svg>Back to Home
+      </a>
     </main>
   </body>
 </html>

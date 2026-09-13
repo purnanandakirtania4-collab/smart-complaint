@@ -5,49 +5,47 @@
 ========================================= -->
 
 <style>
-    /* MENU BUTTON */
+    .sc-svg-icon {
+        width: 22px;
+        height: 22px;
+        display: block;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
 
     .sc-menu-button {
         position: fixed;
         top: 16px;
         left: 16px;
-
         width: 46px;
         height: 46px;
-
         border: none;
         border-radius: 13px;
-
         background: #ffffff;
         color: #1e3a8a;
-
-        font-size: 25px;
-        font-weight: bold;
-
         display: flex;
         align-items: center;
         justify-content: center;
-
         cursor: pointer;
-
         z-index: 950;
-
         box-shadow: 0 5px 18px rgba(15, 23, 42, 0.18);
     }
 
-    /* DARK OVERLAY */
+    .sc-menu-button .sc-svg-icon {
+        width: 25px;
+        height: 25px;
+    }
 
     .sc-sidebar-overlay {
         position: fixed;
         inset: 0;
-
         background: rgba(15, 23, 42, 0.50);
-
         opacity: 0;
         visibility: hidden;
-
         transition: 0.3s ease;
-
         z-index: 998;
     }
 
@@ -56,34 +54,20 @@
         visibility: visible;
     }
 
-    /* SIDEBAR */
-
     .sc-sidebar {
         position: fixed;
-
         top: 0;
         left: 0;
-
         width: 285px;
         max-width: 85vw;
-
         height: 100vh;
-
         background: #ffffff;
-
         transform: translateX(-105%);
-
-        transition:
-            transform 0.32s ease,
-            background 0.3s ease;
-
+        transition: transform 0.32s ease, background 0.3s ease;
         z-index: 999;
-
         display: flex;
         flex-direction: column;
-
         box-shadow: 10px 0 30px rgba(15, 23, 42, 0.20);
-
         overflow-y: auto;
     }
 
@@ -91,15 +75,11 @@
         transform: translateX(0);
     }
 
-    /* SIDEBAR HEADER */
-
     .sc-sidebar-header {
         padding: 22px 18px;
-
         display: flex;
         align-items: center;
         justify-content: space-between;
-
         border-bottom: 1px solid #e2e8f0;
     }
 
@@ -107,9 +87,7 @@
         display: flex;
         align-items: center;
         gap: 10px;
-
         color: #172554;
-
         font-size: 19px;
         font-weight: 800;
     }
@@ -117,72 +95,64 @@
     .sc-sidebar-logo {
         width: 40px;
         height: 40px;
-
         border-radius: 12px;
-
         display: flex;
         align-items: center;
         justify-content: center;
+        background: linear-gradient(135deg, #4f46e5, #2563eb);
+        color: #ffffff;
+    }
 
-        background: linear-gradient(
-            135deg,
-            #4f46e5,
-            #2563eb
-        );
-
-        color: white;
-
-        font-size: 20px;
+    .sc-sidebar-logo .sc-svg-icon {
+        width: 23px;
+        height: 23px;
     }
 
     .sc-close-button {
         width: 36px;
         height: 36px;
-
         border: none;
         border-radius: 10px;
-
         background: #f1f5f9;
-
         color: #475569;
-
-        font-size: 22px;
-
+        display: flex;
+        align-items: center;
+        justify-content: center;
         cursor: pointer;
     }
 
-    /* USER INFO */
+    .sc-close-button .sc-svg-icon {
+        width: 20px;
+        height: 20px;
+    }
 
     .sc-user-box {
         padding: 20px 18px;
-
         display: flex;
         align-items: center;
         gap: 12px;
-
         border-bottom: 1px solid #f1f5f9;
     }
 
     .sc-avatar {
         width: 48px;
         height: 48px;
-
         border-radius: 50%;
-
         display: flex;
         align-items: center;
         justify-content: center;
-
         background: #dbeafe;
+        color: #1d4ed8;
+    }
 
-        font-size: 22px;
+    .sc-avatar .sc-svg-icon {
+        width: 25px;
+        height: 25px;
     }
 
     .sc-user-name {
         color: #172554;
-
         font-weight: 800;
-
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -190,59 +160,49 @@
 
     .sc-user-type {
         margin-top: 3px;
-
         color: #64748b;
-
         font-size: 12px;
     }
 
-    /* MENU LINKS */
-
     .sc-menu {
         flex: 1;
-
         padding: 14px;
-
         display: flex;
         flex-direction: column;
-
         gap: 6px;
     }
 
     .sc-menu-link {
         min-height: 50px;
-
         padding: 12px 14px;
-
         border-radius: 12px;
-
         display: flex;
         align-items: center;
         gap: 14px;
-
         text-decoration: none;
-
         color: #64748b;
-
         font-size: 15px;
         font-weight: 700;
-
         transition: 0.2s ease;
     }
 
     .sc-menu-link:hover {
         background: #eef2ff;
         color: #4338ca;
-
         transform: translateX(3px);
     }
 
     .sc-menu-icon {
         width: 28px;
+        min-width: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
-        text-align: center;
-
-        font-size: 20px;
+    .sc-menu-icon .sc-svg-icon {
+        width: 21px;
+        height: 21px;
     }
 
     .sc-notification-text {
@@ -252,23 +212,16 @@
     .sc-notification-badge {
         min-width: 24px;
         height: 24px;
-
         padding: 0 7px;
-
         border-radius: 999px;
-
         display: inline-flex;
         align-items: center;
         justify-content: center;
-
         background: #dc2626;
         color: #ffffff;
-
         font-size: 12px;
         font-weight: 800;
     }
-
-    /* LOGOUT */
 
     .sc-logout {
         color: #dc2626;
@@ -279,19 +232,13 @@
         background: #fee2e2;
     }
 
-    /* DARK MODE ROW */
-
     .sc-theme-row {
         min-height: 54px;
-
         padding: 10px 14px;
-
         display: flex;
         align-items: center;
         justify-content: space-between;
-
         color: #64748b;
-
         font-size: 15px;
         font-weight: 700;
     }
@@ -302,11 +249,8 @@
         gap: 14px;
     }
 
-    /* TOGGLE */
-
     .sc-switch {
         position: relative;
-
         width: 48px;
         height: 27px;
     }
@@ -319,35 +263,23 @@
 
     .sc-slider {
         position: absolute;
-
         inset: 0;
-
         cursor: pointer;
-
         border-radius: 30px;
-
         background: #cbd5e1;
-
         transition: 0.3s;
     }
 
     .sc-slider::before {
         content: "";
-
         position: absolute;
-
         width: 21px;
         height: 21px;
-
         left: 3px;
         top: 3px;
-
         border-radius: 50%;
-
         background: #ffffff;
-
         transition: 0.3s;
-
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.20);
     }
 
@@ -358,10 +290,6 @@
     .sc-switch input:checked + .sc-slider::before {
         transform: translateX(21px);
     }
-
-    /* =========================================
-       DARK MODE
-    ========================================= */
 
     body.dark-mode {
         background: #0f172a !important;
@@ -409,6 +337,11 @@
         color: #cbd5e1;
     }
 
+    body.dark-mode .sc-avatar {
+        background: #1e3a5f;
+        color: #bfdbfe;
+    }
+
     body.dark-mode .sc-logout {
         color: #fca5a5;
     }
@@ -422,76 +355,68 @@
         .sc-menu-button {
             top: 12px;
             left: 12px;
-
             width: 43px;
             height: 43px;
         }
     }
 </style>
 
-
 <!-- HAMBURGER -->
-
 <button
     type="button"
     class="sc-menu-button"
     id="scMenuButton"
     aria-label="Open menu"
 >
-    ☰
+    <svg class="sc-svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M4 7h16"></path>
+        <path d="M4 12h16"></path>
+        <path d="M4 17h16"></path>
+    </svg>
 </button>
-
-
-<!-- OVERLAY -->
 
 <div
     class="sc-sidebar-overlay"
     id="scSidebarOverlay"
 ></div>
 
-
-<!-- SIDEBAR -->
-
 <aside
     class="sc-sidebar"
     id="scSidebar"
 >
-
     <div class="sc-sidebar-header">
-
         <div class="sc-sidebar-title">
-
             <div class="sc-sidebar-logo">
-                🛡️
+                <svg class="sc-svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 3l7 3v5c0 4.8-2.9 8.1-7 10-4.1-1.9-7-5.2-7-10V6l7-3z"></path>
+                    <path d="M9.5 12l1.7 1.7L15 9.9"></path>
+                </svg>
             </div>
-
-            <span>
-                Menu
-            </span>
-
+            <span>Menu</span>
         </div>
 
         <button
             type="button"
             class="sc-close-button"
             id="scCloseButton"
+            aria-label="Close menu"
         >
-            ×
+            <svg class="sc-svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M6 6l12 12"></path>
+                <path d="M18 6L6 18"></path>
+            </svg>
         </button>
-
     </div>
 
-
-    <!-- USER -->
-
     <div class="sc-user-box">
-
         <div class="sc-avatar">
-            👤
+            <svg class="sc-svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="8" r="4"></circle>
+                <path d="M4.5 21a7.5 7.5 0 0 1 15 0"></path>
+            </svg>
         </div>
 
         <div>
-
             <div class="sc-user-name">
                 {{ request.user.username }}
             </div>
@@ -499,56 +424,34 @@
             <div class="sc-user-type">
                 User Account
             </div>
-
         </div>
-
     </div>
 
-
-    <!-- MENU -->
-
     <nav class="sc-menu">
-
-        <!-- PROFILE -->
+        <!-- My Complaints intentionally moved to Home page -->
 
         <a
             href="{% url 'profile' %}"
             class="sc-menu-link"
         >
             <span class="sc-menu-icon">
-                👤
+                <svg class="sc-svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="8" r="4"></circle>
+                    <path d="M4.5 21a7.5 7.5 0 0 1 15 0"></path>
+                </svg>
             </span>
-
-            <span>
-                Profile
-            </span>
+            <span>Profile</span>
         </a>
-
-
-        <!-- MY COMPLAINTS -->
-
-        <a
-            href="{% url 'my_complaints' %}"
-            class="sc-menu-link"
-        >
-            <span class="sc-menu-icon">
-                📋
-            </span>
-
-            <span>
-                My Complaints
-            </span>
-        </a>
-
-
-        <!-- NOTIFICATIONS -->
 
         <a
             href="{% url 'notifications' %}"
             class="sc-menu-link"
         >
             <span class="sc-menu-icon">
-                🔔
+                <svg class="sc-svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
+                    <path d="M10 21h4"></path>
+                </svg>
             </span>
 
             <span class="sc-notification-text">
@@ -562,72 +465,53 @@
             {% endif %}
         </a>
 
-
-        <!-- SETTINGS -->
-
         <a
             href="{% url 'user_settings' %}"
             class="sc-menu-link"
         >
             <span class="sc-menu-icon">
-                ⚙️
+                <svg class="sc-svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21h-4v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H3v-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6V3h4v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.1v4H21a1.7 1.7 0 0 0-1.6 1z"></path>
+                </svg>
             </span>
-
-            <span>
-                Settings
-            </span>
+            <span>Settings</span>
         </a>
 
-
-        <!-- DARK MODE -->
-
         <div class="sc-theme-row">
-
             <div class="sc-theme-label">
-
                 <span class="sc-menu-icon">
-                    🌙
+                    <svg class="sc-svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"></path>
+                    </svg>
                 </span>
-
-                <span>
-                    Dark Mode
-                </span>
-
+                <span>Dark Mode</span>
             </div>
 
             <label class="sc-switch">
-
                 <input
                     type="checkbox"
                     id="scDarkModeToggle"
                 >
-
                 <span class="sc-slider"></span>
-
             </label>
-
         </div>
-
-
-        <!-- LOGOUT -->
 
         <a
             href="{% url 'logout' %}"
             class="sc-menu-link sc-logout"
         >
             <span class="sc-menu-icon">
-                🚪
+                <svg class="sc-svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <path d="M16 17l5-5-5-5"></path>
+                    <path d="M21 12H9"></path>
+                </svg>
             </span>
-
-            <span>
-                Logout
-            </span>
+            <span>Logout</span>
         </a>
-
     </nav>
-
 </aside>
-
 
 <script>
     const scSidebar =
@@ -645,61 +529,39 @@
     const scDarkModeToggle =
         document.getElementById("scDarkModeToggle");
 
-
-    /* OPEN MENU */
-
     function openScSidebar() {
-
         scSidebar.classList.add("open");
-
         scOverlay.classList.add("active");
-
         document.body.style.overflow = "hidden";
     }
 
-
-    /* CLOSE MENU */
-
     function closeScSidebar() {
-
         scSidebar.classList.remove("open");
-
         scOverlay.classList.remove("active");
-
         document.body.style.overflow = "";
     }
-
 
     scMenuButton.addEventListener(
         "click",
         openScSidebar
     );
 
-
     scCloseButton.addEventListener(
         "click",
         closeScSidebar
     );
-
 
     scOverlay.addEventListener(
         "click",
         closeScSidebar
     );
 
-
-    /* =========================================
-       DARK MODE
-    ========================================= */
-
     const savedTheme =
         localStorage.getItem(
             "smartComplaintTheme"
         );
 
-
     if (savedTheme === "dark") {
-
         document.body.classList.add(
             "dark-mode"
         );
@@ -707,13 +569,10 @@
         scDarkModeToggle.checked = true;
     }
 
-
     scDarkModeToggle.addEventListener(
         "change",
         function () {
-
             if (this.checked) {
-
                 document.body.classList.add(
                     "dark-mode"
                 );
@@ -722,9 +581,7 @@
                     "smartComplaintTheme",
                     "dark"
                 );
-
             } else {
-
                 document.body.classList.remove(
                     "dark-mode"
                 );
@@ -737,19 +594,12 @@
         }
     );
 
-
-    /* =========================================
-       SWIPE
-    ========================================= */
-
     let scTouchStartX = 0;
     let scTouchEndX = 0;
-
 
     document.addEventListener(
         "touchstart",
         function (event) {
-
             scTouchStartX =
                 event.changedTouches[0].screenX;
         },
@@ -758,37 +608,27 @@
         }
     );
 
-
     document.addEventListener(
         "touchend",
         function (event) {
-
             scTouchEndX =
                 event.changedTouches[0].screenX;
 
             const distance =
                 scTouchEndX - scTouchStartX;
 
-
-            /* LEFT EDGE → SWIPE RIGHT */
-
             if (
                 scTouchStartX < 45 &&
                 distance > 70 &&
                 !scSidebar.classList.contains("open")
             ) {
-
                 openScSidebar();
             }
-
-
-            /* SIDEBAR OPEN → SWIPE LEFT */
 
             if (
                 scSidebar.classList.contains("open") &&
                 distance < -70
             ) {
-
                 closeScSidebar();
             }
         },

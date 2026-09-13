@@ -1,435 +1,324 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
 
-<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <meta charset="UTF-8">
+    <title>My Profile | Smart Complaint</title>
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1"
-    >
-
-    <title>
-        My Profile | Smart Complaint
-    </title>
-
-    {% include "complaints/base_style.html" %}
+    {% include 'complaints/base_style.html' %}
 
     <style>
-
+      .ui-icon {
+        width: 21px;
+        height: 21px;
+        display: inline-block;
+        vertical-align: middle;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        flex-shrink: 0;
+      }
+      
+      .profile {
+        max-width: 720px;
+        margin: 35px auto;
+        padding: 35px;
+      }
+      
+      .head {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      
+      .avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        margin: auto;
+        overflow: hidden;
+        background: #dbeafe;
+        color: #1d4ed8;
+        display: grid;
+        place-items: center;
+        border: 4px solid #eff6ff;
+      }
+      
+      .avatar .ui-icon {
+        width: 50px;
+        height: 50px;
+      }
+      
+      .avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      
+      .head h1 {
+        margin: 14px 0 5px;
+      }
+      
+      .username {
+        color: #2563eb;
+        font-weight: 800;
+      }
+      
+      .rating-card {
+        max-width: 420px;
+        margin: 20px auto 5px;
+        padding: 18px;
+        text-align: center;
+        border: 1px solid #fde68a;
+        border-radius: 15px;
+        background: #fffbeb;
+      }
+      
+      .rating-stars {
+        color: #f59e0b;
+        font-size: 28px;
+        letter-spacing: 2px;
+      }
+      
+      .rating-stars .ui-icon {
+        width: 29px;
+        height: 29px;
+      }
+      
+      .rating-number {
+        margin-top: 7px;
+        color: #1e293b;
+        font-size: 19px;
+        font-weight: 800;
+      }
+      
+      .rating-count {
+        margin-top: 4px;
+        color: #64748b;
+        font-size: 13px;
+      }
+      
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+      
+      .full {
+        grid-column: 1 / -1;
+      }
+      
+      .photo-section {
+        margin-bottom: 22px;
+        padding: 18px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+      }
+      
+      .photo-section .label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      
+      .readonly {
+        background: #f1f5f9;
+        cursor: not-allowed;
+      }
+      
+      .actions {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 25px;
+      }
+      
+      .icon-btn {
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+      
+      .message {
+        margin-bottom: 18px;
+      }
+      
+      body.dark-mode .avatar {
+        background: #1e3a5f;
+        border-color: #263247;
+        color: #bfdbfe;
+      }
+      
+      body.dark-mode .rating-card {
+        background: #172033;
+        border-color: #854d0e;
+      }
+      
+      body.dark-mode .rating-number {
+        color: #f8fafc;
+      }
+      
+      body.dark-mode .rating-count {
+        color: #cbd5e1;
+      }
+      
+      body.dark-mode .photo-section {
+        background: #172033;
+        border-color: #334155;
+      }
+      
+      @media (max-width: 650px) {
         .profile {
-            max-width: 720px;
-            margin: 35px auto;
-            padding: 35px;
+          padding: 25px 18px;
         }
-
-        .head {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .avatar {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            margin: auto;
-            overflow: hidden;
-            background: #dbeafe;
-            display: grid;
-            place-items: center;
-            font-size: 50px;
-            border: 4px solid #eff6ff;
-        }
-
-        .avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .head h1 {
-            margin: 14px 0 5px;
-        }
-
-        .username {
-            color: #2563eb;
-            font-weight: 800;
-        }
-
-
-        /* =====================================================
-           USER RATING
-        ===================================================== */
-
-        .rating-card {
-            max-width: 420px;
-
-            margin:
-                20px auto
-                5px;
-
-            padding: 18px;
-
-            text-align: center;
-
-            border:
-                1px solid
-                #fde68a;
-
-            border-radius: 15px;
-
-            background: #fffbeb;
-        }
-
-        .rating-stars {
-            color: #f59e0b;
-            font-size: 28px;
-            letter-spacing: 2px;
-        }
-
-        .rating-number {
-            margin-top: 7px;
-
-            color: #1e293b;
-
-            font-size: 19px;
-            font-weight: 800;
-        }
-
-        .rating-count {
-            margin-top: 4px;
-
-            color: #64748b;
-
-            font-size: 13px;
-        }
-
-
+      
         .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
+          grid-template-columns: 1fr;
         }
-
+      
         .full {
-            grid-column: 1 / -1;
+          grid-column: auto;
         }
-
-        .photo-section {
-            margin-bottom: 22px;
-            padding: 18px;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 14px;
-        }
-
-        .readonly {
-            background: #f1f5f9;
-            cursor: not-allowed;
-        }
-
-        .actions {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-top: 25px;
-        }
-
-        .message {
-            margin-bottom: 18px;
-        }
-
-        @media(max-width: 650px) {
-
-            .profile {
-                padding: 25px 18px;
-            }
-
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .full {
-                grid-column: auto;
-            }
-
-        }
-
+      }
     </style>
+  </head>
 
-</head>
-
-<body>
-
-<main class="page">
-
-    <div class="card profile">
-
-
+  <body>
+    <main class="page">
+      <div class="card profile">
         {% if messages %}
-
-            {% for message in messages %}
-
-                <div class="message">
-                    {{ message }}
-                </div>
-
-            {% endfor %}
-
+          {% for message in messages %}
+            <div class="message">{{ message }}</div>
+          {% endfor %}
         {% endif %}
 
-
         <div class="head">
+          <div class="avatar">
+            {% if user_profile.photo %}
+              <img src="{{ user_profile.photo.url }}" alt="Profile Photo" />
+            {% else %}
+              <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="8" r="4"></circle>
+                <path d="M4.5 21a7.5 7.5 0 0 1 15 0"></path>
+              </svg>
+            {% endif %}
+          </div>
 
-            <div class="avatar">
+          <h1>My Profile</h1>
 
-                {% if user_profile.photo %}
+          <div class="username">@{{ profile_user.username }}</div>
 
-                    <img
-                        src="{{ user_profile.photo.url }}"
-                        alt="Profile Photo"
-                    >
+          <p class="muted">Manage your personal information</p>
 
+          <div class="rating-card">
+            {% if user_rating_count > 0 %}
+              <div class="rating-stars">
+                <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3l-5.6 2.9 1.1-6.2L3 9.6l6.2-.9L12 3z"></path>
+                </svg>
+              </div>
+
+              <div class="rating-number">{{ user_average_rating|floatformat:1 }}
+                / 5</div>
+
+              <div class="rating-count">
+                {{ user_rating_count }}
+
+                {% if user_rating_count == 1 %}
+                  Rating
                 {% else %}
-
-                    👤
-
+                  Ratings
                 {% endif %}
+              </div>
+            {% else %}
+              <div class="rating-stars">☆</div>
 
-            </div>
+              <div class="rating-number">No Rating Yet</div>
 
-
-            <h1>
-                My Profile
-            </h1>
-
-
-            <div class="username">
-                @{{ profile_user.username }}
-            </div>
-
-
-            <p class="muted">
-                Manage your personal information
-            </p>
-
-
-            <!-- =============================================
-                 USER AVERAGE RATING
-            ============================================== -->
-
-            <div class="rating-card">
-
-                {% if user_rating_count > 0 %}
-
-                    <div class="rating-stars">
-                        ⭐
-                    </div>
-
-                    <div class="rating-number">
-
-                        {{ user_average_rating|floatformat:1 }}
-                        / 5
-
-                    </div>
-
-                    <div class="rating-count">
-
-                        {{ user_rating_count }}
-
-                        {% if user_rating_count == 1 %}
-
-                            Rating
-
-                        {% else %}
-
-                            Ratings
-
-                        {% endif %}
-
-                    </div>
-
-                {% else %}
-
-                    <div class="rating-stars">
-                        ☆
-                    </div>
-
-                    <div class="rating-number">
-                        No Rating Yet
-                    </div>
-
-                    <div class="rating-count">
-                        Rating will appear after a worker rates you.
-                    </div>
-
-                {% endif %}
-
-            </div>
-
+              <div class="rating-count">Rating will appear after a worker rates you.</div>
+            {% endif %}
+          </div>
         </div>
 
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
 
-        <form
-            method="post"
-            enctype="multipart/form-data"
-        >
+          <div class="photo-section">
+            <label class="label">
+              <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 7h3l2-3h6l2 3h3a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z"></path>
+                <circle cx="12" cy="13" r="4"></circle>
+              </svg>Profile Photo
+            </label>
 
-            {% csrf_token %}
+            <input class="input" type="file" name="photo" accept="image/*" />
 
+            <p class="muted" style="margin-top:8px">Maximum photo size: 5 MB</p>
+          </div>
 
-            <div class="photo-section">
+          <div class="form-grid">
+            <div class="form-group full">
+              <label class="label">Username</label>
 
-                <label class="label">
-                    📷 Profile Photo
-                </label>
-
-                <input
-                    class="input"
-                    type="file"
-                    name="photo"
-                    accept="image/*"
-                >
-
-                <p
-                    class="muted"
-                    style="margin-top:8px"
-                >
-                    Maximum photo size: 5 MB
-                </p>
-
+              <input class="input readonly" value="{{ profile_user.username }}" readonly />
             </div>
 
+            <div class="form-group">
+              <label class="label">First Name</label>
 
-            <div class="form-grid">
-
-
-                <div class="form-group full">
-
-                    <label class="label">
-                        Username
-                    </label>
-
-                    <input
-                        class="input readonly"
-                        value="{{ profile_user.username }}"
-                        readonly
-                    >
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label class="label">
-                        First Name
-                    </label>
-
-                    <input
-                        class="input"
-                        type="text"
-                        name="first_name"
-                        value="{{ profile_user.first_name }}"
-                        placeholder="First name"
-                    >
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label class="label">
-                        Last Name
-                    </label>
-
-                    <input
-                        class="input"
-                        type="text"
-                        name="last_name"
-                        value="{{ profile_user.last_name }}"
-                        placeholder="Last name"
-                    >
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label class="label">
-                        Email
-                    </label>
-
-                    <input
-                        class="input"
-                        type="email"
-                        name="email"
-                        value="{{ profile_user.email }}"
-                        required
-                    >
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label class="label">
-                        Phone Number
-                    </label>
-
-                    <input
-                        class="input"
-                        type="tel"
-                        name="phone"
-                        maxlength="15"
-                        value="{{ user_profile.phone }}"
-                        placeholder="Enter phone number"
-                    >
-
-                </div>
-
-
+              <input class="input" type="text" name="first_name" value="{{ profile_user.first_name }}" placeholder="First name" />
             </div>
 
+            <div class="form-group">
+              <label class="label">Last Name</label>
 
-            <button
-                type="submit"
-                class="btn btn-primary"
-                style="
+              <input class="input" type="text" name="last_name" value="{{ profile_user.last_name }}" placeholder="Last name" />
+            </div>
+
+            <div class="form-group">
+              <label class="label">Email</label>
+
+              <input class="input" type="email" name="email" value="{{ profile_user.email }}" required />
+            </div>
+
+            <div class="form-group">
+              <label class="label">Phone Number</label>
+
+              <input class="input" type="tel" name="phone" maxlength="15" value="{{ user_profile.phone }}" placeholder="Enter phone number" />
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary icon-btn" style="
                     width:100%;
                     margin-top:20px;
                     font-size:16px;
-                "
-            >
-                💾 Save Profile
-            </button>
-
+                ">
+            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M5 3h12l2 2v16H5z"></path>
+              <path d="M8 3v6h8V3"></path>
+              <path d="M8 21v-7h8v7"></path>
+            </svg>Save Profile
+          </button>
         </form>
 
-
         <div class="actions">
+          <a class="btn btn-dark icon-btn" href="{% url 'home' %}">
+            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m3 11 9-8 9 8"></path>
+              <path d="M5 10v11h14V10"></path>
+              <path d="M9 21v-6h6v6"></path>
+            </svg>Home
+          </a>
 
-            <a
-                class="btn btn-dark"
-                href="{% url 'home' %}"
-            >
-                🏠 Home
-            </a>
-
-            <a
-                class="btn btn-danger"
-                href="{% url 'logout' %}"
-            >
-                Logout
-            </a>
-
+          <a class="btn btn-danger" href="{% url 'logout' %}">Logout</a>
         </div>
-
-    </div>
-
-</main>
-
-</body>
-
+      </div>
+    </main>
+  </body>
 </html>

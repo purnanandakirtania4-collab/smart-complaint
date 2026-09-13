@@ -9,9 +9,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # BASIC SETTINGS
 # =========================================================
 
-SECRET_KEY = "django-insecure-change-this-in-production"
+SECRET_KEY = os.environ.get(
+    "DJANGO_SECRET_KEY",
+    "django-insecure-change-this-in-production",
+)
 
-DEBUG = True
+DEBUG = os.environ.get(
+    "DEBUG",
+    "True",
+).lower() == "true"
 
 ALLOWED_HOSTS = ["*"]
 
@@ -93,20 +99,35 @@ TEMPLATES = [
 # DATABASE
 # =========================================================
 
-# =========================================================
-# DATABASE
-# =========================================================
-
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": os.environ.get("MYSQL_DATABASE", "complaint_db"),
-        "USER": os.environ.get("MYSQLUSER", "root"),
-        "PASSWORD": os.environ.get("MYSQLPASSWORD", ""),
-        "HOST": os.environ.get("MYSQLHOST", "127.0.0.1"),
-        "PORT": os.environ.get("MYSQLPORT", "3306"),
+        "NAME": os.environ.get(
+            "MYSQL_DATABASE",
+            "complaint_db",
+        ),
+        "USER": os.environ.get(
+            "MYSQLUSER",
+            "root",
+        ),
+        "PASSWORD": os.environ.get(
+            "MYSQLPASSWORD",
+            "",
+        ),
+        "HOST": os.environ.get(
+            "MYSQLHOST",
+            "127.0.0.1",
+        ),
+        "PORT": os.environ.get(
+            "MYSQLPORT",
+            "3306",
+        ),
+        "OPTIONS": {
+            "charset": "utf8mb4",
+        },
     }
 }
+
 
 # =========================================================
 # PASSWORD VALIDATION
@@ -114,16 +135,20 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+        "NAME":
+            "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+        "NAME":
+            "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+        "NAME":
+            "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+        "NAME":
+            "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
@@ -155,20 +180,73 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 
 # =========================================================
+# EMAIL / FORGOT PASSWORD
+# =========================================================
+#
+# LOCAL TESTING:
+# If SMTP variables are not set, Django prints the password-reset
+# email and reset link directly in the runserver terminal.
+#
+# PRODUCTION:
+# Set EMAIL_HOST_USER and EMAIL_HOST_PASSWORD in Railway variables.
+# Gmail example uses smtp.gmail.com and an App Password.
+# =========================================================
+
+EMAIL_HOST = os.environ.get(
+    "EMAIL_HOST",
+    "smtp.gmail.com",
+)
+
+EMAIL_PORT = int(
+    os.environ.get(
+        "EMAIL_PORT",
+        "587",
+    )
+)
+
+EMAIL_USE_TLS = os.environ.get(
+    "EMAIL_USE_TLS",
+    "True",
+).lower() == "true"
+
+EMAIL_HOST_USER = os.environ.get(
+    "EMAIL_HOST_USER",
+    "",
+)
+
+EMAIL_HOST_PASSWORD = os.environ.get(
+    "EMAIL_HOST_PASSWORD",
+    "",
+)
+
+DEFAULT_FROM_EMAIL = os.environ.get(
+    "DEFAULT_FROM_EMAIL",
+    EMAIL_HOST_USER or "Smart Complaint <noreply@smartcomplaint.local>",
+)
+
+if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD:
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+else:
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+PASSWORD_RESET_TIMEOUT = 60 * 60
+
+
+# =========================================================
 # RAZORPAY
 # =========================================================
 
 RAZORPAY_KEY_ID = os.environ.get(
     "RAZORPAY_KEY_ID",
-    ""
+    "",
 )
 
 RAZORPAY_KEY_SECRET = os.environ.get(
     "RAZORPAY_KEY_SECRET",
-    ""
+    "",
 )
 
 RAZORPAY_WORKER_PLAN_ID = os.environ.get(
     "RAZORPAY_WORKER_PLAN_ID",
-    ""
+    "",
 )

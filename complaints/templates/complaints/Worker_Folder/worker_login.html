@@ -1,2 +1,61 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Worker Login | Smart Complaint</title>{% include "complaints/base_style.html" %}<style>.box{max-width:430px;margin:70px auto;padding:35px}.icon{width:78px;height:78px;border-radius:20px;background:#dbeafe;display:grid;place-items:center;font-size:38px;margin:auto}.head{text-align:center}.head h1{margin:14px 0 7px}.link{text-align:center;margin-top:20px}</style></head><body><main class="page"><div class="card box"><div class="head"><div class="icon">👷</div><h1>Worker Login</h1><p class="muted">Access your assigned complaint dashboard.</p></div>{% if messages %}{% for message in messages %}<div class="message">{{ message }}</div>{% endfor %}{% endif %}<form method="post" style="margin-top:25px">{% csrf_token %}<div class="form-group"><label class="label">Username</label><input class="input" name="username" required autocomplete="username"></div><div class="form-group"><label class="label">Password</label><input class="input" type="password" name="password" required autocomplete="current-password"></div><button class="btn btn-primary" style="width:100%">🔐 Login to Dashboard</button></form><div class="link"><span class="muted">New worker?</span> <a href="{% url 'worker_register' %}" style="color:#2563eb;font-weight:800">Create Worker Account</a></div><div class="link"><a href="{% url 'login' %}" style="color:#64748b;font-weight:700">← User Login</a></div></div></main></body></html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" /><title>Worker Login | Smart Complaint</title>{% include 'complaints/base_style.html' %}
+    <style>
+      .box {
+        max-width: 430px;
+        margin: 70px auto;
+        padding: 35px;
+      }
+      .icon {
+        width: 78px;
+        height: 78px;
+        border-radius: 20px;
+        background: #dbeafe;
+        display: grid;
+        place-items: center;
+        font-size: 38px;
+        margin: auto;
+      }
+      .head {
+        text-align: center;
+      }
+      .head h1 {
+        margin: 14px 0 7px;
+      }
+      .link {
+        text-align: center;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <div class="card box">
+        <div class="head">
+          <div class="icon">👷</div><h1>Worker Login</h1><p class="muted">Access your assigned complaint dashboard.</p>
+        </div>
+        {% if messages %}{% for message in messages %}
+          <div class="message">{{ message }}</div>
+        {% endfor %}{% endif %}
+        <form method="post" style="margin-top:25px">
+          {% csrf_token %}
+          <div class="form-group">
+            <label class="label">Username</label><input class="input" name="username" required autocomplete="username" />
+          </div>
+          <div class="form-group">
+            <label class="label">Password</label><input class="input" type="password" name="password" required autocomplete="current-password" />
+          </div><button class="btn btn-primary" style="width:100%">🔐 Login to Dashboard</button>
+        </form>
+        <div class="link">
+          <span class="muted">New worker?</span> <a href="{% url 'worker_register' %}" style="color:#2563eb;font-weight:800">Create Worker Account</a>
+        </div>
+        <div class="link">
+          <a href="{% url 'login' %}" style="color:#64748b;font-weight:700">← User Login</a>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
