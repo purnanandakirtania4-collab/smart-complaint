@@ -10,99 +10,125 @@
     {% include 'complaints/base_style.html' %}
 
     <style>
+      /* =========================================
+                 COMMON
+              ========================================= */
+      
+      * {
+        box-sizing: border-box;
+      }
+      
       .ui-icon {
         width: 21px;
         height: 21px;
+      
         display: inline-block;
-        vertical-align: middle;
+      
         fill: none;
         stroke: currentColor;
+      
         stroke-width: 2;
         stroke-linecap: round;
         stroke-linejoin: round;
+      
         flex-shrink: 0;
       }
       
-      .icon-title {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 9px;
-      }
-      
-      .icon-button {
-        display: inline-flex !important;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-      }
-      
-      .settings-header h1 {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-      
-      .settings-icon {
-        color: #2563eb;
-      }
-      
-      .settings-icon .ui-icon {
-        width: 22px;
-        height: 22px;
-      }
-      
-      body.dark-mode .settings-icon {
-        color: #bfdbfe;
-      }
-      
       /* =========================================
-                       SETTINGS WRAPPER
-                    ========================================= */
+                 PAGE WRAPPER
+              ========================================= */
       
       .settings-wrapper {
-        max-width: 850px;
+        max-width: 900px;
+      
         margin: 30px auto;
-        padding: 0 15px 40px;
+      
+        padding: 0 15px 45px;
       }
       
       /* =========================================
-                       SETTINGS HEADER
-                    ========================================= */
+                 HEADER
+              ========================================= */
       
       .settings-header {
         color: white;
-        margin-bottom: 20px;
+      
+        margin-bottom: 22px;
       }
       
       .settings-header h1 {
-        margin-bottom: 6px;
+        margin: 0 0 7px;
+      
+        display: flex;
+        align-items: center;
+      
+        gap: 10px;
+      
+        font-size: 30px;
+      }
+      
+      .settings-header h1 .ui-icon {
+        width: 26px;
+        height: 26px;
+      }
+      
+      .settings-header p {
+        margin: 0;
+      
+        font-size: 15px;
+      
+        opacity: 0.95;
       }
       
       /* =========================================
-                       SETTINGS CARD
-                    ========================================= */
+                 CARD
+              ========================================= */
       
       .settings-card {
         background: white;
-        border-radius: 16px;
+      
+        border-radius: 18px;
+      
         padding: 22px;
-        margin-bottom: 15px;
-        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+      
+        box-shadow: 0 5px 22px rgba(0, 0, 0, 0.09);
       }
       
       /* =========================================
-                       SETTINGS ITEM
-                    ========================================= */
+                 SECTION LABEL
+              ========================================= */
+      
+      .section-label {
+        margin: 3px 0 10px;
+      
+        color: #64748b;
+      
+        font-size: 12px;
+        font-weight: 800;
+      
+        text-transform: uppercase;
+      
+        letter-spacing: 0.7px;
+      }
+      
+      .section-label:not(:first-child) {
+        margin-top: 26px;
+      }
+      
+      /* =========================================
+                 SETTINGS ITEM
+              ========================================= */
       
       .settings-item {
         display: flex;
+      
         align-items: center;
+      
         justify-content: space-between;
       
-        gap: 15px;
+        gap: 18px;
       
-        padding: 16px 0;
+        padding: 17px 0;
       
         border-bottom: 1px solid #e2e8f0;
       }
@@ -112,42 +138,60 @@
       }
       
       /* =========================================
-                       LEFT SIDE
-                    ========================================= */
+                 LEFT CONTENT
+              ========================================= */
       
       .settings-left {
+        min-width: 0;
+      
         display: flex;
+      
         align-items: center;
       
         gap: 14px;
       }
       
-      .settings-icon {
-        width: 44px;
-        height: 44px;
+      /* =========================================
+                 ICON
+              ========================================= */
       
-        border-radius: 12px;
+      .settings-icon {
+        width: 47px;
+        height: 47px;
+      
+        display: grid;
+      
+        place-items: center;
+      
+        flex-shrink: 0;
+      
+        border-radius: 13px;
       
         background: #eff6ff;
       
-        display: grid;
-        place-items: center;
+        color: #2563eb;
+      }
       
-        font-size: 22px;
-      
-        flex-shrink: 0;
+      .settings-icon .ui-icon {
+        width: 22px;
+        height: 22px;
       }
       
       /* =========================================
-                       TEXT
-                    ========================================= */
+                 TEXT
+              ========================================= */
+      
+      .settings-text {
+        min-width: 0;
+      }
       
       .settings-text h3 {
         margin: 0 0 4px;
       
-        font-size: 16px;
-      
         color: #0f172a;
+      
+        font-size: 16px;
+        font-weight: 750;
       }
       
       .settings-text p {
@@ -156,46 +200,68 @@
         color: #64748b;
       
         font-size: 13px;
+      
+        line-height: 1.5;
       }
       
       /* =========================================
-                       ACTION BUTTON
-                    ========================================= */
+                 BUTTON
+              ========================================= */
       
       .settings-action {
-        text-decoration: none;
+        min-width: 104px;
       
-        background: #2563eb;
-        color: white;
+        padding: 10px 15px;
       
-        padding: 9px 14px;
+        display: inline-flex;
+      
+        align-items: center;
+      
+        justify-content: center;
+      
+        gap: 7px;
+      
+        border: none;
       
         border-radius: 9px;
+      
+        background: #2563eb;
+      
+        color: white;
+      
+        text-decoration: none;
       
         font-size: 13px;
         font-weight: 700;
       
         white-space: nowrap;
+      
+        cursor: pointer;
+      
+        transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
       }
       
       .settings-action:hover {
         background: #1d4ed8;
+      
+        transform: translateY(-1px);
+      
+        box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
       }
       
       /* =========================================
-                       COMING SOON
-                    ========================================= */
+                 DELETE OPTION
+              ========================================= */
       
-      .coming-soon {
-        background: #e2e8f0;
-        color: #475569;
+      .delete-item .settings-icon {
+        background: #fef2f2;
       
-        cursor: default;
+        color: #dc2626;
       }
       
-      /* =========================================
-                       DANGER
-                    ========================================= */
+      .delete-item .settings-text h3 {
+        color: #b91c1c;
+      }
       
       .danger-action {
         background: #dc2626;
@@ -203,68 +269,632 @@
       
       .danger-action:hover {
         background: #b91c1c;
+      
+        box-shadow: 0 4px 10px rgba(220, 38, 38, 0.2);
       }
       
       /* =========================================
-                       BACK BUTTON
-                    ========================================= */
+                 BACK BUTTON
+              ========================================= */
       
       .back-box {
         margin-top: 20px;
       }
       
       /* =========================================
-                       DARK MODE
-                    ========================================= */
+                 MODAL BACKGROUND
+              ========================================= */
       
-      body.dark-mode .settings-card {
-        background: #1e293b;
+      .settings-modal {
+        position: fixed;
+      
+        inset: 0;
+      
+        z-index: 9999;
+      
+        display: none;
+      
+        align-items: center;
+      
+        justify-content: center;
+      
+        padding: 20px;
+      
+        background: rgba(15, 23, 42, 0.68);
+      
+        backdrop-filter: blur(3px);
       }
       
-      body.dark-mode .settings-text h3 {
-        color: #f8fafc;
-      }
-      
-      body.dark-mode .settings-text p {
-        color: #cbd5e1;
-      }
-      
-      body.dark-mode .settings-item {
-        border-color: #334155;
-      }
-      
-      body.dark-mode .settings-icon {
-        background: #334155;
+      .settings-modal.show {
+        display: flex;
       }
       
       /* =========================================
-                       MOBILE
-                    ========================================= */
+                 MODAL CARD
+              ========================================= */
       
-      @media (max-width: 600px) {
+      .modal-card {
+        width: 100%;
+      
+        max-width: 560px;
+      
+        max-height: 90vh;
+      
+        overflow-y: auto;
+      
+        background: white;
+      
+        border-radius: 18px;
+      
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+      
+        animation: modalOpen 0.18s ease;
+      }
+      
+      @keyframes modalOpen {
+        from {
+          opacity: 0;
+      
+          transform: translateY(10px) scale(0.98);
+        }
+      
+        to {
+          opacity: 1;
+      
+          transform: translateY(0) scale(1);
+        }
+      }
+      
+      /* =========================================
+                 MODAL HEADER
+              ========================================= */
+      
+      .modal-header {
+        padding: 20px 22px;
+      
+        display: flex;
+      
+        align-items: center;
+      
+        justify-content: space-between;
+      
+        gap: 15px;
+      
+        border-bottom: 1px solid #e2e8f0;
+      }
+      
+      .modal-title-box {
+        display: flex;
+      
+        align-items: center;
+      
+        gap: 11px;
+      }
+      
+      .modal-title-icon {
+        width: 40px;
+        height: 40px;
+      
+        display: grid;
+      
+        place-items: center;
+      
+        border-radius: 11px;
+      
+        background: #eff6ff;
+      
+        color: #2563eb;
+      }
+      
+      .modal-title-icon .ui-icon {
+        width: 20px;
+        height: 20px;
+      }
+      
+      .modal-header h2 {
+        margin: 0;
+      
+        color: #0f172a;
+      
+        font-size: 19px;
+      }
+      
+      .modal-close {
+        width: 36px;
+        height: 36px;
+      
+        display: grid;
+      
+        place-items: center;
+      
+        flex-shrink: 0;
+      
+        border: none;
+      
+        border-radius: 9px;
+      
+        background: #f1f5f9;
+      
+        color: #475569;
+      
+        cursor: pointer;
+      }
+      
+      .modal-close:hover {
+        background: #e2e8f0;
+      }
+      
+      /* =========================================
+                 MODAL BODY
+              ========================================= */
+      
+      .modal-body {
+        padding: 22px;
+      }
+      
+      .modal-description {
+        margin: 0 0 20px;
+      
+        color: #64748b;
+      
+        font-size: 14px;
+      
+        line-height: 1.6;
+      }
+      
+      /* =========================================
+                 FORM
+              ========================================= */
+      
+      .form-group {
+        margin-bottom: 17px;
+      }
+      
+      .form-group:last-child {
+        margin-bottom: 0;
+      }
+      
+      .form-label {
+        display: block;
+      
+        margin-bottom: 7px;
+      
+        color: #334155;
+      
+        font-size: 13px;
+        font-weight: 700;
+      }
+      
+      .form-control {
+        width: 100%;
+      
+        padding: 11px 12px;
+      
+        border: 1px solid #cbd5e1;
+      
+        border-radius: 9px;
+      
+        outline: none;
+      
+        background: white;
+      
+        color: #0f172a;
+      
+        font-size: 14px;
+      
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      }
+      
+      .form-control:focus {
+        border-color: #2563eb;
+      
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+      }
+      
+      textarea.form-control {
+        min-height: 105px;
+      
+        resize: vertical;
+      }
+      
+      /* =========================================
+                 TWO COLUMN FORM
+              ========================================= */
+      
+      .form-row {
+        display: grid;
+      
+        grid-template-columns: 1fr 1fr;
+      
+        gap: 14px;
+      }
+      
+      /* =========================================
+                 MODAL FOOTER
+              ========================================= */
+      
+      .modal-footer {
+        padding: 16px 22px 22px;
+      
+        display: flex;
+      
+        align-items: center;
+      
+        justify-content: flex-end;
+      
+        gap: 10px;
+      }
+      
+      .modal-btn {
+        padding: 10px 16px;
+      
+        border: none;
+      
+        border-radius: 9px;
+      
+        font-size: 13px;
+        font-weight: 700;
+      
+        cursor: pointer;
+      }
+      
+      .modal-btn-secondary {
+        background: #e2e8f0;
+      
+        color: #334155;
+      }
+      
+      .modal-btn-secondary:hover {
+        background: #cbd5e1;
+      }
+      
+      .modal-btn-primary {
+        background: #2563eb;
+      
+        color: white;
+      }
+      
+      .modal-btn-primary:hover {
+        background: #1d4ed8;
+      }
+      
+      .modal-btn-danger {
+        background: #dc2626;
+      
+        color: white;
+      }
+      
+      .modal-btn-danger:hover {
+        background: #b91c1c;
+      }
+      
+      /* =========================================
+                 TERMS BOX
+              ========================================= */
+      
+      .terms-box {
+        padding: 16px;
+      
+        border: 1px solid #e2e8f0;
+      
+        border-radius: 11px;
+      
+        background: #f8fafc;
+      
+        color: #475569;
+      
+        font-size: 13px;
+      
+        line-height: 1.7;
+      }
+      
+      .terms-box h3 {
+        margin: 0 0 8px;
+      
+        color: #0f172a;
+      
+        font-size: 15px;
+      }
+      
+      .terms-box p {
+        margin: 0 0 15px;
+      }
+      
+      .terms-box p:last-child {
+        margin-bottom: 0;
+      }
+      
+      /* =========================================
+                 ABOUT
+              ========================================= */
+      
+      .about-logo {
+        width: 70px;
+        height: 70px;
+      
+        margin: 0 auto 15px;
+      
+        display: grid;
+      
+        place-items: center;
+      
+        border-radius: 20px;
+      
+        background: #eff6ff;
+      
+        color: #2563eb;
+      }
+      
+      .about-logo .ui-icon {
+        width: 34px;
+        height: 34px;
+      }
+      
+      .about-content {
+        text-align: center;
+      }
+      
+      .about-content h3 {
+        margin: 0 0 5px;
+      
+        color: #0f172a;
+      
+        font-size: 21px;
+      }
+      
+      .about-content p {
+        margin: 0 0 8px;
+      
+        color: #64748b;
+      
+        font-size: 13px;
+      
+        line-height: 1.6;
+      }
+      
+      .app-version {
+        display: inline-block;
+      
+        margin-top: 8px;
+      
+        padding: 6px 11px;
+      
+        border-radius: 20px;
+      
+        background: #f1f5f9;
+      
+        color: #475569;
+      
+        font-size: 12px;
+        font-weight: 700;
+      }
+      
+      /* =========================================
+                 WARNING BOX
+              ========================================= */
+      
+      .warning-box {
+        padding: 14px;
+      
+        margin-bottom: 18px;
+      
+        display: flex;
+      
+        align-items: flex-start;
+      
+        gap: 10px;
+      
+        border: 1px solid #fecaca;
+      
+        border-radius: 10px;
+      
+        background: #fef2f2;
+      
+        color: #991b1b;
+      
+        font-size: 13px;
+      
+        line-height: 1.55;
+      }
+      
+      .warning-box .ui-icon {
+        margin-top: 1px;
+      }
+      
+      /* =========================================
+                 UI MESSAGE
+              ========================================= */
+      
+      .ui-message {
+        position: fixed;
+      
+        left: 50%;
+        bottom: 25px;
+      
+        z-index: 10000;
+      
+        display: none;
+      
+        transform: translateX(-50%);
+      
+        padding: 11px 17px;
+      
+        border-radius: 10px;
+      
+        background: #0f172a;
+      
+        color: white;
+      
+        font-size: 13px;
+        font-weight: 650;
+      
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      }
+      
+      .ui-message.show {
+        display: block;
+      
+        animation: messageIn 0.2s ease;
+      }
+      
+      @keyframes messageIn {
+        from {
+          opacity: 0;
+      
+          transform: translate(-50%, 8px);
+        }
+      
+        to {
+          opacity: 1;
+      
+          transform: translate(-50%, 0);
+        }
+      }
+      
+      /* =========================================
+                 DARK MODE
+              ========================================= */
+      
+      body.dark-mode .settings-card,
+      body.dark-mode .modal-card {
+        background: #1e293b;
+      }
+      
+      body.dark-mode .settings-item,
+      body.dark-mode .modal-header {
+        border-color: #334155;
+      }
+      
+      body.dark-mode .settings-icon,
+      body.dark-mode .modal-title-icon {
+        background: #334155;
+      
+        color: #bfdbfe;
+      }
+      
+      body.dark-mode .settings-text h3,
+      body.dark-mode .modal-header h2,
+      body.dark-mode .terms-box h3,
+      body.dark-mode .about-content h3 {
+        color: #f8fafc;
+      }
+      
+      body.dark-mode .settings-text p,
+      body.dark-mode .modal-description,
+      body.dark-mode .about-content p {
+        color: #cbd5e1;
+      }
+      
+      body.dark-mode .section-label {
+        color: #94a3b8;
+      }
+      
+      body.dark-mode .form-label {
+        color: #e2e8f0;
+      }
+      
+      body.dark-mode .form-control {
+        background: #0f172a;
+      
+        border-color: #475569;
+      
+        color: white;
+      }
+      
+      body.dark-mode .modal-close {
+        background: #334155;
+      
+        color: #e2e8f0;
+      }
+      
+      body.dark-mode .terms-box {
+        background: #0f172a;
+      
+        border-color: #334155;
+      
+        color: #cbd5e1;
+      }
+      
+      body.dark-mode .app-version {
+        background: #334155;
+      
+        color: #cbd5e1;
+      }
+      
+      body.dark-mode .delete-item .settings-icon {
+        background: rgba(220, 38, 38, 0.15);
+      
+        color: #fca5a5;
+      }
+      
+      body.dark-mode .delete-item .settings-text h3 {
+        color: #fca5a5;
+      }
+      
+      /* =========================================
+                 MOBILE
+              ========================================= */
+      
+      @media (max-width: 650px) {
+        .settings-wrapper {
+          margin-top: 20px;
+      
+          padding: 0 12px 30px;
+        }
+      
+        .settings-header h1 {
+          font-size: 25px;
+        }
+      
+        .settings-card {
+          padding: 14px 16px;
+        }
+      
         .settings-item {
           align-items: flex-start;
+      
           flex-direction: column;
+      
+          gap: 13px;
+        }
+      
+        .settings-left {
+          width: 100%;
         }
       
         .settings-action {
           width: 100%;
-          text-align: center;
+        }
+      
+        .form-row {
+          grid-template-columns: 1fr;
+        }
+      
+        .modal-card {
+          max-height: 94vh;
+        }
+      
+        .modal-footer {
+          flex-direction: column-reverse;
+        }
+      
+        .modal-btn {
+          width: 100%;
         }
       }
     </style>
   </head>
 
   <body>
-    <!--   =========================================
-         USER NAVBAR
-    =========================================   -->
+    <!--  =========================================
+         NAVBAR
+    =========================================  -->
 
     {% include 'complaints/User_Folder/navbar.html' %}
 
-    <!--   =========================================
+    <!--  =========================================
          SETTINGS PAGE
-    =========================================   -->
+    =========================================  -->
 
     <div class="settings-wrapper">
       <!-- HEADER -->
@@ -273,25 +903,33 @@
         <h1>
           <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
             <circle cx="12" cy="12" r="3"></circle>
+
             <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21h-4v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H3v-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6V3h4v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.1v4H21a1.7 1.7 0 0 0-1.6 1z"></path>
           </svg>User Settings
         </h1>
 
-        <p>Manage your account and preferences.</p>
+        <p>Manage your account, security and support options.</p>
       </div>
 
-      <!-- SETTINGS CARD -->
+      <!--  =========================================
+             SETTINGS CARD
+        =========================================  -->
 
       <div class="settings-card">
-        <!--   =================================
-                 PROFILE
-            ==================================   -->
+        <!--  =====================================
+                 ACCOUNT
+            ======================================  -->
+
+        <div class="section-label">Account</div>
+
+        <!-- PROFILE -->
 
         <div class="settings-item">
           <div class="settings-left">
             <div class="settings-icon">
               <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
                 <circle cx="12" cy="8" r="4"></circle>
+
                 <path d="M4.5 21a7.5 7.5 0 0 1 15 0"></path>
               </svg>
             </div>
@@ -303,19 +941,19 @@
             </div>
           </div>
 
-          <a href="{% url 'profile' %}" class="settings-action">Open</a>
+          <a href="{% url 'profile' %}" class="settings-action">Open Profile</a>
         </div>
 
-        <!--   =================================
-                 CHANGE PASSWORD
-            ==================================   -->
+        <!-- CHANGE PASSWORD -->
 
         <div class="settings-item">
           <div class="settings-left">
             <div class="settings-icon">
               <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
                 <circle cx="8" cy="15" r="4"></circle>
+
                 <path d="m11 12 9-9"></path>
+
                 <path d="m17 3 4 4"></path>
               </svg>
             </div>
@@ -323,45 +961,21 @@
             <div class="settings-text">
               <h3>Change Password</h3>
 
-              <p>Change your account password.</p>
+              <p>Update your account password securely.</p>
             </div>
           </div>
 
-          <span class="settings-action coming-soon">Coming Soon</span>
+          <button type="button" class="settings-action" onclick="openModal('passwordModal')">Change</button>
         </div>
 
-        <!--   =================================
-                 NOTIFICATIONS
-            ==================================   -->
-
-        <div class="settings-item">
-          <div class="settings-left">
-            <div class="settings-icon">
-              <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
-                <path d="M10 21h4"></path>
-              </svg>
-            </div>
-
-            <div class="settings-text">
-              <h3>Notifications</h3>
-
-              <p>Manage complaint notifications.</p>
-            </div>
-          </div>
-
-          <span class="settings-action coming-soon">Coming Soon</span>
-        </div>
-
-        <!--   =================================
-                 ADDRESS / LOCATION
-            ==================================   -->
+        <!-- ADDRESS -->
 
         <div class="settings-item">
           <div class="settings-left">
             <div class="settings-icon">
               <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M12 21s7-5.1 7-12a7 7 0 1 0-14 0c0 6.9 7 12 7 12z"></path>
+
                 <circle cx="12" cy="9" r="2.5"></circle>
               </svg>
             </div>
@@ -373,90 +987,109 @@
             </div>
           </div>
 
-          <span class="settings-action coming-soon">Coming Soon</span>
+          <button type="button" class="settings-action" onclick="openModal('addressModal')">Manage</button>
         </div>
 
-        <!--   =================================
-                 PHONE NUMBER
-            ==================================   -->
+        <!--  =====================================
+                 SUPPORT & INFORMATION
+            ======================================  -->
 
-        <div class="settings-item">
-          <div class="settings-left">
-            <div class="settings-icon">
-              <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7l.5 3a2 2 0 0 1-.6 1.8L7.7 9.8a16 16 0 0 0 6.5 6.5l1.3-1.3a2 2 0 0 1 1.8-.6l3 .5a2 2 0 0 1 1.7 2z"></path>
-              </svg>
-            </div>
+        <div class="section-label">Support & Information</div>
 
-            <div class="settings-text">
-              <h3>Phone Number</h3>
-
-              <p>Update your registered phone number.</p>
-            </div>
-          </div>
-
-          <span class="settings-action coming-soon">Coming Soon</span>
-        </div>
-
-        <!--   =================================
-                 DARK MODE
-            ==================================   -->
-
-        <div class="settings-item">
-          <div class="settings-left">
-            <div class="settings-icon">
-              <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"></path>
-              </svg>
-            </div>
-
-            <div class="settings-text">
-              <h3>Dark Mode</h3>
-
-              <p>Use the Dark Mode option from the sidebar.</p>
-            </div>
-          </div>
-
-          <span class="settings-action coming-soon">Sidebar</span>
-        </div>
-
-        <!--   =================================
-                 PRIVACY / TERMS
-            ==================================   -->
+        <!-- TERMS -->
 
         <div class="settings-item">
           <div class="settings-left">
             <div class="settings-icon">
               <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M6 2h8l4 4v16H6z"></path>
+
                 <path d="M14 2v5h5"></path>
-                <path d="M9 13h6"></path>
-                <path d="M9 17h6"></path>
+
+                <path d="M9 12h6"></path>
+
+                <path d="M9 16h6"></path>
               </svg>
             </div>
 
             <div class="settings-text">
-              <h3>Privacy Policy & Terms</h3>
+              <h3>User Terms & Conditions</h3>
 
-              <p>Read important account policies.</p>
+              <p>Read the rules and conditions for using Smart Complaint.</p>
             </div>
           </div>
 
-          <span class="settings-action coming-soon">Coming Soon</span>
+          <button type="button" class="settings-action" onclick="openModal('termsModal')">View</button>
         </div>
 
-        <!--   =================================
-                 DELETE ACCOUNT
-            ==================================   -->
+        <!-- HELP -->
 
         <div class="settings-item">
           <div class="settings-left">
             <div class="settings-icon">
               <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="9"></circle>
+
+                <path d="M9.8 9a2.4 2.4 0 1 1 3.9 1.9c-.9.7-1.7 1.1-1.7 2.6"></path>
+
+                <path d="M12 17h.01"></path>
+              </svg>
+            </div>
+
+            <div class="settings-text">
+              <h3>Help & Support</h3>
+
+              <p>Get help with complaints, account issues or app problems.</p>
+            </div>
+          </div>
+
+          <button type="button" class="settings-action" onclick="openModal('supportModal')">Get Help</button>
+        </div>
+
+        <!-- ABOUT -->
+
+        <div class="settings-item">
+          <div class="settings-left">
+            <div class="settings-icon">
+              <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="9"></circle>
+
+                <path d="M12 11v6"></path>
+
+                <path d="M12 7h.01"></path>
+              </svg>
+            </div>
+
+            <div class="settings-text">
+              <h3>About Smart Complaint</h3>
+
+              <p>Learn more about Smart Complaint and this application.</p>
+            </div>
+          </div>
+
+          <button type="button" class="settings-action" onclick="openModal('aboutModal')">About</button>
+        </div>
+
+        <!--  =====================================
+                 ACCOUNT MANAGEMENT
+            ======================================  -->
+
+        <div class="section-label">Account Management</div>
+
+        <!-- DELETE ACCOUNT -->
+
+        <div class="settings-item delete-item">
+          <div class="settings-left">
+            <div class="settings-icon">
+              <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M3 6h18"></path>
+
                 <path d="M8 6V4h8v2"></path>
+
                 <path d="M19 6l-1 15H6L5 6"></path>
+
                 <path d="M10 11v6"></path>
+
                 <path d="M14 11v6"></path>
               </svg>
             </div>
@@ -468,17 +1101,456 @@
             </div>
           </div>
 
-          <span class="settings-action danger-action">Coming Soon</span>
+          <button type="button" class="settings-action danger-action" onclick="openModal('deleteModal')">Delete</button>
         </div>
       </div>
 
-      <!--   =====================================
-             BACK TO HOME
-        ======================================   -->
+      <!-- BACK -->
 
       <div class="back-box">
         <a href="{% url 'home' %}" class="btn btn-light">← Back to Home</a>
       </div>
     </div>
+
+    <!--  =====================================================
+         CHANGE PASSWORD MODAL
+    ======================================================  -->
+
+    <div class="settings-modal" id="passwordModal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <div class="modal-title-box">
+            <div class="modal-title-icon">
+              <svg class="ui-icon" viewBox="0 0 24 24">
+                <circle cx="8" cy="15" r="4"></circle>
+
+                <path d="m11 12 9-9"></path>
+
+                <path d="m17 3 4 4"></path>
+              </svg>
+            </div>
+
+            <h2>Change Password</h2>
+          </div>
+
+          <button type="button" class="modal-close" onclick="closeModal('passwordModal')">✕</button>
+        </div>
+
+        <div class="modal-body">
+          <p class="modal-description">Create a strong password to keep your account secure.</p>
+
+          <div class="form-group">
+            <label class="form-label">Current Password</label>
+
+            <input type="password" class="form-control" placeholder="Enter current password" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">New Password</label>
+
+            <input type="password" class="form-control" placeholder="Enter new password" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Confirm New Password</label>
+
+            <input type="password" class="form-control" placeholder="Confirm new password" />
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="modal-btn modal-btn-secondary" onclick="closeModal('passwordModal')">Cancel</button>
+
+          <button type="button" class="modal-btn modal-btn-primary" onclick="uiOnlyAction('passwordModal')">Update Password</button>
+        </div>
+      </div>
+    </div>
+
+    <!--  =====================================================
+         ADDRESS MODAL
+    ======================================================  -->
+
+    <div class="settings-modal" id="addressModal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <div class="modal-title-box">
+            <div class="modal-title-icon">
+              <svg class="ui-icon" viewBox="0 0 24 24">
+                <path d="M12 21s7-5.1 7-12a7 7 0 1 0-14 0c0 6.9 7 12 7 12z"></path>
+
+                <circle cx="12" cy="9" r="2.5"></circle>
+              </svg>
+            </div>
+
+            <h2>Address / Location</h2>
+          </div>
+
+          <button type="button" class="modal-close" onclick="closeModal('addressModal')">✕</button>
+        </div>
+
+        <div class="modal-body">
+          <p class="modal-description">Add your preferred address. Later we can connect this with map and location services.</p>
+
+          <div class="form-group">
+            <label class="form-label">Full Address</label>
+
+            <textarea class="form-control" placeholder="House number, street, area..."></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">City</label>
+
+              <input type="text" class="form-control" placeholder="Enter city" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">State</label>
+
+              <input type="text" class="form-control" placeholder="Enter state" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">PIN Code</label>
+
+            <input type="text" class="form-control" maxlength="6" placeholder="Enter PIN code" />
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="modal-btn modal-btn-secondary" onclick="closeModal('addressModal')">Cancel</button>
+
+          <button type="button" class="modal-btn modal-btn-primary" onclick="uiOnlyAction('addressModal')">Save Address</button>
+        </div>
+      </div>
+    </div>
+
+    <!--  =====================================================
+         TERMS MODAL
+    ======================================================  -->
+
+    <div class="settings-modal" id="termsModal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <div class="modal-title-box">
+            <div class="modal-title-icon">
+              <svg class="ui-icon" viewBox="0 0 24 24">
+                <path d="M6 2h8l4 4v16H6z"></path>
+
+                <path d="M14 2v5h5"></path>
+
+                <path d="M9 12h6"></path>
+
+                <path d="M9 16h6"></path>
+              </svg>
+            </div>
+
+            <h2>User Terms & Conditions</h2>
+          </div>
+
+          <button type="button" class="modal-close" onclick="closeModal('termsModal')">✕</button>
+        </div>
+
+        <div class="modal-body">
+          <div class="terms-box">
+            <h3>1. Account Responsibility</h3>
+
+            <p>Users are responsible for providing correct account information and keeping their login details secure.</p>
+
+            <h3>2. Complaint Information</h3>
+
+            <p>Users should provide accurate complaint details, location information and supporting photos when required.</p>
+
+            <h3>3. Proper Use</h3>
+
+            <p>Smart Complaint should not be used for false, misleading, abusive or unlawful complaints.</p>
+
+            <h3>4. Service Updates</h3>
+
+            <p>Features, policies and services may be updated as the Smart Complaint platform develops.</p>
+
+            <h3>5. Final Terms</h3>
+
+            <p>This is currently the user-interface version of the Terms section. The final legal text can be added later.</p>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="modal-btn modal-btn-primary" onclick="closeModal('termsModal')">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!--  =====================================================
+         HELP & SUPPORT MODAL
+    ======================================================  -->
+
+    <div class="settings-modal" id="supportModal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <div class="modal-title-box">
+            <div class="modal-title-icon">
+              <svg class="ui-icon" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="9"></circle>
+
+                <path d="M9.8 9a2.4 2.4 0 1 1 3.9 1.9c-.9.7-1.7 1.1-1.7 2.6"></path>
+
+                <path d="M12 17h.01"></path>
+              </svg>
+            </div>
+
+            <h2>Help & Support</h2>
+          </div>
+
+          <button type="button" class="modal-close" onclick="closeModal('supportModal')">✕</button>
+        </div>
+
+        <div class="modal-body">
+          <p class="modal-description">Tell us what type of problem you are facing.</p>
+
+          <div class="form-group">
+            <label class="form-label">Issue Type</label>
+
+            <select class="form-control">
+              <option value="">Select an issue</option>
+
+              <option>Complaint Issue</option>
+
+              <option>Worker Issue</option>
+
+              <option>Payment Issue</option>
+
+              <option>Account Issue</option>
+
+              <option>Technical Problem</option>
+
+              <option>Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Subject</label>
+
+            <input type="text" class="form-control" placeholder="Enter subject" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Message</label>
+
+            <textarea class="form-control" placeholder="Explain your problem..."></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="modal-btn modal-btn-secondary" onclick="closeModal('supportModal')">Cancel</button>
+
+          <button type="button" class="modal-btn modal-btn-primary" onclick="uiOnlyAction('supportModal')">Send Request</button>
+        </div>
+      </div>
+    </div>
+
+    <!--  =====================================================
+         ABOUT MODAL
+    ======================================================  -->
+
+    <div class="settings-modal" id="aboutModal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <div class="modal-title-box">
+            <div class="modal-title-icon">
+              <svg class="ui-icon" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="9"></circle>
+
+                <path d="M12 11v6"></path>
+
+                <path d="M12 7h.01"></path>
+              </svg>
+            </div>
+
+            <h2>About</h2>
+          </div>
+
+          <button type="button" class="modal-close" onclick="closeModal('aboutModal')">✕</button>
+        </div>
+
+        <div class="modal-body">
+          <div class="about-content">
+            <div class="about-logo">
+              <svg class="ui-icon" viewBox="0 0 24 24">
+                <path d="M4 20V10l8-6 8 6v10"></path>
+
+                <path d="M9 20v-6h6v6"></path>
+              </svg>
+            </div>
+
+            <h3>Smart Complaint</h3>
+
+            <p>Smart Complaint is designed to help users submit, track and manage service complaints efficiently.</p>
+
+            <p>The platform helps connect users with suitable workers and provides complaint tracking, communication and service-management features.</p>
+
+            <span class="app-version">Version 1.0</span>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="modal-btn modal-btn-primary" onclick="closeModal('aboutModal')">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!--  =====================================================
+         DELETE ACCOUNT MODAL
+    ======================================================  -->
+
+    <div class="settings-modal" id="deleteModal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <div class="modal-title-box">
+            <div class="modal-title-icon" style="
+                            background: #fef2f2;
+                            color: #dc2626;
+                        ">
+              <svg class="ui-icon" viewBox="0 0 24 24">
+                <path d="M3 6h18"></path>
+
+                <path d="M8 6V4h8v2"></path>
+
+                <path d="M19 6l-1 15H6L5 6"></path>
+
+                <path d="M10 11v6"></path>
+
+                <path d="M14 11v6"></path>
+              </svg>
+            </div>
+
+            <h2>Delete Account</h2>
+          </div>
+
+          <button type="button" class="modal-close" onclick="closeModal('deleteModal')">✕</button>
+        </div>
+
+        <div class="modal-body">
+          <div class="warning-box">
+            <svg class="ui-icon" viewBox="0 0 24 24">
+              <path d="M12 3 2 21h20L12 3z"></path>
+
+              <path d="M12 9v5"></path>
+
+              <path d="M12 18h.01"></path>
+            </svg>
+
+            <div>Deleting your account will be permanent. Your account information may no longer be available after deletion.</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Enter your password to confirm</label>
+
+            <input type="password" class="form-control" placeholder="Enter your password" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Type DELETE to confirm</label>
+
+            <input type="text" class="form-control" id="deleteConfirmText" placeholder="Type DELETE" />
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="modal-btn modal-btn-secondary" onclick="closeModal('deleteModal')">Cancel</button>
+
+          <button type="button" class="modal-btn modal-btn-danger" onclick="deleteUiAction()">Delete Account</button>
+        </div>
+      </div>
+    </div>
+
+    <!--  =========================================
+         UI MESSAGE
+    =========================================  -->
+
+    <div class="ui-message" id="uiMessage">UI ready. Backend connection will be added later.</div>
+
+    <!--  =========================================
+         JAVASCRIPT
+    =========================================  -->
+
+    <script>
+      function openModal(modalId) {
+        const modal = document.getElementById(modalId)
+      
+        if (!modal) {
+          return
+        }
+      
+        modal.classList.add('show')
+      
+        document.body.style.overflow = 'hidden'
+      }
+      
+      function closeModal(modalId) {
+        const modal = document.getElementById(modalId)
+      
+        if (!modal) {
+          return
+        }
+      
+        modal.classList.remove('show')
+      
+        document.body.style.overflow = ''
+      }
+      
+      function showUiMessage(message) {
+        const messageBox = document.getElementById('uiMessage')
+      
+        messageBox.textContent = message
+      
+        messageBox.classList.add('show')
+      
+        setTimeout(function () {
+          messageBox.classList.remove('show')
+        }, 2500)
+      }
+      
+      function uiOnlyAction(modalId) {
+        closeModal(modalId)
+      
+        showUiMessage('UI is ready. We will connect this feature with Django later.')
+      }
+      
+      function deleteUiAction() {
+        const confirmInput = document.getElementById('deleteConfirmText')
+      
+        const value = confirmInput.value.trim().toUpperCase()
+      
+        if (value !== 'DELETE') {
+          showUiMessage('Please type DELETE to confirm.')
+      
+          return
+        }
+      
+        closeModal('deleteModal')
+      
+        showUiMessage('Delete Account UI is ready. Backend deletion is not connected yet.')
+      
+        confirmInput.value = ''
+      }
+      
+      document.querySelectorAll('.settings-modal').forEach(function (modal) {
+        modal.addEventListener('click', function (event) {
+          if (event.target === modal) {
+            closeModal(modal.id)
+          }
+        })
+      })
+      
+      document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') {
+          document.querySelectorAll('.settings-modal.show').forEach(function (modal) {
+            closeModal(modal.id)
+          })
+        }
+      })
+    </script>
   </body>
 </html>

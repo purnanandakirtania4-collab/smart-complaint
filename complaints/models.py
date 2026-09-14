@@ -11,6 +11,13 @@ def generate_tracking_id():
 
 
 class UserProfile(models.Model):
+    GENDER_CHOICES = [
+        ("Male", "Male"),
+        ("Female", "Female"),
+        ("Other", "Other"),
+        ("Prefer not to say", "Prefer not to say"),
+    ]
+
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
@@ -18,6 +25,12 @@ class UserProfile(models.Model):
     )
     phone = models.CharField(
         max_length=15,
+        blank=True,
+        default="",
+    )
+    gender = models.CharField(
+        max_length=20,
+        choices=GENDER_CHOICES,
         blank=True,
         default="",
     )
@@ -232,6 +245,93 @@ class WorkerProfile(models.Model):
         )
 
         return f"{worker_label} - {self.name}"
+
+
+class WorkerPayoutDetails(models.Model):
+    PAYOUT_METHOD_CHOICES = [
+        ("upi", "UPI"),
+        ("bank", "Bank Account"),
+    ]
+
+    worker = models.OneToOneField(
+        WorkerProfile,
+        on_delete=models.CASCADE,
+        related_name="payout_details",
+    )
+
+    payout_method = models.CharField(
+        max_length=20,
+        choices=PAYOUT_METHOD_CHOICES,
+        blank=True,
+        default="",
+    )
+
+    upi_id = models.CharField(
+        max_length=150,
+        blank=True,
+        default="",
+    )
+
+    account_holder_name = models.CharField(
+        max_length=150,
+        blank=True,
+        default="",
+    )
+
+    bank_name = models.CharField(
+        max_length=150,
+        blank=True,
+        default="",
+    )
+
+    # For safety, only the last 4 digits are stored locally.
+    # Full bank account number is never stored in this model.
+    bank_account_last4 = models.CharField(
+        max_length=4,
+        blank=True,
+        default="",
+    )
+
+    ifsc_code = models.CharField(
+        max_length=11,
+        blank=True,
+        default="",
+    )
+
+    is_verified = models.BooleanField(
+        default=False,
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True,
+    )
+
+    @property
+    def masked_bank_account(self):
+        if not self.bank_account_last4:
+            return ""
+
+        return f"XXXXXX{self.bank_account_last4}"
+
+    @property
+    def display_summary(self):
+        if self.payout_method == "upi":
+            return self.upi_id or "UPI details not provided"
+
+        if self.payout_method == "bank":
+            if self.bank_account_last4:
+                return f"{self.bank_name or 'Bank'} • {self.masked_bank_account}"
+
+            return "Bank details not provided"
+
+        return "Not configured"
+
+    def __str__(self):
+        return f"{self.worker.worker_id or 'PENDING'} - {self.get_payout_method_display() or 'Not configured'}"
 
 
 class WorkerSubscription(models.Model):

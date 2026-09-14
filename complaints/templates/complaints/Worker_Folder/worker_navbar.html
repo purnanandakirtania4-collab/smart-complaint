@@ -1,70 +1,135 @@
 {% load static %}
 
 <style>
+    :root {
+        --worker-glass-rgb: 37, 99, 235;
+        --worker-glass-rgb-2: 79, 70, 229;
+    }
+
     * {
         box-sizing: border-box;
     }
 
-    /* =========================
-       TOP NAVBAR
-    ========================= */
+    /* =====================================================
+       TOPBAR
+    ===================================================== */
+
     .worker-topbar {
         position: fixed;
+
         top: 0;
         left: 0;
         right: 0;
+
         height: 64px;
-        background: #ffffff;
+
         display: flex;
         align-items: center;
         justify-content: space-between;
+
         padding: 0 20px;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+
+        background: #ffffff;
+
+        box-shadow:
+            0 2px 12px
+            rgba(0, 0, 0, 0.12);
+
         z-index: 9998;
+
+        transition:
+            background 0.25s ease,
+            border-color 0.25s ease;
     }
 
     .worker-menu-btn {
         width: 42px;
         height: 42px;
+
         border: none;
-        border-radius: 10px;
+        border-radius: 11px;
+
         background: #f1f5f9;
+
+        color: #0f172a;
+
         cursor: pointer;
+
         font-size: 24px;
+
         display: flex;
         align-items: center;
         justify-content: center;
-    }
 
-    .worker-menu-btn:hover {
-        background: #e2e8f0;
+        font-family: inherit;
     }
 
     .worker-topbar-title {
         font-size: 18px;
-        font-weight: 700;
+        font-weight: 800;
+
         color: #0f172a;
     }
 
     .worker-topbar-name {
         font-size: 14px;
-        font-weight: 600;
+        font-weight: 700;
+
         color: #475569;
     }
 
-    /* =========================
+    /* =====================================================
+       OVERLAY
+    ===================================================== */
+
+    .worker-sidebar-overlay {
+        position: fixed;
+
+        inset: 0;
+
+        background:
+            rgba(15, 23, 42, 0.55);
+
+        z-index: 9999;
+
+        opacity: 0;
+        visibility: hidden;
+
+        transition: 0.3s ease;
+    }
+
+    .worker-sidebar-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    /* =====================================================
        SIDEBAR
-    ========================= */
+    ===================================================== */
+
     .worker-sidebar {
         position: fixed;
+
         top: 0;
-        left: -300px;
+        left: -310px;
+
         width: 285px;
+        max-width: 88vw;
+
         height: 100vh;
+
         background: #ffffff;
+
         z-index: 10000;
-        box-shadow: 5px 0 25px rgba(0, 0, 0, 0.18);
-        transition: left 0.3s ease;
+
+        box-shadow:
+            5px 0 25px
+            rgba(0, 0, 0, 0.18);
+
+        transition:
+            left 0.32s ease,
+            background 0.25s ease;
+
         overflow-y: auto;
     }
 
@@ -74,8 +139,15 @@
 
     .worker-sidebar-header {
         padding: 28px 20px 22px;
-        background: linear-gradient(135deg, #2563eb, #1d4ed8);
-        color: white;
+
+        background:
+            linear-gradient(
+                135deg,
+                #2563eb,
+                #1d4ed8
+            );
+
+        color: #ffffff;
     }
 
     .worker-sidebar-header h2 {
@@ -90,34 +162,58 @@
     }
 
     .worker-sidebar-menu {
-        padding: 18px 12px;
+        padding: 18px 12px 24px;
     }
 
+    /* =====================================================
+       LINKS
+    ===================================================== */
+
     .worker-nav-link,
-    .worker-dark-button {
+    .worker-appearance-button {
         width: 100%;
+
         min-height: 50px;
+
         display: flex;
         align-items: center;
+
         gap: 14px;
+
         padding: 12px 15px;
+
         margin-bottom: 7px;
-        border: none;
-        border-radius: 10px;
+
+        border: 1px solid transparent;
+        border-radius: 11px;
+
         background: transparent;
+
         color: #1e293b;
+
         text-decoration: none;
+
         font-size: 15px;
         font-weight: 600;
+
         cursor: pointer;
+
         text-align: left;
+
         font-family: inherit;
+
+        transition:
+            background 0.2s ease,
+            color 0.2s ease,
+            transform 0.2s ease;
     }
 
     .worker-nav-link:hover,
-    .worker-dark-button:hover {
+    .worker-appearance-button:hover {
         background: #eff6ff;
         color: #2563eb;
+
+        transform: translateX(3px);
     }
 
     .worker-nav-icon {
@@ -141,72 +237,387 @@
         margin: 12px 5px;
     }
 
-    /* =========================
-       OVERLAY
-    ========================= */
-    .worker-sidebar-overlay {
-        position: fixed;
-        inset: 0;
-        background: rgba(15, 23, 42, 0.55);
-        z-index: 9999;
+    /* =====================================================
+       APPEARANCE
+    ===================================================== */
+
+    .worker-appearance-panel {
         display: none;
+
+        margin:
+            0 0 12px;
+
+        padding: 14px;
+
+        border:
+            1px solid #e2e8f0;
+
+        border-radius: 15px;
+
+        background: #f8fafc;
     }
 
-    .worker-sidebar-overlay.active {
+    .worker-appearance-panel.open {
         display: block;
     }
 
-    /* =========================
-       DARK MODE
-    ========================= */
-    body.worker-dark-mode {
+    .worker-appearance-title {
+        margin-bottom: 10px;
+
+        font-size: 13px;
+        font-weight: 800;
+
+        color: #475569;
+    }
+
+    .worker-theme-options {
+        display: grid;
+
+        grid-template-columns:
+            repeat(3, 1fr);
+
+        gap: 7px;
+    }
+
+    .worker-theme-option {
+        padding: 9px 5px;
+
+        border:
+            1px solid #cbd5e1;
+
+        border-radius: 10px;
+
+        background: #ffffff;
+
+        color: #475569;
+
+        font-size: 12px;
+        font-weight: 800;
+
+        font-family: inherit;
+
+        cursor: pointer;
+    }
+
+    .worker-theme-option.active {
+        background: #2563eb;
+        border-color: #2563eb;
+
+        color: #ffffff;
+    }
+
+    .worker-glass-colors {
+        display: none;
+
+        margin-top: 14px;
+    }
+
+    .worker-glass-colors.show {
+        display: block;
+    }
+
+    .worker-glass-color-title {
+        margin-bottom: 9px;
+
+        font-size: 12px;
+        font-weight: 800;
+
+        color: #64748b;
+    }
+
+    .worker-color-options {
+        display: flex;
+        gap: 10px;
+
+        flex-wrap: wrap;
+    }
+
+    .worker-color-option {
+        width: 30px;
+        height: 30px;
+
+        border:
+            3px solid transparent;
+
+        border-radius: 50%;
+
+        cursor: pointer;
+
+        padding: 0;
+    }
+
+    .worker-color-option.active {
+        border-color: #ffffff;
+        outline: 2px solid #0f172a;
+    }
+
+    .worker-color-blue {
+        background: #2563eb;
+    }
+
+    .worker-color-indigo {
+        background: #4f46e5;
+    }
+
+    .worker-color-teal {
+        background: #0f766e;
+    }
+
+    .worker-color-purple {
+        background: #7c3aed;
+    }
+
+    .worker-color-slate {
+        background: #475569;
+    }
+
+    /* =====================================================
+       DARK
+    ===================================================== */
+
+    body.worker-theme-dark {
         background: #0f172a !important;
         color: #e2e8f0 !important;
     }
 
-    body.worker-dark-mode .worker-topbar {
+    body.worker-theme-dark .worker-topbar {
         background: #1e293b;
     }
 
-    body.worker-dark-mode .worker-topbar-title,
-    body.worker-dark-mode .worker-topbar-name {
-        color: #f8fafc;
+    body.worker-theme-dark
+    .worker-topbar-title,
+    body.worker-theme-dark
+    .worker-topbar-name {
+        color: #ffffff;
     }
 
-    body.worker-dark-mode .worker-menu-btn {
+    body.worker-theme-dark
+    .worker-menu-btn {
         background: #334155;
-        color: white;
+        color: #ffffff;
     }
 
-    body.worker-dark-mode .worker-sidebar {
+    body.worker-theme-dark
+    .worker-sidebar {
         background: #1e293b;
     }
 
-    body.worker-dark-mode .worker-nav-link,
-    body.worker-dark-mode .worker-dark-button {
+    body.worker-theme-dark
+    .worker-nav-link,
+    body.worker-theme-dark
+    .worker-appearance-button {
         color: #e2e8f0;
     }
 
-    body.worker-dark-mode .worker-nav-link:hover,
-    body.worker-dark-mode .worker-dark-button:hover {
+    body.worker-theme-dark
+    .worker-nav-link:hover,
+    body.worker-theme-dark
+    .worker-appearance-button:hover {
         background: #334155;
         color: #60a5fa;
     }
 
-    body.worker-dark-mode .worker-logout-link {
-        color: #f87171;
+    body.worker-theme-dark
+    .worker-appearance-panel {
+        background: #0f172a;
+        border-color: #475569;
     }
 
-    body.worker-dark-mode .worker-divider {
-        background: #475569;
+    body.worker-theme-dark
+    .worker-appearance-title,
+    body.worker-theme-dark
+    .worker-glass-color-title {
+        color: #cbd5e1;
     }
 
-    /* Navbar fixed hai, page content uske niche rahe */
+    body.worker-theme-dark
+    .worker-theme-option {
+        background: #1e293b;
+        border-color: #475569;
+        color: #cbd5e1;
+    }
+
+    body.worker-theme-dark
+    .worker-theme-option.active {
+        background: #2563eb;
+        color: #ffffff;
+    }
+
+    /* =====================================================
+       GLASS
+    ===================================================== */
+
+    body.worker-theme-glass {
+        background:
+            radial-gradient(
+                circle at 15% 15%,
+                rgba(var(--worker-glass-rgb), 0.45),
+                transparent 35%
+            ),
+            radial-gradient(
+                circle at 85% 85%,
+                rgba(var(--worker-glass-rgb-2), 0.32),
+                transparent 40%
+            ),
+            linear-gradient(
+                135deg,
+                #0f172a,
+                #172554,
+                #1e293b
+            ) !important;
+
+        background-attachment: fixed !important;
+
+        color: #ffffff;
+    }
+
+    body.worker-theme-glass
+    .worker-topbar {
+        background:
+            rgba(var(--worker-glass-rgb), 0.15);
+
+        border-bottom:
+            1px solid
+            rgba(255, 255, 255, 0.18);
+
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+    }
+
+    body.worker-theme-glass
+    .worker-menu-btn {
+        background:
+            rgba(255, 255, 255, 0.10);
+
+        border:
+            1px solid
+            rgba(255, 255, 255, 0.18);
+
+        color: #ffffff;
+
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    }
+
+    body.worker-theme-glass
+    .worker-topbar-title,
+    body.worker-theme-glass
+    .worker-topbar-name {
+        color: #ffffff;
+    }
+
+    body.worker-theme-glass
+    .worker-sidebar {
+        background:
+            linear-gradient(
+                180deg,
+                rgba(var(--worker-glass-rgb), 0.20),
+                rgba(15, 23, 42, 0.25)
+            );
+
+        border-right:
+            1px solid
+            rgba(255, 255, 255, 0.18);
+
+        backdrop-filter: blur(28px);
+        -webkit-backdrop-filter: blur(28px);
+    }
+
+    body.worker-theme-glass
+    .worker-sidebar-header {
+        background:
+            linear-gradient(
+                135deg,
+                rgba(var(--worker-glass-rgb), 0.42),
+                rgba(var(--worker-glass-rgb-2), 0.22)
+            );
+    }
+
+    body.worker-theme-glass
+    .worker-nav-link,
+    body.worker-theme-glass
+    .worker-appearance-button {
+        background:
+            rgba(255, 255, 255, 0.07);
+
+        border-color:
+            rgba(255, 255, 255, 0.10);
+
+        color: #ffffff;
+
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    }
+
+    body.worker-theme-glass
+    .worker-nav-link:hover,
+    body.worker-theme-glass
+    .worker-appearance-button:hover {
+        background:
+            rgba(var(--worker-glass-rgb), 0.24);
+
+        border-color:
+            rgba(255, 255, 255, 0.22);
+
+        color: #ffffff;
+    }
+
+    body.worker-theme-glass
+    .worker-appearance-panel {
+        background:
+            rgba(255, 255, 255, 0.07);
+
+        border-color:
+            rgba(255, 255, 255, 0.14);
+
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+    }
+
+    body.worker-theme-glass
+    .worker-appearance-title,
+    body.worker-theme-glass
+    .worker-glass-color-title {
+        color:
+            rgba(255, 255, 255, 0.82);
+    }
+
+    body.worker-theme-glass
+    .worker-theme-option {
+        background:
+            rgba(255, 255, 255, 0.08);
+
+        border-color:
+            rgba(255, 255, 255, 0.14);
+
+        color: #ffffff;
+    }
+
+    body.worker-theme-glass
+    .worker-theme-option.active {
+        background:
+            rgba(var(--worker-glass-rgb), 0.75);
+    }
+
+    body.worker-theme-glass
+    .worker-logout-link {
+        color: #fecaca;
+    }
+
+    /* =====================================================
+       CONTENT OFFSET
+    ===================================================== */
+
     body {
         padding-top: 64px;
     }
 
+    /* =====================================================
+       MOBILE
+    ===================================================== */
+
     @media (max-width: 600px) {
+
         .worker-topbar {
             padding: 0 12px;
         }
@@ -226,9 +637,6 @@
 </style>
 
 
-<!-- =========================
-     TOP BAR
-========================= -->
 <div class="worker-topbar">
 
     <button
@@ -251,18 +659,12 @@
 </div>
 
 
-<!-- =========================
-     OVERLAY
-========================= -->
 <div
     class="worker-sidebar-overlay"
     id="workerSidebarOverlay"
 ></div>
 
 
-<!-- =========================
-     WORKER SIDEBAR
-========================= -->
 <aside
     class="worker-sidebar"
     id="workerSidebar"
@@ -283,62 +685,176 @@
 
     <div class="worker-sidebar-menu">
 
-        <!-- PROFILE -->
         {% if worker %}
+
             <a
                 href="{% url 'worker_profile' worker.id %}"
                 class="worker-nav-link"
             >
-                <span class="worker-nav-icon">👤</span>
-                <span>Profile</span>
+                <span class="worker-nav-icon">
+                    👤
+                </span>
+
+                <span>
+                    Profile
+                </span>
             </a>
+
         {% endif %}
 
 
-        <!-- SUBSCRIPTION -->
         <a
             href="{% url 'terms_conditions' %}"
             class="worker-nav-link"
         >
-            <span class="worker-nav-icon">💳</span>
-            <span>Subscription</span>
+            <span class="worker-nav-icon">
+                💳
+            </span>
+
+            <span>
+                Subscription
+            </span>
         </a>
 
 
-        <!-- SETTINGS -->
         <a
             href="{% url 'worker_settings' %}"
             class="worker-nav-link"
         >
-            <span class="worker-nav-icon">⚙️</span>
-            <span>Settings</span>
+            <span class="worker-nav-icon">
+                ⚙️
+            </span>
+
+            <span>
+                Settings
+            </span>
         </a>
 
 
-        <!-- DARK MODE -->
+        <!-- APPEARANCE -->
+
         <button
             type="button"
-            class="worker-dark-button"
-            id="workerDarkModeButton"
+            class="worker-appearance-button"
+            id="workerAppearanceButton"
         >
-            <span class="worker-nav-icon">🌙</span>
+            <span class="worker-nav-icon">
+                🎨
+            </span>
 
-            <span id="workerDarkModeText">
-                Dark Mode
+            <span>
+                Appearance
             </span>
         </button>
+
+
+        <div
+            class="worker-appearance-panel"
+            id="workerAppearancePanel"
+        >
+
+            <div class="worker-appearance-title">
+                Choose Theme
+            </div>
+
+
+            <div class="worker-theme-options">
+
+                <button
+                    type="button"
+                    class="worker-theme-option"
+                    data-worker-theme="light"
+                >
+                    Light
+                </button>
+
+                <button
+                    type="button"
+                    class="worker-theme-option"
+                    data-worker-theme="dark"
+                >
+                    Dark
+                </button>
+
+                <button
+                    type="button"
+                    class="worker-theme-option"
+                    data-worker-theme="glass"
+                >
+                    Glass
+                </button>
+
+            </div>
+
+
+            <div
+                class="worker-glass-colors"
+                id="workerGlassColors"
+            >
+
+                <div class="worker-glass-color-title">
+                    Glass Color
+                </div>
+
+
+                <div class="worker-color-options">
+
+                    <button
+                        type="button"
+                        class="worker-color-option worker-color-blue"
+                        data-worker-color="blue"
+                        title="Blue"
+                    ></button>
+
+                    <button
+                        type="button"
+                        class="worker-color-option worker-color-indigo"
+                        data-worker-color="indigo"
+                        title="Indigo"
+                    ></button>
+
+                    <button
+                        type="button"
+                        class="worker-color-option worker-color-teal"
+                        data-worker-color="teal"
+                        title="Teal"
+                    ></button>
+
+                    <button
+                        type="button"
+                        class="worker-color-option worker-color-purple"
+                        data-worker-color="purple"
+                        title="Purple"
+                    ></button>
+
+                    <button
+                        type="button"
+                        class="worker-color-option worker-color-slate"
+                        data-worker-color="slate"
+                        title="Slate"
+                    ></button>
+
+                </div>
+
+            </div>
+
+        </div>
 
 
         <div class="worker-divider"></div>
 
 
-        <!-- LOGOUT -->
         <a
             href="{% url 'worker_logout' %}"
             class="worker-nav-link worker-logout-link"
         >
-            <span class="worker-nav-icon">🚪</span>
-            <span>Logout</span>
+            <span class="worker-nav-icon">
+                🚪
+            </span>
+
+            <span>
+                Logout
+            </span>
         </a>
 
     </div>
@@ -347,103 +863,314 @@
 
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
 
-        const menuButton =
-            document.getElementById("workerMenuButton");
+            const menuButton =
+                document.getElementById(
+                    "workerMenuButton"
+                );
 
-        const sidebar =
-            document.getElementById("workerSidebar");
+            const sidebar =
+                document.getElementById(
+                    "workerSidebar"
+                );
 
-        const overlay =
-            document.getElementById("workerSidebarOverlay");
+            const overlay =
+                document.getElementById(
+                    "workerSidebarOverlay"
+                );
 
-        const darkButton =
-            document.getElementById("workerDarkModeButton");
+            const appearanceButton =
+                document.getElementById(
+                    "workerAppearanceButton"
+                );
 
-        const darkText =
-            document.getElementById("workerDarkModeText");
+            const appearancePanel =
+                document.getElementById(
+                    "workerAppearancePanel"
+                );
 
+            const glassColors =
+                document.getElementById(
+                    "workerGlassColors"
+                );
 
-        function openWorkerMenu() {
-            sidebar.classList.add("active");
-            overlay.classList.add("active");
-        }
+            const themeButtons =
+                document.querySelectorAll(
+                    ".worker-theme-option"
+                );
 
-
-        function closeWorkerMenu() {
-            sidebar.classList.remove("active");
-            overlay.classList.remove("active");
-        }
-
-
-        menuButton.addEventListener(
-            "click",
-            openWorkerMenu
-        );
-
-
-        overlay.addEventListener(
-            "click",
-            closeWorkerMenu
-        );
-
-
-        /* =========================
-           DARK MODE SAVE
-        ========================= */
-
-        const savedDarkMode =
-            localStorage.getItem("workerDarkMode");
+            const colorButtons =
+                document.querySelectorAll(
+                    ".worker-color-option"
+                );
 
 
-        if (savedDarkMode === "enabled") {
+            const glassColorMap = {
 
-            document.body.classList.add(
-                "worker-dark-mode"
-            );
+                blue: {
+                    primary: "37, 99, 235",
+                    secondary: "59, 130, 246"
+                },
 
-            darkText.textContent =
-                "Light Mode";
-        }
+                indigo: {
+                    primary: "79, 70, 229",
+                    secondary: "99, 102, 241"
+                },
+
+                teal: {
+                    primary: "15, 118, 110",
+                    secondary: "20, 184, 166"
+                },
+
+                purple: {
+                    primary: "124, 58, 237",
+                    secondary: "147, 51, 234"
+                },
+
+                slate: {
+                    primary: "71, 85, 105",
+                    secondary: "100, 116, 139"
+                }
+
+            };
 
 
-        darkButton.addEventListener(
-            "click",
-            function () {
+            function openMenu() {
 
-                document.body.classList.toggle(
+                sidebar.classList.add(
+                    "active"
+                );
+
+                overlay.classList.add(
+                    "active"
+                );
+
+                document.body.style.overflow =
+                    "hidden";
+            }
+
+
+            function closeMenu() {
+
+                sidebar.classList.remove(
+                    "active"
+                );
+
+                overlay.classList.remove(
+                    "active"
+                );
+
+                document.body.style.overflow =
+                    "";
+            }
+
+
+            function setWorkerGlassColor(
+                color
+            ) {
+
+                const selected =
+                    glassColorMap[color] ||
+                    glassColorMap.blue;
+
+
+                document.documentElement.style.setProperty(
+                    "--worker-glass-rgb",
+                    selected.primary
+                );
+
+
+                document.documentElement.style.setProperty(
+                    "--worker-glass-rgb-2",
+                    selected.secondary
+                );
+
+
+                colorButtons.forEach(
+                    function (button) {
+
+                        button.classList.toggle(
+                            "active",
+                            button.dataset.workerColor === color
+                        );
+                    }
+                );
+
+
+                localStorage.setItem(
+                    "workerGlassColorV2",
+                    color
+                );
+            }
+
+
+            function setWorkerTheme(
+                theme
+            ) {
+
+                document.body.classList.remove(
+                    "worker-theme-light",
+                    "worker-theme-dark",
+                    "worker-theme-glass",
                     "worker-dark-mode"
                 );
 
 
                 if (
-                    document.body.classList.contains(
-                        "worker-dark-mode"
-                    )
+                    theme === "dark"
                 ) {
 
-                    localStorage.setItem(
-                        "workerDarkMode",
-                        "enabled"
+                    document.body.classList.add(
+                        "worker-theme-dark"
                     );
 
-                    darkText.textContent =
-                        "Light Mode";
-
-                } else {
-
-                    localStorage.setItem(
-                        "workerDarkMode",
-                        "disabled"
-                    );
-
-                    darkText.textContent =
-                        "Dark Mode";
                 }
 
-            }
-        );
+                else if (
+                    theme === "glass"
+                ) {
 
-    });
+                    document.body.classList.add(
+                        "worker-theme-glass"
+                    );
+
+                }
+
+                else {
+
+                    theme = "light";
+
+                    document.body.classList.add(
+                        "worker-theme-light"
+                    );
+                }
+
+
+                themeButtons.forEach(
+                    function (button) {
+
+                        button.classList.toggle(
+                            "active",
+                            button.dataset.workerTheme === theme
+                        );
+                    }
+                );
+
+
+                glassColors.classList.toggle(
+                    "show",
+                    theme === "glass"
+                );
+
+
+                localStorage.setItem(
+                    "workerThemeV2",
+                    theme
+                );
+            }
+
+
+            menuButton.addEventListener(
+                "click",
+                openMenu
+            );
+
+
+            overlay.addEventListener(
+                "click",
+                closeMenu
+            );
+
+
+            appearanceButton.addEventListener(
+                "click",
+                function () {
+
+                    appearancePanel.classList.toggle(
+                        "open"
+                    );
+                }
+            );
+
+
+            themeButtons.forEach(
+                function (button) {
+
+                    button.addEventListener(
+                        "click",
+                        function () {
+
+                            setWorkerTheme(
+                                this.dataset.workerTheme
+                            );
+                        }
+                    );
+                }
+            );
+
+
+            colorButtons.forEach(
+                function (button) {
+
+                    button.addEventListener(
+                        "click",
+                        function () {
+
+                            setWorkerGlassColor(
+                                this.dataset.workerColor
+                            );
+
+
+                            setWorkerTheme(
+                                "glass"
+                            );
+                        }
+                    );
+                }
+            );
+
+
+            const savedTheme =
+                localStorage.getItem(
+                    "workerThemeV2"
+                ) || "light";
+
+
+            const savedColor =
+                localStorage.getItem(
+                    "workerGlassColorV2"
+                ) || "blue";
+
+
+            setWorkerGlassColor(
+                savedColor
+            );
+
+
+            setWorkerTheme(
+                savedTheme
+            );
+
+
+            document.addEventListener(
+                "keydown",
+                function (event) {
+
+                    if (
+                        event.key === "Escape" &&
+                        sidebar.classList.contains(
+                            "active"
+                        )
+                    ) {
+
+                        closeMenu();
+                    }
+                }
+            );
+
+        }
+    );
 </script>

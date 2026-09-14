@@ -124,10 +124,206 @@
           grid-template-columns: 1fr;
         }
       }
-    </style>
+    
+
+/* =====================================================
+   NEW LIGHT / DARK / GLASS THEME SUPPORT
+===================================================== */
+
+body.worker-theme-glass .theme-glass-surface,
+body.worker-theme-glass .profile,
+body.worker-theme-glass .box,
+body.worker-theme-glass .settings-card,
+body.worker-theme-glass .modal-card,
+body.worker-theme-glass .payment-card,
+body.worker-theme-glass .terms-card {
+    background:
+        linear-gradient(
+            135deg,
+            rgba(96, 165, 250, 0.13),
+            rgba(255, 255, 255, 0.075),
+            rgba(99, 102, 241, 0.08)
+        ) !important;
+    border: 1px solid rgba(191, 219, 254, 0.27) !important;
+    color: #ffffff !important;
+    box-shadow:
+        0 26px 65px rgba(2, 6, 23, 0.30),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+}
+
+body.worker-theme-glass h1,
+body.worker-theme-glass h2,
+body.worker-theme-glass h3,
+body.worker-theme-glass .value,
+body.worker-theme-glass .worker-name,
+body.worker-theme-glass .settings-text h3,
+body.worker-theme-glass .modal-header h2,
+body.worker-theme-glass .modal-label,
+body.worker-theme-glass .header h1,
+body.worker-theme-glass .rule h3 {
+    color: #ffffff !important;
+}
+
+body.worker-theme-glass .box,
+body.worker-theme-glass .photo-upload,
+body.worker-theme-glass .notice,
+body.worker-theme-glass .privacy,
+body.worker-theme-glass .worker-box,
+body.worker-theme-glass .plan-box,
+body.worker-theme-glass .today-box,
+body.worker-theme-glass .security,
+body.worker-theme-glass .rule,
+body.worker-theme-glass .important,
+body.worker-theme-glass .availability-box,
+body.worker-theme-glass .modal-note {
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.11),
+            rgba(59, 130, 246, 0.055)
+        ) !important;
+    border-color: rgba(191, 219, 254, 0.25) !important;
+    color: rgba(255, 255, 255, 0.90) !important;
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+}
+
+body.worker-theme-glass .box-label,
+body.worker-theme-glass .rating-count,
+body.worker-theme-glass .file-help,
+body.worker-theme-glass .settings-text p,
+body.worker-theme-glass .header p,
+body.worker-theme-glass .worker-label,
+body.worker-theme-glass .worker-id,
+body.worker-theme-glass .small-label,
+body.worker-theme-glass .first-text,
+body.worker-theme-glass .per-month,
+body.worker-theme-glass .autopay-text,
+body.worker-theme-glass .today-label,
+body.worker-theme-glass .rule p {
+    color: rgba(219, 234, 254, 0.76) !important;
+}
+
+body.worker-theme-glass .avatar,
+body.worker-theme-glass .icon,
+body.worker-theme-glass .header-icon,
+body.worker-theme-glass .payment-icon,
+body.worker-theme-glass .settings-icon {
+    background: rgba(255, 255, 255, 0.12) !important;
+    border-color: rgba(255, 255, 255, 0.25) !important;
+    color: #ffffff !important;
+}
+
+body.worker-theme-glass .rating-card {
+    background: rgba(245, 158, 11, 0.12) !important;
+    border-color: rgba(253, 230, 138, 0.28) !important;
+}
+
+body.worker-theme-glass .rating-number {
+    color: #ffffff !important;
+}
+
+body.worker-theme-glass .worker-id,
+body.worker-theme-glass .back-link,
+body.worker-theme-glass .worker-id,
+body.worker-theme-glass .plan-title {
+    color: #bfdbfe !important;
+}
+
+body.worker-theme-glass .modal-input,
+body.worker-theme-glass .modal-select,
+body.worker-theme-glass .modal-textarea {
+    background: rgba(255, 255, 255, 0.09) !important;
+    border-color: rgba(255, 255, 255, 0.20) !important;
+    color: #ffffff !important;
+}
+
+body.worker-theme-glass .modal-select option {
+    background: #0f172a;
+    color: #ffffff;
+}
+
+body.worker-theme-glass .settings-item {
+    border-color: rgba(191, 219, 254, 0.15) !important;
+}
+
+body.worker-theme-glass .settings-action,
+body.worker-theme-glass .pay-button,
+body.worker-theme-glass .back-button {
+    background:
+        linear-gradient(
+            135deg,
+            rgba(var(--app-primary-rgb), 0.95),
+            rgba(var(--app-secondary-rgb), 0.88)
+        ) !important;
+    border: 1px solid rgba(255, 255, 255, 0.20) !important;
+    color: #ffffff !important;
+    box-shadow: 0 9px 24px rgba(var(--app-primary-rgb), 0.24);
+}
+
+body.worker-theme-glass .subscription-action {
+    background: linear-gradient(135deg, #16a34a, #15803d) !important;
+}
+
+body.worker-theme-glass .danger-action,
+body.worker-theme-glass .modal-delete {
+    background: linear-gradient(135deg, #dc2626, #b91c1c) !important;
+}
+
+body.worker-theme-glass .test-badge,
+body.worker-theme-glass .discount {
+    box-shadow: 0 5px 15px rgba(2, 6, 23, 0.12);
+}
+
+body.worker-theme-glass .first-price,
+body.worker-theme-glass .today-price {
+    color: #86efac !important;
+}
+
+body.worker-theme-glass .new-price {
+    color: #bfdbfe !important;
+}
+
+body.worker-theme-glass .old-price {
+    color: rgba(219, 234, 254, 0.55) !important;
+}
+
+body.worker-theme-glass .notice {
+    border-left-color: #f59e0b !important;
+}
+
+body.worker-theme-glass .important {
+    border-left-color: #f97316 !important;
+}
+
+body.worker-theme-dark .theme-glass-surface,
+body.worker-theme-dark .profile,
+body.worker-theme-dark .box,
+body.worker-theme-dark .settings-card,
+body.worker-theme-dark .modal-card,
+body.worker-theme-dark .payment-card,
+body.worker-theme-dark .terms-card {
+    background: #1e293b !important;
+    color: #e2e8f0 !important;
+    border-color: #334155 !important;
+}
+
+body.worker-theme-glass .section {
+    border-color: rgba(191, 219, 254, 0.16) !important;
+}
+body.worker-theme-glass .check-row {
+    color: rgba(255, 255, 255, 0.88);
+}
+body.worker-theme-glass a {
+    color: #bfdbfe !important;
+}
+
+</style>
   </head>
 
-  <body>
+  <body class="worker-page">
     <main class="page">
       <div class="card box">
         <div class="head">

@@ -1,291 +1,404 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Worker Dashboard | Smart Complaint</title>
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <title>
+        Worker Dashboard | Smart Complaint
+    </title>
+
 
     {% include "complaints/base_style.html" %}
 
+
     <style>
+
+        /* =====================================================
+           ICONS
+        ===================================================== */
 
         .ui-icon {
             width: 21px;
             height: 21px;
+
             display: inline-block;
+
             vertical-align: middle;
+
             fill: none;
             stroke: currentColor;
+
             stroke-width: 2;
             stroke-linecap: round;
             stroke-linejoin: round;
+
             flex-shrink: 0;
         }
-        .icon-inline {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .status-dot {
-            width: 9px;
-            height: 9px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 6px;
-            vertical-align: middle;
-            background: #16a34a;
-        }
 
-        .header h1,
+
+        .icon-inline,
+        .dashboard-title,
         .section-title,
         .photo-title,
         .location-title,
         .otp-title,
         .rating-title {
-            display:flex;
-            align-items:center;
-            gap:9px;
+            display: flex;
+            align-items: center;
+
+            gap: 9px;
         }
-        .priority-dot {
-            width:9px;height:9px;border-radius:50%;
-            display:inline-block;margin-right:6px;
+
+
+        /* =====================================================
+           PAGE HEADER
+        ===================================================== */
+
+        .dashboard-header {
+            padding: 18px 4px 25px;
+
+            color: #ffffff;
         }
-        .dot-normal{background:#16a34a}.dot-high{background:#f59e0b}.dot-emergency{background:#dc2626}
-        .empty-icon {
-            width:64px;height:64px;margin:0 auto;
-            border-radius:18px;background:#eef2ff;color:#4338ca;
-            display:grid;place-items:center;
+
+
+        .dashboard-title {
+            margin: 0;
+
+            color: #ffffff;
+
+            font-size: 31px;
+            font-weight: 900;
+
+            text-shadow:
+                0 3px 18px
+                rgba(2, 6, 23, 0.35);
         }
-        .empty-icon .ui-icon{width:32px;height:32px}
+
+
+        .dashboard-header p {
+            margin-top: 7px;
+
+            color: #dbeafe;
+
+            line-height: 1.6;
+        }
+
+
+        /* =====================================================
+           WORKER SUMMARY
+        ===================================================== */
 
         .dashboard-summary {
             padding: 24px;
-            margin-bottom: 22px;
-            border: 1px solid rgba(255, 255, 255, 0.14);
-            background:
-                linear-gradient(
-                    135deg,
-                    rgba(255, 255, 255, 0.98),
-                    rgba(239, 246, 255, 0.98)
-                );
+
+            margin-bottom: 24px;
+
+            overflow: hidden;
         }
+
 
         .dashboard-summary-main {
             display: flex;
+
             align-items: center;
+
             gap: 18px;
         }
 
+
         .dashboard-summary-avatar {
-            width: 72px;
-            height: 72px;
-            min-width: 72px;
-            border-radius: 50%;
-            overflow: hidden;
-            background: #dbeafe;
-            color: #1d4ed8;
+            width: 76px;
+            height: 76px;
+
+            min-width: 76px;
+
             display: grid;
             place-items: center;
+
+            overflow: hidden;
+
             border: 3px solid #ffffff;
-            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.16);
+
+            border-radius: 50%;
+
+            background: #dbeafe;
+            color: #1d4ed8;
+
+            box-shadow:
+                0 8px 22px
+                rgba(37, 99, 235, 0.18);
         }
+
 
         .dashboard-summary-avatar img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+
             display: block;
+
+            object-fit: cover;
         }
 
+
         .dashboard-summary-avatar .ui-icon {
-            width: 31px;
-            height: 31px;
+            width: 32px;
+            height: 32px;
         }
+
 
         .dashboard-summary-text {
             min-width: 0;
         }
 
+
         .dashboard-summary-kicker {
-            margin-bottom: 3px;
+            margin-bottom: 4px;
+
             color: #2563eb;
+
             font-size: 12px;
             font-weight: 900;
+
             letter-spacing: 0.08em;
+
             text-transform: uppercase;
         }
 
+
         .dashboard-summary-text h2 {
             margin: 0;
+
             color: #172554;
+
             font-size: 25px;
         }
 
+
         .dashboard-summary-meta {
             display: flex;
+
             align-items: center;
+
             flex-wrap: wrap;
+
             gap: 8px;
-            margin-top: 8px;
+
+            margin-top: 9px;
         }
+
 
         .worker-id-pill,
         .approved-pill {
             display: inline-flex;
+
             align-items: center;
+
             gap: 6px;
+
             padding: 6px 10px;
+
             border-radius: 999px;
+
             font-size: 12px;
-            font-weight: 800;
+            font-weight: 900;
         }
+
 
         .worker-id-pill {
             background: #dbeafe;
             color: #1d4ed8;
         }
 
+
         .approved-pill {
             background: #dcfce7;
             color: #166534;
         }
 
-        .approved-pill .status-dot {
-            margin: 0;
+
+        .status-dot {
+            width: 9px;
+            height: 9px;
+
+            display: inline-block;
+
+            border-radius: 50%;
+
+            background: #16a34a;
         }
+
 
         .dashboard-summary-text p {
             margin: 10px 0 0;
+
             color: #64748b;
+
             font-size: 13px;
+
             line-height: 1.65;
         }
 
-        body.worker-dark-mode .dashboard-summary {
-            background:
-                linear-gradient(
-                    135deg,
-                    #172033,
-                    #111827
-                );
-            border-color: #334155;
-        }
 
-        body.worker-dark-mode .dashboard-summary-avatar {
-            background: #1e3a5f;
-            color: #bfdbfe;
-            border-color: #334155;
-        }
+        /* =====================================================
+           SECTION TITLE
+        ===================================================== */
 
-        body.worker-dark-mode .dashboard-summary-text h2 {
-            color: #f8fafc;
-        }
+        .section-title {
+            margin: 27px 0 13px;
 
-        body.worker-dark-mode .dashboard-summary-text p {
-            color: #cbd5e1;
-        }
+            color: #ffffff;
 
-        body.worker-dark-mode .worker-id-pill {
-            background: #1e3a5f;
-            color: #bfdbfe;
-        }
+            font-size: 22px;
+            font-weight: 900;
 
-        @media (max-width: 650px) {
-            .dashboard-summary {
-                padding: 19px;
-            }
-
-            .dashboard-summary-main {
-                align-items: flex-start;
-            }
-
-            .dashboard-summary-avatar {
-                width: 60px;
-                height: 60px;
-                min-width: 60px;
-            }
-
-            .dashboard-summary-avatar .ui-icon {
-                width: 27px;
-                height: 27px;
-            }
-
-            .dashboard-summary-text h2 {
-                font-size: 21px;
-            }
+            text-shadow:
+                0 2px 10px
+                rgba(2, 6, 23, 0.28);
         }
 
 
-        .header {
-            padding: 28px;
-            color: #fff;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .header h1 {
-            font-size: 30px;
-        }
+        /* =====================================================
+           COMPLAINT CARD
+        ===================================================== */
 
         .complaint {
             padding: 25px;
-            margin-bottom: 18px;
+
+            margin-bottom: 22px;
+
+            overflow: hidden;
         }
 
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-        }
-
-        .info {
-            background: #f8fafc;
-            padding: 14px;
-            border-radius: 11px;
-        }
-
-        .info small {
-            display: block;
-            color: #64748b;
-            margin-bottom: 5px;
-        }
-
-        .info b {
-            word-break: break-word;
-        }
-
-        .section-title {
-            color: #fff;
-            margin: 25px 0 12px;
-        }
 
         .complaint-head {
             display: flex;
+
             justify-content: space-between;
-            gap: 15px;
             align-items: flex-start;
+
+            gap: 15px;
         }
 
+
+        .complaint-head h2 {
+            color: #172554;
+
+            font-size: 23px;
+            font-weight: 900;
+        }
+
+
+        .tracking-id {
+            margin-top: 6px;
+
+            color: #64748b;
+
+            font-size: 13px;
+        }
+
+
+        /* =====================================================
+           PRIORITY / STATUS
+        ===================================================== */
+
+        .priority-row {
+            display: flex;
+
+            align-items: center;
+
+            flex-wrap: wrap;
+
+            gap: 8px;
+
+            margin-top: 9px;
+        }
+
+
+        .priority-badge,
         .status {
+            display: inline-flex;
+
+            align-items: center;
+            justify-content: center;
+
             padding: 7px 12px;
-            border-radius: 20px;
+
+            border-radius: 999px;
+
             font-size: 12px;
-            font-weight: 800;
+            font-weight: 900;
+
             white-space: nowrap;
         }
+
+
+        .priority-dot {
+            width: 9px;
+            height: 9px;
+
+            display: inline-block;
+
+            margin-right: 6px;
+
+            border-radius: 50%;
+        }
+
+
+        .dot-normal {
+            background: #16a34a;
+        }
+
+
+        .dot-high {
+            background: #f59e0b;
+        }
+
+
+        .dot-emergency {
+            background: #dc2626;
+        }
+
+
+        .priority-normal {
+            background: #ecfdf5;
+            color: #166534;
+        }
+
+
+        .priority-high {
+            background: #fff7ed;
+            color: #c2410c;
+        }
+
+
+        .priority-emergency {
+            background: #fee2e2;
+            color: #b91c1c;
+
+            animation:
+                emergencyPulse
+                1.5s infinite;
+        }
+
 
         .pending {
             background: #fef3c7;
             color: #92400e;
         }
 
+
         .progress {
             background: #dbeafe;
             color: #1d4ed8;
         }
+
 
         .resolved {
             background: #dcfce7;
@@ -293,270 +406,621 @@
         }
 
 
+        @keyframes emergencyPulse {
 
-        .priority-row {
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 9px;
+            0%,
+            100% {
+                box-shadow:
+                    0 0 0 0
+                    rgba(220, 38, 38, 0.18);
+            }
+
+            50% {
+                box-shadow:
+                    0 0 0 7px
+                    rgba(220, 38, 38, 0);
+            }
+
         }
 
-        .priority-badge {
-            display: inline-flex;
+
+        /* =====================================================
+           DESCRIPTION
+        ===================================================== */
+
+        .desc {
+            margin: 17px 0;
+
+            padding: 16px;
+
+            border:
+                1px solid
+                #dbeafe;
+
+            border-radius: 12px;
+
+            background: #eff6ff;
+
+            color: #334155;
+
+            line-height: 1.65;
+        }
+
+
+        /* =====================================================
+           USER PROFILE
+        ===================================================== */
+
+        .complaint-user-profile {
+            display: flex;
+
             align-items: center;
-            padding: 6px 10px;
-            border-radius: 999px;
-            font-size: 12px;
+
+            gap: 15px;
+
+            margin: 18px 0;
+
+            padding: 16px;
+
+            background: #f8fafc;
+
+            border:
+                1px solid
+                #e2e8f0;
+
+            border-radius: 16px;
+        }
+
+
+        .complaint-user-avatar {
+            width: 64px;
+            height: 64px;
+
+            min-width: 64px;
+
+            display: grid;
+            place-items: center;
+
+            overflow: hidden;
+
+            border: 3px solid #ffffff;
+
+            border-radius: 50%;
+
+            background: #dbeafe;
+            color: #2563eb;
+
+            box-shadow:
+                0 5px 14px
+                rgba(15, 23, 42, 0.12);
+        }
+
+
+        .complaint-user-avatar img {
+            width: 100%;
+            height: 100%;
+
+            display: block;
+
+            object-fit: cover;
+        }
+
+
+        .complaint-user-avatar .ui-icon {
+            width: 30px;
+            height: 30px;
+        }
+
+
+        .complaint-user-details {
+            flex: 1;
+
+            min-width: 0;
+        }
+
+
+        .complaint-user-label {
+            margin-bottom: 4px;
+
+            color: #2563eb;
+
+            font-size: 11px;
+            font-weight: 900;
+
+            letter-spacing: 0.08em;
+
+            text-transform: uppercase;
+        }
+
+
+        .complaint-user-name {
+            margin-bottom: 7px;
+
+            color: #0f172a;
+
+            font-size: 18px;
             font-weight: 900;
         }
 
-        .priority-normal {
-            background: #ecfdf5;
-            color: #166534;
+
+        .complaint-user-meta {
+            display: flex;
+
+            flex-wrap: wrap;
+
+            gap: 8px 18px;
+
+            color: #64748b;
+
+            font-size: 13px;
         }
 
-        .priority-high {
-            background: #fff7ed;
-            color: #c2410c;
-        }
 
-        .priority-emergency {
-            background: #fee2e2;
-            color: #b91c1c;
-            animation: emergencyPulse 1.5s infinite;
-        }
-
-        @keyframes emergencyPulse {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, .18); }
-            50% { box-shadow: 0 0 0 7px rgba(220, 38, 38, 0); }
-        }
-
-        .desc {
-            background: #eff6ff;
-            padding: 16px;
-            border-radius: 11px;
+        .complaint-user-meta strong {
             color: #334155;
-            line-height: 1.6;
-            margin: 15px 0;
         }
+
+
+        /* =====================================================
+           INFO GRID
+        ===================================================== */
+
+        .info-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, minmax(0, 1fr));
+
+            gap: 12px;
+
+            margin-top: 18px;
+        }
+
+
+        .info {
+            padding: 14px;
+
+            border:
+                1px solid
+                #e2e8f0;
+
+            border-radius: 12px;
+
+            background: #f8fafc;
+        }
+
+
+        .info small {
+            display: block;
+
+            margin-bottom: 5px;
+
+            color: #64748b;
+        }
+
+
+        .info b {
+            display: block;
+
+            color: #172554;
+
+            word-break: break-word;
+        }
+
+
+        /* =====================================================
+           PHOTO BOXES
+        ===================================================== */
+
+        .photo-box,
+        .after-photo-box {
+            margin-top: 18px;
+
+            padding: 18px;
+
+            border:
+                1px solid
+                #dbeafe;
+
+            border-radius: 15px;
+
+            background: #f8fafc;
+        }
+
+
+        .photo-title {
+            margin-bottom: 11px;
+
+            color: #1e3a8a;
+
+            font-size: 17px;
+            font-weight: 900;
+        }
+
+
+        .complaint-photo,
+        .after-photo {
+            width: 100%;
+
+            max-width: 400px;
+            max-height: 520px;
+
+            display: block;
+
+            margin-top: 10px;
+
+            border-radius: 13px;
+
+            object-fit: cover;
+        }
+
+
+        .after-photo-box {
+            border-color: #bbf7d0;
+
+            background: #f0fdf4;
+        }
+
+
+        .after-photo-upload {
+            display: flex;
+
+            align-items: center;
+
+            flex-wrap: wrap;
+
+            gap: 10px;
+
+            margin-top: 14px;
+        }
+
+
+        .after-photo-upload input[type="file"] {
+            max-width: 100%;
+
+            color: inherit;
+        }
+
+
+        .photo-note {
+            margin-top: 9px;
+
+            color: #64748b;
+
+            font-size: 12px;
+
+            line-height: 1.6;
+        }
+
+
+        /* =====================================================
+           CHAT
+        ===================================================== */
 
         .chat-action {
             margin-top: 18px;
         }
 
+
         .chat-btn {
             display: inline-flex;
+
             align-items: center;
             justify-content: center;
-            gap: 7px;
+
+            gap: 8px;
+
             padding: 11px 18px;
+
             border-radius: 10px;
-            background: #16a34a;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #16a34a,
+                    #15803d
+                );
+
             color: #ffffff;
-            text-decoration: none;
+
             font-size: 14px;
-            font-weight: 800;
+            font-weight: 900;
+
+            box-shadow:
+                0 8px 20px
+                rgba(22, 163, 74, 0.22);
+
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
         }
+
 
         .chat-btn:hover {
-            background: #15803d;
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 11px 27px
+                rgba(22, 163, 74, 0.30);
         }
 
-        .photo-box,
-        .after-photo-box {
-            margin-top: 18px;
-            padding: 18px;
-            border-radius: 14px;
-            border: 1px solid #dbeafe;
-            background: #f8fafc;
-        }
 
-        .photo-title {
-            font-size: 17px;
-            font-weight: 800;
-            margin-bottom: 10px;
-            color: #1e3a8a;
-        }
-
-        .complaint-photo,
-        .after-photo {
-            width: 100%;
-            max-width: 360px;
-            border-radius: 12px;
-            display: block;
-            margin-top: 10px;
-        }
-
-        .after-photo-box {
-            border-color: #bbf7d0;
-            background: #f0fdf4;
-        }
-
-        .after-photo-upload {
-            margin-top: 14px;
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .after-photo-upload input[type="file"] {
-            max-width: 100%;
-        }
-
-        .photo-note {
-            margin-top: 8px;
-            color: #64748b;
-            font-size: 12px;
-        }
+        /* =====================================================
+           LOCATION
+        ===================================================== */
 
         .location-box {
             margin-top: 18px;
+
             padding: 18px;
-            border: 1px solid #bfdbfe;
-            border-radius: 14px;
+
+            border:
+                1px solid
+                #bfdbfe;
+
+            border-radius: 15px;
+
             background: #eff6ff;
         }
 
+
         .location-title {
-            font-size: 17px;
-            font-weight: 800;
-            color: #1e3a8a;
             margin-bottom: 8px;
+
+            color: #1e3a8a;
+
+            font-size: 17px;
+            font-weight: 900;
         }
 
+
         .location-coordinates {
-            font-size: 13px;
-            color: #64748b;
             margin-bottom: 13px;
-            line-height: 1.6;
+
+            color: #64748b;
+
+            font-size: 13px;
+
+            line-height: 1.65;
         }
+
 
         .map-button {
             display: inline-flex;
+
             align-items: center;
             justify-content: center;
+
             gap: 7px;
-            text-decoration: none;
         }
+
 
         .no-location {
             margin-top: 18px;
+
             padding: 14px;
+
+            border:
+                1px solid
+                #e2e8f0;
+
             border-radius: 11px;
+
             background: #f8fafc;
-            border: 1px solid #e2e8f0;
+
             color: #64748b;
         }
 
+
+        /* =====================================================
+           STATUS UPDATE
+        ===================================================== */
+
         .update {
             display: flex;
-            gap: 10px;
+
             align-items: center;
-            margin-top: 16px;
+
+            gap: 10px;
+
+            margin-top: 18px;
         }
+
 
         .update select {
             max-width: 220px;
         }
 
+
+        /* =====================================================
+           OTP
+        ===================================================== */
+
         .otp-box {
-            margin-top: 18px;
+            margin-top: 20px;
+
             padding: 18px;
-            border: 2px solid #2563eb;
-            border-radius: 14px;
-            background: linear-gradient(135deg, #eff6ff, #ffffff);
+
+            border:
+                1px solid
+                #93c5fd;
+
+            border-radius: 15px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #eff6ff,
+                    #ffffff
+                );
         }
 
+
         .otp-title {
+            margin-bottom: 7px;
+
             color: #1e3a8a;
+
             font-size: 18px;
-            font-weight: 800;
-            margin-bottom: 6px;
+            font-weight: 900;
         }
+
 
         .otp-subtitle {
             color: #64748b;
+
             font-size: 13px;
+
             line-height: 1.6;
         }
 
+
         .otp-form {
             display: flex;
-            gap: 10px;
+
             align-items: center;
+
+            gap: 10px;
+
             margin-top: 14px;
         }
 
+
         .otp-input {
             width: 180px;
+
             padding: 12px 14px;
-            border: 1px solid #cbd5e1;
+
+            border:
+                1px solid
+                #cbd5e1;
+
             border-radius: 10px;
+
             outline: none;
+
+            background: #ffffff;
+
+            color: #172554;
+
             font-size: 20px;
-            font-weight: 800;
+            font-weight: 900;
+
             letter-spacing: 4px;
+
             text-align: center;
         }
 
+
+        .otp-input:focus {
+            border-color: #2563eb;
+
+            box-shadow:
+                0 0 0 4px
+                rgba(37, 99, 235, 0.10);
+        }
+
+
         .otp-note {
             margin-top: 10px;
+
             color: #b45309;
+
             font-size: 12px;
-            font-weight: 700;
+            font-weight: 800;
         }
+
 
         .otp-verified {
             margin-top: 18px;
+
             padding: 14px;
+
+            border:
+                1px solid
+                #bbf7d0;
+
             border-radius: 12px;
+
             background: #f0fdf4;
-            border: 1px solid #bbf7d0;
+
             color: #166534;
-            font-weight: 800;
+
+            font-weight: 900;
         }
+
+
+        /* =====================================================
+           RATING
+        ===================================================== */
 
         .rating-box {
             margin-top: 20px;
+
             padding: 18px;
-            border: 1px solid #dbeafe;
+
+            border:
+                1px solid
+                #dbeafe;
+
             border-radius: 14px;
-            background: linear-gradient(135deg, #eff6ff, #ffffff);
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #eff6ff,
+                    #ffffff
+                );
         }
+
 
         .rating-title {
             margin-bottom: 5px;
+
             color: #172554;
+
             font-size: 17px;
-            font-weight: 800;
+            font-weight: 900;
         }
 
+
         .rating-subtitle {
-            color: #64748b;
             margin-bottom: 13px;
+
+            color: #64748b;
+
             font-size: 13px;
         }
 
+
         .stars {
             display: inline-flex;
+
             flex-direction: row-reverse;
+
             justify-content: flex-end;
+
             gap: 4px;
+
             margin-bottom: 14px;
         }
+
 
         .stars input {
             display: none;
         }
 
+
         .stars label {
             color: #cbd5e1;
+
             font-size: 34px;
+
             cursor: pointer;
+
             line-height: 1;
         }
+
 
         .stars label:hover,
         .stars label:hover ~ label,
@@ -564,303 +1028,1825 @@
             color: #fbbf24;
         }
 
+
         .problem-label {
             display: block;
+
             margin-bottom: 7px;
+
             color: #334155;
+
             font-size: 13px;
             font-weight: 700;
         }
 
+
         .problem-box {
             width: 100%;
+
             min-height: 90px;
+
             padding: 12px;
+
             resize: vertical;
-            border: 1px solid #cbd5e1;
+
+            border:
+                1px solid
+                #cbd5e1;
+
             border-radius: 10px;
+
             outline: none;
+
             background: #ffffff;
+
             color: #334155;
-            font-family: inherit;
+
             font-size: 14px;
         }
+
+
+        .problem-box:focus {
+            border-color: #2563eb;
+
+            box-shadow:
+                0 0 0 4px
+                rgba(37, 99, 235, 0.10);
+        }
+
 
         .rating-submit {
             margin-top: 12px;
         }
 
+
         .submitted-rating {
             margin-top: 20px;
+
             padding: 17px;
-            border: 1px solid #bbf7d0;
+
+            border:
+                1px solid
+                #bbf7d0;
+
             border-radius: 14px;
+
             background: #f0fdf4;
+
+            color: #166534;
         }
+
 
         .submitted-stars {
             margin: 7px 0;
+
             color: #f59e0b;
+
             font-size: 24px;
+
             letter-spacing: 2px;
         }
 
+
         .submitted-problem {
             margin-top: 10px;
+
             padding: 11px;
+
             border-radius: 9px;
+
             background: #ffffff;
+
             color: #475569;
+
             line-height: 1.5;
         }
 
+
+        /* =====================================================
+           EMPTY STATE
+        ===================================================== */
+
         .empty {
+            padding: 42px;
+
             text-align: center;
-            padding: 40px;
         }
 
-        .message {
-            margin-bottom: 15px;
+
+        .empty-icon {
+            width: 64px;
+            height: 64px;
+
+            display: grid;
+
+            place-items: center;
+
+            margin: 0 auto;
+
+            border-radius: 18px;
+
+            background: #eef2ff;
+
+            color: #4338ca;
         }
 
-        body.worker-dark-mode .complaint,
-        body.worker-dark-mode .empty {
+
+        .empty-icon .ui-icon {
+            width: 32px;
+            height: 32px;
+        }
+
+
+        /* =====================================================
+           DARK THEME
+        ===================================================== */
+
+        body.worker-theme-dark .dashboard-summary,
+        body.worker-theme-dark .complaint,
+        body.worker-theme-dark .empty {
             background: #1e293b;
+
+            border-color: #334155;
+
             color: #e2e8f0;
         }
 
-        body.worker-dark-mode .info,
-        body.worker-dark-mode .desc,
-        body.worker-dark-mode .photo-box,
-        body.worker-dark-mode .after-photo-box,
-        body.worker-dark-mode .location-box,
-        body.worker-dark-mode .no-location,
-        body.worker-dark-mode .otp-box,
-        body.worker-dark-mode .rating-box {
-            background: #334155;
+
+        body.worker-theme-dark .dashboard-summary-avatar,
+        body.worker-theme-dark .complaint-user-avatar {
+            background: #1e3a5f;
+
+            border-color: #334155;
+
+            color: #bfdbfe;
+        }
+
+
+        body.worker-theme-dark .dashboard-summary-kicker,
+        body.worker-theme-dark .complaint-user-label {
+            color: #60a5fa;
+        }
+
+
+        body.worker-theme-dark .dashboard-summary-text h2,
+        body.worker-theme-dark .complaint-head h2,
+        body.worker-theme-dark .complaint-user-name,
+        body.worker-theme-dark .info b {
+            color: #f8fafc;
+        }
+
+
+        body.worker-theme-dark .dashboard-summary-text p,
+        body.worker-theme-dark .tracking-id,
+        body.worker-theme-dark .info small,
+        body.worker-theme-dark .complaint-user-meta,
+        body.worker-theme-dark .location-coordinates,
+        body.worker-theme-dark .otp-subtitle,
+        body.worker-theme-dark .rating-subtitle,
+        body.worker-theme-dark .photo-note {
+            color: #94a3b8;
+        }
+
+
+        body.worker-theme-dark .complaint-user-meta strong {
             color: #e2e8f0;
+        }
+
+
+        body.worker-theme-dark .desc,
+        body.worker-theme-dark .complaint-user-profile,
+        body.worker-theme-dark .info,
+        body.worker-theme-dark .photo-box,
+        body.worker-theme-dark .after-photo-box,
+        body.worker-theme-dark .location-box,
+        body.worker-theme-dark .no-location,
+        body.worker-theme-dark .otp-box,
+        body.worker-theme-dark .rating-box {
+            background: #172033;
+
+            border-color: #334155;
+
+            color: #e2e8f0;
+        }
+
+
+        body.worker-theme-dark .photo-title,
+        body.worker-theme-dark .location-title,
+        body.worker-theme-dark .otp-title,
+        body.worker-theme-dark .rating-title,
+        body.worker-theme-dark .problem-label {
+            color: #f8fafc;
+        }
+
+
+        body.worker-theme-dark .otp-input,
+        body.worker-theme-dark .problem-box {
+            background: #0f172a;
+
             border-color: #475569;
+
+            color: #ffffff;
         }
 
-        body.worker-dark-mode .info small,
-        body.worker-dark-mode .location-coordinates,
-        body.worker-dark-mode .otp-subtitle,
-        body.worker-dark-mode .rating-subtitle,
-        body.worker-dark-mode .muted,
-        body.worker-dark-mode .photo-note {
-            color: #cbd5e1;
+
+        /* =====================================================
+           GLASS THEME
+           SAME DESIGN AS MY COMPLAINTS
+        ===================================================== */
+
+        body.worker-theme-glass .dashboard-header,
+        body.worker-theme-glass .section-title {
+            color: #ffffff;
         }
 
-        body.worker-dark-mode .section-title,
-        body.worker-dark-mode .location-title,
-        body.worker-dark-mode .otp-title,
-        body.worker-dark-mode .rating-title,
-        body.worker-dark-mode .photo-title {
-            color: #f8fafc;
+
+        body.worker-theme-glass .dashboard-summary,
+        body.worker-theme-glass .complaint {
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(
+                        96,
+                        165,
+                        250,
+                        0.13
+                    ),
+                    rgba(
+                        255,
+                        255,
+                        255,
+                        0.075
+                    ),
+                    rgba(
+                        99,
+                        102,
+                        241,
+                        0.08
+                    )
+                ) !important;
+
+            border:
+                1px solid
+                rgba(
+                    191,
+                    219,
+                    254,
+                    0.27
+                ) !important;
+
+            box-shadow:
+                0 26px 65px
+                rgba(
+                    2,
+                    6,
+                    23,
+                    0.30
+                ),
+
+                inset
+                0 1px 0
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.12
+                );
+
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
         }
 
-        body.worker-dark-mode .otp-input,
-        body.worker-dark-mode .problem-box {
-            background: #1e293b;
-            color: #f8fafc;
-            border-color: #64748b;
+
+        body.worker-theme-glass
+        .dashboard-summary-avatar {
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.12
+                );
+
+            border-color:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.38
+                );
+
+            color: #ffffff;
         }
 
-        @media (max-width: 800px) {
+
+        body.worker-theme-glass
+        .dashboard-summary-kicker {
+            color: #bfdbfe;
+        }
+
+
+        body.worker-theme-glass
+        .dashboard-summary-text h2 {
+            color: #ffffff;
+        }
+
+
+        body.worker-theme-glass
+        .dashboard-summary-text p {
+            color:
+                rgba(
+                    219,
+                    234,
+                    254,
+                    0.78
+                );
+        }
+
+
+        body.worker-theme-glass
+        .worker-id-pill {
+            background:
+                rgba(
+                    59,
+                    130,
+                    246,
+                    0.20
+                );
+
+            border:
+                1px solid
+                rgba(
+                    147,
+                    197,
+                    253,
+                    0.24
+                );
+
+            color: #dbeafe;
+        }
+
+
+        body.worker-theme-glass
+        .approved-pill {
+            background:
+                rgba(
+                    22,
+                    163,
+                    74,
+                    0.18
+                );
+
+            border:
+                1px solid
+                rgba(
+                    134,
+                    239,
+                    172,
+                    0.22
+                );
+
+            color: #bbf7d0;
+        }
+
+
+        body.worker-theme-glass
+        .complaint-head h2 {
+            color: #ffffff;
+        }
+
+
+        body.worker-theme-glass
+        .tracking-id {
+            color:
+                rgba(
+                    191,
+                    219,
+                    254,
+                    0.74
+                );
+        }
+
+
+        /* =====================================================
+           GLASS DESCRIPTION
+        ===================================================== */
+
+        body.worker-theme-glass .desc {
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(
+                        255,
+                        255,
+                        255,
+                        0.10
+                    ),
+                    rgba(
+                        96,
+                        165,
+                        250,
+                        0.06
+                    )
+                );
+
+            border:
+                1px solid
+                rgba(
+                    191,
+                    219,
+                    254,
+                    0.22
+                );
+
+            color:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.90
+                );
+
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+        }
+
+
+        /* =====================================================
+           GLASS USER PROFILE
+        ===================================================== */
+
+        body.worker-theme-glass
+        .complaint-user-profile {
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(
+                        255,
+                        255,
+                        255,
+                        0.11
+                    ),
+                    rgba(
+                        59,
+                        130,
+                        246,
+                        0.055
+                    )
+                );
+
+            border:
+                1px solid
+                rgba(
+                    191,
+                    219,
+                    254,
+                    0.24
+                );
+
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+        }
+
+
+        body.worker-theme-glass
+        .complaint-user-avatar {
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.12
+                );
+
+            border-color:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.30
+                );
+
+            color: #ffffff;
+        }
+
+
+        body.worker-theme-glass
+        .complaint-user-label {
+            color: #bfdbfe;
+        }
+
+
+        body.worker-theme-glass
+        .complaint-user-name {
+            color: #ffffff;
+        }
+
+
+        body.worker-theme-glass
+        .complaint-user-meta {
+            color:
+                rgba(
+                    219,
+                    234,
+                    254,
+                    0.76
+                );
+        }
+
+
+        body.worker-theme-glass
+        .complaint-user-meta strong {
+            color: #ffffff;
+        }
+
+
+        /* =====================================================
+           GLASS INFO BOX
+        ===================================================== */
+
+        body.worker-theme-glass .info {
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(
+                        255,
+                        255,
+                        255,
+                        0.12
+                    ),
+                    rgba(
+                        96,
+                        165,
+                        250,
+                        0.07
+                    )
+                );
+
+            border:
+                1px solid
+                rgba(
+                    191,
+                    219,
+                    254,
+                    0.28
+                );
+
+            box-shadow:
+                inset
+                0 1px 0
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.10
+                );
+
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+        }
+
+
+        body.worker-theme-glass .info small {
+            color:
+                rgba(
+                    219,
+                    234,
+                    254,
+                    0.72
+                );
+        }
+
+
+        body.worker-theme-glass .info b {
+            color: #ffffff;
+        }
+
+
+        /* =====================================================
+           GLASS PHOTOS
+        ===================================================== */
+
+        body.worker-theme-glass
+        .photo-box,
+        body.worker-theme-glass
+        .after-photo-box {
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(
+                        255,
+                        255,
+                        255,
+                        0.11
+                    ),
+                    rgba(
+                        59,
+                        130,
+                        246,
+                        0.055
+                    )
+                );
+
+            border:
+                1px solid
+                rgba(
+                    191,
+                    219,
+                    254,
+                    0.27
+                );
+
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+
+        body.worker-theme-glass
+        .after-photo-box {
+            border-color:
+                rgba(
+                    134,
+                    239,
+                    172,
+                    0.28
+                );
+        }
+
+
+        body.worker-theme-glass
+        .photo-title {
+            color: #ffffff;
+        }
+
+
+        body.worker-theme-glass
+        .photo-note {
+            color:
+                rgba(
+                    219,
+                    234,
+                    254,
+                    0.74
+                );
+        }
+
+
+        body.worker-theme-glass
+        input[type="file"] {
+            color:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.82
+                );
+        }
+
+
+        /* =====================================================
+           GLASS LOCATION
+        ===================================================== */
+
+        body.worker-theme-glass
+        .location-box,
+        body.worker-theme-glass
+        .no-location {
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(
+                        37,
+                        99,
+                        235,
+                        0.14
+                    ),
+                    rgba(
+                        255,
+                        255,
+                        255,
+                        0.07
+                    )
+                );
+
+            border:
+                1px solid
+                rgba(
+                    147,
+                    197,
+                    253,
+                    0.30
+                );
+
+            color: #ffffff;
+
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+        }
+
+
+        body.worker-theme-glass
+        .location-title {
+            color: #ffffff;
+        }
+
+
+        body.worker-theme-glass
+        .location-coordinates {
+            color:
+                rgba(
+                    219,
+                    234,
+                    254,
+                    0.76
+                );
+        }
+
+
+        /* =====================================================
+           GLASS CHAT
+        ===================================================== */
+
+        body.worker-theme-glass .chat-btn {
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(
+                        22,
+                        163,
+                        74,
+                        0.94
+                    ),
+                    rgba(
+                        5,
+                        150,
+                        105,
+                        0.88
+                    )
+                );
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.18
+                );
+
+            color: #ffffff;
+        }
+
+
+        /* =====================================================
+           GLASS OTP
+        ===================================================== */
+
+        body.worker-theme-glass
+        .otp-box {
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(
+                        37,
+                        99,
+                        235,
+                        0.15
+                    ),
+                    rgba(
+                        255,
+                        255,
+                        255,
+                        0.07
+                    )
+                );
+
+            border:
+                1px solid
+                rgba(
+                    147,
+                    197,
+                    253,
+                    0.32
+                );
+
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+
+        body.worker-theme-glass
+        .otp-title {
+            color: #ffffff;
+        }
+
+
+        body.worker-theme-glass
+        .otp-subtitle {
+            color:
+                rgba(
+                    219,
+                    234,
+                    254,
+                    0.80
+                );
+        }
+
+
+        body.worker-theme-glass
+        .otp-input {
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.10
+                );
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.20
+                );
+
+            color: #ffffff;
+
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+
+        body.worker-theme-glass
+        .otp-input::placeholder {
+            color:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.48
+                );
+        }
+
+
+        body.worker-theme-glass
+        .otp-note {
+            color: #fde68a;
+        }
+
+
+        body.worker-theme-glass
+        .otp-verified {
+            background:
+                rgba(
+                    22,
+                    163,
+                    74,
+                    0.15
+                );
+
+            border-color:
+                rgba(
+                    134,
+                    239,
+                    172,
+                    0.30
+                );
+
+            color: #bbf7d0;
+        }
+
+
+        /* =====================================================
+           GLASS RATING
+        ===================================================== */
+
+        body.worker-theme-glass
+        .rating-box {
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(
+                        255,
+                        255,
+                        255,
+                        0.11
+                    ),
+                    rgba(
+                        59,
+                        130,
+                        246,
+                        0.06
+                    )
+                );
+
+            border:
+                1px solid
+                rgba(
+                    191,
+                    219,
+                    254,
+                    0.26
+                );
+
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+
+        body.worker-theme-glass
+        .rating-title {
+            color: #ffffff;
+        }
+
+
+        body.worker-theme-glass
+        .rating-subtitle,
+        body.worker-theme-glass
+        .problem-label {
+            color:
+                rgba(
+                    219,
+                    234,
+                    254,
+                    0.82
+                );
+        }
+
+
+        body.worker-theme-glass
+        .problem-box {
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.09
+                );
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.20
+                );
+
+            color: #ffffff;
+        }
+
+
+        body.worker-theme-glass
+        .problem-box::placeholder {
+            color:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.48
+                );
+        }
+
+
+        body.worker-theme-glass
+        .submitted-rating {
+            background:
+                rgba(
+                    22,
+                    163,
+                    74,
+                    0.14
+                );
+
+            border-color:
+                rgba(
+                    134,
+                    239,
+                    172,
+                    0.28
+                );
+
+            color: #dcfce7;
+        }
+
+
+        body.worker-theme-glass
+        .submitted-problem {
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.09
+                );
+
+            color: #e2e8f0;
+        }
+
+
+        /* =====================================================
+           GLASS EMPTY
+        ===================================================== */
+
+        body.worker-theme-glass .empty {
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(
+                        255,
+                        255,
+                        255,
+                        0.14
+                    ),
+                    rgba(
+                        255,
+                        255,
+                        255,
+                        0.06
+                    )
+                ) !important;
+        }
+
+
+        body.worker-theme-glass .empty-icon {
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.12
+                );
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.18
+                );
+
+            color: #ffffff;
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+        @media (max-width: 850px) {
+
             .info-grid {
-                grid-template-columns: 1fr 1fr;
+                grid-template-columns:
+                    repeat(2, minmax(0, 1fr));
             }
+
         }
 
-        @media (max-width: 600px) {
-            .header {
-                padding: 20px 5px;
+
+        @media (max-width: 650px) {
+
+            .dashboard-header {
+                padding:
+                    18px 4px
+                    22px;
             }
 
-            .worker-top {
-                flex-direction: column;
-                text-align: center;
+
+            .dashboard-title {
+                font-size: 27px;
             }
 
-            .info-grid {
-                grid-template-columns: 1fr;
+
+            .dashboard-summary {
+                padding: 18px;
             }
+
+
+            .dashboard-summary-main {
+                align-items: flex-start;
+            }
+
+
+            .dashboard-summary-avatar {
+                width: 62px;
+                height: 62px;
+
+                min-width: 62px;
+            }
+
+
+            .dashboard-summary-text h2 {
+                font-size: 21px;
+            }
+
+
+            .complaint {
+                padding: 18px;
+            }
+
 
             .complaint-head {
                 flex-direction: column;
             }
 
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+
+            .complaint-user-profile {
+                align-items: flex-start;
+            }
+
+
+            .complaint-user-avatar {
+                width: 55px;
+                height: 55px;
+
+                min-width: 55px;
+            }
+
+
+            .complaint-user-name {
+                font-size: 16px;
+            }
+
+
+            .complaint-user-meta {
+                flex-direction: column;
+
+                gap: 5px;
+            }
+
+
             .update,
             .otp-form,
             .after-photo-upload {
                 flex-direction: column;
+
                 align-items: stretch;
             }
 
+
             .update select,
             .otp-input {
-                max-width: none;
                 width: 100%;
+
+                max-width: none;
             }
+
 
             .map-button,
             .chat-btn {
                 width: 100%;
             }
+
+
+            .complaint-photo,
+            .after-photo {
+                max-width: 100%;
+            }
+
         }
+
     </style>
+
 </head>
 
-<body>
+
+<body class="worker-page">
+
 
     {% include "complaints/Worker_Folder/worker_navbar.html" %}
 
+
     <main class="page">
 
-        <div class="header">
-            <div>
-                <h1><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M5 21v-2a7 7 0 0 1 14 0v2"></path><path d="M8 4h8"></path></svg> Worker Dashboard</h1>
-                <p style="color:#dbeafe; margin-top:5px;">
-                    Manage complaints assigned to you.
-                </p>
-            </div>
-        </div>
+
+        <!-- =================================================
+             HEADER
+        ================================================== -->
+
+        <header class="dashboard-header">
+
+            <h1 class="dashboard-title">
+
+                <svg
+                    class="ui-icon"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                >
+                    <circle
+                        cx="12"
+                        cy="8"
+                        r="4"
+                    ></circle>
+
+                    <path
+                        d="M5 21v-2a7 7 0 0 1 14 0v2"
+                    ></path>
+
+                    <path
+                        d="M8 4h8"
+                    ></path>
+                </svg>
+
+                Worker Dashboard
+
+            </h1>
+
+
+            <p>
+                Manage complaints assigned to you.
+            </p>
+
+        </header>
+
+
+        <!-- =================================================
+             MESSAGES
+        ================================================== -->
 
         {% if messages %}
+
             {% for message in messages %}
-                <div class="message">
+
+                <div
+                    class="
+                        message
+                        {% if message.tags %}
+                            {{ message.tags }}
+                        {% endif %}
+                    "
+                >
                     {{ message }}
                 </div>
+
             {% endfor %}
+
         {% endif %}
 
 
+        <!-- =================================================
+             WORKER SUMMARY
+        ================================================== -->
+
         <section class="card dashboard-summary">
+
+
             <div class="dashboard-summary-main">
+
+
                 <div class="dashboard-summary-avatar">
+
+
                     {% if worker.photo %}
+
                         <img
                             src="{{ worker.photo.url }}"
                             alt="{{ worker.name }}"
-                        />
+                        >
+
                     {% else %}
-                        <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
-                            <circle cx="12" cy="8" r="4"></circle>
-                            <path d="M5 21v-2a7 7 0 0 1 14 0v2"></path>
-                            <path d="M8 4h8"></path>
+
+                        <svg
+                            class="ui-icon"
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                        >
+                            <circle
+                                cx="12"
+                                cy="8"
+                                r="4"
+                            ></circle>
+
+                            <path
+                                d="M5 21v-2a7 7 0 0 1 14 0v2"
+                            ></path>
+
+                            <path
+                                d="M8 4h8"
+                            ></path>
                         </svg>
+
                     {% endif %}
+
+
                 </div>
 
+
                 <div class="dashboard-summary-text">
+
+
                     <div class="dashboard-summary-kicker">
                         Worker Dashboard
                     </div>
+
 
                     <h2>
                         {{ worker.name }}
                     </h2>
 
+
                     <div class="dashboard-summary-meta">
+
+
                         <span class="worker-id-pill">
                             {{ worker.worker_id }}
                         </span>
 
+
                         <span class="approved-pill">
+
                             <span class="status-dot"></span>
+
                             Approved Worker
+
                         </span>
+
+
                     </div>
 
+
                     <p>
-                        Manage assigned complaints, work updates, completion proof,
-                        OTP verification and customer communication from one place.
+                        Manage assigned complaints, work updates,
+                        completion proof, OTP verification and
+                        customer communication from one place.
                     </p>
+
+
                 </div>
+
+
             </div>
+
+
         </section>
 
-        <h2 class="section-title"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5h6"></path><path d="M9 3h6a2 2 0 0 1 2 2v1h2a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h2V5a2 2 0 0 1 2-2z"></path></svg> Assigned Complaints</h2>
+
+        <!-- =================================================
+             ASSIGNED COMPLAINTS
+        ================================================== -->
+
+        <h2 class="section-title">
+
+            <svg
+                class="ui-icon"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+            >
+                <path d="M9 5h6"></path>
+
+                <path
+                    d="M9 3h6a2 2 0 0 1 2 2v1h2a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h2V5a2 2 0 0 1 2-2z"
+                ></path>
+            </svg>
+
+            Assigned Complaints
+
+        </h2>
+
 
         {% for complaint in complaints %}
 
+
             <article class="card complaint">
 
+
+                <!-- =========================================
+                     COMPLAINT HEAD
+                ========================================== -->
+
                 <div class="complaint-head">
+
+
                     <div>
-                        <h2>{{ complaint.subject }}</h2>
-                        <div class="muted" style="font-size:13px; margin-top:5px;">
-                            Tracking ID: <b>{{ complaint.tracking_id }}</b>
+
+
+                        <h2>
+                            {{ complaint.subject }}
+                        </h2>
+
+
+                        <div class="tracking-id">
+
+                            Tracking ID:
+
+                            <strong>
+                                {{ complaint.tracking_id }}
+                            </strong>
+
                         </div>
+
 
                         <div class="priority-row">
+
+
                             {% if complaint.priority == 'Emergency' %}
-                                <span class="priority-badge priority-emergency"><span class="priority-dot dot-emergency"></span>Emergency</span>
+
+                                <span
+                                    class="priority-badge priority-emergency"
+                                >
+
+                                    <span
+                                        class="priority-dot dot-emergency"
+                                    ></span>
+
+                                    Emergency
+
+                                </span>
+
+
                             {% elif complaint.priority == 'High' %}
-                                <span class="priority-badge priority-high"><span class="priority-dot dot-high"></span>High Priority</span>
+
+                                <span
+                                    class="priority-badge priority-high"
+                                >
+
+                                    <span
+                                        class="priority-dot dot-high"
+                                    ></span>
+
+                                    High Priority
+
+                                </span>
+
+
                             {% else %}
-                                <span class="priority-badge priority-normal"><span class="priority-dot dot-normal"></span>Normal</span>
+
+                                <span
+                                    class="priority-badge priority-normal"
+                                >
+
+                                    <span
+                                        class="priority-dot dot-normal"
+                                    ></span>
+
+                                    Normal
+
+                                </span>
+
                             {% endif %}
+
+
                         </div>
+
+
                     </div>
 
-                    <span class="status {% if complaint.status == 'Pending' %}pending{% elif complaint.status == 'In Progress' %}progress{% else %}resolved{% endif %}">
+
+                    <span
+                        class="
+                            status
+
+                            {% if complaint.status == 'Pending' %}
+                                pending
+                            {% elif complaint.status == 'In Progress' %}
+                                progress
+                            {% else %}
+                                resolved
+                            {% endif %}
+                        "
+                    >
                         {{ complaint.status }}
                     </span>
+
+
                 </div>
+
+
+                <!-- =========================================
+                     DESCRIPTION
+                ========================================== -->
 
                 <div class="desc">
-                    <b>Complaint:</b><br>
+
+                    <strong>
+                        Complaint:
+                    </strong>
+
+                    <br>
+
                     {{ complaint.description }}
+
                 </div>
+
+
+                <!-- =========================================
+                     USER PROFILE
+                ========================================== -->
+
+                <div class="complaint-user-profile">
+
+
+                    <div class="complaint-user-avatar">
+
+
+                        {% if complaint.user.user_profile.photo %}
+
+                            <img
+                                src="{{ complaint.user.user_profile.photo.url }}"
+                                alt="{{ complaint.user.username }}"
+                            >
+
+                        {% else %}
+
+                            <svg
+                                class="ui-icon"
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <circle
+                                    cx="12"
+                                    cy="8"
+                                    r="4"
+                                ></circle>
+
+                                <path
+                                    d="M4.5 21a7.5 7.5 0 0 1 15 0"
+                                ></path>
+                            </svg>
+
+                        {% endif %}
+
+
+                    </div>
+
+
+                    <div class="complaint-user-details">
+
+
+                        <div class="complaint-user-label">
+                            User Profile
+                        </div>
+
+
+                        <div class="complaint-user-name">
+
+
+                            {% if complaint.user.first_name or complaint.user.last_name %}
+
+                                {{ complaint.user.first_name }}
+                                {{ complaint.user.last_name }}
+
+                            {% elif complaint.name %}
+
+                                {{ complaint.name }}
+
+                            {% else %}
+
+                                {{ complaint.user.username }}
+
+                            {% endif %}
+
+
+                        </div>
+
+
+                        <div class="complaint-user-meta">
+
+
+                            <span>
+
+                                <strong>
+                                    User ID:
+                                </strong>
+
+                                USR-{{ complaint.user.id|stringformat:"05d" }}
+
+                            </span>
+
+
+                            <span>
+
+                                <strong>
+                                    Gender:
+                                </strong>
+
+
+                                {% if complaint.user.user_profile.gender %}
+
+                                    {{ complaint.user.user_profile.get_gender_display }}
+
+                                {% else %}
+
+                                    Not Provided
+
+                                {% endif %}
+
+
+                            </span>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+                <!-- =========================================
+                     BEFORE PHOTO
+                ========================================== -->
 
                 {% if complaint.photo %}
+
+
                     <div class="photo-box">
-                        <div class="photo-title"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h3l2-3h6l2 3h3a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z"></path><circle cx="12" cy="13" r="4"></circle></svg> Before Photo</div>
-                        <img
-                            class="complaint-photo"
-                            src="{{ complaint.photo.url }}"
-                            alt="Before Photo"
+
+
+                        <div class="photo-title">
+
+                            <svg
+                                class="ui-icon"
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    d="M4 7h3l2-3h6l2 3h3a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z"
+                                ></path>
+
+                                <circle
+                                    cx="12"
+                                    cy="13"
+                                    r="4"
+                                ></circle>
+                            </svg>
+
+                            Before Photo
+
+                        </div>
+
+
+                        <a
+                            href="{{ complaint.photo.url }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
                         >
+
+                            <img
+                                class="complaint-photo"
+                                src="{{ complaint.photo.url }}"
+                                alt="Before Photo"
+                            >
+
+                        </a>
+
+
                     </div>
+
+
                 {% endif %}
 
-                <div class="info-grid" style="margin-top:18px;">
-                    <div class="info">
-                        <small>Complainant</small>
-                        <b>{{ complaint.name }}</b>
-                    </div>
+
+                <!-- =========================================
+                     INFORMATION
+                ========================================== -->
+
+                <div class="info-grid">
+
 
                     <div class="info">
-                        <small>Email</small>
-                        <b>{{ complaint.email }}</b>
+
+                        <small>
+                            Complainant
+                        </small>
+
+                        <b>
+                            {{ complaint.name }}
+                        </b>
+
                     </div>
 
-                    <div class="info">
-                        <small>Submitted</small>
-                        <b>{{ complaint.created_at|date:"d M Y, h:i A" }}</b>
-                    </div>
 
                     <div class="info">
-                        <small>Updated</small>
-                        <b>{{ complaint.updated_at|date:"d M Y, h:i A" }}</b>
+
+                        <small>
+                            Email
+                        </small>
+
+                        <b>
+                            {{ complaint.email }}
+                        </b>
+
                     </div>
+
+
+                    <div class="info">
+
+                        <small>
+                            Submitted
+                        </small>
+
+                        <b>
+                            {{ complaint.created_at|date:"d M Y, h:i A" }}
+                        </b>
+
+                    </div>
+
+
+                    <div class="info">
+
+                        <small>
+                            Updated
+                        </small>
+
+                        <b>
+                            {{ complaint.updated_at|date:"d M Y, h:i A" }}
+                        </b>
+
+                    </div>
+
+
                 </div>
+
+
+                <!-- =========================================
+                     CHAT
+                ========================================== -->
 
                 <div class="chat-action">
-                    <a class="chat-btn" href="{% url 'complaint_chat' complaint.id %}">
-                        <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3 1.5-5A7 7 0 0 1 3 13V8a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"></path></svg> Chat with User
+
+                    <a
+                        class="chat-btn"
+                        href="{% url 'complaint_chat' complaint.id %}"
+                    >
+
+                        <svg
+                            class="ui-icon"
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                        >
+                            <path
+                                d="M21 15a4 4 0 0 1-4 4H8l-5 3 1.5-5A7 7 0 0 1 3 13V8a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"
+                            ></path>
+                        </svg>
+
+                        Chat with User
+
                     </a>
+
                 </div>
 
+
+                <!-- =========================================
+                     LOCATION
+                ========================================== -->
+
                 {% if complaint.latitude and complaint.longitude %}
+
+
                     <div class="location-box">
-                        <div class="location-title"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-5.1 7-12a7 7 0 1 0-14 0c0 6.9 7 12 7 12z"></path><circle cx="12" cy="9" r="2.5"></circle></svg> Complaint Location</div>
+
+
+                        <div class="location-title">
+
+                            <svg
+                                class="ui-icon"
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    d="M12 21s7-5.1 7-12a7 7 0 1 0-14 0c0 6.9 7 12 7 12z"
+                                ></path>
+
+                                <circle
+                                    cx="12"
+                                    cy="9"
+                                    r="2.5"
+                                ></circle>
+                            </svg>
+
+                            Complaint Location
+
+                        </div>
+
 
                         <div class="location-coordinates">
-                            Latitude: <b>{{ complaint.latitude }}</b><br>
-                            Longitude: <b>{{ complaint.longitude }}</b>
+
+                            Latitude:
+
+                            <strong>
+                                {{ complaint.latitude }}
+                            </strong>
+
+                            <br>
+
+                            Longitude:
+
+                            <strong>
+                                {{ complaint.longitude }}
+                            </strong>
+
                         </div>
+
 
                         <a
                             class="btn btn-primary map-button"
@@ -868,46 +2854,166 @@
                             target="_blank"
                             rel="noopener noreferrer"
                         >
-                            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3h7v7"></path><path d="M10 14 21 3"></path><path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"></path></svg> Open Location in Google Maps
+
+                            <svg
+                                class="ui-icon"
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    d="M14 3h7v7"
+                                ></path>
+
+                                <path
+                                    d="M10 14 21 3"
+                                ></path>
+
+                                <path
+                                    d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"
+                                ></path>
+                            </svg>
+
+                            Open Location in Google Maps
+
                         </a>
+
+
                     </div>
+
+
                 {% else %}
+
+
                     <div class="no-location">
-                        <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-5.1 7-12a7 7 0 1 0-14 0c0 6.9 7 12 7 12z"></path><circle cx="12" cy="9" r="2.5"></circle></svg> Location was not provided for this complaint.
+
+                        <span class="icon-inline">
+
+                            <svg
+                                class="ui-icon"
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    d="M12 21s7-5.1 7-12a7 7 0 1 0-14 0c0 6.9 7 12 7 12z"
+                                ></path>
+
+                                <circle
+                                    cx="12"
+                                    cy="9"
+                                    r="2.5"
+                                ></circle>
+                            </svg>
+
+                            Location was not provided for this complaint.
+
+                        </span>
+
                     </div>
+
+
                 {% endif %}
 
+
+                <!-- =========================================
+                     AFTER PHOTO
+                ========================================== -->
+
                 <div class="after-photo-box">
-                    <div class="photo-title">📸 After Photo / Work Completion Proof</div>
+
+
+                    <div class="photo-title">
+
+                        <svg
+                            class="ui-icon"
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                        >
+                            <path
+                                d="M4 7h3l2-3h6l2 3h3a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z"
+                            ></path>
+
+                            <circle
+                                cx="12"
+                                cy="13"
+                                r="4"
+                            ></circle>
+                        </svg>
+
+                        After Photo / Work Completion Proof
+
+                    </div>
+
 
                     {% if complaint.after_photo %}
-                        <img
-                            class="after-photo"
-                            src="{{ complaint.after_photo.url }}"
-                            alt="After Photo"
+
+
+                        <a
+                            href="{{ complaint.after_photo.url }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
                         >
 
+                            <img
+                                class="after-photo"
+                                src="{{ complaint.after_photo.url }}"
+                                alt="After Photo"
+                            >
+
+                        </a>
+
+
                         {% if complaint.after_photo_uploaded_at %}
+
                             <div class="photo-note">
-                                Uploaded: {{ complaint.after_photo_uploaded_at|date:"d M Y, h:i A" }}
+
+                                Uploaded:
+
+                                {{ complaint.after_photo_uploaded_at|date:"d M Y, h:i A" }}
+
                             </div>
+
                         {% endif %}
+
+
                     {% else %}
+
+
                         <div class="photo-note">
-                            Worker ko complaint resolve karne se pehle After Photo upload karna zaroori hai.
+
+                            Worker ko complaint resolve karne se pehle
+                            After Photo upload karna zaroori hai.
+
                         </div>
+
+
                     {% endif %}
 
+
                     {% if complaint.status != 'Resolved' %}
+
+
                         <form
                             method="post"
                             enctype="multipart/form-data"
                             class="after-photo-upload"
                         >
+
                             {% csrf_token %}
 
-                            <input type="hidden" name="action" value="upload_after_photo">
-                            <input type="hidden" name="complaint_id" value="{{ complaint.id }}">
+
+                            <input
+                                type="hidden"
+                                name="action"
+                                value="upload_after_photo"
+                            >
+
+
+                            <input
+                                type="hidden"
+                                name="complaint_id"
+                                value="{{ complaint.id }}"
+                            >
+
 
                             <input
                                 type="file"
@@ -916,62 +3022,182 @@
                                 required
                             >
 
-                            <button type="submit" class="btn btn-primary">
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary"
+                            >
+
                                 {% if complaint.after_photo %}
+
                                     🔄 Replace After Photo
+
                                 {% else %}
+
                                     📤 Upload After Photo
+
                                 {% endif %}
+
                             </button>
+
+
                         </form>
+
 
                         <div class="photo-note">
                             JPG, PNG ya WEBP. Maximum 5 MB.
                         </div>
+
+
                     {% endif %}
+
+
                 </div>
 
+
+                <!-- =========================================
+                     STATUS UPDATE
+                ========================================== -->
+
                 {% if complaint.status != 'Resolved' %}
-                    <form method="post" class="update">
+
+
+                    <form
+                        method="post"
+                        class="update"
+                    >
+
                         {% csrf_token %}
 
-                        <input type="hidden" name="action" value="status_update">
-                        <input type="hidden" name="complaint_id" value="{{ complaint.id }}">
 
-                        <select class="select" name="status">
-                            <option value="Pending" {% if complaint.status == "Pending" %}selected{% endif %}>
+                        <input
+                            type="hidden"
+                            name="action"
+                            value="status_update"
+                        >
+
+
+                        <input
+                            type="hidden"
+                            name="complaint_id"
+                            value="{{ complaint.id }}"
+                        >
+
+
+                        <select
+                            class="select"
+                            name="status"
+                        >
+
+                            <option
+                                value="Pending"
+                                {% if complaint.status == "Pending" %}
+                                    selected
+                                {% endif %}
+                            >
                                 Pending
                             </option>
 
-                            <option value="In Progress" {% if complaint.status == "In Progress" %}selected{% endif %}>
+
+                            <option
+                                value="In Progress"
+                                {% if complaint.status == "In Progress" %}
+                                    selected
+                                {% endif %}
+                            >
                                 In Progress
                             </option>
+
 
                             <option value="Resolved">
                                 Resolved
                             </option>
+
+
                         </select>
 
-                        <button type="submit" class="btn btn-primary">
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary"
+                        >
                             Update Status
                         </button>
+
+
                     </form>
+
+
                 {% endif %}
 
-                {% if complaint.otp_active and complaint.status != 'Resolved' %}
-                    <div class="otp-box">
-                        <div class="otp-title"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg> Verify Completion OTP</div>
 
-                        <div class="otp-subtitle">
-                            User ke My Complaints page par 6-digit OTP dikh raha hai.
-                            Work complete hone ke baad user se OTP lekar yahan enter karein.
+                <!-- =========================================
+                     OTP
+                ========================================== -->
+
+                {% if complaint.otp_active and complaint.status != 'Resolved' %}
+
+
+                    <div class="otp-box">
+
+
+                        <div class="otp-title">
+
+                            <svg
+                                class="ui-icon"
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <rect
+                                    x="5"
+                                    y="10"
+                                    width="14"
+                                    height="11"
+                                    rx="2"
+                                ></rect>
+
+                                <path
+                                    d="M8 10V7a4 4 0 0 1 8 0v3"
+                                ></path>
+                            </svg>
+
+                            Verify Completion OTP
+
                         </div>
 
-                        <form method="post" class="otp-form">
+
+                        <div class="otp-subtitle">
+
+                            User ke My Complaints page par
+                            6-digit OTP dikh raha hai.
+
+                            Work complete hone ke baad
+                            user se OTP lekar yahan enter karein.
+
+                        </div>
+
+
+                        <form
+                            method="post"
+                            class="otp-form"
+                        >
+
                             {% csrf_token %}
 
-                            <input type="hidden" name="action" value="verify_otp">
-                            <input type="hidden" name="complaint_id" value="{{ complaint.id }}">
+
+                            <input
+                                type="hidden"
+                                name="action"
+                                value="verify_otp"
+                            >
+
+
+                            <input
+                                type="hidden"
+                                name="complaint_id"
+                                value="{{ complaint.id }}"
+                            >
+
 
                             <input
                                 class="otp-input"
@@ -985,80 +3211,308 @@
                                 required
                             >
 
-                            <button type="submit" class="btn btn-primary">
-                                <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="m8 12 2.5 2.5L16 9"></path></svg> Verify & Resolve
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary"
+                            >
+
+                                <svg
+                                    class="ui-icon"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                >
+                                    <circle
+                                        cx="12"
+                                        cy="12"
+                                        r="9"
+                                    ></circle>
+
+                                    <path
+                                        d="m8 12 2.5 2.5L16 9"
+                                    ></path>
+                                </svg>
+
+                                Verify & Resolve
+
                             </button>
+
+
                         </form>
+
 
                         <div class="otp-note">
                             OTP 10 minutes tak valid hai.
                         </div>
+
+
                     </div>
 
+
                 {% elif complaint.otp_verified and complaint.status == 'Resolved' %}
+
+
                     <div class="otp-verified">
-                        <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="m8 12 2.5 2.5L16 9"></path></svg> Completion OTP verified. Complaint successfully resolved.
+
+                        <span class="icon-inline">
+
+                            <svg
+                                class="ui-icon"
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <circle
+                                    cx="12"
+                                    cy="12"
+                                    r="9"
+                                ></circle>
+
+                                <path
+                                    d="m8 12 2.5 2.5L16 9"
+                                ></path>
+                            </svg>
+
+                            Completion OTP verified.
+                            Complaint successfully resolved.
+
+                        </span>
+
                     </div>
+
+
                 {% endif %}
+
+
+                <!-- =========================================
+                     RATING USER
+                ========================================== -->
 
                 {% if complaint.status == 'Resolved' %}
 
+
                     {% if complaint.worker_rating %}
+
+
                         <div class="submitted-rating">
-                            <b class="icon-inline"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="m8 12 2.5 2.5L16 9"></path></svg> You rated {{ complaint.name }}</b>
+
+
+                            <strong class="icon-inline">
+
+                                <svg
+                                    class="ui-icon"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                >
+                                    <circle
+                                        cx="12"
+                                        cy="12"
+                                        r="9"
+                                    ></circle>
+
+                                    <path
+                                        d="m8 12 2.5 2.5L16 9"
+                                    ></path>
+                                </svg>
+
+                                You rated {{ complaint.name }}
+
+                            </strong>
+
 
                             <div class="submitted-stars">
-                                {% if complaint.worker_rating.stars >= 1 %}★{% else %}☆{% endif %}
-                                {% if complaint.worker_rating.stars >= 2 %}★{% else %}☆{% endif %}
-                                {% if complaint.worker_rating.stars >= 3 %}★{% else %}☆{% endif %}
-                                {% if complaint.worker_rating.stars >= 4 %}★{% else %}☆{% endif %}
-                                {% if complaint.worker_rating.stars >= 5 %}★{% else %}☆{% endif %}
+
+                                {% if complaint.worker_rating.stars >= 1 %}
+                                    ★
+                                {% else %}
+                                    ☆
+                                {% endif %}
+
+                                {% if complaint.worker_rating.stars >= 2 %}
+                                    ★
+                                {% else %}
+                                    ☆
+                                {% endif %}
+
+                                {% if complaint.worker_rating.stars >= 3 %}
+                                    ★
+                                {% else %}
+                                    ☆
+                                {% endif %}
+
+                                {% if complaint.worker_rating.stars >= 4 %}
+                                    ★
+                                {% else %}
+                                    ☆
+                                {% endif %}
+
+                                {% if complaint.worker_rating.stars >= 5 %}
+                                    ★
+                                {% else %}
+                                    ☆
+                                {% endif %}
+
                             </div>
+
 
                             <div class="muted">
-                                {{ complaint.worker_rating.stars }} out of 5 stars
+
+                                {{ complaint.worker_rating.stars }}
+                                out of 5 stars
+
                             </div>
+
 
                             {% if complaint.worker_rating.problem %}
+
+
                                 <div class="submitted-problem">
-                                    <b>Your feedback:</b><br>
+
+                                    <strong>
+                                        Your feedback:
+                                    </strong>
+
+                                    <br>
+
                                     {{ complaint.worker_rating.problem }}
+
                                 </div>
+
+
                             {% endif %}
+
+
                         </div>
 
-                    {% else %}
-                        <div class="rating-box">
-                            <div class="rating-title"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3l-5.6 2.9 1.1-6.2L3 9.6l6.2-.9L12 3z"></path></svg> Rate User</div>
 
-                            <div class="rating-subtitle">
-                                How was your experience with <b>{{ complaint.name }}</b>?
+                    {% else %}
+
+
+                        <div class="rating-box">
+
+
+                            <div class="rating-title">
+
+                                <svg
+                                    class="ui-icon"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                >
+                                    <path
+                                        d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3l-5.6 2.9 1.1-6.2L3 9.6l6.2-.9L12 3z"
+                                    ></path>
+                                </svg>
+
+                                Rate User
+
                             </div>
 
-                            <form method="post" action="{% url 'rate_user' complaint.id %}">
+
+                            <div class="rating-subtitle">
+
+                                How was your experience with
+
+                                <strong>
+                                    {{ complaint.name }}
+                                </strong>?
+
+                            </div>
+
+
+                            <form
+                                method="post"
+                                action="{% url 'rate_user' complaint.id %}"
+                            >
+
                                 {% csrf_token %}
 
+
                                 <div class="stars">
-                                    <input type="radio" id="user-star-5-{{ complaint.id }}" name="stars" value="5" required>
-                                    <label for="user-star-5-{{ complaint.id }}">★</label>
 
-                                    <input type="radio" id="user-star-4-{{ complaint.id }}" name="stars" value="4">
-                                    <label for="user-star-4-{{ complaint.id }}">★</label>
 
-                                    <input type="radio" id="user-star-3-{{ complaint.id }}" name="stars" value="3">
-                                    <label for="user-star-3-{{ complaint.id }}">★</label>
+                                    <input
+                                        type="radio"
+                                        id="user-star-5-{{ complaint.id }}"
+                                        name="stars"
+                                        value="5"
+                                        required
+                                    >
 
-                                    <input type="radio" id="user-star-2-{{ complaint.id }}" name="stars" value="2">
-                                    <label for="user-star-2-{{ complaint.id }}">★</label>
+                                    <label
+                                        for="user-star-5-{{ complaint.id }}"
+                                    >
+                                        ★
+                                    </label>
 
-                                    <input type="radio" id="user-star-1-{{ complaint.id }}" name="stars" value="1">
-                                    <label for="user-star-1-{{ complaint.id }}">★</label>
+
+                                    <input
+                                        type="radio"
+                                        id="user-star-4-{{ complaint.id }}"
+                                        name="stars"
+                                        value="4"
+                                    >
+
+                                    <label
+                                        for="user-star-4-{{ complaint.id }}"
+                                    >
+                                        ★
+                                    </label>
+
+
+                                    <input
+                                        type="radio"
+                                        id="user-star-3-{{ complaint.id }}"
+                                        name="stars"
+                                        value="3"
+                                    >
+
+                                    <label
+                                        for="user-star-3-{{ complaint.id }}"
+                                    >
+                                        ★
+                                    </label>
+
+
+                                    <input
+                                        type="radio"
+                                        id="user-star-2-{{ complaint.id }}"
+                                        name="stars"
+                                        value="2"
+                                    >
+
+                                    <label
+                                        for="user-star-2-{{ complaint.id }}"
+                                    >
+                                        ★
+                                    </label>
+
+
+                                    <input
+                                        type="radio"
+                                        id="user-star-1-{{ complaint.id }}"
+                                        name="stars"
+                                        value="1"
+                                    >
+
+                                    <label
+                                        for="user-star-1-{{ complaint.id }}"
+                                    >
+                                        ★
+                                    </label>
+
+
                                 </div>
 
+
                                 <label class="problem-label">
+
                                     Any problem or feedback?
-                                    <span class="muted">(Optional)</span>
+
+                                    <span class="muted">
+                                        (Optional)
+                                    </span>
+
                                 </label>
+
 
                                 <textarea
                                     class="problem-box"
@@ -1067,30 +3521,85 @@
                                     placeholder="Write your feedback here..."
                                 ></textarea>
 
-                                <button type="submit" class="btn btn-primary rating-submit">
-                                    <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3l-5.6 2.9 1.1-6.2L3 9.6l6.2-.9L12 3z"></path></svg> Submit Rating
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-primary rating-submit"
+                                >
+
+                                    <svg
+                                        class="ui-icon"
+                                        viewBox="0 0 24 24"
+                                        aria-hidden="true"
+                                    >
+                                        <path
+                                            d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3l-5.6 2.9 1.1-6.2L3 9.6l6.2-.9L12 3z"
+                                        ></path>
+                                    </svg>
+
+                                    Submit Rating
+
                                 </button>
+
+
                             </form>
+
+
                         </div>
+
+
                     {% endif %}
+
 
                 {% endif %}
 
+
             </article>
+
 
         {% empty %}
 
+
             <section class="card empty">
-                <div class="empty-icon"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16l2 9v5a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-5z"></path><path d="M3 14h5l2 3h4l2-3h5"></path></svg></div>
-                <h2 style="margin:10px 0">No Complaints Assigned</h2>
+
+
+                <div class="empty-icon">
+
+                    <svg
+                        class="ui-icon"
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
+                        <path
+                            d="M4 5h16l2 9v5a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-5z"
+                        ></path>
+
+                        <path
+                            d="M3 14h5l2 3h4l2-3h5"
+                        ></path>
+                    </svg>
+
+                </div>
+
+
+                <h2 style="margin:10px 0">
+                    No Complaints Assigned
+                </h2>
+
+
                 <p class="muted">
                     New complaints assigned to you will appear here.
                 </p>
+
+
             </section>
 
+
         {% endfor %}
+
 
     </main>
 
 </body>
+
 </html>

@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -11,52 +10,81 @@
     {% include 'complaints/base_style.html' %}
 
     <style>
+      /* =====================================================
+                 ICON
+              ===================================================== */
+      
       .home-icon {
-        width: 34px;
-        height: 34px;
+        width: 38px;
+        height: 38px;
+      
         display: block;
-        margin: 0 auto 10px;
+      
+        margin: 0 auto 13px;
+      
         fill: none;
         stroke: currentColor;
+      
         stroke-width: 1.8;
         stroke-linecap: round;
         stroke-linejoin: round;
       }
       
+      /* =====================================================
+                 HERO
+              ===================================================== */
+      
       .hero {
-        padding: 55px 40px;
-        color: #ffffff;
+        padding: 44px 28px 30px;
+      
         text-align: center;
       }
       
       .hero h1 {
+        margin: 0;
+      
+        color: #ffffff;
+      
         font-size: 42px;
-        margin-bottom: 12px;
+        font-weight: 900;
+      
+        line-height: 1.2;
+      
+        text-shadow: 0 3px 18px rgba(2, 6, 23, 0.34);
       }
       
       .hero p {
-        max-width: 680px;
-        margin: auto;
+        max-width: 700px;
+      
+        margin: 14px auto 0;
+      
         color: #dbeafe;
+      
+        font-size: 16px;
+      
         line-height: 1.7;
       }
       
+      /* =====================================================
+                 ACTION GRID
+              ===================================================== */
+      
       .actions {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+      
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      
         grid-template-areas:
           'submit status worker'
-          'complaints . .';
-        gap: 15px;
-        margin-top: 30px;
+          'complaints complaints complaints';
+      
+        gap: 16px;
+      
+        margin-top: 32px;
       }
       
       .action-submit {
         grid-area: submit;
-      }
-      
-      .action-complaints {
-        grid-area: complaints;
       }
       
       .action-status {
@@ -67,153 +95,455 @@
         grid-area: worker;
       }
       
+      .action-complaints {
+        grid-area: complaints;
+      }
+      
+      /* =====================================================
+                 ACTION CARD
+              ===================================================== */
+      
       .action {
-        background: #ffffff;
-        color: #172554;
+        position: relative;
+      
+        min-height: 150px;
+      
+        display: flex;
+        flex-direction: column;
+      
+        align-items: center;
+        justify-content: center;
+      
         padding: 22px;
-        border-radius: 16px;
-        font-weight: 800;
+      
+        overflow: hidden;
+      
+        border: 1px solid #e2e8f0;
+      
+        border-radius: 17px;
+      
+        background: #ffffff;
+      
         text-decoration: none;
-        transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s ease, color 0.3s ease;
+      
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.1);
+      
+        transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.3s ease, border-color 0.3s ease;
+      }
+      
+      .action::before {
+        content: '';
+      
+        position: absolute;
+      
+        width: 110px;
+        height: 110px;
+      
+        top: -65px;
+        right: -55px;
+      
+        border-radius: 50%;
+      
+        opacity: 0;
+      
+        transition: opacity 0.25s ease, transform 0.25s ease;
       }
       
       .action:hover {
         transform: translateY(-4px);
-        box-shadow: 0 10px 25px rgba(15, 23, 42, 0.15);
+      
+        box-shadow: 0 14px 32px rgba(15, 23, 42, 0.15);
+      }
+      
+      .action:hover::before {
+        opacity: 1;
+      
+        transform: scale(1.25);
+      }
+      
+      .action-title {
+        position: relative;
+      
+        z-index: 2;
+      
+        color: #172554;
+      
+        font-size: 17px;
+        font-weight: 900;
       }
       
       .action-subtext {
+        position: relative;
+      
+        z-index: 2;
+      
         display: block;
-        margin-top: 6px;
+      
+        max-width: 270px;
+      
+        margin-top: 7px;
+      
         color: #64748b;
+      
         font-size: 12px;
         font-weight: 600;
-        line-height: 1.45;
+      
+        line-height: 1.5;
+      
+        text-align: center;
       }
+      
+      /* =====================================================
+                 ACTION COLORS
+              ===================================================== */
       
       .action-submit {
-        color: #1d4ed8;
+        color: #2563eb;
       }
       
-      .action-complaints {
-        color: #4338ca;
+      .action-submit::before {
+        background: rgba(37, 99, 235, 0.12);
       }
       
       .action-status {
         color: #0f766e;
       }
       
-      .action-worker {
-        color: #9a3412;
+      .action-status::before {
+        background: rgba(13, 148, 136, 0.12);
       }
       
-      .action-title {
-        color: #172554;
+      .action-worker {
+        color: #ea580c;
       }
+      
+      .action-worker::before {
+        background: rgba(234, 88, 12, 0.12);
+      }
+      
+      .action-complaints {
+        color: #4f46e5;
+      }
+      
+      .action-complaints::before {
+        background: rgba(79, 70, 229, 0.12);
+      }
+      
+      /* =====================================================
+                 HOW IT WORKS PANEL
+              ===================================================== */
       
       .panel {
-        margin-top: 22px;
+        margin-top: 26px;
+      
         padding: 28px;
-        transition: background 0.3s ease, color 0.3s ease;
       }
       
       .panel h2 {
-        margin-bottom: 10px;
+        margin: 0;
+      
+        color: #172554;
+      
+        font-size: 23px;
+        font-weight: 900;
       }
       
-      .grid {
+      .panel-description {
+        margin-top: 10px;
+      }
+      
+      /* =====================================================
+                 FEATURES
+              ===================================================== */
+      
+      .feature-grid {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+      
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      
         gap: 15px;
-        margin-top: 20px;
+      
+        margin-top: 21px;
       }
       
       .feature {
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
+        min-height: 155px;
+      
         padding: 20px;
+      
+        border: 1px solid #e2e8f0;
+      
         border-radius: 14px;
-        transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+      
+        background: #f8fafc;
+      
+        transition: transform 0.2s ease, background 0.3s ease, border-color 0.3s ease;
+      }
+      
+      .feature:hover {
+        transform: translateY(-3px);
       }
       
       .feature-number {
-        width: 34px;
-        height: 34px;
+        width: 38px;
+        height: 38px;
+      
         display: inline-flex;
+      
         align-items: center;
         justify-content: center;
-        margin-bottom: 10px;
-        border-radius: 10px;
+      
+        margin-bottom: 13px;
+      
+        border-radius: 11px;
+      
         background: #e0e7ff;
+      
         color: #3730a3;
+      
         font-size: 14px;
         font-weight: 900;
       }
       
       .feature b {
         display: block;
-        margin-bottom: 6px;
+      
+        margin-bottom: 7px;
+      
+        color: #172554;
+      
+        font-size: 15px;
       }
       
-      body.dark-mode .action {
-        background: #111827;
+      /* =====================================================
+                 DARK MODE
+              ===================================================== */
+      
+      body.sc-theme-dark .hero h1 {
+        color: #ffffff;
+      }
+      
+      body.sc-theme-dark .hero p {
+        color: #cbd5e1;
+      }
+      
+      body.sc-theme-dark .action {
+        background: #1e293b;
+      
+        border-color: #334155;
+      }
+      
+      body.sc-theme-dark .action-title {
         color: #f8fafc;
-        border: 1px solid #263247;
       }
       
-      body.dark-mode .action-title {
-        color: #f8fafc;
-      }
-      
-      body.dark-mode .action-subtext {
+      body.sc-theme-dark .action-subtext {
         color: #94a3b8;
       }
       
-      body.dark-mode .panel {
-        background: #111827 !important;
-        color: #f8fafc;
-        border-color: #263247 !important;
+      body.sc-theme-dark .panel {
+        background: #1e293b !important;
+      
+        border-color: #334155 !important;
       }
       
-      body.dark-mode .panel h2 {
+      body.sc-theme-dark .panel h2 {
         color: #f8fafc;
       }
       
-      body.dark-mode .feature {
+      body.sc-theme-dark .feature {
         background: #172033;
-        border-color: #263247;
+      
+        border-color: #334155;
+      }
+      
+      body.sc-theme-dark .feature b {
         color: #f8fafc;
       }
       
-      body.dark-mode .feature-number {
+      body.sc-theme-dark .feature-number {
         background: #312e81;
+      
         color: #e0e7ff;
       }
       
-      body.dark-mode .muted {
-        color: #94a3b8 !important;
+      /* =====================================================
+                 GLASS MODE
+              ===================================================== */
+      
+      body.sc-theme-glass .hero h1 {
+        color: #ffffff;
       }
       
-      @media (max-width: 700px) {
+      body.sc-theme-glass .hero p {
+        color: rgba(219, 234, 254, 0.9);
+      }
+      
+      /* =====================================================
+                 GLASS ACTION CARDS
+              ===================================================== */
+      
+      body.sc-theme-glass .action {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.13), rgba(96, 165, 250, 0.065));
+      
+        border: 1px solid rgba(191, 219, 254, 0.27);
+      
+        box-shadow: 0 18px 42px rgba(2, 6, 23, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.11);
+      
+        backdrop-filter: blur(18px);
+      
+        -webkit-backdrop-filter: blur(18px);
+      }
+      
+      body.sc-theme-glass .action:hover {
+        background: linear-gradient(135deg, rgba(var(--app-primary-rgb), 0.2), rgba(255, 255, 255, 0.1));
+      
+        border-color: rgba(191, 219, 254, 0.45);
+      
+        box-shadow: 0 22px 50px rgba(2, 6, 23, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+      }
+      
+      body.sc-theme-glass .action-title {
+        color: #ffffff;
+      
+        text-shadow: 0 2px 8px rgba(2, 6, 23, 0.24);
+      }
+      
+      body.sc-theme-glass .action-subtext {
+        color: rgba(219, 234, 254, 0.76);
+      }
+      
+      body.sc-theme-glass .action-submit {
+        color: #60a5fa;
+      }
+      
+      body.sc-theme-glass .action-status {
+        color: #2dd4bf;
+      }
+      
+      body.sc-theme-glass .action-worker {
+        color: #fb923c;
+      }
+      
+      body.sc-theme-glass .action-complaints {
+        color: #a5b4fc;
+      }
+      
+      /* =====================================================
+                 GLASS PANEL
+              ===================================================== */
+      
+      body.sc-theme-glass .panel {
+        background: linear-gradient(135deg, rgba(96, 165, 250, 0.13), rgba(255, 255, 255, 0.075), rgba(99, 102, 241, 0.08)) !important;
+      
+        border: 1px solid rgba(191, 219, 254, 0.27) !important;
+      
+        color: #ffffff !important;
+      
+        box-shadow: 0 24px 58px rgba(2, 6, 23, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      
+        backdrop-filter: blur(24px);
+      
+        -webkit-backdrop-filter: blur(24px);
+      }
+      
+      body.sc-theme-glass .panel h2 {
+        color: #ffffff;
+      }
+      
+      /* =====================================================
+                 GLASS FEATURES
+              ===================================================== */
+      
+      body.sc-theme-glass .feature {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(59, 130, 246, 0.06));
+      
+        border: 1px solid rgba(191, 219, 254, 0.24);
+      
+        color: #ffffff;
+      
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      
+        backdrop-filter: blur(14px);
+      
+        -webkit-backdrop-filter: blur(14px);
+      }
+      
+      body.sc-theme-glass .feature b {
+        color: #ffffff;
+      }
+      
+      body.sc-theme-glass .feature-number {
+        background: rgba(var(--app-primary-rgb), 0.28);
+      
+        border: 1px solid rgba(191, 219, 254, 0.24);
+      
+        color: #ffffff;
+      }
+      
+      body.sc-theme-glass .feature .muted {
+        color: rgba(219, 234, 254, 0.76) !important;
+      }
+      
+      /* =====================================================
+                 MOBILE
+              ===================================================== */
+      
+      @media (max-width: 800px) {
         .hero {
-          padding: 45px 20px 35px;
+          padding: 42px 15px 25px;
         }
       
         .hero h1 {
-          font-size: 30px;
+          font-size: 34px;
+        }
+      
+        .actions {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+      
+          grid-template-areas:
+            'submit status'
+            'worker complaints';
+        }
+      
+        .feature-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      
+      @media (max-width: 600px) {
+        .hero {
+          padding: 35px 10px 22px;
+        }
+      
+        .hero h1 {
+          font-size: 29px;
+      
+          line-height: 1.25;
+        }
+      
+        .hero p {
+          font-size: 14px;
         }
       
         .actions {
           grid-template-columns: 1fr;
+      
           grid-template-areas:
             'submit'
-            'complaints'
             'status'
-            'worker';
+            'worker'
+            'complaints';
         }
       
-        .grid {
-          grid-template-columns: 1fr;
+        .action {
+          min-height: 135px;
+      
+          padding: 19px;
+        }
+      
+        .panel {
+          padding: 20px;
         }
       }
     </style>
@@ -223,83 +553,133 @@
     {% include 'complaints/User_Folder/navbar.html' %}
 
     <main class="page">
+      <!--  =================================================
+             HERO
+        ==================================================  -->
+
       <section class="hero">
         <h1>Smart Complaint Management</h1>
 
         <p>Submit complaints, choose an approved worker, track progress, and view your complaint history from one place.</p>
 
+        <!--  =============================================
+                 HOME ACTIONS
+            ==============================================  -->
+
         <div class="actions">
+          <!--  =========================================
+                     SUBMIT COMPLAINT
+                ==========================================  -->
+
           <a class="action action-submit" href="{% url 'submit_complaint' %}">
             <svg class="home-icon" viewBox="0 0 24 24" aria-hidden="true">
               <path d="M12 20h9"></path>
+
               <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4z"></path>
             </svg>
 
             <span class="action-title">Submit Complaint</span>
+
             <span class="action-subtext">Create a new complaint with photo and location.</span>
           </a>
 
-          <a class="action action-complaints" href="{% url 'my_complaints' %}">
-            <svg class="home-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M9 5h11"></path>
-              <path d="M9 12h11"></path>
-              <path d="M9 19h11"></path>
-              <path d="M4 5h.01"></path>
-              <path d="M4 12h.01"></path>
-              <path d="M4 19h.01"></path>
-            </svg>
-
-            <span class="action-title">My Complaints</span>
-            <span class="action-subtext">View all complaints submitted from your account.</span>
-          </a>
+          <!--  =========================================
+                     CHECK STATUS
+                ==========================================  -->
 
           <a class="action action-status" href="{% url 'check_status' %}">
             <svg class="home-icon" viewBox="0 0 24 24" aria-hidden="true">
               <circle cx="11" cy="11" r="7"></circle>
+
               <path d="M20 20l-4-4"></path>
+
               <path d="M8.5 11l1.7 1.7 3.5-3.5"></path>
             </svg>
 
             <span class="action-title">Check Status</span>
+
             <span class="action-subtext">Track complaint progress using your Tracking ID.</span>
           </a>
+
+          <!--  =========================================
+                     FIND WORKER
+                ==========================================  -->
 
           <a class="action action-worker" href="{% url 'worker_details' %}">
             <svg class="home-icon" viewBox="0 0 24 24" aria-hidden="true">
               <circle cx="12" cy="7" r="4"></circle>
+
               <path d="M5 21v-2a7 7 0 0 1 14 0v2"></path>
+
               <path d="M8 3h8"></path>
+
               <path d="M9 3l-1 3"></path>
+
               <path d="M15 3l1 3"></path>
             </svg>
 
             <span class="action-title">Find Worker</span>
-            <span class="action-subtext">Browse approved workers and choose the right one.</span>
+
+            <span class="action-subtext">Browse approved workers and view their details.</span>
+          </a>
+
+          <!--  =========================================
+                     MY COMPLAINTS
+                ==========================================  -->
+
+          <a class="action action-complaints" href="{% url 'my_complaints' %}">
+            <svg class="home-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M9 5h11"></path>
+
+              <path d="M9 12h11"></path>
+
+              <path d="M9 19h11"></path>
+
+              <path d="M4 5h.01"></path>
+
+              <path d="M4 12h.01"></path>
+
+              <path d="M4 19h.01"></path>
+            </svg>
+
+            <span class="action-title">My Complaints</span>
+
+            <span class="action-subtext">View all complaints submitted from your account.</span>
           </a>
         </div>
       </section>
 
+      <!--  =================================================
+             HOW IT WORKS
+        ==================================================  -->
+
       <section class="card panel">
         <h2>How it works</h2>
 
-        <p class="muted">Choose a worker, describe the problem and keep the Tracking ID for future status checks.</p>
+        <p class="muted panel-description">Submit your complaint, choose Smart Auto Assign or select a worker manually, and keep the Tracking ID for future status checks.</p>
 
-        <div class="grid">
+        <div class="feature-grid">
           <div class="feature">
             <span class="feature-number">01</span>
-            <b>Select Worker</b>
-            <span class="muted">Search by name, username or Worker ID.</span>
+
+            <b>Find Workers</b>
+
+            <span class="muted">View approved workers, their Worker IDs, skills and service details.</span>
           </div>
 
           <div class="feature">
             <span class="feature-number">02</span>
+
             <b>Submit Complaint</b>
-            <span class="muted">Add the subject and a clear description.</span>
+
+            <span class="muted">Add the problem details, photo, priority and complaint location.</span>
           </div>
 
           <div class="feature">
             <span class="feature-number">03</span>
+
             <b>Track Progress</b>
+
             <span class="muted">Follow Pending, In Progress and Resolved status.</span>
           </div>
         </div>

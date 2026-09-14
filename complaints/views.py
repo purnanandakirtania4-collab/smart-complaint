@@ -1,12 +1,18 @@
 import calendar
 import secrets
+import re
 from datetime import timedelta
 
 import razorpay
 
 from django.conf import settings
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import (
+    authenticate,
+    login,
+    logout,
+    update_session_auth_hash,
+)
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
@@ -23,6 +29,7 @@ from .models import (
     UserProfile,
     Rating,
     WorkerSubscription,
+    WorkerPayoutDetails,
     Notification,
     DeviceToken,
     ChatMessage,
@@ -310,6 +317,11 @@ def profile(request):
             ''
         ).strip()
 
+        gender = request.POST.get(
+            'gender',
+            ''
+        ).strip()
+
         photo = request.FILES.get(
             'photo'
         )
@@ -350,6 +362,25 @@ def profile(request):
             messages.error(
                 request,
                 'Phone number is too long.'
+            )
+
+            return redirect(
+                'profile'
+            )
+
+        allowed_genders = {
+            'Male',
+            'Female',
+            'Other',
+            'Prefer not to say',
+            '',
+        }
+
+        if gender not in allowed_genders:
+
+            messages.error(
+                request,
+                'Please select a valid gender.'
             )
 
             return redirect(
@@ -405,6 +436,7 @@ def profile(request):
         user.save()
 
         user_profile.phone = phone
+        user_profile.gender = gender
         user_profile.save()
 
         messages.success(
@@ -1186,12 +1218,11 @@ def worker_details(request):
 
     return render(
         request,
-        'complaints/Worker_Folder/worker_details.html',
+        'complaints/User_Folder/worker_details.html',
         {
             'workers': workers
         }
     )
-
 
 # =========================================================
 # WORKER PROFILE
@@ -2434,7 +2465,8 @@ def worker_dashboard(request):
             assigned_worker=worker
         )
         .select_related(
-            'user'
+            'user',
+            'user__user_profile'
         )
         .annotate(
             priority_rank=Case(
@@ -2546,13 +2578,414 @@ def worker_settings(request):
         )
     )
 
+    payout_details, payout_created = (
+        WorkerPayoutDetails.objects.get_or_create(
+            worker=worker
+        )
+    )
+
+    if request.method == 'POST':
+
+        action = request.POST.get(
+            'action',
+            ''
+        ).strip()
+
+        if action == 'save_payout_details':
+
+            payout_method = request.POST.get(
+                'payout_method',
+                ''
+            ).strip().lower()
+
+            if payout_method not in {
+                'upi',
+                'bank',
+            }:
+
+                messages.error(
+                    request,
+                    'Please select a valid payout method.'
+                )
+
+                return redirect(
+                    'worker_settings'
+                )
+
+            if payout_method == 'upi':
+
+                upi_id = request.POST.get(
+                    'upi_id',
+                    ''
+                ).strip()
+
+                upi_pattern = re.compile(
+                    r'^[A-Za-z0-9._-]{2,100}@[A-Za-z0-9.-]{2,50}$'
+                )
+
+                if not upi_id:
+
+                    messages.error(
+                        request,
+                        'Please enter your UPI ID.'
+                    )
+
+                    return redirect(
+                        'worker_settings'
+                    )
+
+                if not upi_pattern.fullmatch(
+                    upi_id
+                ):
+
+                    messages.error(
+                        request,
+                        'Please enter a valid UPI ID.'
+                    )
+
+                    return redirect(
+                        'worker_settings'
+                    )
+
+                payout_details.payout_method = (
+                    'upi'
+                )
+
+                payout_details.upi_id = (
+                    upi_id
+                )
+
+                payout_details.account_holder_name = (
+                    ''
+                )
+
+                payout_details.bank_name = (
+                    ''
+                )
+
+                payout_details.bank_account_last4 = (
+                    ''
+                )
+
+                payout_details.ifsc_code = (
+                    ''
+                )
+
+                payout_details.is_verified = (
+                    False
+                )
+
+                payout_details.save()
+
+                messages.success(
+                    request,
+                    'UPI payout details saved successfully.'
+                )
+
+                return redirect(
+                    'worker_settings'
+                )
+
+            account_holder_name = (
+                request.POST.get(
+                    'account_holder_name',
+                    ''
+                ).strip()
+            )
+
+            bank_name = request.POST.get(
+                'bank_name',
+                ''
+            ).strip()
+
+            account_number = request.POST.get(
+                'account_number',
+                ''
+            ).replace(
+                ' ',
+                ''
+            ).strip()
+
+            confirm_account_number = (
+                request.POST.get(
+                    'confirm_account_number',
+                    ''
+                )
+                .replace(
+                    ' ',
+                    ''
+                )
+                .strip()
+            )
+
+            ifsc_code = (
+                request.POST.get(
+                    'ifsc_code',
+                    ''
+                )
+                .strip()
+                .upper()
+            )
+
+            if (
+                not account_holder_name
+                or not bank_name
+                or not account_number
+                or not confirm_account_number
+                or not ifsc_code
+            ):
+
+                messages.error(
+                    request,
+                    'Please fill all bank payout fields.'
+                )
+
+                return redirect(
+                    'worker_settings'
+                )
+
+            if not account_number.isdigit():
+
+                messages.error(
+                    request,
+                    'Bank account number must contain digits only.'
+                )
+
+                return redirect(
+                    'worker_settings'
+                )
+
+            if not (
+                6 <= len(account_number) <= 18
+            ):
+
+                messages.error(
+                    request,
+                    'Bank account number must be between 6 and 18 digits.'
+                )
+
+                return redirect(
+                    'worker_settings'
+                )
+
+            if (
+                account_number
+                != confirm_account_number
+            ):
+
+                messages.error(
+                    request,
+                    'Bank account numbers do not match.'
+                )
+
+                return redirect(
+                    'worker_settings'
+                )
+
+            ifsc_pattern = re.compile(
+                r'^[A-Z]{4}0[A-Z0-9]{6}$'
+            )
+
+            if not ifsc_pattern.fullmatch(
+                ifsc_code
+            ):
+
+                messages.error(
+                    request,
+                    'Please enter a valid 11-character IFSC code.'
+                )
+
+                return redirect(
+                    'worker_settings'
+                )
+
+            payout_details.payout_method = (
+                'bank'
+            )
+
+            payout_details.upi_id = (
+                ''
+            )
+
+            payout_details.account_holder_name = (
+                account_holder_name
+            )
+
+            payout_details.bank_name = (
+                bank_name
+            )
+
+            payout_details.bank_account_last4 = (
+                account_number[-4:]
+            )
+
+            payout_details.ifsc_code = (
+                ifsc_code
+            )
+
+            payout_details.is_verified = (
+                False
+            )
+
+            payout_details.save()
+
+            messages.success(
+                request,
+                (
+                    'Bank payout details saved successfully. '
+                    'For security, only the last 4 account digits are stored.'
+                )
+            )
+
+            return redirect(
+                'worker_settings'
+            )
+
     return render(
         request,
         'complaints/Worker_Folder/worker_settings.html',
         {
             'worker': worker,
             'subscription': subscription,
+            'payout_details': payout_details,
         }
+    )
+
+
+# =========================================================
+# WORKER CHANGE PASSWORD
+# =========================================================
+
+@login_required(login_url='worker_login')
+@require_POST
+def worker_change_password(request):
+
+    try:
+
+        worker = (
+            request.user.worker_profile
+        )
+
+    except WorkerProfile.DoesNotExist:
+
+        messages.error(
+            request,
+            'Worker access required.'
+        )
+
+        return redirect(
+            'worker_login'
+        )
+
+    if not worker.is_approved:
+
+        messages.error(
+            request,
+            'Your worker account is not approved.'
+        )
+
+        return redirect(
+            'worker_login'
+        )
+
+    current_password = request.POST.get(
+        'current_password',
+        ''
+    )
+
+    new_password = request.POST.get(
+        'new_password',
+        ''
+    )
+
+    confirm_password = request.POST.get(
+        'confirm_password',
+        ''
+    )
+
+    if (
+        not current_password
+        or not new_password
+        or not confirm_password
+    ):
+
+        messages.error(
+            request,
+            'Please fill all password fields.'
+        )
+
+        return redirect(
+            'worker_settings'
+        )
+
+    if not request.user.check_password(
+        current_password
+    ):
+
+        messages.error(
+            request,
+            'Current password is incorrect.'
+        )
+
+        return redirect(
+            'worker_settings'
+        )
+
+    if new_password != confirm_password:
+
+        messages.error(
+            request,
+            'New password and confirm password do not match.'
+        )
+
+        return redirect(
+            'worker_settings'
+        )
+
+    if len(new_password) < 6:
+
+        messages.error(
+            request,
+            'New password must be at least 6 characters.'
+        )
+
+        return redirect(
+            'worker_settings'
+        )
+
+    if current_password == new_password:
+
+        messages.error(
+            request,
+            'New password must be different from your current password.'
+        )
+
+        return redirect(
+            'worker_settings'
+        )
+
+    request.user.set_password(
+        new_password
+    )
+
+    request.user.save(
+        update_fields=[
+            'password',
+        ]
+    )
+
+    update_session_auth_hash(
+        request,
+        request.user
+    )
+
+    messages.success(
+        request,
+        'Password changed successfully.'
+    )
+
+    return redirect(
+        'worker_settings'
     )
 
 

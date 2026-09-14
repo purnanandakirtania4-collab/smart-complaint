@@ -2,173 +2,261 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" /><title>Check Status | Smart Complaint</title>{% include 'complaints/base_style.html' %}
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Track Complaint | Smart Complaint</title>
+
+    {% include 'complaints/base_style.html' %}
+
     <style>
-      .search-card,
-      .result {
-        padding: 30px;
-        margin-bottom: 20px;
+      .track-wrap {
+        max-width: 820px;
+        margin: 34px auto;
       }
+      
+      .track-header {
+        text-align: center;
+        color: #ffffff;
+        margin-bottom: 24px;
+      }
+      
+      .track-header h1 {
+        margin: 0;
+        font-size: 32px;
+        font-weight: 900;
+      }
+      
+      .track-header p {
+        margin-top: 8px;
+        color: #dbeafe;
+      }
+      
+      .search-card,
+      .details-card {
+        padding: 24px;
+      }
+      
       .search-form {
         display: flex;
         gap: 10px;
+        align-items: center;
+      }
+      
+      .search-form .input {
+        flex: 1;
+      }
+      
+      .details-card {
         margin-top: 18px;
       }
-      .title {
-        display: flex;
-        justify-content: space-between;
-        gap: 15px;
-        align-items: center;
-        flex-wrap: wrap;
+      
+      .details-title {
+        margin-bottom: 18px;
+        color: #172554;
+        font-size: 21px;
+        font-weight: 900;
       }
-      .tracking {
-        background: #eff6ff;
-        color: #1d4ed8;
-        padding: 9px 13px;
-        border-radius: 9px;
-        font-weight: 800;
-      }
-      .grid {
+      
+      .details-grid {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 12px;
-        margin: 22px 0;
       }
-      .box {
+      
+      .detail-box {
+        padding: 15px;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
         background: #f8fafc;
-        padding: 16px;
-        border-radius: 11px;
       }
-      .box small {
+      
+      .detail-box.full {
+        grid-column: 1 / -1;
+      }
+      
+      .detail-label {
         display: block;
-        color: #64748b;
         margin-bottom: 5px;
+        color: #64748b;
+        font-size: 12px;
+        font-weight: 700;
       }
-      .box b {
+      
+      .detail-value {
+        color: #172554;
+        font-weight: 800;
+        line-height: 1.6;
         word-break: break-word;
       }
-      .full {
-        grid-column: 1/-1;
+      
+      .status-pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 7px 12px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 900;
       }
-      .status {
-        text-align: center;
-        margin: 25px 0;
-      }
-      .badge {
-        display: inline-block;
-        padding: 10px 20px;
-        border-radius: 30px;
-        font-weight: 800;
-      }
-      .pending {
+      
+      .status-pending {
         background: #fef3c7;
         color: #92400e;
       }
-      .progress {
+      
+      .status-progress {
         background: #dbeafe;
         color: #1d4ed8;
       }
-      .resolved {
+      
+      .status-resolved {
         background: #dcfce7;
         color: #166534;
       }
-      .history {
-        border-top: 1px solid #e2e8f0;
-        padding-top: 22px;
+      
+      body.sc-theme-dark .details-title,
+      body.sc-theme-dark .detail-value {
+        color: #f8fafc;
       }
-      .history-item {
-        background: #f8fafc;
-        padding: 13px;
-        border-left: 4px solid #2563eb;
-        margin-bottom: 10px;
-        border-radius: 8px;
+      
+      body.sc-theme-dark .detail-box {
+        background: #172033;
+        border-color: #334155;
       }
+      
+      body.sc-theme-dark .detail-label {
+        color: #94a3b8;
+      }
+      
+      body.sc-theme-glass .search-card,
+      body.sc-theme-glass .details-card {
+        background: linear-gradient(135deg, rgba(96, 165, 250, 0.13), rgba(255, 255, 255, 0.075), rgba(99, 102, 241, 0.08)) !important;
+        border: 1px solid rgba(191, 219, 254, 0.27) !important;
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+      }
+      
+      body.sc-theme-glass .details-title {
+        color: #ffffff;
+      }
+      
+      body.sc-theme-glass .detail-box {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(96, 165, 250, 0.07));
+        border: 1px solid rgba(191, 219, 254, 0.28);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+      }
+      
+      body.sc-theme-glass .detail-label {
+        color: rgba(219, 234, 254, 0.72);
+      }
+      
+      body.sc-theme-glass .detail-value {
+        color: #ffffff;
+      }
+      
       @media (max-width: 650px) {
+        .track-wrap {
+          margin: 20px auto;
+        }
+      
+        .track-header h1 {
+          font-size: 27px;
+        }
+      
+        .search-card,
+        .details-card {
+          padding: 18px;
+        }
+      
         .search-form {
           flex-direction: column;
         }
-        .grid {
+      
+        .search-form .btn {
+          width: 100%;
+        }
+      
+        .details-grid {
           grid-template-columns: 1fr;
         }
-        .full {
+      
+        .detail-box.full {
           grid-column: auto;
         }
       }
     </style>
   </head>
+
   <body>
+    {% include 'complaints/User_Folder/navbar.html' %}
+
     <main class="page">
-      <section class="card search-card">
-        <h1>🔎 Check Complaint Status</h1><p class="muted" style="margin-top:7px">Enter your Tracking ID to view the latest status.</p>
-        <form method="post" class="search-form">
-          {% csrf_token %}
-          <input class="input" name="tracking_id" placeholder="CMP-A82F91BC" required /><button class="btn btn-primary">Search</button>
-        </form>
-        {% if status == 'Not Found' %}
-          <div class="message" style="margin-top:15px">Complaint not found. Please check your Tracking ID.</div>
-        {% endif %}
-      </section>
-      {% if complaint %}
-        <section class="card result">
-          <div class="title">
-            <h2>Complaint Details</h2><div class="tracking">{{ complaint.tracking_id }}</div>
-          </div>
-          <div class="grid">
-            <div class="box">
-              <small>Complainant</small><b>{{ complaint.name }}</b>
-            </div>
-            <div class="box">
-              <small>Email</small><b>{{ complaint.email }}</b>
-            </div>
-            <div class="box full">
-              <small>Subject</small><b>{{ complaint.subject }}</b>
-            </div>
-            <div class="box full">
-              <small>Description</small><div>{{ complaint.description }}</div>
-            </div>
-            <div class="box">
-              <small>Submitted</small><b>{{ complaint.created_at|date:'d M Y, h:i A' }}</b>
-            </div>
-            <div class="box">
-              <small>Assigned Worker</small><b>
-                {% if complaint.assigned_worker %}
-                  {{ complaint.assigned_worker.name }}
-                {% else %}
-                  Not assigned
-                {% endif %}
-              </b>
-            </div>
-          </div>
-          <div class="status">
-            <h3 style="margin-bottom:12px">Current Status</h3><span class="badge {% if complaint.status == 'Pending' %}
-                
-                pending
+      <div class="track-wrap">
+        <header class="track-header">
+          <h1>Track Your Complaint</h1>
+          <p>Enter your Tracking ID to view the latest complaint status.</p>
+        </header>
 
-              {% elif complaint.status == 'In Progress' %}
-                
-                progress
+        <section class="card search-card">
+          <form method="post" class="search-form">
+            {% csrf_token %}
 
-              {% else %}
-                
-                resolved
+            <input class="input" type="text" name="tracking_id" placeholder="Enter Tracking ID" required />
 
-              {% endif %}">
-              {{ complaint.status }}
-            </span>
-          </div>
-          {% if complaint.history.all %}
-            <div class="history">
-              <h3 style="margin-bottom:15px">Status History</h3>{% for history in complaint.history.all %}
-                <div class="history-item">
-                  <b>{{ history.old_status }} → {{ history.new_status }}</b><div class="muted" style="font-size:13px">{{ history.changed_at|date:'d M Y, h:i A' }}</div>
-                </div>
-              {% endfor %}
-            </div>
-          {% endif %}
+            <button type="submit" class="btn btn-primary">Check Status</button>
+          </form>
         </section>
-      {% endif %}
-      <div style="text-align:center">
-        <a class="btn btn-dark" href="{% url 'home' %}">← Back Home</a>
+
+        {% if complaint %}
+          <section class="card details-card">
+            <h2 class="details-title">Complaint Details</h2>
+
+            <div class="details-grid">
+              <div class="detail-box">
+                <span class="detail-label">Name</span>
+                <div class="detail-value">{{ complaint.name }}</div>
+              </div>
+
+              <div class="detail-box">
+                <span class="detail-label">Email</span>
+                <div class="detail-value">{{ complaint.email }}</div>
+              </div>
+
+              <div class="detail-box">
+                <span class="detail-label">Subject</span>
+                <div class="detail-value">{{ complaint.subject }}</div>
+              </div>
+
+              <div class="detail-box">
+                <span class="detail-label">Status</span>
+                <div class="detail-value">
+                  <span class="
+                                    status-pill
+                                    {% if complaint.status == 'Pending' %}
+                      
+                                        status-pending
+
+                    {% elif complaint.status == 'In Progress' %}
+                      
+                                        status-progress
+
+                    {% else %}
+                      
+                                        status-resolved
+
+                    {% endif %}
+                                ">
+                    {{ complaint.status }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="detail-box full">
+                <span class="detail-label">Description</span>
+                <div class="detail-value">{{ complaint.description }}</div>
+              </div>
+            </div>
+          </section>
+        {% endif %}
       </div>
     </main>
   </body>
