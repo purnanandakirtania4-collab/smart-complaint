@@ -1,252 +1,121 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-    <title>Login | Smart Complaint</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login / Register | Smart Complaint</title>
 
     {% include 'complaints/base_style.html' %}
 
     <style>
-      /* =====================================================
-                 RESET
-              ===================================================== */
-      
       * {
         box-sizing: border-box;
       }
       
-      html,
-      body {
-        margin: 0;
-        padding: 0;
-      
-        width: 100%;
-        min-height: 100%;
-      }
-      
-      button,
-      input {
-        font: inherit;
-      }
-      
-      /* =====================================================
-                 PAGE
-              ===================================================== */
-      
-      .login-page {
+      .auth-page {
         width: 100%;
         min-height: 100vh;
-      
         display: flex;
-      
         align-items: center;
         justify-content: center;
-      
-        padding: 26px 18px;
+        padding: 24px;
       }
-      
-      /* =====================================================
-                 AUTH CARD
-              ===================================================== */
       
       .auth-card {
         width: min(470px, 100%);
-      
-        padding: 34px 30px;
-      
-        border: 1px solid #e2e8f0;
-      
-        border-radius: 25px;
-      
-        background: #ffffff;
-      
-        box-shadow: 0 24px 60px rgba(15, 23, 42, 0.2);
-      
-        transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        padding: 32px;
+        border-radius: 26px;
+        transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
       }
       
       .auth-content {
         width: 100%;
       }
       
-      /* =====================================================
-                 LOGO
-              ===================================================== */
-      
-      .logo {
-        width: 76px;
-        height: 76px;
-      
-        margin: 0 auto 15px;
-      
+      .auth-logo {
+        width: 72px;
+        height: 72px;
+        margin: 0 auto 14px;
         display: grid;
-      
         place-items: center;
-      
         border-radius: 22px;
-      
         background: linear-gradient(135deg, #2563eb, #4f46e5);
-      
-        color: #ffffff;
-      
-        font-size: 32px;
-      
-        box-shadow: 0 12px 28px rgba(37, 99, 235, 0.27);
+        color: #fff;
+        box-shadow: 0 12px 30px rgba(37, 99, 235, 0.24);
       }
       
-      /* =====================================================
-                 TITLE
-              ===================================================== */
+      .ui-icon {
+        width: 22px;
+        height: 22px;
+        display: inline-block;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        flex-shrink: 0;
+      }
+      
+      .auth-logo .ui-icon {
+        width: 36px;
+        height: 36px;
+      }
+      
+      .main-title,
+      .panel-title {
+        text-align: center;
+        margin: 0;
+      }
       
       .main-title {
-        margin: 0;
-      
-        text-align: center;
-      
-        color: #172554;
-      
         font-size: 29px;
         font-weight: 900;
       }
-      
       .main-subtitle {
-        margin: 7px 0 23px;
-      
         text-align: center;
-      
-        color: #64748b;
-      
+        margin: 8px 0 18px;
         font-size: 14px;
         line-height: 1.6;
       }
       
-      /* =====================================================
-                 DJANGO MESSAGES
-              ===================================================== */
-      
-      .login-message {
-        margin-bottom: 15px;
-      
-        padding: 12px 14px;
-      
-        border: 1px solid #fecaca;
-      
-        border-radius: 11px;
-      
-        background: #fee2e2;
-      
-        color: #991b1b;
-      
-        font-size: 13px;
-        font-weight: 700;
-      
-        line-height: 1.5;
-      }
-      
-      .login-message.success {
-        background: #dcfce7;
-      
-        border-color: #bbf7d0;
-      
-        color: #166534;
-      }
-      
-      /* =====================================================
-                 LOGIN / REGISTER TABS
-              ===================================================== */
-      
       .tabs {
         display: grid;
-      
         grid-template-columns: 1fr 1fr;
-      
         gap: 5px;
-      
-        margin-bottom: 23px;
-      
         padding: 5px;
-      
-        border-radius: 13px;
-      
-        background: #eef2f7;
+        margin-bottom: 22px;
+        border-radius: 14px;
       }
       
       .tab {
-        padding: 11px;
-      
         border: 0;
-      
-        border-radius: 9px;
-      
-        background: transparent;
-      
-        color: #64748b;
-      
-        font-size: 14px;
-        font-weight: 800;
-      
+        border-radius: 10px;
+        padding: 11px;
         cursor: pointer;
-      
-        transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+        font-weight: 800;
+        background: transparent;
       }
-      
-      .tab.active {
-        background: #ffffff;
-      
-        color: #2563eb;
-      
-        box-shadow: 0 3px 10px rgba(15, 23, 42, 0.08);
-      }
-      
-      /* =====================================================
-                 PANEL
-              ===================================================== */
       
       .panel {
-        animation: panelShow 0.3s ease;
+        animation: panelShow 0.25s ease;
       }
-      
       .panel-title {
-        margin: 0 0 6px;
-      
-        text-align: center;
-      
-        color: #172554;
-      
         font-size: 22px;
         font-weight: 900;
       }
-      
       .panel-subtitle {
-        margin: 0 0 21px;
-      
         text-align: center;
-      
-        color: #64748b;
-      
+        margin: 6px 0 20px;
         font-size: 13px;
       }
       
-      /* =====================================================
-                 FORM
-              ===================================================== */
-      
       .form-group {
-        margin-bottom: 16px;
+        margin-bottom: 15px;
       }
-      
-      .label {
+      .auth-label {
         display: block;
-      
         margin-bottom: 7px;
-      
-        color: #334155;
-      
         font-size: 13px;
         font-weight: 800;
       }
@@ -255,865 +124,463 @@
         position: relative;
       }
       
-      .input-icon {
+      .input-symbol {
         position: absolute;
-      
         left: 14px;
         top: 50%;
-      
         transform: translateY(-50%);
-      
-        font-size: 16px;
-      
+        display: grid;
+        place-items: center;
         pointer-events: none;
+      }
+      
+      .input-symbol .ui-icon {
+        width: 19px;
+        height: 19px;
       }
       
       .auth-input {
         width: 100%;
-        height: 49px;
-      
-        padding: 0 46px;
-      
-        border: 1px solid #dbe3ef;
-      
-        border-radius: 12px;
-      
+        height: 50px;
+        padding: 0 47px;
+        border-radius: 13px;
         outline: none;
-      
-        background: #f8fafc;
-      
-        color: #172554;
-      
         font-size: 14px;
-      
-        transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
       }
-      
-      .auth-input:focus {
-        background: #ffffff;
-      
-        border-color: #3b82f6;
-      
-        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
-      }
-      
-      .auth-input::placeholder {
-        color: #94a3b8;
-      }
-      
-      /* =====================================================
-                 PASSWORD SHOW / HIDE
-              ===================================================== */
       
       .password-btn {
         position: absolute;
-      
         right: 7px;
         top: 50%;
-      
+        transform: translateY(-50%);
         width: 36px;
         height: 36px;
-      
-        transform: translateY(-50%);
-      
         display: grid;
-      
         place-items: center;
-      
         border: 0;
-      
         border-radius: 9px;
-      
-        background: transparent;
-      
         cursor: pointer;
+        background: transparent;
       }
       
-      /* =====================================================
-                 FORGOT PASSWORD
-              ===================================================== */
+      .password-btn .ui-icon {
+        width: 19px;
+        height: 19px;
+      }
       
       .forgot-row {
         display: flex;
-      
         justify-content: flex-end;
-      
-        margin: -5px 0 17px;
+        margin: -4px 0 15px;
       }
       
       .forgot-link {
-        padding: 0;
-      
-        border: 0;
-      
-        background: transparent;
-      
-        color: #2563eb;
-      
         font-size: 13px;
         font-weight: 800;
-      
-        cursor: pointer;
-      
         text-decoration: none;
       }
-      
-      .forgot-link:hover {
-        text-decoration: underline;
-      }
-      
-      /* =====================================================
-                 SUBMIT
-              ===================================================== */
       
       .submit-btn {
         width: 100%;
-        height: 49px;
-      
+        min-height: 50px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
         border: 0;
-      
-        border-radius: 12px;
-      
+        border-radius: 13px;
+        color: #fff;
         background: linear-gradient(135deg, #2563eb, #4f46e5);
-      
-        color: #ffffff;
-      
-        font-size: 14px;
         font-weight: 900;
-      
         cursor: pointer;
-      
-        box-shadow: 0 10px 24px rgba(37, 99, 235, 0.24);
-      
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        box-shadow: 0 11px 25px rgba(37, 99, 235, 0.24);
       }
-      
-      .submit-btn:hover {
-        transform: translateY(-2px);
-      
-        box-shadow: 0 14px 30px rgba(37, 99, 235, 0.31);
-      }
-      
-      /* =====================================================
-                 WORKER LOGIN
-              ===================================================== */
       
       .worker-login {
-        margin-top: 23px;
-      
+        margin-top: 22px;
         padding-top: 18px;
-      
-        border-top: 1px solid #e2e8f0;
-      
         text-align: center;
       }
       
-      .worker-login p {
-        margin: 0 0 8px;
-      
-        color: #64748b;
-      
-        font-size: 12px;
-      }
-      
       .worker-login a {
-        color: #2563eb;
-      
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
         font-size: 14px;
         font-weight: 900;
-      
         text-decoration: none;
       }
       
-      .worker-login a:hover {
-        text-decoration: underline;
-      }
-      
-      /* =====================================================
-                 FORGOT PASSWORD MODAL
-              ===================================================== */
-      
-      .forgot-modal {
-        position: fixed;
-      
-        inset: 0;
-      
-        z-index: 10000;
-      
-        display: none;
-      
-        align-items: center;
-        justify-content: center;
-      
-        padding: 20px;
-      
-        background: rgba(2, 6, 23, 0.65);
-      
-        backdrop-filter: blur(7px);
-        -webkit-backdrop-filter: blur(7px);
-      }
-      
-      .forgot-modal.active {
-        display: flex;
-      }
-      
-      .forgot-card {
-        width: min(430px, 100%);
-      
-        padding: 25px;
-      
-        border: 1px solid #e2e8f0;
-      
-        border-radius: 20px;
-      
-        background: #ffffff;
-      
-        box-shadow: 0 25px 70px rgba(0, 0, 0, 0.3);
-      }
-      
-      .forgot-header {
-        display: flex;
-      
-        align-items: center;
-        justify-content: space-between;
-      
-        gap: 15px;
-      
-        margin-bottom: 15px;
-      }
-      
-      .forgot-header h2 {
-        margin: 0;
-      
-        color: #172554;
-      
-        font-size: 20px;
-      }
-      
-      .forgot-close {
-        width: 38px;
-        height: 38px;
-      
-        border: 0;
-      
-        border-radius: 10px;
-      
-        background: #f1f5f9;
-      
-        color: #334155;
-      
-        cursor: pointer;
-      
-        font-size: 21px;
-      }
-      
-      .forgot-info {
-        margin-bottom: 18px;
-      
-        padding: 13px;
-      
-        border: 1px solid #bfdbfe;
-      
+      .message {
+        margin-bottom: 14px;
+        padding: 12px 14px;
         border-radius: 11px;
-      
-        background: #eff6ff;
-      
-        color: #1e3a8a;
-      
         font-size: 13px;
-        line-height: 1.6;
+        font-weight: 700;
       }
-      
-      .forgot-disabled-btn {
-        width: 100%;
-      
-        height: 47px;
-      
-        border: 0;
-      
-        border-radius: 11px;
-      
-        background: #cbd5e1;
-      
-        color: #64748b;
-      
-        font-weight: 800;
-      
-        cursor: not-allowed;
-      }
-      
-      /* =====================================================
-                 DARK
-              ===================================================== */
-      
-      body.sc-theme-dark .auth-card,
-      body.sc-theme-dark .forgot-card {
-        background: #1e293b;
-      
-        border-color: #334155;
-      }
-      
-      body.sc-theme-dark .main-title,
-      body.sc-theme-dark .panel-title,
-      body.sc-theme-dark .forgot-header h2 {
-        color: #f8fafc;
-      }
-      
-      body.sc-theme-dark .main-subtitle,
-      body.sc-theme-dark .panel-subtitle,
-      body.sc-theme-dark .worker-login p {
-        color: #94a3b8;
-      }
-      
-      body.sc-theme-dark .tabs {
-        background: #0f172a;
-      }
-      
-      body.sc-theme-dark .tab {
-        color: #94a3b8;
-      }
-      
-      body.sc-theme-dark .tab.active {
-        background: #334155;
-      
-        color: #bfdbfe;
-      }
-      
-      body.sc-theme-dark .label {
-        color: #cbd5e1;
-      }
-      
-      body.sc-theme-dark .auth-input {
-        background: #0f172a;
-      
-        border-color: #475569;
-      
-        color: #ffffff;
-      }
-      
-      body.sc-theme-dark .worker-login {
-        border-color: #334155;
-      }
-      
-      body.sc-theme-dark .forgot-info {
-        background: #172554;
-      
-        border-color: #1d4ed8;
-      
-        color: #dbeafe;
-      }
-      
-      body.sc-theme-dark .forgot-close {
-        background: #334155;
-      
-        color: #ffffff;
-      }
-      
-      /* =====================================================
-                 GLASS
-              ===================================================== */
-      
-      body.sc-theme-glass .auth-card,
-      body.sc-theme-glass .forgot-card {
-        background: linear-gradient(135deg, rgba(96, 165, 250, 0.13), rgba(255, 255, 255, 0.075), rgba(99, 102, 241, 0.08)) !important;
-      
-        border: 1px solid rgba(191, 219, 254, 0.28) !important;
-      
-        color: #ffffff;
-      
-        box-shadow: 0 26px 65px rgba(2, 6, 23, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.12);
-      
-        backdrop-filter: blur(25px);
-      
-        -webkit-backdrop-filter: blur(25px);
-      }
-      
-      body.sc-theme-glass .logo {
-        background: linear-gradient(135deg, rgba(var(--app-primary-rgb), 0.92), rgba(var(--app-secondary-rgb), 0.84));
-      
-        border: 1px solid rgba(255, 255, 255, 0.22);
-      }
-      
-      body.sc-theme-glass .main-title,
-      body.sc-theme-glass .panel-title,
-      body.sc-theme-glass .forgot-header h2 {
-        color: #ffffff;
-      }
-      
-      body.sc-theme-glass .main-subtitle,
-      body.sc-theme-glass .panel-subtitle,
-      body.sc-theme-glass .worker-login p {
-        color: rgba(219, 234, 254, 0.78);
-      }
-      
-      body.sc-theme-glass .tabs {
-        background: rgba(255, 255, 255, 0.07);
-      
-        border: 1px solid rgba(255, 255, 255, 0.1);
-      
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-      }
-      
-      body.sc-theme-glass .tab {
-        color: rgba(219, 234, 254, 0.75);
-      }
-      
-      body.sc-theme-glass .tab.active {
-        background: rgba(255, 255, 255, 0.13);
-      
-        color: #ffffff;
-      
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.11);
-      }
-      
-      body.sc-theme-glass .label {
-        color: rgba(255, 255, 255, 0.9);
-      }
-      
-      body.sc-theme-glass .auth-input {
-        background: rgba(255, 255, 255, 0.09);
-      
-        border: 1px solid rgba(255, 255, 255, 0.19);
-      
-        color: #ffffff;
-      
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-      }
-      
-      body.sc-theme-glass .auth-input:focus {
-        background: rgba(255, 255, 255, 0.13);
-      
-        border-color: rgba(191, 219, 254, 0.48);
-      
-        box-shadow: 0 0 0 4px rgba(var(--app-primary-rgb), 0.14);
-      }
-      
-      body.sc-theme-glass .auth-input::placeholder {
-        color: rgba(219, 234, 254, 0.47);
-      }
-      
-      body.sc-theme-glass .password-btn {
-        color: #ffffff;
-      }
-      
-      body.sc-theme-glass .forgot-link,
-      body.sc-theme-glass .worker-login a {
-        color: #bfdbfe;
-      }
-      
-      body.sc-theme-glass .submit-btn {
-        background: linear-gradient(135deg, rgba(var(--app-primary-rgb), 0.96), rgba(var(--app-secondary-rgb), 0.9));
-      
-        border: 1px solid rgba(255, 255, 255, 0.2);
-      }
-      
-      body.sc-theme-glass .worker-login {
-        border-color: rgba(191, 219, 254, 0.15);
-      }
-      
-      body.sc-theme-glass .forgot-info {
-        background: rgba(59, 130, 246, 0.11);
-      
-        border-color: rgba(147, 197, 253, 0.25);
-      
-        color: rgba(219, 234, 254, 0.88);
-      }
-      
-      body.sc-theme-glass .forgot-close {
-        background: rgba(255, 255, 255, 0.1);
-      
-        border: 1px solid rgba(255, 255, 255, 0.14);
-      
-        color: #ffffff;
-      }
-      
-      /* =====================================================
-                 ANIMATION
-              ===================================================== */
       
       @keyframes panelShow {
         from {
           opacity: 0;
-      
-          transform: translateY(8px);
+          transform: translateY(7px);
         }
-      
         to {
           opacity: 1;
-      
           transform: translateY(0);
         }
       }
       
-      /* =====================================================
-                 MOBILE
-              ===================================================== */
+      /* LIGHT */
+      body.sc-theme-light .auth-card {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        color: #172554;
+        box-shadow: 0 24px 60px rgba(15, 23, 42, 0.14);
+      }
+      body.sc-theme-light .main-subtitle,
+      body.sc-theme-light .panel-subtitle {
+        color: #64748b;
+      }
+      body.sc-theme-light .tabs {
+        background: #eef2f7;
+      }
+      body.sc-theme-light .tab {
+        color: #64748b;
+      }
+      body.sc-theme-light .tab.active {
+        background: #fff;
+        color: #2563eb;
+        box-shadow: 0 3px 10px rgba(15, 23, 42, 0.08);
+      }
+      body.sc-theme-light .auth-label {
+        color: #334155;
+      }
+      body.sc-theme-light .auth-input {
+        background: #f8fafc;
+        border: 1px solid #dbe3ef;
+        color: #172554;
+      }
+      body.sc-theme-light .input-symbol,
+      body.sc-theme-light .password-btn {
+        color: #64748b;
+      }
+      body.sc-theme-light .forgot-link,
+      body.sc-theme-light .worker-login a {
+        color: #2563eb;
+      }
+      body.sc-theme-light .worker-login {
+        border-top: 1px solid #e2e8f0;
+      }
+      
+      /* DARK */
+      body.sc-theme-dark .auth-card {
+        background: #1e293b;
+        border: 1px solid #334155;
+        color: #f8fafc;
+        box-shadow: 0 26px 65px rgba(2, 6, 23, 0.42);
+      }
+      body.sc-theme-dark .main-subtitle,
+      body.sc-theme-dark .panel-subtitle {
+        color: #cbd5e1;
+      }
+      body.sc-theme-dark .tabs {
+        background: #0f172a;
+      }
+      body.sc-theme-dark .tab {
+        color: #94a3b8;
+      }
+      body.sc-theme-dark .tab.active {
+        background: #334155;
+        color: #fff;
+      }
+      body.sc-theme-dark .auth-label {
+        color: #e2e8f0;
+      }
+      body.sc-theme-dark .auth-input {
+        background: #0f172a;
+        border: 1px solid #475569;
+        color: #fff;
+      }
+      body.sc-theme-dark .input-symbol,
+      body.sc-theme-dark .password-btn {
+        color: #cbd5e1;
+      }
+      body.sc-theme-dark .forgot-link,
+      body.sc-theme-dark .worker-login a {
+        color: #93c5fd;
+      }
+      body.sc-theme-dark .worker-login {
+        border-top: 1px solid #334155;
+      }
+      
+      /* GLASS */
+      body.sc-theme-glass .auth-card {
+        background: linear-gradient(135deg, rgba(96, 165, 250, 0.14), rgba(255, 255, 255, 0.075), rgba(99, 102, 241, 0.08));
+        border: 1px solid rgba(191, 219, 254, 0.28);
+        color: #fff;
+        box-shadow: 0 30px 75px rgba(2, 6, 23, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+      }
+      body.sc-theme-glass .auth-logo {
+        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+      body.sc-theme-glass .main-subtitle,
+      body.sc-theme-glass .panel-subtitle {
+        color: rgba(219, 234, 254, 0.8);
+      }
+      body.sc-theme-glass .tabs {
+        background: rgba(15, 23, 42, 0.28);
+        border: 1px solid rgba(191, 219, 254, 0.14);
+      }
+      body.sc-theme-glass .tab {
+        color: rgba(219, 234, 254, 0.72);
+      }
+      body.sc-theme-glass .tab.active {
+        background: rgba(255, 255, 255, 0.13);
+        color: #fff;
+      }
+      body.sc-theme-glass .auth-label {
+        color: rgba(255, 255, 255, 0.92);
+      }
+      body.sc-theme-glass .auth-input {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(191, 219, 254, 0.22);
+        color: #fff;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+      }
+      body.sc-theme-glass .auth-input::placeholder {
+        color: rgba(226, 232, 240, 0.58);
+      }
+      body.sc-theme-glass .input-symbol,
+      body.sc-theme-glass .password-btn {
+        color: #dbeafe;
+      }
+      body.sc-theme-glass .forgot-link,
+      body.sc-theme-glass .worker-login a {
+        color: #bfdbfe;
+      }
+      body.sc-theme-glass .worker-login {
+        border-top: 1px solid rgba(191, 219, 254, 0.16);
+      }
       
       @media (max-width: 600px) {
-        .login-page {
-          padding: 12px;
+        .auth-page {
+          padding: 14px;
+          align-items: flex-start;
         }
-      
         .auth-card {
-          padding: 27px 19px;
-      
-          border-radius: 20px;
+          margin-top: 14px;
+          padding: 24px 18px;
+          border-radius: 22px;
         }
-      
-        .logo {
-          width: 65px;
-          height: 65px;
-      
-          font-size: 27px;
-      
+        .auth-logo {
+          width: 64px;
+          height: 64px;
           border-radius: 19px;
         }
-      
+        .auth-logo .ui-icon {
+          width: 32px;
+          height: 32px;
+        }
         .main-title {
           font-size: 25px;
         }
-      
-        .main-subtitle {
-          font-size: 13px;
-        }
-      
-        .panel-title {
-          font-size: 21px;
-        }
-      }
-      
-      @media (max-width: 360px) {
-        .auth-card {
-          padding: 23px 15px;
-        }
-      
-        .main-title {
-          font-size: 23px;
+        body.sc-theme-glass .auth-card {
+          backdrop-filter: blur(18px);
+          -webkit-backdrop-filter: blur(18px);
         }
       }
     </style>
   </head>
 
   <body>
-    <main class="login-page">
+    <main class="auth-page">
       <section class="auth-card">
         <div class="auth-content">
-          <!--  =================================================
-                     LOGO
-                ==================================================  -->
+          <div class="theme-choice-bar" aria-label="Theme">
+            <button type="button" class="theme-choice-btn" onclick="setUserTheme('light')">Light</button>
+            <button type="button" class="theme-choice-btn" onclick="setUserTheme('dark')">Dark</button>
+            <button type="button" class="theme-choice-btn" onclick="setUserTheme('glass')">Glass</button>
+          </div>
 
-          <div class="logo">🛡️</div>
+          <div class="auth-logo">
+            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 3 4.5 6v5.5c0 4.7 3.1 8 7.5 9.5 4.4-1.5 7.5-4.8 7.5-9.5V6L12 3z"></path>
+              <path d="m9 12 2 2 4-4"></path>
+            </svg>
+          </div>
 
           <h1 class="main-title">Smart Complaint</h1>
-
           <p class="main-subtitle">Login or create your user account</p>
-
-          <!--  =================================================
-                     DJANGO MESSAGES
-                ==================================================  -->
 
           {% if messages %}
             {% for message in messages %}
-              <div class="
-                                login-message
-
-                                {% if message.tags == 'success' %}
-                                    success
-                                {% endif %}
-                            ">{{ message }}</div>
+              <div class="message {% if message.tags %}{{ message.tags }}{% endif %}">{{ message }}</div>
             {% endfor %}
           {% endif %}
 
-          <!--  =================================================
-                     TABS
-                ==================================================  -->
-
           <div class="tabs">
             <button type="button" class="tab active" id="loginTab" onclick="showLogin()">Login</button>
-
             <button type="button" class="tab" id="registerTab" onclick="showRegister()">Register</button>
           </div>
 
-          <!--  =================================================
-                     LOGIN PANEL
-                ==================================================  -->
-
           <div id="loginPanel" class="panel">
             <h2 class="panel-title">Welcome Back</h2>
-
             <p class="panel-subtitle">Login to continue</p>
 
             <form method="post" action="{% url 'login' %}">
               {% csrf_token %}
 
-              <!-- USERNAME -->
-
               <div class="form-group">
-                <label class="label" for="loginUsername">Username</label>
-
+                <label class="auth-label" for="loginUsername">Username</label>
                 <div class="input-wrap">
-                  <span class="input-icon">👤</span>
-
+                  <span class="input-symbol">
+                    <svg class="ui-icon" viewBox="0 0 24 24">
+                      <circle cx="12" cy="8" r="4"></circle>
+                      <path d="M5 21v-2a7 7 0 0 1 14 0v2"></path>
+                    </svg>
+                  </span>
                   <input class="auth-input" id="loginUsername" type="text" name="username" placeholder="Enter username" autocomplete="username" required />
                 </div>
               </div>
 
-              <!-- PASSWORD -->
-
               <div class="form-group">
-                <label class="label" for="loginPassword">Password</label>
-
+                <label class="auth-label" for="loginPassword">Password</label>
                 <div class="input-wrap">
-                  <span class="input-icon">🔒</span>
-
+                  <span class="input-symbol">
+                    <svg class="ui-icon" viewBox="0 0 24 24">
+                      <rect x="5" y="10" width="14" height="11" rx="2"></rect>
+                      <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+                    </svg>
+                  </span>
                   <input class="auth-input" id="loginPassword" type="password" name="password" placeholder="Enter password" autocomplete="current-password" required />
-
-                  <button type="button" class="password-btn" onclick="
-                                        togglePassword(
-                                            'loginPassword',
-                                            this
-                                        )
-                                    " aria-label="Show password">👁️</button>
+                  <button type="button" class="password-btn" onclick="togglePassword('loginPassword', this)" aria-label="Show or hide password">
+                    <svg class="ui-icon eye-open" viewBox="0 0 24 24">
+                      <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z"></path>
+                      <circle cx="12" cy="12" r="2.5"></circle>
+                    </svg>
+                  </button>
                 </div>
               </div>
 
-              <!-- FORGOT PASSWORD -->
-
               <div class="forgot-row">
-                <button type="button" class="forgot-link" onclick="openForgotModal()">Forgot Password?</button>
+                <a class="forgot-link" href="{% url 'password_reset' %}">Forgot Password?</a>
               </div>
 
-              <button type="submit" class="submit-btn">🔐 User Login</button>
+              <button type="submit" class="submit-btn">
+                <svg class="ui-icon" viewBox="0 0 24 24">
+                  <path d="M10 17l5-5-5-5"></path>
+                  <path d="M15 12H3"></path>
+                  <path d="M14 3h5a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-5"></path>
+                </svg>User Login
+              </button>
             </form>
           </div>
 
-          <!--  =================================================
-                     REGISTER PANEL
-                ==================================================  -->
-
           <div id="registerPanel" class="panel" style="display:none;">
             <h2 class="panel-title">Create Account</h2>
-
             <p class="panel-subtitle">Create your Smart Complaint account</p>
 
             <form method="post" action="{% url 'register' %}">
               {% csrf_token %}
 
-              <!-- USERNAME -->
-
               <div class="form-group">
-                <label class="label" for="registerUsername">Username</label>
-
+                <label class="auth-label" for="registerUsername">Username</label>
                 <div class="input-wrap">
-                  <span class="input-icon">👤</span>
-
+                  <span class="input-symbol">
+                    <svg class="ui-icon" viewBox="0 0 24 24">
+                      <circle cx="12" cy="8" r="4"></circle>
+                      <path d="M5 21v-2a7 7 0 0 1 14 0v2"></path>
+                    </svg>
+                  </span>
                   <input class="auth-input" id="registerUsername" type="text" name="username" placeholder="Choose username" autocomplete="username" required />
                 </div>
               </div>
 
-              <!-- EMAIL -->
-
               <div class="form-group">
-                <label class="label" for="registerEmail">Email</label>
-
+                <label class="auth-label" for="registerEmail">Email</label>
                 <div class="input-wrap">
-                  <span class="input-icon">✉️</span>
-
+                  <span class="input-symbol">
+                    <svg class="ui-icon" viewBox="0 0 24 24">
+                      <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+                      <path d="m3 7 9 6 9-6"></path>
+                    </svg>
+                  </span>
                   <input class="auth-input" id="registerEmail" type="email" name="email" placeholder="Enter email address" autocomplete="email" required />
                 </div>
               </div>
 
-              <!-- PASSWORD -->
-
               <div class="form-group">
-                <label class="label" for="registerPassword">Password</label>
-
+                <label class="auth-label" for="registerPassword">Password</label>
                 <div class="input-wrap">
-                  <span class="input-icon">🔒</span>
-
+                  <span class="input-symbol">
+                    <svg class="ui-icon" viewBox="0 0 24 24">
+                      <rect x="5" y="10" width="14" height="11" rx="2"></rect>
+                      <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+                    </svg>
+                  </span>
                   <input class="auth-input" id="registerPassword" type="password" name="password" placeholder="Minimum 6 characters" minlength="6" autocomplete="new-password" required />
-
-                  <button type="button" class="password-btn" onclick="
-                                        togglePassword(
-                                            'registerPassword',
-                                            this
-                                        )
-                                    " aria-label="Show password">👁️</button>
+                  <button type="button" class="password-btn" onclick="togglePassword('registerPassword', this)" aria-label="Show or hide password">
+                    <svg class="ui-icon" viewBox="0 0 24 24">
+                      <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z"></path>
+                      <circle cx="12" cy="12" r="2.5"></circle>
+                    </svg>
+                  </button>
                 </div>
               </div>
 
-              <button type="submit" class="submit-btn">Create Account</button>
+              <button type="submit" class="submit-btn">
+                <svg class="ui-icon" viewBox="0 0 24 24">
+                  <circle cx="9" cy="8" r="4"></circle>
+                  <path d="M2 21v-2a7 7 0 0 1 14 0v2"></path>
+                  <path d="M19 8v6"></path>
+                  <path d="M16 11h6"></path>
+                </svg>Create Account
+              </button>
             </form>
           </div>
 
-          <!--  =================================================
-                     WORKER LOGIN
-                ==================================================  -->
-
           <div class="worker-login">
-            <p>Are you a registered worker?</p>
-
-            <a href="{% url 'worker_login' %}">👷 Worker Login</a>
+            <a href="{% url 'worker_login' %}">
+              <svg class="ui-icon" viewBox="0 0 24 24">
+                <circle cx="12" cy="8" r="4"></circle>
+                <path d="M5 21v-2a7 7 0 0 1 14 0v2"></path>
+                <path d="M8 4h8"></path>
+              </svg>Worker Login
+            </a>
           </div>
         </div>
       </section>
     </main>
 
-    <!--  =====================================================
-         FORGOT PASSWORD MODAL
-         UI READY - BACKEND NEXT
-    ======================================================  -->
-
-    <div class="forgot-modal" id="forgotModal">
-      <div class="forgot-card">
-        <div class="forgot-header">
-          <h2>🔑 Forgot Password</h2>
-
-          <button type="button" class="forgot-close" onclick="closeForgotModal()" aria-label="Close">×</button>
-        </div>
-
-        <div class="forgot-info">
-          Password reset option ab UI me ready hai.
-
-          <br /><br />
-
-          Next step me hum registered email par password reset link/OTP bhejne ka backend connect karenge.
-        </div>
-
-        <div class="form-group">
-          <label class="label">Registered Email</label>
-
-          <div class="input-wrap">
-            <span class="input-icon">✉️</span>
-
-            <input class="auth-input" type="email" placeholder="Enter registered email" autocomplete="email" />
-          </div>
-        </div>
-
-        <button type="button" class="forgot-disabled-btn" disabled>Reset Backend Connection Required</button>
-      </div>
-    </div>
-
     <script>
-      /* =====================================================
-                 LOGIN TAB
-              ===================================================== */
+      function setUserTheme(theme) {
+        if (window.SmartComplaintTheme && window.SmartComplaintTheme.setUserTheme) {
+          window.SmartComplaintTheme.setUserTheme(theme)
+        }
+      }
       
       function showLogin() {
-        const loginPanel = document.getElementById('loginPanel')
-      
-        const registerPanel = document.getElementById('registerPanel')
-      
-        const loginTab = document.getElementById('loginTab')
-      
-        const registerTab = document.getElementById('registerTab')
-      
-        loginPanel.style.display = 'block'
-      
-        registerPanel.style.display = 'none'
-      
-        loginTab.classList.add('active')
-      
-        registerTab.classList.remove('active')
-      
-        restartPanelAnimation(loginPanel)
+        document.getElementById('loginPanel').style.display = 'block'
+        document.getElementById('registerPanel').style.display = 'none'
+        document.getElementById('loginTab').classList.add('active')
+        document.getElementById('registerTab').classList.remove('active')
       }
-      
-      /* =====================================================
-                 REGISTER TAB
-              ===================================================== */
       
       function showRegister() {
-        const loginPanel = document.getElementById('loginPanel')
-      
-        const registerPanel = document.getElementById('registerPanel')
-      
-        const loginTab = document.getElementById('loginTab')
-      
-        const registerTab = document.getElementById('registerTab')
-      
-        loginPanel.style.display = 'none'
-      
-        registerPanel.style.display = 'block'
-      
-        loginTab.classList.remove('active')
-      
-        registerTab.classList.add('active')
-      
-        restartPanelAnimation(registerPanel)
+        document.getElementById('loginPanel').style.display = 'none'
+        document.getElementById('registerPanel').style.display = 'block'
+        document.getElementById('loginTab').classList.remove('active')
+        document.getElementById('registerTab').classList.add('active')
       }
-      
-      /* =====================================================
-                 PANEL ANIMATION
-              ===================================================== */
-      
-      function restartPanelAnimation(panel) {
-        panel.style.animation = 'none'
-      
-        void panel.offsetWidth
-      
-        panel.style.animation = 'panelShow .3s ease'
-      }
-      
-      /* =====================================================
-                 PASSWORD SHOW / HIDE
-              ===================================================== */
       
       function togglePassword(inputId, button) {
         const input = document.getElementById(inputId)
-      
-        if (input.type === 'password') {
-          input.type = 'text'
-      
-          button.textContent = '🙈'
-      
-          button.setAttribute('aria-label', 'Hide password')
-        } else {
-          input.type = 'password'
-      
-          button.textContent = '👁️'
-      
-          button.setAttribute('aria-label', 'Show password')
-        }
+        input.type = input.type === 'password' ? 'text' : 'password'
       }
-      
-      /* =====================================================
-                 FORGOT PASSWORD MODAL
-              ===================================================== */
-      
-      function openForgotModal() {
-        const modal = document.getElementById('forgotModal')
-      
-        modal.classList.add('active')
-      
-        document.body.style.overflow = 'hidden'
-      }
-      
-      function closeForgotModal() {
-        const modal = document.getElementById('forgotModal')
-      
-        modal.classList.remove('active')
-      
-        document.body.style.overflow = ''
-      }
-      
-      /* Close modal when clicking outside */
-      
-      document.getElementById('forgotModal').addEventListener('click', function (event) {
-        if (event.target === this) {
-          closeForgotModal()
-        }
-      })
-      
-      /* Close using Escape key */
-      
-      document.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape') {
-          closeForgotModal()
-        }
-      })
     </script>
   </body>
 </html>

@@ -732,188 +732,234 @@
             padding: 20px 0;
         }
     }
+
+    /* =====================================================
+       ACCESSIBILITY / CLARITY POLISH
+       Keeps text, forms and cards readable in all 3 themes.
+    ===================================================== */
+
+    body.sc-theme-light,
+    body.worker-theme-light {
+        color-scheme: light;
+    }
+
+    body.sc-theme-dark,
+    body.worker-theme-dark {
+        color-scheme: dark;
+    }
+
+    body.sc-theme-glass,
+    body.worker-theme-glass {
+        color-scheme: dark;
+    }
+
+    body.sc-theme-light .theme-glass-surface,
+    body.worker-theme-light .theme-glass-surface {
+        background: #ffffff !important;
+        border: 1px solid #e2e8f0 !important;
+        color: #172554 !important;
+        box-shadow: 0 20px 50px rgba(15, 23, 42, 0.12);
+    }
+
+    body.sc-theme-dark .theme-glass-surface,
+    body.worker-theme-dark .theme-glass-surface {
+        background: #1e293b !important;
+        border: 1px solid #334155 !important;
+        color: #e2e8f0 !important;
+        box-shadow: 0 22px 55px rgba(2, 6, 23, 0.34);
+    }
+
+    body.sc-theme-glass .theme-glass-surface,
+    body.worker-theme-glass .theme-glass-surface {
+        background:
+            linear-gradient(
+                135deg,
+                rgba(255, 255, 255, 0.15),
+                rgba(59, 130, 246, 0.075)
+            ) !important;
+        border: 1px solid rgba(191, 219, 254, 0.28) !important;
+        color: #ffffff !important;
+        box-shadow:
+            0 26px 65px rgba(2, 6, 23, 0.34),
+            inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+    }
+
+    body.sc-theme-light input,
+    body.sc-theme-light select,
+    body.sc-theme-light textarea,
+    body.worker-theme-light input,
+    body.worker-theme-light select,
+    body.worker-theme-light textarea {
+        color-scheme: light;
+    }
+
+    body.sc-theme-dark input,
+    body.sc-theme-dark select,
+    body.sc-theme-dark textarea,
+    body.sc-theme-glass input,
+    body.sc-theme-glass select,
+    body.sc-theme-glass textarea,
+    body.worker-theme-dark input,
+    body.worker-theme-dark select,
+    body.worker-theme-dark textarea,
+    body.worker-theme-glass input,
+    body.worker-theme-glass select,
+    body.worker-theme-glass textarea {
+        color-scheme: dark;
+    }
+
+    .theme-choice-bar {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin: 0 auto 18px;
+    }
+
+    .theme-choice-btn {
+        min-width: 72px;
+        padding: 8px 11px;
+        border-radius: 999px;
+        border: 1px solid rgba(148, 163, 184, 0.35);
+        background: rgba(255, 255, 255, 0.86);
+        color: #334155;
+        font-size: 12px;
+        font-weight: 800;
+        cursor: pointer;
+        transition: transform .2s ease, background .2s ease, color .2s ease;
+    }
+
+    .theme-choice-btn:hover {
+        transform: translateY(-1px);
+    }
+
+    body.sc-theme-dark .theme-choice-btn,
+    body.worker-theme-dark .theme-choice-btn {
+        background: #1e293b;
+        border-color: #475569;
+        color: #e2e8f0;
+    }
+
+    body.sc-theme-glass .theme-choice-btn,
+    body.worker-theme-glass .theme-choice-btn {
+        background: rgba(255, 255, 255, 0.10);
+        border-color: rgba(191, 219, 254, 0.24);
+        color: #ffffff;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    }
+
+    @media (max-width: 650px) {
+        body.sc-theme-glass,
+        body.worker-theme-glass {
+            background-attachment: scroll !important;
+        }
+
+        body.sc-theme-glass .card,
+        body.worker-theme-glass .card,
+        body.sc-theme-glass .theme-glass-surface,
+        body.worker-theme-glass .theme-glass-surface {
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+        }
+    }
+
 </style>
 
 
 <script>
-    /*
-        Global Theme Loader
+(function () {
+    const colorMap = {
+        blue:   { primary: "37, 99, 235", secondary: "14, 165, 233" },
+        indigo: { primary: "79, 70, 229", secondary: "99, 102, 241" },
+        teal:   { primary: "13, 148, 136", secondary: "6, 182, 212" },
+        purple: { primary: "124, 58, 237", secondary: "168, 85, 247" },
+        slate:  { primary: "71, 85, 105", secondary: "100, 116, 139" }
+    };
 
-        This makes saved themes work even on pages
-        where navbar is not present.
-    */
+    function validTheme(theme) {
+        return ["light", "dark", "glass"].includes(theme) ? theme : "light";
+    }
 
-    (function () {
+    function applyGlobalColor(colorName) {
+        const selected = colorMap[colorName] || colorMap.blue;
+        document.documentElement.style.setProperty("--app-primary-rgb", selected.primary);
+        document.documentElement.style.setProperty("--app-secondary-rgb", selected.secondary);
+    }
 
-        const colorMap = {
-            blue: {
-                primary: "37, 99, 235",
-                secondary: "14, 165, 233"
-            },
+    function applyTheme(theme, workerPage) {
+        if (!document.body) return;
 
-            indigo: {
-                primary: "79, 70, 229",
-                secondary: "99, 102, 241"
-            },
+        theme = validTheme(theme);
 
-            teal: {
-                primary: "13, 148, 136",
-                secondary: "6, 182, 212"
-            },
-
-            purple: {
-                primary: "124, 58, 237",
-                secondary: "168, 85, 247"
-            },
-
-            slate: {
-                primary: "71, 85, 105",
-                secondary: "100, 116, 139"
-            }
-        };
-
-
-        function applyGlobalColor(colorName) {
-
-            const selected =
-                colorMap[colorName] ||
-                colorMap.blue;
-
-
-            document.documentElement.style.setProperty(
-                "--app-primary-rgb",
-                selected.primary
+        if (workerPage) {
+            document.body.classList.remove(
+                "worker-theme-light",
+                "worker-theme-dark",
+                "worker-theme-glass",
+                "worker-dark-mode"
             );
-
-
-            document.documentElement.style.setProperty(
-                "--app-secondary-rgb",
-                selected.secondary
-            );
-        }
-
-
-        function applySavedTheme() {
-
-            if (!document.body) {
-                return;
-            }
-
-
-            const workerTheme =
-                localStorage.getItem(
-                    "workerThemeV2"
-                );
-
-
-            const userTheme =
-                localStorage.getItem(
-                    "smartComplaintThemeV2"
-                );
-
-
-            const workerColor =
-                localStorage.getItem(
-                    "workerGlassColorV2"
-                );
-
-
-            const userColor =
-                localStorage.getItem(
-                    "smartComplaintGlassColor"
-                );
-
-
-            const isWorkerPage =
-                document.body.classList.contains(
-                    "worker-page"
-                );
-
-
-            let theme;
-            let color;
-
-
-            if (isWorkerPage) {
-
-                theme =
-                    workerTheme ||
-                    "light";
-
-                color =
-                    workerColor ||
-                    "blue";
-
-            } else {
-
-                theme =
-                    userTheme ||
-                    "light";
-
-                color =
-                    userColor ||
-                    "blue";
-            }
-
-
-            applyGlobalColor(
-                color
-            );
-
-
-            if (isWorkerPage) {
-
-                document.body.classList.remove(
-                    "worker-theme-light",
-                    "worker-theme-dark",
-                    "worker-theme-glass",
-                    "worker-dark-mode"
-                );
-
-
-                document.body.classList.add(
-                    "worker-theme-" + theme
-                );
-
-            } else {
-
-                document.body.classList.remove(
-                    "sc-theme-light",
-                    "sc-theme-dark",
-                    "sc-theme-glass",
-                    "dark-mode"
-                );
-
-
-                document.body.classList.add(
-                    "sc-theme-" + theme
-                );
-            }
-        }
-
-
-        if (
-            document.readyState === "loading"
-        ) {
-
-            document.addEventListener(
-                "DOMContentLoaded",
-                applySavedTheme
-            );
-
+            document.body.classList.add("worker-theme-" + theme);
         } else {
-
-            applySavedTheme();
+            document.body.classList.remove(
+                "sc-theme-light",
+                "sc-theme-dark",
+                "sc-theme-glass",
+                "dark-mode"
+            );
+            document.body.classList.add("sc-theme-" + theme);
         }
 
+        document.dispatchEvent(
+            new CustomEvent("smartComplaintThemeChanged", {
+                detail: { theme: theme, workerPage: workerPage }
+            })
+        );
+    }
 
-        window.SmartComplaintTheme = {
-            applySavedTheme:
-                applySavedTheme,
+    function applySavedTheme() {
+        if (!document.body) return;
 
-            applyGlobalColor:
-                applyGlobalColor
-        };
+        const isWorkerPage = document.body.classList.contains("worker-page");
 
-    })();
+        if (isWorkerPage) {
+            const theme = validTheme(localStorage.getItem("workerThemeV2") || "light");
+            const color = localStorage.getItem("workerGlassColorV2") || "blue";
+            applyGlobalColor(color);
+            applyTheme(theme, true);
+        } else {
+            const theme = validTheme(localStorage.getItem("smartComplaintThemeV2") || "light");
+            const color = localStorage.getItem("smartComplaintGlassColor") || "blue";
+            applyGlobalColor(color);
+            applyTheme(theme, false);
+        }
+    }
+
+    function setUserTheme(theme) {
+        theme = validTheme(theme);
+        localStorage.setItem("smartComplaintThemeV2", theme);
+        applyTheme(theme, false);
+    }
+
+    function setWorkerTheme(theme) {
+        theme = validTheme(theme);
+        localStorage.setItem("workerThemeV2", theme);
+        applyTheme(theme, true);
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", applySavedTheme);
+    } else {
+        applySavedTheme();
+    }
+
+    window.SmartComplaintTheme = {
+        applySavedTheme: applySavedTheme,
+        applyGlobalColor: applyGlobalColor,
+        setUserTheme: setUserTheme,
+        setWorkerTheme: setWorkerTheme
+    };
+})();
 </script>

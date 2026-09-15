@@ -11,8 +11,8 @@
 
     <style>
       /* =========================================
-                 COMMON
-              ========================================= */
+                             COMMON
+                          ========================================= */
       
       * {
         box-sizing: border-box;
@@ -35,8 +35,8 @@
       }
       
       /* =========================================
-                 PAGE WRAPPER
-              ========================================= */
+                             PAGE WRAPPER
+                          ========================================= */
       
       .settings-wrapper {
         max-width: 900px;
@@ -47,8 +47,8 @@
       }
       
       /* =========================================
-                 HEADER
-              ========================================= */
+                             HEADER
+                          ========================================= */
       
       .settings-header {
         color: white;
@@ -81,8 +81,8 @@
       }
       
       /* =========================================
-                 CARD
-              ========================================= */
+                             CARD
+                          ========================================= */
       
       .settings-card {
         background: white;
@@ -95,8 +95,8 @@
       }
       
       /* =========================================
-                 SECTION LABEL
-              ========================================= */
+                             SECTION LABEL
+                          ========================================= */
       
       .section-label {
         margin: 3px 0 10px;
@@ -116,8 +116,8 @@
       }
       
       /* =========================================
-                 SETTINGS ITEM
-              ========================================= */
+                             SETTINGS ITEM
+                          ========================================= */
       
       .settings-item {
         display: flex;
@@ -138,8 +138,8 @@
       }
       
       /* =========================================
-                 LEFT CONTENT
-              ========================================= */
+                             LEFT CONTENT
+                          ========================================= */
       
       .settings-left {
         min-width: 0;
@@ -152,8 +152,8 @@
       }
       
       /* =========================================
-                 ICON
-              ========================================= */
+                             ICON
+                          ========================================= */
       
       .settings-icon {
         width: 47px;
@@ -178,8 +178,8 @@
       }
       
       /* =========================================
-                 TEXT
-              ========================================= */
+                             TEXT
+                          ========================================= */
       
       .settings-text {
         min-width: 0;
@@ -205,8 +205,8 @@
       }
       
       /* =========================================
-                 BUTTON
-              ========================================= */
+                             BUTTON
+                          ========================================= */
       
       .settings-action {
         min-width: 104px;
@@ -250,8 +250,8 @@
       }
       
       /* =========================================
-                 DELETE OPTION
-              ========================================= */
+                             DELETE OPTION
+                          ========================================= */
       
       .delete-item .settings-icon {
         background: #fef2f2;
@@ -274,16 +274,16 @@
       }
       
       /* =========================================
-                 BACK BUTTON
-              ========================================= */
+                             BACK BUTTON
+                          ========================================= */
       
       .back-box {
         margin-top: 20px;
       }
       
       /* =========================================
-                 MODAL BACKGROUND
-              ========================================= */
+                             MODAL BACKGROUND
+                          ========================================= */
       
       .settings-modal {
         position: fixed;
@@ -310,8 +310,8 @@
       }
       
       /* =========================================
-                 MODAL CARD
-              ========================================= */
+                             MODAL CARD
+                          ========================================= */
       
       .modal-card {
         width: 100%;
@@ -346,8 +346,8 @@
       }
       
       /* =========================================
-                 MODAL HEADER
-              ========================================= */
+                             MODAL HEADER
+                          ========================================= */
       
       .modal-header {
         padding: 20px 22px;
@@ -425,8 +425,8 @@
       }
       
       /* =========================================
-                 MODAL BODY
-              ========================================= */
+                             MODAL BODY
+                          ========================================= */
       
       .modal-body {
         padding: 22px;
@@ -443,8 +443,8 @@
       }
       
       /* =========================================
-                 FORM
-              ========================================= */
+                             FORM
+                          ========================================= */
       
       .form-group {
         margin-bottom: 17px;
@@ -498,8 +498,8 @@
       }
       
       /* =========================================
-                 TWO COLUMN FORM
-              ========================================= */
+                             TWO COLUMN FORM
+                          ========================================= */
       
       .form-row {
         display: grid;
@@ -510,8 +510,8 @@
       }
       
       /* =========================================
-                 MODAL FOOTER
-              ========================================= */
+                             MODAL FOOTER
+                          ========================================= */
       
       .modal-footer {
         padding: 16px 22px 22px;
@@ -569,8 +569,8 @@
       }
       
       /* =========================================
-                 TERMS BOX
-              ========================================= */
+                             TERMS BOX
+                          ========================================= */
       
       .terms-box {
         padding: 16px;
@@ -605,8 +605,8 @@
       }
       
       /* =========================================
-                 ABOUT
-              ========================================= */
+                             ABOUT
+                          ========================================= */
       
       .about-logo {
         width: 70px;
@@ -670,8 +670,8 @@
       }
       
       /* =========================================
-                 WARNING BOX
-              ========================================= */
+                             WARNING BOX
+                          ========================================= */
       
       .warning-box {
         padding: 14px;
@@ -702,8 +702,8 @@
       }
       
       /* =========================================
-                 UI MESSAGE
-              ========================================= */
+                             UI MESSAGE
+                          ========================================= */
       
       .ui-message {
         position: fixed;
@@ -752,8 +752,8 @@
       }
       
       /* =========================================
-                 DARK MODE
-              ========================================= */
+                             DARK MODE
+                          ========================================= */
       
       body.dark-mode .settings-card,
       body.dark-mode .modal-card {
@@ -832,8 +832,8 @@
       }
       
       /* =========================================
-                 MOBILE
-              ========================================= */
+                             MOBILE
+                          ========================================= */
       
       @media (max-width: 650px) {
         .settings-wrapper {
@@ -882,19 +882,194 @@
           width: 100%;
         }
       }
+      
+      /* =====================================================
+                     FINAL LIGHT / DARK / GLASS THEME SUPPORT
+                  ===================================================== */
+      
+      body.sc-theme-light .settings-card,
+      body.sc-theme-light .modal-card {
+        background: #ffffff !important;
+        border: 1px solid #e2e8f0 !important;
+        color: #172554 !important;
+      }
+      
+      body.sc-theme-light .settings-item,
+      body.sc-theme-light .modal-header {
+        border-color: #e2e8f0 !important;
+      }
+      body.sc-theme-light .settings-text h3,
+      body.sc-theme-light .modal-header h2,
+      body.sc-theme-light .terms-box h3,
+      body.sc-theme-light .about-content h3 {
+        color: #0f172a !important;
+      }
+      body.sc-theme-light .settings-text p,
+      body.sc-theme-light .modal-description,
+      body.sc-theme-light .about-content p {
+        color: #64748b !important;
+      }
+      
+      body.sc-theme-dark .settings-card,
+      body.sc-theme-dark .modal-card {
+        background: #1e293b !important;
+        border: 1px solid #334155 !important;
+        color: #e2e8f0 !important;
+      }
+      
+      body.sc-theme-dark .settings-item,
+      body.sc-theme-dark .modal-header {
+        border-color: #334155 !important;
+      }
+      body.sc-theme-dark .settings-icon,
+      body.sc-theme-dark .modal-title-icon {
+        background: #334155 !important;
+        color: #bfdbfe !important;
+      }
+      body.sc-theme-dark .settings-text h3,
+      body.sc-theme-dark .modal-header h2,
+      body.sc-theme-dark .terms-box h3,
+      body.sc-theme-dark .about-content h3 {
+        color: #f8fafc !important;
+      }
+      body.sc-theme-dark .settings-text p,
+      body.sc-theme-dark .modal-description,
+      body.sc-theme-dark .about-content p {
+        color: #cbd5e1 !important;
+      }
+      body.sc-theme-dark .section-label {
+        color: #94a3b8 !important;
+      }
+      body.sc-theme-dark .form-label {
+        color: #e2e8f0 !important;
+      }
+      body.sc-theme-dark .form-control {
+        background: #0f172a !important;
+        border-color: #475569 !important;
+        color: #ffffff !important;
+      }
+      body.sc-theme-dark .modal-close,
+      body.sc-theme-dark .app-version {
+        background: #334155 !important;
+        color: #e2e8f0 !important;
+      }
+      body.sc-theme-dark .terms-box {
+        background: #0f172a !important;
+        border-color: #334155 !important;
+        color: #cbd5e1 !important;
+      }
+      
+      body.sc-theme-glass .settings-card,
+      body.sc-theme-glass .modal-card {
+        background: linear-gradient(135deg, rgba(96, 165, 250, 0.14), rgba(255, 255, 255, 0.075), rgba(99, 102, 241, 0.08)) !important;
+        border: 1px solid rgba(191, 219, 254, 0.28) !important;
+        color: #ffffff !important;
+        box-shadow: 0 30px 75px rgba(2, 6, 23, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+      }
+      
+      body.sc-theme-glass .settings-item,
+      body.sc-theme-glass .modal-header {
+        border-color: rgba(191, 219, 254, 0.16) !important;
+      }
+      
+      body.sc-theme-glass .section-label {
+        color: rgba(219, 234, 254, 0.72) !important;
+      }
+      
+      body.sc-theme-glass .settings-text h3,
+      body.sc-theme-glass .modal-header h2,
+      body.sc-theme-glass .terms-box h3,
+      body.sc-theme-glass .about-content h3 {
+        color: #ffffff !important;
+      }
+      
+      body.sc-theme-glass .settings-text p,
+      body.sc-theme-glass .modal-description,
+      body.sc-theme-glass .about-content p {
+        color: rgba(219, 234, 254, 0.78) !important;
+      }
+      
+      body.sc-theme-glass .settings-icon,
+      body.sc-theme-glass .modal-title-icon,
+      body.sc-theme-glass .about-logo {
+        background: rgba(255, 255, 255, 0.11) !important;
+        border: 1px solid rgba(255, 255, 255, 0.18) !important;
+        color: #bfdbfe !important;
+      }
+      
+      body.sc-theme-glass .form-label {
+        color: rgba(255, 255, 255, 0.92) !important;
+      }
+      body.sc-theme-glass .form-control {
+        background: rgba(255, 255, 255, 0.09) !important;
+        border: 1px solid rgba(191, 219, 254, 0.22) !important;
+        color: #ffffff !important;
+      }
+      body.sc-theme-glass .form-control::placeholder {
+        color: rgba(219, 234, 254, 0.55) !important;
+      }
+      body.sc-theme-glass select.form-control option {
+        background: #0f172a;
+        color: #ffffff;
+      }
+      
+      body.sc-theme-glass .terms-box {
+        background: rgba(255, 255, 255, 0.07) !important;
+        border-color: rgba(191, 219, 254, 0.18) !important;
+        color: rgba(219, 234, 254, 0.84) !important;
+      }
+      
+      body.sc-theme-glass .modal-close,
+      body.sc-theme-glass .app-version {
+        background: rgba(255, 255, 255, 0.1) !important;
+        color: #ffffff !important;
+        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+      }
+      
+      body.sc-theme-glass .settings-action {
+        border: 1px solid rgba(255, 255, 255, 0.18) !important;
+        color: #ffffff !important;
+      }
+      
+      body.sc-theme-glass .delete-item .settings-icon {
+        background: rgba(220, 38, 38, 0.13) !important;
+        border-color: rgba(252, 165, 165, 0.2) !important;
+        color: #fca5a5 !important;
+      }
+      body.sc-theme-glass .delete-item .settings-text h3 {
+        color: #fca5a5 !important;
+      }
+      body.sc-theme-glass .warning-box {
+        background: rgba(220, 38, 38, 0.1) !important;
+        border-color: rgba(252, 165, 165, 0.22) !important;
+        color: #fecaca !important;
+      }
+      
+      @media (max-width: 650px) {
+        body.sc-theme-glass .settings-card,
+        body.sc-theme-glass .modal-card {
+          backdrop-filter: blur(18px);
+          -webkit-backdrop-filter: blur(18px);
+        }
+        body.sc-theme-glass .settings-item {
+          background: rgba(255, 255, 255, 0.02);
+        }
+      }
     </style>
   </head>
 
   <body>
-    <!--  =========================================
+    <!--    =========================================
          NAVBAR
-    =========================================  -->
+    =========================================    -->
 
     {% include 'complaints/User_Folder/navbar.html' %}
 
-    <!--  =========================================
+    <!--    =========================================
          SETTINGS PAGE
-    =========================================  -->
+    =========================================    -->
 
     <div class="settings-wrapper">
       <!-- HEADER -->
@@ -911,14 +1086,14 @@
         <p>Manage your account, security and support options.</p>
       </div>
 
-      <!--  =========================================
+      <!--    =========================================
              SETTINGS CARD
-        =========================================  -->
+        =========================================    -->
 
       <div class="settings-card">
-        <!--  =====================================
+        <!--    =====================================
                  ACCOUNT
-            ======================================  -->
+            ======================================    -->
 
         <div class="section-label">Account</div>
 
@@ -990,9 +1165,9 @@
           <button type="button" class="settings-action" onclick="openModal('addressModal')">Manage</button>
         </div>
 
-        <!--  =====================================
+        <!--    =====================================
                  SUPPORT & INFORMATION
-            ======================================  -->
+            ======================================    -->
 
         <div class="section-label">Support & Information</div>
 
@@ -1070,9 +1245,9 @@
           <button type="button" class="settings-action" onclick="openModal('aboutModal')">About</button>
         </div>
 
-        <!--  =====================================
+        <!--    =====================================
                  ACCOUNT MANAGEMENT
-            ======================================  -->
+            ======================================    -->
 
         <div class="section-label">Account Management</div>
 
@@ -1112,9 +1287,9 @@
       </div>
     </div>
 
-    <!--  =====================================================
+    <!--    =====================================================
          CHANGE PASSWORD MODAL
-    ======================================================  -->
+    ======================================================    -->
 
     <div class="settings-modal" id="passwordModal">
       <div class="modal-card">
@@ -1166,9 +1341,9 @@
       </div>
     </div>
 
-    <!--  =====================================================
+    <!--    =====================================================
          ADDRESS MODAL
-    ======================================================  -->
+    ======================================================    -->
 
     <div class="settings-modal" id="addressModal">
       <div class="modal-card">
@@ -1226,9 +1401,9 @@
       </div>
     </div>
 
-    <!--  =====================================================
+    <!--    =====================================================
          TERMS MODAL
-    ======================================================  -->
+    ======================================================    -->
 
     <div class="settings-modal" id="termsModal">
       <div class="modal-card">
@@ -1282,9 +1457,9 @@
       </div>
     </div>
 
-    <!--  =====================================================
+    <!--    =====================================================
          HELP & SUPPORT MODAL
-    ======================================================  -->
+    ======================================================    -->
 
     <div class="settings-modal" id="supportModal">
       <div class="modal-card">
@@ -1350,9 +1525,9 @@
       </div>
     </div>
 
-    <!--  =====================================================
+    <!--    =====================================================
          ABOUT MODAL
-    ======================================================  -->
+    ======================================================    -->
 
     <div class="settings-modal" id="aboutModal">
       <div class="modal-card">
@@ -1400,9 +1575,9 @@
       </div>
     </div>
 
-    <!--  =====================================================
+    <!--    =====================================================
          DELETE ACCOUNT MODAL
-    ======================================================  -->
+    ======================================================    -->
 
     <div class="settings-modal" id="deleteModal">
       <div class="modal-card">
@@ -1465,15 +1640,15 @@
       </div>
     </div>
 
-    <!--  =========================================
+    <!--    =========================================
          UI MESSAGE
-    =========================================  -->
+    =========================================    -->
 
     <div class="ui-message" id="uiMessage">UI ready. Backend connection will be added later.</div>
 
-    <!--  =========================================
+    <!--    =========================================
          JAVASCRIPT
-    =========================================  -->
+    =========================================    -->
 
     <script>
       function openModal(modalId) {

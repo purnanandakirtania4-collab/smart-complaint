@@ -320,12 +320,78 @@ body.worker-theme-glass a {
     color: #bfdbfe !important;
 }
 
+
+      /* =====================================================
+         FINAL THEME CLARITY
+      ===================================================== */
+
+      body.worker-theme-light .box {
+        background: #ffffff !important;
+        border: 1px solid #e2e8f0 !important;
+        color: #172554 !important;
+      }
+
+      body.worker-theme-light .section { border-color: #e2e8f0 !important; }
+      body.worker-theme-light .notice { background: #eff6ff !important; color: #1e3a8a !important; }
+      body.worker-theme-light .privacy { background: #f8fafc !important; color: #475569 !important; }
+
+      body.worker-theme-dark .box {
+        background: #1e293b !important;
+        border: 1px solid #334155 !important;
+        color: #e2e8f0 !important;
+      }
+
+      body.worker-theme-dark .section { border-color: #334155 !important; }
+      body.worker-theme-dark .notice,
+      body.worker-theme-dark .privacy {
+        background: #0f172a !important;
+        border-color: #334155 !important;
+        color: #cbd5e1 !important;
+      }
+
+      body.worker-theme-glass .box {
+        background: linear-gradient(135deg, rgba(96,165,250,.14), rgba(255,255,255,.075), rgba(99,102,241,.08)) !important;
+        border: 1px solid rgba(191,219,254,.28) !important;
+        color: #ffffff !important;
+        box-shadow: 0 30px 75px rgba(2,6,23,.38), inset 0 1px 0 rgba(255,255,255,.12) !important;
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+      }
+
+      body.worker-theme-glass .section { border-color: rgba(191,219,254,.16) !important; }
+      body.worker-theme-glass .notice,
+      body.worker-theme-glass .privacy {
+        background: rgba(255,255,255,.08) !important;
+        border-color: rgba(191,219,254,.20) !important;
+        color: rgba(239,246,255,.90) !important;
+      }
+
+      body.worker-theme-glass .file-help { color: rgba(219,234,254,.75) !important; }
+      body.worker-theme-glass .check-row { color: rgba(255,255,255,.90) !important; }
+
+      @media (max-width: 650px) {
+        .page { width: calc(100% - 20px); padding-top: 14px; }
+        .box { margin: 0 auto; padding: 22px 16px; border-radius: 22px; }
+        .icon { width: 66px; height: 66px; }
+        .icon .ui-icon { width: 32px; height: 32px; }
+        .head h1 { font-size: 25px; }
+        body.worker-theme-glass .box {
+          backdrop-filter: blur(18px);
+          -webkit-backdrop-filter: blur(18px);
+        }
+      }
+
 </style>
   </head>
 
   <body class="worker-page">
     <main class="page">
       <div class="card box">
+        <div class="theme-choice-bar">
+          <button type="button" class="theme-choice-btn" onclick="setWorkerTheme('light')">Light</button>
+          <button type="button" class="theme-choice-btn" onclick="setWorkerTheme('dark')">Dark</button>
+          <button type="button" class="theme-choice-btn" onclick="setWorkerTheme('glass')">Glass</button>
+        </div>
         <div class="head">
           <div class="icon">
             <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
@@ -612,5 +678,12 @@ body.worker-theme-glass a {
         </div>
       </div>
     </main>
+  <script>
+      function setWorkerTheme(theme) {
+        if (window.SmartComplaintTheme && window.SmartComplaintTheme.setWorkerTheme) {
+          window.SmartComplaintTheme.setWorkerTheme(theme);
+        }
+      }
+    </script>
   </body>
 </html>

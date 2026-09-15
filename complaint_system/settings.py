@@ -135,20 +135,28 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME":
-            "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+        "NAME": (
+            "django.contrib.auth.password_validation."
+            "UserAttributeSimilarityValidator"
+        ),
     },
     {
-        "NAME":
-            "django.contrib.auth.password_validation.MinimumLengthValidator",
+        "NAME": (
+            "django.contrib.auth.password_validation."
+            "MinimumLengthValidator"
+        ),
     },
     {
-        "NAME":
-            "django.contrib.auth.password_validation.CommonPasswordValidator",
+        "NAME": (
+            "django.contrib.auth.password_validation."
+            "CommonPasswordValidator"
+        ),
     },
     {
-        "NAME":
-            "django.contrib.auth.password_validation.NumericPasswordValidator",
+        "NAME": (
+            "django.contrib.auth.password_validation."
+            "NumericPasswordValidator"
+        ),
     },
 ]
 
@@ -184,12 +192,16 @@ MEDIA_ROOT = BASE_DIR / "media"
 # =========================================================
 #
 # LOCAL TESTING:
-# If SMTP variables are not set, Django prints the password-reset
-# email and reset link directly in the runserver terminal.
+# If EMAIL_HOST_USER and EMAIL_HOST_PASSWORD are empty,
+# Django prints the password-reset email and reset URL
+# directly in the runserver terminal.
 #
 # PRODUCTION:
-# Set EMAIL_HOST_USER and EMAIL_HOST_PASSWORD in Railway variables.
-# Gmail example uses smtp.gmail.com and an App Password.
+# Add EMAIL_HOST_USER and EMAIL_HOST_PASSWORD to Railway
+# environment variables.
+#
+# For Gmail, EMAIL_HOST_PASSWORD should be a Google
+# App Password, NOT the normal Gmail password.
 # =========================================================
 
 EMAIL_HOST = os.environ.get(
@@ -229,6 +241,8 @@ if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD:
 else:
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
+
+# Password reset link expires after 1 hour.
 PASSWORD_RESET_TIMEOUT = 60 * 60
 
 

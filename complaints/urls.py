@@ -1,7 +1,8 @@
+from django.contrib.auth import views as auth_views
 from django.urls import path
 
-from . import views
 from . import ai_views
+from . import views
 
 
 urlpatterns = [
@@ -46,6 +47,66 @@ urlpatterns = [
         name="user_settings",
     ),
 
+
+    # =====================================================
+    # FORGOT / RESET PASSWORD
+    # =====================================================
+
+    path(
+        "forgot-password/",
+        auth_views.PasswordResetView.as_view(
+            template_name=(
+                "complaints/User_Folder/"
+                "password_reset_form.html"
+            ),
+            email_template_name=(
+                "complaints/User_Folder/"
+                "password_reset_email.txt"
+            ),
+            subject_template_name=(
+                "complaints/User_Folder/"
+                "password_reset_subject.txt"
+            ),
+            success_url="/forgot-password/done/",
+        ),
+        name="password_reset",
+    ),
+
+    path(
+        "forgot-password/done/",
+        auth_views.PasswordResetDoneView.as_view(
+            template_name=(
+                "complaints/User_Folder/"
+                "password_reset_done.html"
+            ),
+        ),
+        name="password_reset_done",
+    ),
+
+    path(
+        "reset-password/<uidb64>/<token>/",
+        auth_views.PasswordResetConfirmView.as_view(
+            template_name=(
+                "complaints/User_Folder/"
+                "password_reset_confirm.html"
+            ),
+            success_url="/reset-password/complete/",
+        ),
+        name="password_reset_confirm",
+    ),
+
+    path(
+        "reset-password/complete/",
+        auth_views.PasswordResetCompleteView.as_view(
+            template_name=(
+                "complaints/User_Folder/"
+                "password_reset_complete.html"
+            ),
+        ),
+        name="password_reset_complete",
+    ),
+
+
     # =====================================================
     # COMPLAINT
     # =====================================================
@@ -55,6 +116,7 @@ urlpatterns = [
         views.submit_complaint,
         name="submit_complaint",
     ),
+
 
     # =====================================================
     # AI COMPLAINT ANALYZER
@@ -90,6 +152,7 @@ urlpatterns = [
         name="success",
     ),
 
+
     # =====================================================
     # RATINGS
     # =====================================================
@@ -105,6 +168,7 @@ urlpatterns = [
         views.rate_user,
         name="rate_user",
     ),
+
 
     # =====================================================
     # WORKER
@@ -152,6 +216,7 @@ urlpatterns = [
         name="worker_settings",
     ),
 
+
     # =====================================================
     # WORKER CHANGE PASSWORD
     # =====================================================
@@ -162,6 +227,7 @@ urlpatterns = [
         name="worker_change_password",
     ),
 
+
     # =====================================================
     # WORKER APP TERMS - READ ONLY
     # =====================================================
@@ -171,6 +237,7 @@ urlpatterns = [
         views.worker_app_terms,
         name="worker_app_terms",
     ),
+
 
     # =====================================================
     # WORKER SUBSCRIPTION
@@ -188,6 +255,7 @@ urlpatterns = [
         name="worker_subscription_payment",
     ),
 
+
     # =====================================================
     # FIREBASE DEVICE TOKEN
     # =====================================================
@@ -197,6 +265,7 @@ urlpatterns = [
         views.save_device_token,
         name="save_device_token",
     ),
+
 
     # =====================================================
     # COMPLAINT CHAT
