@@ -33,6 +33,7 @@ from .models import (
     Notification,
     DeviceToken,
     ChatMessage,
+    SupportRequest,
 )
 
 from .firebase_push import send_push_to_user
@@ -490,6 +491,293 @@ def user_settings(request):
         {
             'user_profile': user_profile,
         }
+    )
+
+
+# =========================================================
+# USER CHANGE PASSWORD
+# =========================================================
+
+@login_required(login_url='login')
+@require_POST
+def user_change_password(request):
+    try:
+        request.user.worker_profile
+        messages.error(request, 'Worker accounts must use Worker Settings.')
+        return redirect('worker_settings')
+    except WorkerProfile.DoesNotExist:
+        pass
+
+    current_password = request.POST.get('current_password', '')
+    new_password = request.POST.get('new_password', '')
+    confirm_password = request.POST.get('confirm_password', '')
+
+    if not current_password or not new_password or not confirm_password:
+        messages.error(request, 'Please fill all password fields.')
+        return redirect('user_settings')
+
+    if not request.user.check_password(current_password):
+        messages.error(request, 'Current password is incorrect.')
+        return redirect('user_settings')
+
+    if new_password != confirm_password:
+        messages.error(request, 'New password and confirm password do not match.')
+        return redirect('user_settings')
+
+    if len(new_password) < 6:
+        messages.error(request, 'New password must be at least 6 characters.')
+        return redirect('user_settings')
+
+    if current_password == new_password:
+        messages.error(request, 'New password must be different from current password.')
+        return redirect('user_settings')
+
+    request.user.set_password(new_password)
+    request.user.save()
+    update_session_auth_hash(request, request.user)
+
+    messages.success(request, 'Password changed successfully.')
+    return redirect('user_settings')
+
+
+# =========================================================
+# USER ADDRESS / LOCATION
+# =========================================================
+
+@login_required(login_url='login')
+@require_POST
+def user_update_address(request):
+    try:
+        request.user.worker_profile
+        messages.error(request, 'Worker accounts must use Worker Settings.')
+        return redirect('worker_settings')
+    except WorkerProfile.DoesNotExist:
+        pass
+
+    address = request.POST.get('address', '').strip()
+    city = request.POST.get('city', '').strip()
+    state = request.POST.get('state', '').strip()
+    pincode = request.POST.get('pincode', '').strip()
+
+    if not address or not city or not state or not pincode:
+        messages.error(request, 'Please fill all address fields.')
+        return redirect('user_settings')
+
+    if len(address) > 500:
+        messages.error(request, 'Address must be less than 500 characters.')
+        return redirect('user_settings')
+
+    if len(city) > 100 or len(state) > 100:
+        messages.error(request, 'City and state must be less than 100 characters.')
+        return redirect('user_settings')
+
+    if not pincode.isdigit() or len(pincode) != 6:
+        messages.error(request, 'Please enter a valid 6-digit PIN code.')
+        return redirect('user_settings')
+
+    user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+    user_profile.address = address
+    user_profile.city = city
+    user_profile.state = state
+    user_profile.pincode = pincode
+    user_profile.save(update_fields=['address', 'city', 'state', 'pincode', 'updated_at'])
+
+    messages.success(request, 'Address updated successfully.')
+    return redirect('user_settings')
+
+
+# =========================================================
+# USER HELP & SUPPORT
+# =========================================================
+
+@login_required(login_url='login')
+@require_POST
+def user_support_request(request):
+    try:
+        request.user.worker_profile
+        messages.error(request, 'Worker accounts must use Worker Settings.')
+        return redirect('worker_settings')
+    except WorkerProfile.DoesNotExist:
+        pass
+
+    issue_type = request.POST.get('issue_type', '').strip()
+    subject = request.POST.get('subject', '').strip()
+    support_message = request.POST.get('message', '').strip()
+
+    valid_issue_types = {choice[0] for choice in SupportRequest.ISSUE_TYPE_CHOICES}
+
+    if issue_type not in valid_issue_types:
+        messages.error(request, 'Please select a valid issue type.')
+        return redirect('user_settings')
+
+    if not subject or not support_message:
+        messages.error(request, 'Please enter subject and message.')
+        return redirect('user_settings')
+
+    if len(subject) > 150:
+        messages.error(request, 'Subject must be less than 150 characters.')
+        return redirect('user_settings')
+
+    if len(support_message) > 2000:
+        messages.error(request, 'Support message must be less than 2000 characters.')
+        return redirect('user_settings')
+
+    SupportRequest.objects.create(
+        user=request.user,
+        issue_type=issue_type,
+        subject=subject,
+        message=support_message,
+    )
+
+    messages.success(request, 'Your support request has been submitted successfully.')
+    return redirect('user_settings')
+
+
+# =========================================================
+# USER DELETE ACCOUNT
+# =========================================================
+
+@login_required(login_url='login')
+@require_POST
+def user_delete_account(request):
+
+    try:
+        request.user.worker_profile
+
+        messages.error(
+            request,
+            'Worker accounts must be deleted from Worker Settings.'
+        )
+
+        return redirect(
+            'worker_settings'
+        )
+
+    except WorkerProfile.DoesNotExist:
+        pass
+
+    password = request.POST.get(
+        'password',
+        ''
+    )
+
+    confirmation = request.POST.get(
+        'confirmation',
+        ''
+    ).strip()
+
+    if not password:
+        messages.error(
+            request,
+            'Please enter your current password.'
+        )
+
+        return redirect(
+            'user_settings'
+        )
+
+    if not request.user.check_password(
+        password
+    ):
+        messages.error(
+            request,
+            'Current password is incorrect.'
+        )
+
+        return redirect(
+            'user_settings'
+        )
+
+    if confirmation != 'DELETE':
+        messages.error(
+            request,
+            'Type DELETE exactly to confirm account deletion.'
+        )
+
+        return redirect(
+            'user_settings'
+        )
+
+    user = request.user
+    storage_files = set()
+
+    try:
+        user_profile = user.user_profile
+
+        if user_profile.photo:
+            storage_files.add(
+                user_profile.photo.name
+            )
+
+    except UserProfile.DoesNotExist:
+        pass
+
+    complaints = (
+        Complaint.objects
+        .filter(user=user)
+        .prefetch_related('chat_messages')
+    )
+
+    sent_chat_images = (
+        ChatMessage.objects
+        .filter(sender=user)
+        .exclude(image='')
+        .values_list('image', flat=True)
+    )
+
+    for image_name in sent_chat_images:
+        if image_name:
+            storage_files.add(image_name)
+
+    for complaint in complaints:
+        if complaint.photo:
+            storage_files.add(
+                complaint.photo.name
+            )
+
+        if complaint.after_photo:
+            storage_files.add(
+                complaint.after_photo.name
+            )
+
+        for chat_message in complaint.chat_messages.all():
+            if chat_message.image:
+                storage_files.add(
+                    chat_message.image.name
+                )
+
+    try:
+        with transaction.atomic():
+            user.delete()
+
+    except Exception:
+        messages.error(
+            request,
+            'Account could not be deleted. Please try again.'
+        )
+
+        return redirect(
+            'user_settings'
+        )
+
+    for file_name in storage_files:
+        try:
+            if file_name and default_storage.exists(file_name):
+                default_storage.delete(file_name)
+        except Exception:
+            pass
+
+    logout(
+        request
+    )
+
+    messages.success(
+        request,
+        'Your Smart Complaint account has been permanently deleted.'
+    )
+
+    return redirect(
+        'login'
     )
 
 
@@ -2849,6 +3137,180 @@ def worker_settings(request):
             'subscription': subscription,
             'payout_details': payout_details,
         }
+    )
+
+
+# =========================================================
+# WORKER DELETE ACCOUNT
+# =========================================================
+
+@login_required(login_url='worker_login')
+@require_POST
+def worker_delete_account(request):
+
+    try:
+        worker = request.user.worker_profile
+
+    except WorkerProfile.DoesNotExist:
+        messages.error(
+            request,
+            'Worker access required.'
+        )
+
+        return redirect(
+            'worker_login'
+        )
+
+    password = request.POST.get(
+        'password',
+        ''
+    )
+
+    confirmation = request.POST.get(
+        'confirmation',
+        ''
+    ).strip()
+
+    if not password:
+        messages.error(
+            request,
+            'Please enter your current password.'
+        )
+
+        return redirect(
+            'worker_settings'
+        )
+
+    if not request.user.check_password(
+        password
+    ):
+        messages.error(
+            request,
+            'Current password is incorrect.'
+        )
+
+        return redirect(
+            'worker_settings'
+        )
+
+    if confirmation != 'DELETE':
+        messages.error(
+            request,
+            'Type DELETE exactly to confirm account deletion.'
+        )
+
+        return redirect(
+            'worker_settings'
+        )
+
+    subscription = (
+        WorkerSubscription.objects
+        .filter(worker=worker)
+        .first()
+    )
+
+    if (
+        subscription
+        and subscription.razorpay_subscription_id
+        and subscription.status in {'active', 'pending'}
+    ):
+        if (
+            not settings.RAZORPAY_KEY_ID
+            or not settings.RAZORPAY_KEY_SECRET
+        ):
+            messages.error(
+                request,
+                (
+                    'Your subscription is still active. '
+                    'Please cancel the subscription before deleting your account.'
+                )
+            )
+
+            return redirect(
+                'worker_settings'
+            )
+
+        try:
+            client = razorpay.Client(
+                auth=(
+                    settings.RAZORPAY_KEY_ID,
+                    settings.RAZORPAY_KEY_SECRET,
+                )
+            )
+
+            client.subscription.cancel(
+                subscription.razorpay_subscription_id
+            )
+
+        except Exception:
+            messages.error(
+                request,
+                (
+                    'We could not cancel your active subscription. '
+                    'Your account was not deleted. Please try again.'
+                )
+            )
+
+            return redirect(
+                'worker_settings'
+            )
+
+    user = request.user
+    storage_files = set()
+
+    for image_field in (
+        worker.photo,
+        worker.aadhaar_front_photo,
+        worker.aadhaar_back_photo,
+    ):
+        if image_field:
+            storage_files.add(
+                image_field.name
+            )
+
+    sent_chat_messages = (
+        ChatMessage.objects
+        .filter(sender=user)
+    )
+
+    for chat_message in sent_chat_messages:
+        if chat_message.image:
+            storage_files.add(
+                chat_message.image.name
+            )
+
+    try:
+        with transaction.atomic():
+            user.delete()
+
+    except Exception:
+        messages.error(
+            request,
+            'Worker account could not be deleted. Please try again.'
+        )
+
+        return redirect(
+            'worker_settings'
+        )
+
+    for file_name in storage_files:
+        try:
+            if file_name and default_storage.exists(file_name):
+                default_storage.delete(file_name)
+        except Exception:
+            pass
+
+    logout(
+        request
+    )
+
+    messages.success(
+        request,
+        'Your worker account has been permanently deleted.'
+    )
+
+    return redirect(
+        'worker_login'
     )
 
 

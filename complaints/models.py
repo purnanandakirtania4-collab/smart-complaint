@@ -34,6 +34,30 @@ class UserProfile(models.Model):
         blank=True,
         default="",
     )
+    address = models.TextField(
+        blank=True,
+        default="",
+        max_length=500,
+    )
+
+    city = models.CharField(
+        max_length=100,
+        blank=True,
+        default="",
+    )
+
+    state = models.CharField(
+        max_length=100,
+        blank=True,
+        default="",
+    )
+
+    pincode = models.CharField(
+        max_length=6,
+        blank=True,
+        default="",
+    )
+
     photo = models.ImageField(
         upload_to="user_profile_photos/",
         null=True,
@@ -44,6 +68,37 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return self.user.username
+
+
+class SupportRequest(models.Model):
+    ISSUE_TYPE_CHOICES = [
+        ("Complaint Issue", "Complaint Issue"),
+        ("Worker Issue", "Worker Issue"),
+        ("Payment Issue", "Payment Issue"),
+        ("Account Issue", "Account Issue"),
+        ("Technical Problem", "Technical Problem"),
+        ("Other", "Other"),
+    ]
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="support_requests",
+    )
+    issue_type = models.CharField(
+        max_length=50,
+        choices=ISSUE_TYPE_CHOICES,
+    )
+    subject = models.CharField(max_length=150)
+    message = models.TextField(max_length=2000)
+    is_resolved = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.user.username} - {self.issue_type} - {self.subject}"
 
 
 class WorkerProfile(models.Model):

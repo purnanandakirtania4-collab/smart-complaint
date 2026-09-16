@@ -1179,37 +1179,36 @@
 
     <div class="settings-modal" id="passwordModal">
       <div class="modal-card">
-        <div class="modal-header">
-          <h2>Change Password</h2>
+        <form method="post" action="{% url 'worker_change_password' %}">
+          {% csrf_token %}
 
-          <button type="button" class="modal-close" data-close>×</button>
-        </div>
+          <div class="modal-header">
+            <h2>Change Password</h2>
+            <button type="button" class="modal-close" data-close>×</button>
+          </div>
 
-        <div class="modal-note">Password change backend will be connected next.</div>
+          <div class="modal-note">Use your current password, then create a new password with at least 6 characters.</div>
 
-        <div class="modal-form-group">
-          <label class="modal-label">Current Password</label>
+          <div class="modal-form-group">
+            <label class="modal-label" for="currentPassword">Current Password</label>
+            <input type="password" class="modal-input" id="currentPassword" name="current_password" autocomplete="current-password" required />
+          </div>
 
-          <input type="password" class="modal-input" id="currentPassword" autocomplete="current-password" />
-        </div>
+          <div class="modal-form-group">
+            <label class="modal-label" for="newPassword">New Password</label>
+            <input type="password" class="modal-input" id="newPassword" name="new_password" autocomplete="new-password" minlength="6" required />
+          </div>
 
-        <div class="modal-form-group">
-          <label class="modal-label">New Password</label>
+          <div class="modal-form-group">
+            <label class="modal-label" for="confirmPassword">Confirm New Password</label>
+            <input type="password" class="modal-input" id="confirmPassword" name="confirm_password" autocomplete="new-password" minlength="6" required />
+          </div>
 
-          <input type="password" class="modal-input" id="newPassword" autocomplete="new-password" />
-        </div>
-
-        <div class="modal-form-group">
-          <label class="modal-label">Confirm New Password</label>
-
-          <input type="password" class="modal-input" id="confirmPassword" autocomplete="new-password" />
-        </div>
-
-        <div class="modal-actions">
-          <button type="button" class="modal-cancel" data-close>Cancel</button>
-
-          <button type="button" class="modal-save" data-demo-save="Password">Change Password</button>
-        </div>
+          <div class="modal-actions">
+            <button type="button" class="modal-cancel" data-close>Cancel</button>
+            <button type="submit" class="modal-save">Change Password</button>
+          </div>
+        </form>
       </div>
     </div>
 
@@ -1576,31 +1575,51 @@
 
     <div class="settings-modal" id="deleteModal">
       <div class="modal-card">
-        <div class="modal-header">
-          <h2>Delete Worker Account</h2>
+        <form method="post" action="{% url 'worker_delete_account' %}" id="workerDeleteAccountForm">
+          {% csrf_token %}
 
-          <button type="button" class="modal-close" data-close>×</button>
-        </div>
+          <div class="modal-header">
+            <h2>Delete Worker Account</h2>
+            <button type="button" class="modal-close" data-close>×</button>
+          </div>
 
-        <div class="modal-note">Account deletion is permanent. Backend deletion is not connected yet.</div>
+          <div class="modal-note">
+            This action is permanent. Your worker profile, verification data, payout details,
+            subscription records and worker account data will be deleted. Existing customer
+            complaints will remain, but your worker assignment will be removed from them.
+          </div>
 
-        <div class="modal-form-group">
-          <label class="modal-label">Password</label>
+          <div class="modal-form-group">
+            <label class="modal-label" for="deletePassword">Current Password</label>
+            <input
+              type="password"
+              class="modal-input"
+              id="deletePassword"
+              name="password"
+              placeholder="Enter your current password"
+              autocomplete="current-password"
+              required
+            />
+          </div>
 
-          <input type="password" class="modal-input" id="deletePassword" />
-        </div>
+          <div class="modal-form-group">
+            <label class="modal-label" for="deleteConfirm">Type DELETE to confirm</label>
+            <input
+              type="text"
+              class="modal-input"
+              id="deleteConfirm"
+              name="confirmation"
+              placeholder="DELETE"
+              autocomplete="off"
+              required
+            />
+          </div>
 
-        <div class="modal-form-group">
-          <label class="modal-label">Type DELETE to confirm</label>
-
-          <input type="text" class="modal-input" id="deleteConfirm" placeholder="DELETE" autocomplete="off" />
-        </div>
-
-        <div class="modal-actions">
-          <button type="button" class="modal-cancel" data-close>Cancel</button>
-
-          <button type="button" class="modal-save modal-delete" id="deleteDemoButton">Delete Account</button>
-        </div>
+          <div class="modal-actions">
+            <button type="button" class="modal-cancel" data-close>Cancel</button>
+            <button type="submit" class="modal-save modal-delete">Delete Worker Account Permanently</button>
+          </div>
+        </form>
       </div>
     </div>
 
@@ -1691,22 +1710,6 @@
       
           showToast(featureName + ' UI is ready. Backend connection will be added next.')
         })
-      })
-      
-      const deleteDemoButton = document.getElementById('deleteDemoButton')
-      
-      deleteDemoButton.addEventListener('click', function () {
-        const confirmation = document.getElementById('deleteConfirm').value.trim()
-      
-        if (confirmation !== 'DELETE') {
-          showToast('Type DELETE to confirm account deletion.')
-      
-          return
-        }
-      
-        closeModal(document.getElementById('deleteModal'))
-      
-        showToast('Delete Account UI is ready. Backend deletion is not connected yet.')
       })
     
 

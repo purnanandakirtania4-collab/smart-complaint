@@ -1071,6 +1071,14 @@
          SETTINGS PAGE
     =========================================    -->
 
+    {% if messages %}
+      <div class="settings-wrapper" style="padding-bottom:0; margin-bottom:0;">
+        {% for message in messages %}
+          <div style="margin-bottom:10px; padding:12px 14px; border-radius:10px; background:rgba(15,23,42,.88); color:#fff; font-size:14px;">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
     <div class="settings-wrapper">
       <!-- HEADER -->
 
@@ -1293,6 +1301,8 @@
 
     <div class="settings-modal" id="passwordModal">
       <div class="modal-card">
+        <form method="post" action="{% url 'user_change_password' %}">
+          {% csrf_token %}
         <div class="modal-header">
           <div class="modal-title-box">
             <div class="modal-title-icon">
@@ -1317,27 +1327,28 @@
           <div class="form-group">
             <label class="form-label">Current Password</label>
 
-            <input type="password" class="form-control" placeholder="Enter current password" />
+            <input type="password" class="form-control" name="current_password" placeholder="Enter current password" autocomplete="current-password" required />
           </div>
 
           <div class="form-group">
             <label class="form-label">New Password</label>
 
-            <input type="password" class="form-control" placeholder="Enter new password" />
+            <input type="password" class="form-control" name="new_password" placeholder="Enter new password" autocomplete="new-password" minlength="6" required />
           </div>
 
           <div class="form-group">
             <label class="form-label">Confirm New Password</label>
 
-            <input type="password" class="form-control" placeholder="Confirm new password" />
+            <input type="password" class="form-control" name="confirm_password" placeholder="Confirm new password" autocomplete="new-password" minlength="6" required />
           </div>
         </div>
 
         <div class="modal-footer">
           <button type="button" class="modal-btn modal-btn-secondary" onclick="closeModal('passwordModal')">Cancel</button>
 
-          <button type="button" class="modal-btn modal-btn-primary" onclick="uiOnlyAction('passwordModal')">Update Password</button>
+          <button type="submit" class="modal-btn modal-btn-primary">Update Password</button>
         </div>
+        </form>
       </div>
     </div>
 
@@ -1347,6 +1358,8 @@
 
     <div class="settings-modal" id="addressModal">
       <div class="modal-card">
+        <form method="post" action="{% url 'user_update_address' %}">
+          {% csrf_token %}
         <div class="modal-header">
           <div class="modal-title-box">
             <div class="modal-title-icon">
@@ -1369,35 +1382,36 @@
           <div class="form-group">
             <label class="form-label">Full Address</label>
 
-            <textarea class="form-control" placeholder="House number, street, area..."></textarea>
+            <textarea class="form-control" name="address" maxlength="500" placeholder="House number, street, area..." required>{{ user_profile.address }}</textarea>
           </div>
 
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">City</label>
 
-              <input type="text" class="form-control" placeholder="Enter city" />
+              <input type="text" class="form-control" name="city" maxlength="100" value="{{ user_profile.city }}" placeholder="Enter city" required />
             </div>
 
             <div class="form-group">
               <label class="form-label">State</label>
 
-              <input type="text" class="form-control" placeholder="Enter state" />
+              <input type="text" class="form-control" name="state" maxlength="100" value="{{ user_profile.state }}" placeholder="Enter state" required />
             </div>
           </div>
 
           <div class="form-group">
             <label class="form-label">PIN Code</label>
 
-            <input type="text" class="form-control" maxlength="6" placeholder="Enter PIN code" />
+            <input type="text" class="form-control" name="pincode" maxlength="6" inputmode="numeric" pattern="[0-9]{6}" value="{{ user_profile.pincode }}" placeholder="Enter PIN code" required />
           </div>
         </div>
 
         <div class="modal-footer">
           <button type="button" class="modal-btn modal-btn-secondary" onclick="closeModal('addressModal')">Cancel</button>
 
-          <button type="button" class="modal-btn modal-btn-primary" onclick="uiOnlyAction('addressModal')">Save Address</button>
+          <button type="submit" class="modal-btn modal-btn-primary">Save Address</button>
         </div>
+        </form>
       </div>
     </div>
 
@@ -1447,7 +1461,7 @@
 
             <h3>5. Final Terms</h3>
 
-            <p>This is currently the user-interface version of the Terms section. The final legal text can be added later.</p>
+            <p>These terms explain the current rules for using Smart Complaint. A public legal Terms page can be published before production release.</p>
           </div>
         </div>
 
@@ -1463,6 +1477,8 @@
 
     <div class="settings-modal" id="supportModal">
       <div class="modal-card">
+        <form method="post" action="{% url 'user_support_request' %}">
+          {% csrf_token %}
         <div class="modal-header">
           <div class="modal-title-box">
             <div class="modal-title-icon">
@@ -1487,7 +1503,7 @@
           <div class="form-group">
             <label class="form-label">Issue Type</label>
 
-            <select class="form-control">
+            <select class="form-control" name="issue_type" required>
               <option value="">Select an issue</option>
 
               <option>Complaint Issue</option>
@@ -1507,21 +1523,22 @@
           <div class="form-group">
             <label class="form-label">Subject</label>
 
-            <input type="text" class="form-control" placeholder="Enter subject" />
+            <input type="text" class="form-control" name="subject" maxlength="150" placeholder="Enter subject" required />
           </div>
 
           <div class="form-group">
             <label class="form-label">Message</label>
 
-            <textarea class="form-control" placeholder="Explain your problem..."></textarea>
+            <textarea class="form-control" name="message" maxlength="2000" placeholder="Explain your problem..." required></textarea>
           </div>
         </div>
 
         <div class="modal-footer">
           <button type="button" class="modal-btn modal-btn-secondary" onclick="closeModal('supportModal')">Cancel</button>
 
-          <button type="button" class="modal-btn modal-btn-primary" onclick="uiOnlyAction('supportModal')">Send Request</button>
+          <button type="submit" class="modal-btn modal-btn-primary">Send Request</button>
         </div>
+        </form>
       </div>
     </div>
 
@@ -1581,62 +1598,73 @@
 
     <div class="settings-modal" id="deleteModal">
       <div class="modal-card">
-        <div class="modal-header">
-          <div class="modal-title-box">
-            <div class="modal-title-icon" style="
-                            background: #fef2f2;
-                            color: #dc2626;
-                        ">
-              <svg class="ui-icon" viewBox="0 0 24 24">
-                <path d="M3 6h18"></path>
+        <form method="post" action="{% url 'user_delete_account' %}" id="userDeleteAccountForm">
+          {% csrf_token %}
 
-                <path d="M8 6V4h8v2"></path>
+          <div class="modal-header">
+            <div class="modal-title-box">
+              <div class="modal-title-icon" style="background: #fef2f2; color: #dc2626;">
+                <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M3 6h18"></path>
+                  <path d="M8 6V4h8v2"></path>
+                  <path d="M19 6l-1 15H6L5 6"></path>
+                  <path d="M10 11v6"></path>
+                  <path d="M14 11v6"></path>
+                </svg>
+              </div>
 
-                <path d="M19 6l-1 15H6L5 6"></path>
-
-                <path d="M10 11v6"></path>
-
-                <path d="M14 11v6"></path>
-              </svg>
+              <h2>Delete Account</h2>
             </div>
 
-            <h2>Delete Account</h2>
+            <button type="button" class="modal-close" onclick="closeModal('deleteModal')">✕</button>
           </div>
 
-          <button type="button" class="modal-close" onclick="closeModal('deleteModal')">✕</button>
-        </div>
+          <div class="modal-body">
+            <div class="warning-box">
+              <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 3 2 21h20L12 3z"></path>
+                <path d="M12 9v5"></path>
+                <path d="M12 18h.01"></path>
+              </svg>
 
-        <div class="modal-body">
-          <div class="warning-box">
-            <svg class="ui-icon" viewBox="0 0 24 24">
-              <path d="M12 3 2 21h20L12 3z"></path>
+              <div>
+                This action is permanent. Your account, complaints, related chat history,
+                ratings, notifications and account data will be deleted.
+              </div>
+            </div>
 
-              <path d="M12 9v5"></path>
+            <div class="form-group">
+              <label class="form-label" for="userDeletePassword">Current Password</label>
+              <input
+                type="password"
+                class="form-control"
+                id="userDeletePassword"
+                name="password"
+                placeholder="Enter your current password"
+                autocomplete="current-password"
+                required
+              />
+            </div>
 
-              <path d="M12 18h.01"></path>
-            </svg>
-
-            <div>Deleting your account will be permanent. Your account information may no longer be available after deletion.</div>
+            <div class="form-group">
+              <label class="form-label" for="deleteConfirmText">Type DELETE to confirm</label>
+              <input
+                type="text"
+                class="form-control"
+                id="deleteConfirmText"
+                name="confirmation"
+                placeholder="Type DELETE"
+                autocomplete="off"
+                required
+              />
+            </div>
           </div>
 
-          <div class="form-group">
-            <label class="form-label">Enter your password to confirm</label>
-
-            <input type="password" class="form-control" placeholder="Enter your password" />
+          <div class="modal-footer">
+            <button type="button" class="modal-btn modal-btn-secondary" onclick="closeModal('deleteModal')">Cancel</button>
+            <button type="submit" class="modal-btn modal-btn-danger">Delete Account Permanently</button>
           </div>
-
-          <div class="form-group">
-            <label class="form-label">Type DELETE to confirm</label>
-
-            <input type="text" class="form-control" id="deleteConfirmText" placeholder="Type DELETE" />
-          </div>
-        </div>
-
-        <div class="modal-footer">
-          <button type="button" class="modal-btn modal-btn-secondary" onclick="closeModal('deleteModal')">Cancel</button>
-
-          <button type="button" class="modal-btn modal-btn-danger" onclick="deleteUiAction()">Delete Account</button>
-        </div>
+        </form>
       </div>
     </div>
 
@@ -1644,7 +1672,6 @@
          UI MESSAGE
     =========================================    -->
 
-    <div class="ui-message" id="uiMessage">UI ready. Backend connection will be added later.</div>
 
     <!--    =========================================
          JAVASCRIPT
@@ -1689,26 +1716,8 @@
       
       function uiOnlyAction(modalId) {
         closeModal(modalId)
-      
-        showUiMessage('UI is ready. We will connect this feature with Django later.')
-      }
-      
-      function deleteUiAction() {
-        const confirmInput = document.getElementById('deleteConfirmText')
-      
-        const value = confirmInput.value.trim().toUpperCase()
-      
-        if (value !== 'DELETE') {
-          showUiMessage('Please type DELETE to confirm.')
-      
-          return
-        }
-      
-        closeModal('deleteModal')
-      
-        showUiMessage('Delete Account UI is ready. Backend deletion is not connected yet.')
-      
-        confirmInput.value = ''
+
+        showUiMessage('This option is not connected to the backend yet.')
       }
       
       document.querySelectorAll('.settings-modal').forEach(function (modal) {
