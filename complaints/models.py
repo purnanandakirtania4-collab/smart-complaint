@@ -135,6 +135,12 @@ class WorkerProfile(models.Model):
         ("Suspended", "Suspended"),
     ]
 
+    AVAILABILITY_STATUS_CHOICES = [
+        ("available", "Available"),
+        ("busy", "Busy"),
+        ("offline", "Offline"),
+    ]
+
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
@@ -244,6 +250,12 @@ class WorkerProfile(models.Model):
     # Existing approved workers remain safe during migration.
     is_approved = models.BooleanField(
         default=False,
+    )
+
+    availability_status = models.CharField(
+        max_length=20,
+        choices=AVAILABILITY_STATUS_CHOICES,
+        default="available",
     )
 
     created_at = models.DateTimeField(

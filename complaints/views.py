@@ -72,11 +72,30 @@ def add_one_month(dt):
 
 
 # =========================================================
+# ADMIN ACCOUNT PROTECTION
+# =========================================================
+
+def _admin_account_redirect(request):
+    """Keep Django staff/superuser accounts out of the normal app UI."""
+    if (
+        request.user.is_authenticated
+        and (request.user.is_staff or request.user.is_superuser)
+    ):
+        return redirect('/admin/')
+
+    return None
+
+
+# =========================================================
 # HOME
 # =========================================================
 
 @login_required(login_url='login')
 def home(request):
+
+    admin_redirect = _admin_account_redirect(request)
+    if admin_redirect:
+        return admin_redirect
 
     return render(
         request,
@@ -89,6 +108,10 @@ def home(request):
 # =========================================================
 
 def user_login(request):
+
+    admin_redirect = _admin_account_redirect(request)
+    if admin_redirect:
+        return admin_redirect
 
     if request.user.is_authenticated:
 
@@ -136,6 +159,13 @@ def user_login(request):
         )
 
         if user is not None:
+
+            if user.is_staff or user.is_superuser:
+                login(
+                    request,
+                    user
+                )
+                return redirect('/admin/')
 
             try:
 
@@ -267,6 +297,10 @@ def register(request):
 
 @login_required(login_url='login')
 def profile(request):
+
+    admin_redirect = _admin_account_redirect(request)
+    if admin_redirect:
+        return admin_redirect
 
     user = request.user
 
@@ -468,6 +502,10 @@ def profile(request):
 @login_required(login_url='login')
 def user_settings(request):
 
+    admin_redirect = _admin_account_redirect(request)
+    if admin_redirect:
+        return admin_redirect
+
     try:
 
         request.user.worker_profile
@@ -501,6 +539,10 @@ def user_settings(request):
 @login_required(login_url='login')
 @require_POST
 def user_change_password(request):
+
+    admin_redirect = _admin_account_redirect(request)
+    if admin_redirect:
+        return admin_redirect
     try:
         request.user.worker_profile
         messages.error(request, 'Worker accounts must use Worker Settings.')
@@ -547,6 +589,10 @@ def user_change_password(request):
 @login_required(login_url='login')
 @require_POST
 def user_update_address(request):
+
+    admin_redirect = _admin_account_redirect(request)
+    if admin_redirect:
+        return admin_redirect
     try:
         request.user.worker_profile
         messages.error(request, 'Worker accounts must use Worker Settings.')
@@ -593,6 +639,10 @@ def user_update_address(request):
 @login_required(login_url='login')
 @require_POST
 def user_support_request(request):
+
+    admin_redirect = _admin_account_redirect(request)
+    if admin_redirect:
+        return admin_redirect
     try:
         request.user.worker_profile
         messages.error(request, 'Worker accounts must use Worker Settings.')
@@ -640,6 +690,10 @@ def user_support_request(request):
 @login_required(login_url='login')
 @require_POST
 def user_delete_account(request):
+
+    admin_redirect = _admin_account_redirect(request)
+    if admin_redirect:
+        return admin_redirect
 
     try:
         request.user.worker_profile
@@ -836,6 +890,7 @@ def get_smart_worker():
         .filter(
             is_approved=True,
             verification_status="Approved",
+            availability_status="available",
         )
         .select_related("user")
         .order_by("created_at", "id")
@@ -963,9 +1018,17 @@ def notify_worker_about_assignment(
 @login_required(login_url='login')
 def submit_complaint(request):
 
+    admin_redirect = _admin_account_redirect(request)
+    if admin_redirect:
+        return admin_redirect
+
     workers = (
         WorkerProfile.objects
-        .filter(is_approved=True)
+        .filter(
+            is_approved=True,
+            verification_status="Approved",
+            availability_status="available",
+        )
         .select_related('user')
         .order_by('-created_at')
     )
@@ -1077,7 +1140,22 @@ def submit_complaint(request):
         if assignment_mode == 'smart':
 
             selected_worker = get_smart_worker()
-            smart_assigned = selected_worker is not None
+
+            if selected_worker is None:
+                messages.error(
+                    request,
+                    (
+                        'No worker is currently available. '
+                        'Please try again later or choose an available worker.'
+                    ),
+                )
+                return render(
+                    request,
+                    'complaints/User_Folder/submit_complaint.html',
+                    {'workers': workers},
+                )
+
+            smart_assigned = True
 
         else:
 
@@ -1096,6 +1174,8 @@ def submit_complaint(request):
                 selected_worker = WorkerProfile.objects.get(
                     id=worker_id,
                     is_approved=True,
+                    verification_status="Approved",
+                    availability_status="available",
                 )
 
             except (
@@ -1181,6 +1261,10 @@ def submit_complaint(request):
 @login_required(login_url='login')
 def success(request):
 
+    admin_redirect = _admin_account_redirect(request)
+    if admin_redirect:
+        return admin_redirect
+
     return render(
         request,
         'complaints/User_Folder/success.html'
@@ -1192,6 +1276,10 @@ def success(request):
 # =========================================================
 
 def check_status(request):
+
+    admin_redirect = _admin_account_redirect(request)
+    if admin_redirect:
+        return admin_redirect
 
     complaint = None
     status = None
@@ -1243,6 +1331,10 @@ def check_status(request):
 
 @login_required(login_url='login')
 def my_complaints(request):
+
+    admin_redirect = _admin_account_redirect(request)
+    if admin_redirect:
+        return admin_redirect
 
     complaints = list(
         Complaint.objects
@@ -1299,6 +1391,10 @@ def my_complaints(request):
 
 @login_required(login_url='login')
 def rate_worker(request, complaint_id):
+
+    admin_redirect = _admin_account_redirect(request)
+    if admin_redirect:
+        return admin_redirect
 
     if request.method != 'POST':
 
@@ -1443,6 +1539,10 @@ def rate_worker(request, complaint_id):
 @login_required(login_url='login')
 def notifications(request):
 
+    admin_redirect = _admin_account_redirect(request)
+    if admin_redirect:
+        return admin_redirect
+
     user_notifications = (
         Notification.objects
         .filter(recipient=request.user)
@@ -1491,6 +1591,10 @@ def notifications(request):
 @login_required(login_url='login')
 def worker_details(request):
 
+    admin_redirect = _admin_account_redirect(request)
+    if admin_redirect:
+        return admin_redirect
+
     workers = (
         WorkerProfile.objects
         .filter(
@@ -1518,6 +1622,10 @@ def worker_details(request):
 
 @login_required(login_url='login')
 def worker_profile(request, worker_id):
+
+    admin_redirect = _admin_account_redirect(request)
+    if admin_redirect:
+        return admin_redirect
 
     try:
 
@@ -2109,6 +2217,10 @@ def worker_register(request):
 
 def worker_login(request):
 
+    admin_redirect = _admin_account_redirect(request)
+    if admin_redirect:
+        return admin_redirect
+
     if request.user.is_authenticated:
 
         try:
@@ -2165,6 +2277,13 @@ def worker_login(request):
             return redirect(
                 'worker_login'
             )
+
+        if user.is_staff or user.is_superuser:
+            login(
+                request,
+                user
+            )
+            return redirect('/admin/')
 
         try:
 
@@ -2660,27 +2779,31 @@ def worker_dashboard(request):
                         ]
                     )
 
+                    otp_message = (
+                        f'Completion OTP for complaint '
+                        f'{complaint.tracking_id}: '
+                        f'{complaint.completion_otp}. '
+                        f'This OTP is valid for 10 minutes. '
+                        f'Share it only with the assigned worker after the work is completed.'
+                    )
+
                     Notification.objects.create(
                         recipient=complaint.user,
                         complaint=complaint,
                         notification_type='otp',
                         title='Completion OTP Ready',
-                        message=(
-                            f'Worker requested completion for complaint '
-                            f'{complaint.tracking_id}. '
-                            f'Open My Complaints to view the OTP. '
-                            f'The OTP is valid for 10 minutes.'
-                        ),
+                        message=otp_message,
                     )
 
                     send_push_to_user(
                         complaint.user,
                         'Completion OTP Ready',
-                        (
-                            f'Completion OTP for complaint '
-                            f'{complaint.tracking_id} is ready. '
-                            f'Open My Complaints to view the OTP.'
-                        )
+                        otp_message,
+                        data={
+                            'type': 'completion_otp',
+                            'complaint_id': str(complaint.id),
+                            'tracking_id': complaint.tracking_id,
+                        },
                     )
 
                 messages.info(
@@ -2878,6 +3001,45 @@ def worker_settings(request):
             'action',
             ''
         ).strip()
+
+        if action == 'save_availability':
+
+            availability_status = request.POST.get(
+                'availability_status',
+                ''
+            ).strip().lower()
+
+            valid_availability_statuses = {
+                choice[0]
+                for choice in WorkerProfile.AVAILABILITY_STATUS_CHOICES
+            }
+
+            if availability_status not in valid_availability_statuses:
+
+                messages.error(
+                    request,
+                    'Please select a valid availability status.'
+                )
+
+                return redirect(
+                    'worker_settings'
+                )
+
+            worker.availability_status = availability_status
+            worker.save(
+                update_fields=[
+                    'availability_status',
+                ]
+            )
+
+            messages.success(
+                request,
+                f'Availability updated to {worker.get_availability_status_display()}.'
+            )
+
+            return redirect(
+                'worker_settings'
+            )
 
         if action == 'save_payout_details':
 

@@ -782,8 +782,8 @@
 
     <script>
       /* =========================================
-                     SMART / MANUAL WORKER ASSIGNMENT
-                  ========================================= */
+                           SMART / MANUAL WORKER ASSIGNMENT
+                        ========================================= */
       
       const smartAssignment = document.getElementById('smartAssignment')
       const manualAssignment = document.getElementById('manualAssignment')
@@ -810,8 +810,8 @@
       updateAssignmentMode()
       
       /* =========================================
-                     WORKER SEARCH
-                  ========================================= */
+                           WORKER SEARCH
+                        ========================================= */
       
       search.addEventListener('input', function () {
         const q = search.value.toLowerCase().trim()
@@ -830,8 +830,8 @@
       })
       
       /* =========================================
-                     MANUAL WORKER SELECT
-                  ========================================= */
+                           MANUAL WORKER SELECT
+                        ========================================= */
       
       cards.forEach(function (card) {
         const radio = card.querySelector('input[name="worker"]')
@@ -854,8 +854,8 @@
       })
       
       /* =========================================
-                     PHOTO PREVIEW
-                  ========================================= */
+                           PHOTO PREVIEW
+                        ========================================= */
       
       const photoInput = document.getElementById('photoInput')
       
@@ -906,20 +906,21 @@
       })
       
       /* =========================================
-                     MAP
-                  ========================================= */
+                           MAP
+                        ========================================= */
       
       const map = L.map('map').setView([20.5937, 78.9629], 5)
       
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors',
+        referrerPolicy: 'strict-origin-when-cross-origin'
       }).addTo(map)
       
       let marker = null
       
       /* =========================================
-                     SET LOCATION
-                  ========================================= */
+                           SET LOCATION
+                        ========================================= */
       
       function setLocation(lat, lng) {
         lat = Number(lat)
@@ -957,11 +958,11 @@
       }
       
       /* =========================================
-                     ANDROID NATIVE LOCATION RECEIVER
-                  
-                     MainActivity.kt calls:
-                     window.receiveAndroidLocation(lat, lng)
-                  ========================================= */
+                           ANDROID NATIVE LOCATION RECEIVER
+                        
+                           MainActivity.kt calls:
+                           window.receiveAndroidLocation(lat, lng)
+                        ========================================= */
       
       window.receiveAndroidLocation = function (lat, lng) {
         setLocation(Number(lat), Number(lng))
@@ -974,16 +975,16 @@
       }
       
       /* =========================================
-                     MAP CLICK
-                  ========================================= */
+                           MAP CLICK
+                        ========================================= */
       
       map.on('click', function (event) {
         setLocation(event.latlng.lat, event.latlng.lng)
       })
       
       /* =========================================
-                     NORMAL BROWSER LOCATION
-                  ========================================= */
+                           NORMAL BROWSER LOCATION
+                        ========================================= */
       
       function useBrowserLocation() {
         const button = document.getElementById('currentLocationBtn')
@@ -1028,14 +1029,14 @@
       }
       
       /* =========================================
-                     CURRENT LOCATION BUTTON
-                  
-                     Android app:
-                         Android.getCurrentLocation()
-                  
-                     Normal browser:
-                         navigator.geolocation
-                  ========================================= */
+                           CURRENT LOCATION BUTTON
+                        
+                           Android app:
+                               Android.getCurrentLocation()
+                        
+                           Normal browser:
+                               navigator.geolocation
+                        ========================================= */
       
       document.getElementById('currentLocationBtn').addEventListener('click', function () {
         const button = this
@@ -1069,8 +1070,8 @@
       })
       
       /* =========================================
-                     FORM CHECK
-      ========================================= */
+                           FORM CHECK
+            ========================================= */
       
       document.getElementById('complaintForm').addEventListener('submit', function (event) {
         const latitude = document.getElementById('latitude').value

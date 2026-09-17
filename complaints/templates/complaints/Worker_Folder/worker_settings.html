@@ -41,6 +41,14 @@
         display: inline-block;
         background: #16a34a;
       }
+
+      .status-dot.busy {
+        background: #f59e0b;
+      }
+
+      .status-dot.offline {
+        background: #dc2626;
+      }
       
       /* =====================================================
                          PAGE
@@ -1041,13 +1049,16 @@
         <div class="settings-item">
           <div class="settings-left">
             <div class="settings-icon">
-              <span class="status-dot"></span>
+              <span class="status-dot {% if worker.availability_status == 'busy' %}busy{% elif worker.availability_status == 'offline' %}offline{% endif %}"></span>
             </div>
 
             <div class="settings-text">
               <h3>Availability</h3>
 
-              <p>Set whether you are currently available for work.</p>
+              <p>
+                Current: <strong>{{ worker.get_availability_status_display }}</strong>.
+                Only Available workers receive Smart Auto Assign complaints.
+              </p>
             </div>
           </div>
 
@@ -1338,33 +1349,65 @@
 
     <div class="settings-modal" id="availabilityModal">
       <div class="modal-card">
-        <div class="modal-header">
-          <h2>Worker Availability</h2>
+        <form method="post" action="{% url 'worker_settings' %}">
+          {% csrf_token %}
 
-          <button type="button" class="modal-close" data-close>×</button>
-        </div>
+          <input type="hidden" name="action" value="save_availability" />
 
-        <div class="modal-note">Smart Auto Assign should only assign complaints to available workers after this feature is connected to the backend.</div>
+          <div class="modal-header">
+            <h2>Worker Availability</h2>
 
-        <div class="availability-options">
-          <label class="availability-choice">
-            <input type="radio" name="availability" value="available" checked />
+            <button type="button" class="modal-close" data-close>×</button>
+          </div>
 
-            <div class="availability-box">🟢 Available</div>
-          </label>
+          <div class="modal-note">
+            Smart Auto Assign sends new complaints only to workers whose status is Available.
+            Busy and Offline workers keep their existing assigned complaints, but do not receive
+            new Smart Auto Assign complaints.
+          </div>
 
-          <label class="availability-choice">
-            <input type="radio" name="availability" value="unavailable" />
+          <div class="availability-options">
+            <label class="availability-choice">
+              <input
+                type="radio"
+                name="availability_status"
+                value="available"
+                {% if worker.availability_status == 'available' %}checked{% endif %}
+                required
+              />
 
-            <div class="availability-box">🔴 Unavailable</div>
-          </label>
-        </div>
+              <div class="availability-box">🟢 Available</div>
+            </label>
 
-        <div class="modal-actions">
-          <button type="button" class="modal-cancel" data-close>Cancel</button>
+            <label class="availability-choice">
+              <input
+                type="radio"
+                name="availability_status"
+                value="busy"
+                {% if worker.availability_status == 'busy' %}checked{% endif %}
+              />
 
-          <button type="button" class="modal-save" data-demo-save="Availability">Save</button>
-        </div>
+              <div class="availability-box">🟠 Busy</div>
+            </label>
+
+            <label class="availability-choice">
+              <input
+                type="radio"
+                name="availability_status"
+                value="offline"
+                {% if worker.availability_status == 'offline' %}checked{% endif %}
+              />
+
+              <div class="availability-box">🔴 Offline</div>
+            </label>
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" class="modal-cancel" data-close>Cancel</button>
+
+            <button type="submit" class="modal-save">Save Availability</button>
+          </div>
+        </form>
       </div>
     </div>
 
