@@ -3,756 +3,1035 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <title>Complaint Chat</title>
+    <title>
+      {% if chat_inbox %}
+        Worker Chats
+      {% else %}
+        Complaint Chat
+      {% endif %}
+    </title>
 
     <style>
       * {
         box-sizing: border-box;
       }
-      
+      html {
+        scroll-behavior: smooth;
+      }
       body {
         margin: 0;
-        font-family: Arial, sans-serif;
-        background: #f4f6f8;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #eef4ff;
+        color: #0f172a;
       }
-      
-      .chat-container {
-        max-width: 700px;
-        height: 100vh;
-        margin: auto;
-        background: white;
-        display: flex;
-        flex-direction: column;
+      button,
+      input,
+      textarea {
+        font: inherit;
       }
-      
-      /* ===============================
-                         HEADER
-                      =============================== */
-      
+      a {
+        color: inherit;
+      }
+      .chat-page {
+        width: min(1180px, calc(100% - 28px));
+        margin: 26px auto 40px;
+      }
+      .chat-shell {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 300px;
+        gap: 18px;
+        align-items: stretch;
+      }
+      .chat-card,
+      .info-card,
+      .inbox-card {
+        min-width: 0;
+        background: rgba(255, 255, 255, 0.96);
+        border: 1px solid #dbeafe;
+        border-radius: 24px;
+        box-shadow: 0 18px 50px rgba(37, 99, 235, 0.1);
+        overflow: hidden;
+      }
       .chat-header {
-        padding: 15px;
-        background: #1f6feb;
-        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        padding: 18px 20px;
+        color: #fff;
+        background: linear-gradient(135deg, #2563eb, #1d4ed8 55%, #0ea5e9);
       }
-      
-      .chat-header h3 {
-        margin: 0 0 5px;
+      .chat-person {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
       }
-      
-      .chat-header p {
+      .chat-avatar {
+        width: 46px;
+        height: 46px;
+        min-width: 46px;
+        border-radius: 15px;
+        display: grid;
+        place-items: center;
+        background: rgba(255, 255, 255, 0.18);
+        border: 1px solid rgba(255, 255, 255, 0.28);
+        font-size: 21px;
+        font-weight: 800;
+        overflow: hidden;
+      }
+      .chat-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .chat-title {
+        min-width: 0;
+      }
+      .chat-title h1 {
         margin: 0;
-        font-size: 13px;
+        font-size: 18px;
+        line-height: 1.25;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
-      
-      /* ===============================
-                         DJANGO MESSAGES
-                      =============================== */
-      
+      .chat-title p {
+        margin: 5px 0 0;
+        color: #dbeafe;
+        font-size: 12px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .header-status {
+        padding: 8px 11px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.24);
+        font-size: 12px;
+        font-weight: 800;
+        white-space: nowrap;
+      }
+      .django-messages {
+        padding: 12px 16px 0;
+      }
       .django-message {
-        margin: 8px 12px 0;
         padding: 10px 12px;
-        border-radius: 8px;
-        background: #fff3cd;
-        color: #664d03;
+        margin-bottom: 8px;
+        border-radius: 12px;
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        color: #1e40af;
         font-size: 13px;
       }
-      
-      /* ===============================
-                         CHAT AREA
-                      =============================== */
-      
       .chat-messages {
-        flex: 1;
+        width: 100%;
+        min-width: 0;
+        height: min(62vh, 650px);
+        min-height: 430px;
         overflow-y: auto;
-        padding: 15px;
+        overflow-x: hidden;
+        padding: 20px;
+        background: radial-gradient(circle at 10% 10%, rgba(59, 130, 246, 0.07), transparent 28%), radial-gradient(circle at 90% 90%, rgba(14, 165, 233, 0.06), transparent 30%), #f8fbff;
       }
-      
+      .empty-chat {
+        height: 100%;
+        display: grid;
+        place-items: center;
+        text-align: center;
+        color: #64748b;
+        padding: 30px;
+      }
       .message-row {
         display: flex;
-        margin-bottom: 12px;
+        width: 100%;
+        min-width: 0;
+        margin: 10px 0;
       }
-      
-      .my-message {
+      .message-row.own {
         justify-content: flex-end;
       }
-      
-      .other-message {
-        justify-content: flex-start;
-      }
-      
-      .message-box {
+      .message-wrap {
         position: relative;
-        max-width: 75%;
-        min-width: 90px;
-        padding: 10px 13px;
-        border-radius: 15px;
-        word-wrap: break-word;
+        min-width: 0;
+        max-width: min(76%, 620px);
       }
-      
-      .my-message .message-box {
-        background: #1f6feb;
-        color: white;
+      .message-bubble {
+        min-width: 0;
+        max-width: 100%;
+        overflow: hidden;
+        padding: 11px 13px 9px;
+        border-radius: 18px 18px 18px 5px;
+        background: #fff;
+        border: 1px solid #dbeafe;
+        box-shadow: 0 7px 20px rgba(15, 23, 42, 0.05);
       }
-      
-      .other-message .message-box {
-        background: #e9ecef;
-        color: #222;
+      .own .message-bubble {
+        color: #fff;
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        border-color: transparent;
+        border-radius: 18px 18px 5px 18px;
       }
-      
-      .sender {
+      .sender-name {
         font-size: 11px;
-        font-weight: bold;
-        margin-bottom: 4px;
-        padding-right: 24px;
+        font-weight: 800;
+        margin-bottom: 5px;
+        padding-right: 28px;
+        color: #2563eb;
+        overflow-wrap: anywhere;
       }
-      
+      .own .sender-name {
+        color: #dbeafe;
+      }
+      /* Message text colors are explicit so navbar/theme CSS cannot hide received text. */
       .message-text {
+        display: block;
         white-space: pre-wrap;
+        overflow-wrap: anywhere;
         word-break: break-word;
+        line-height: 1.48;
+        font-size: 14px;
       }
-      
-      .time {
+      .message-row:not(.own) .message-text {
+        color: #0f172a !important;
+      }
+      .message-row.own .message-text {
+        color: #ffffff !important;
+      }
+      .message-bubble a {
         display: block;
-        margin-top: 5px;
+        max-width: 100%;
+        overflow: hidden;
+      }
+      .message-image {
+        display: block;
+        width: auto;
+        height: auto;
+        max-width: 100%;
+        max-height: 320px;
+        border-radius: 13px;
+        margin-top: 8px;
+        object-fit: contain;
+      }
+      .message-meta {
+        display: flex;
+        justify-content: flex-end;
+        gap: 7px;
+        margin-top: 6px;
         font-size: 10px;
-        opacity: 0.75;
+        opacity: 0.76;
       }
-      
-      .edited {
-        font-size: 9px;
-        margin-left: 3px;
+      .message-row:not(.own) .message-meta {
+        color: #475569 !important;
       }
-      
-      .empty-chat {
-        text-align: center;
-        color: #777;
-        margin-top: 40px;
+      .message-row.own .message-meta {
+        color: #ffffff !important;
       }
-      
-      /* ===============================
-                         CHAT IMAGE
-                      =============================== */
-      
-      .chat-image {
-        display: block;
-        width: 100%;
-        max-width: 260px;
-        max-height: 300px;
-        object-fit: cover;
-        border-radius: 10px;
-        margin-top: 7px;
-        cursor: pointer;
-      }
-      
-      /* ===============================
-                         THREE DOT MENU
-                      =============================== */
-      
-      .message-menu-wrapper {
-        position: absolute;
-        top: 4px;
-        right: 5px;
-      }
-      
       .message-menu-button {
-        border: none;
-        background: transparent;
-        color: inherit;
-        font-size: 20px;
+        position: absolute;
+        top: 7px;
+        right: 7px;
+        width: 27px;
+        height: 27px;
+        border: 0;
+        border-radius: 50%;
+        background: #fff;
+        color: #475569;
+        box-shadow: 0 5px 16px rgba(15, 23, 42, 0.13);
         cursor: pointer;
-        padding: 2px 5px;
-        line-height: 1;
       }
-      
       .message-menu {
         display: none;
         position: absolute;
-        right: 0;
-        top: 24px;
-        min-width: 115px;
-        background: white;
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 3px 15px rgba(0, 0, 0, 0.22);
-        z-index: 30;
+        z-index: 20;
+        top: 35px;
+        right: 7px;
+        min-width: 120px;
+        padding: 6px;
+        border-radius: 12px;
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 12px 30px rgba(15, 23, 42, 0.16);
       }
-      
       .message-menu.show {
         display: block;
       }
-      
-      .message-menu form {
-        margin: 0;
-      }
-      
-      .message-menu button {
+      .menu-action {
         width: 100%;
-        border: none;
-        background: white;
-        color: #222;
-        padding: 10px;
+        border: 0;
+        background: transparent;
+        padding: 9px 10px;
+        border-radius: 8px;
         text-align: left;
         cursor: pointer;
-        font-size: 13px;
+        color: #334155;
       }
-      
-      .message-menu button:hover {
-        background: #f1f3f5;
+      .menu-action:hover {
+        background: #f1f5f9;
       }
-      
-      .message-menu .delete-button {
-        color: #d93025;
+      .menu-action.delete {
+        color: #dc2626;
       }
-      
-      /* ===============================
-                         SELECTED IMAGE
-                      =============================== */
-      
-      .selected-image {
+      .delete-form {
+        margin: 0;
+      }
+      .selected-image-strip {
         display: none;
-        padding: 7px 12px;
-        border-top: 1px solid #ddd;
-        background: #eef4ff;
-        font-size: 12px;
         align-items: center;
         justify-content: space-between;
-        gap: 10px;
+        gap: 12px;
+        padding: 9px 14px;
+        background: #eff6ff;
+        border-top: 1px solid #dbeafe;
+        color: #1e40af;
+        font-size: 12px;
       }
-      
-      .selected-image.show {
+      .selected-image-strip.show {
         display: flex;
       }
-      
-      .selected-image-name {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-      
       .remove-image {
-        border: none;
-        background: transparent;
-        color: #d93025;
-        font-size: 17px;
-        cursor: pointer;
-      }
-      
-      /* ===============================
-                         SEND FORM
-                      =============================== */
-      
-      .chat-form {
-        position: relative;
-        display: flex;
-        align-items: center;
-        gap: 7px;
-        padding: 10px;
-        border-top: 1px solid #ddd;
-        background: white;
-      }
-      
-      .message-input {
-        flex: 1;
-        min-width: 0;
-        padding: 12px 15px;
-        border: 1px solid #ccc;
-        border-radius: 22px;
-        outline: none;
-      }
-      
-      .icon-button {
-        width: 40px;
-        height: 40px;
-        min-width: 40px;
-        padding: 0;
-        border: none;
+        border: 0;
+        background: #dbeafe;
+        color: #1d4ed8;
+        width: 28px;
+        height: 28px;
         border-radius: 50%;
-        background: #edf2f7;
-        font-size: 19px;
         cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
       }
-      
+      .composer {
+        position: relative;
+        min-width: 0;
+        padding: 13px;
+        border-top: 1px solid #dbeafe;
+        background: #fff;
+        overflow: visible;
+      }
+      .composer-form {
+        width: 100%;
+        min-width: 0;
+        display: grid;
+        grid-template-columns: 42px 42px minmax(0, 1fr) auto;
+        gap: 8px;
+        align-items: end;
+      }
+      .composer-icon {
+        width: 42px;
+        height: 42px;
+        display: grid;
+        place-items: center;
+        border: 1px solid #dbeafe;
+        border-radius: 13px;
+        background: #eff6ff;
+        color: #1d4ed8;
+        cursor: pointer;
+        font-size: 18px;
+      }
+      .composer textarea {
+        width: 100%;
+        min-width: 0;
+        min-height: 42px;
+        max-height: 120px;
+        resize: vertical;
+        border: 1px solid #cbd5e1;
+        border-radius: 14px;
+        padding: 11px 13px;
+        outline: none;
+        color: #0f172a;
+        background: #fff;
+      }
+      .composer textarea:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+      }
       .send-button {
-        border: none;
-        padding: 11px 17px;
-        border-radius: 22px;
-        background: #1f6feb;
-        color: white;
+        height: 42px;
+        border: 0;
+        border-radius: 13px;
+        padding: 0 18px;
+        color: #fff;
+        background: linear-gradient(135deg, #2563eb, #0ea5e9);
+        font-weight: 800;
         cursor: pointer;
-        flex-shrink: 0;
       }
-      
-      #imageInput {
-        display: none;
-      }
-      
-      /* ===============================
-                         EMOJI PICKER
-                      =============================== */
-      
       .emoji-picker {
         display: none;
         position: absolute;
-        left: 8px;
-        bottom: 58px;
-        width: 260px;
-        padding: 10px;
-        border-radius: 12px;
-        background: white;
-        box-shadow: 0 3px 20px rgba(0, 0, 0, 0.2);
-        z-index: 40;
+        z-index: 30;
+        left: 13px;
+        bottom: 72px;
+        width: 280px;
+        padding: 12px;
         grid-template-columns: repeat(6, 1fr);
-        gap: 6px;
+        gap: 5px;
+        background: #fff;
+        border: 1px solid #dbeafe;
+        border-radius: 16px;
+        box-shadow: 0 15px 35px rgba(15, 23, 42, 0.18);
       }
-      
       .emoji-picker.show {
         display: grid;
       }
-      
-      .emoji-button {
-        border: none;
+      .emoji {
+        border: 0;
         background: transparent;
-        padding: 5px;
-        font-size: 22px;
+        border-radius: 8px;
+        padding: 6px;
         cursor: pointer;
+        font-size: 20px;
+      }
+      .emoji:hover {
+        background: #eff6ff;
+      }
+      .info-card {
+        padding: 20px;
+      }
+      .info-card h2 {
+        margin: 0 0 16px;
+        font-size: 16px;
+      }
+      .info-item {
+        padding: 12px 0;
+        border-bottom: 1px solid #e2e8f0;
+      }
+      .info-item:last-child {
+        border-bottom: 0;
+      }
+      .info-label {
+        display: block;
+        color: #64748b;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 5px;
+      }
+      .info-value {
+        font-size: 14px;
+        font-weight: 700;
+        overflow-wrap: anywhere;
+      }
+      .status-pill {
+        display: inline-flex;
+        padding: 6px 9px;
+        border-radius: 999px;
+        background: #dbeafe;
+        color: #1d4ed8;
+        font-size: 11px;
+        font-weight: 800;
       }
       
-      /* ===============================
-                         EDIT MODAL
-                      =============================== */
+      /* WORKER INBOX */
+      .inbox-card {
+        padding: 0;
+      }
+      .inbox-head {
+        padding: 24px;
+        color: #fff;
+        background: linear-gradient(135deg, #2563eb, #1d4ed8 55%, #0ea5e9);
+      }
+      .inbox-head h1 {
+        margin: 0;
+        font-size: 25px;
+      }
+      .inbox-head p {
+        margin: 7px 0 0;
+        color: #dbeafe;
+        font-size: 13px;
+      }
+      .inbox-list {
+        padding: 14px;
+      }
+      .inbox-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        padding: 15px;
+        margin: 8px 0;
+        border: 1px solid #dbeafe;
+        border-radius: 17px;
+        text-decoration: none;
+        background: #fff;
+        transition: 0.18s ease;
+      }
+      .inbox-item:hover {
+        transform: translateY(-2px);
+        border-color: #93c5fd;
+        box-shadow: 0 10px 24px rgba(37, 99, 235, 0.1);
+      }
+      .inbox-main {
+        min-width: 0;
+      }
+      .inbox-title {
+        font-weight: 800;
+        color: #0f172a;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .inbox-meta {
+        margin-top: 5px;
+        color: #64748b;
+        font-size: 12px;
+      }
+      .inbox-open {
+        color: #2563eb;
+        font-weight: 800;
+        font-size: 13px;
+        white-space: nowrap;
+      }
+      .inbox-empty {
+        padding: 60px 24px;
+        text-align: center;
+        color: #64748b;
+      }
       
+      /* MODAL */
       .edit-modal {
         display: none;
         position: fixed;
+        z-index: 9999;
         inset: 0;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 100;
+        padding: 18px;
+        background: rgba(15, 23, 42, 0.55);
         align-items: center;
         justify-content: center;
-        padding: 15px;
       }
-      
       .edit-modal.show {
         display: flex;
       }
-      
       .edit-box {
-        width: 100%;
-        max-width: 420px;
+        width: min(520px, 100%);
         padding: 18px;
-        border-radius: 12px;
-        background: white;
+        border-radius: 20px;
+        background: #fff;
+        box-shadow: 0 25px 70px rgba(15, 23, 42, 0.25);
       }
-      
       .edit-box h3 {
-        margin-top: 0;
+        margin: 0 0 12px;
       }
-      
       .edit-box textarea {
         width: 100%;
-        min-height: 100px;
+        min-height: 120px;
+        border: 1px solid #cbd5e1;
+        border-radius: 13px;
+        padding: 12px;
         resize: vertical;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        font-family: Arial, sans-serif;
       }
-      
       .edit-actions {
         display: flex;
         justify-content: flex-end;
         gap: 8px;
         margin-top: 12px;
       }
-      
       .edit-actions button {
-        border: none;
-        padding: 9px 15px;
-        border-radius: 7px;
+        border: 0;
+        border-radius: 11px;
+        padding: 10px 15px;
         cursor: pointer;
+        font-weight: 800;
+      }
+      .cancel-edit {
+        background: #e2e8f0;
+        color: #334155;
+      }
+      .save-edit {
+        background: #2563eb;
+        color: #fff;
       }
       
-      .cancel-button {
-        background: #e9ecef;
-        color: #222;
+      /* Existing navbar themes */
+      body.sc-theme-dark,
+      body.worker-theme-dark {
+        background: #0f172a;
+        color: #e2e8f0;
+      }
+      body.sc-theme-dark .chat-card,
+      body.sc-theme-dark .info-card,
+      body.sc-theme-dark .inbox-card,
+      body.worker-theme-dark .chat-card,
+      body.worker-theme-dark .info-card,
+      body.worker-theme-dark .inbox-card,
+      body.sc-theme-dark .composer,
+      body.worker-theme-dark .composer,
+      body.sc-theme-dark .inbox-item,
+      body.worker-theme-dark .inbox-item,
+      body.sc-theme-dark .edit-box,
+      body.worker-theme-dark .edit-box {
+        background: #1e293b;
+        border-color: #334155;
+        color: #e2e8f0;
+      }
+      body.sc-theme-dark .chat-messages,
+      body.worker-theme-dark .chat-messages {
+        background: #111827;
+      }
+      body.sc-theme-dark .message-bubble,
+      body.worker-theme-dark .message-bubble {
+        background: #1e293b;
+        border-color: #334155;
+      }
+      body.sc-theme-dark .own .message-bubble,
+      body.worker-theme-dark .own .message-bubble {
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      }
+      body.sc-theme-dark .inbox-title,
+      body.worker-theme-dark .inbox-title {
+        color: #f8fafc;
+      }
+      body.sc-theme-dark .composer textarea,
+      body.worker-theme-dark .composer textarea,
+      body.sc-theme-dark .edit-box textarea,
+      body.worker-theme-dark .edit-box textarea {
+        background: #0f172a;
+        color: #f8fafc;
+        border-color: #475569;
       }
       
-      .save-button {
-        background: #1f6feb;
-        color: white;
+      body.sc-theme-glass .chat-card,
+      body.sc-theme-glass .info-card,
+      body.sc-theme-glass .inbox-card,
+      body.worker-theme-glass .chat-card,
+      body.worker-theme-glass .info-card,
+      body.worker-theme-glass .inbox-card {
+        background: rgba(15, 23, 42, 0.42);
+        color: #fff;
+        border-color: rgba(255, 255, 255, 0.16);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+      }
+      body.sc-theme-glass .chat-messages,
+      body.worker-theme-glass .chat-messages {
+        background: rgba(15, 23, 42, 0.25);
+      }
+      body.sc-theme-glass .composer,
+      body.worker-theme-glass .composer,
+      body.sc-theme-glass .inbox-item,
+      body.worker-theme-glass .inbox-item {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.14);
+        color: #fff;
+      }
+      body.sc-theme-glass .inbox-title,
+      body.worker-theme-glass .inbox-title {
+        color: #fff;
       }
       
-      /* ===============================
-                         MOBILE
-                      =============================== */
-      
-      @media (max-width: 500px) {
-        .message-box {
-          max-width: 82%;
+      @media (max-width: 860px) {
+        .chat-shell {
+          grid-template-columns: 1fr;
         }
-      
-        .emoji-picker {
-          width: 240px;
+        .info-card {
+          display: none;
         }
-      
+        .chat-messages {
+          height: calc(100vh - 310px);
+          min-height: 390px;
+        }
+      }
+      @media (max-width: 600px) {
+        .chat-page {
+          width: 100%;
+          margin: 0;
+          padding: 0;
+        }
+        .chat-card,
+        .inbox-card {
+          border-radius: 0;
+          border-left: 0;
+          border-right: 0;
+        }
+        .chat-header {
+          padding: 13px 12px;
+        }
+        .chat-avatar {
+          width: 40px;
+          height: 40px;
+          min-width: 40px;
+          border-radius: 12px;
+        }
+        .chat-title h1 {
+          font-size: 15px;
+        }
+        .header-status {
+          display: none;
+        }
+        .chat-messages {
+          min-height: 360px;
+          padding: 13px 10px;
+        }
+        .message-wrap {
+          max-width: calc(100% - 42px);
+        }
+        .message-image {
+          max-height: 280px;
+        }
+        .composer {
+          padding: 9px;
+        }
+        .composer-form {
+          grid-template-columns: 39px 39px minmax(0, 1fr) 44px;
+          gap: 6px;
+        }
+        .composer-icon {
+          width: 39px;
+          height: 39px;
+          border-radius: 12px;
+        }
         .send-button {
-          padding: 11px 14px;
+          width: 44px;
+          height: 39px;
+          padding: 0;
+          font-size: 0;
+        }
+        .send-button::after {
+          content: '➤';
+          font-size: 17px;
+        }
+        .emoji-picker {
+          left: 8px;
+          bottom: 64px;
+          width: min(280px, calc(100vw - 16px));
+        }
+        .inbox-head {
+          padding: 20px 16px;
+        }
+        .inbox-list {
+          padding: 8px;
+        }
+        .inbox-item {
+          padding: 13px;
         }
       }
     </style>
   </head>
 
   <body>
-    <div class="chat-container">
-      <!-- HEADER -->
+    {% if chat_inbox %}
+      {% include 'complaints/Worker_Folder/worker_navbar.html' %}
+    {% elif is_assigned_worker %}
+      {% with worker=complaint.assigned_worker %}
+        {% include 'complaints/Worker_Folder/worker_navbar.html' %}
+      {% endwith %}
+    {% else %}
+      {% include 'complaints/User_Folder/navbar.html' %}
+    {% endif %}
 
-      <div class="chat-header">
-        <h3>Complaint Chat</h3>
+    <main class="chat-page">
+      {% if chat_inbox %}
+        <section class="inbox-card">
+          <header class="inbox-head">
+            <h1>💬 Worker Chats</h1>
+            <p>Open a complaint to chat with the assigned customer.</p>
+          </header>
 
-        <p>{{ complaint.tracking_id }}
-          —
-          {{ complaint.subject }}</p>
-      </div>
-
-      <!-- DJANGO MESSAGES -->
-
-      {% if messages %}
-        {% for message in messages %}
-          <div class="django-message">{{ message }}</div>
-        {% endfor %}
-      {% endif %}
-
-      <!-- CHAT MESSAGES -->
-
-      <div class="chat-messages" id="chatMessages">
-        {% for chat in chat_messages %}
-          {% if chat.sender == request.user %}
-            <!-- MY MESSAGE -->
-
-            <div class="message-row my-message">
-              <div class="message-box">
-                <!-- THREE DOTS -->
-
-                <div class="message-menu-wrapper">
-                  <button type="button" class="message-menu-button" onclick="toggleMessageMenu(event, 'menu-{{ chat.id }}')">⋮</button>
-
-                  <div class="message-menu" id="menu-{{ chat.id }}">
-                    {% if chat.can_edit and chat.message %}
-                      <button type="button" onclick="openEditModal(
-                        '{{ chat.id }}',
-                        'message-text-{{ chat.id }}'
-                      )">✏️ Edit</button>
-                    {% endif %}
-
-                    <form method="POST" onsubmit="return confirm('Delete this message?');">
-                      {% csrf_token %}
-
-                      <input type="hidden" name="action" value="delete" />
-
-                      <input type="hidden" name="message_id" value="{{ chat.id }}" />
-
-                      <button type="submit" class="delete-button">🗑️ Delete</button>
-                    </form>
-                  </div>
-                </div>
-
-                <div class="sender">You</div>
-
-                {% if chat.message %}
-                  <div class="message-text" id="message-text-{{ chat.id }}">{{ chat.message }}</div>
-                {% endif %}
-
-                {% if chat.image %}
-                  <img src="{{ chat.image.url }}" alt="Chat image" class="chat-image" onclick="window.open(this.src, '_blank')" />
-                {% endif %}
-
-                <span class="time">
-                  {{ chat.created_at|date:'d M, h:i A' }}
-
-                  {% if chat.is_edited %}
-                    <span class="edited">(edited)</span>
-                  {% endif %}
-                </span>
-              </div>
-            </div>
-          {% else %}
-            <!-- OTHER PERSON -->
-
-            <div class="message-row other-message">
-              <div class="message-box">
-                <div class="sender">{{ chat.sender.username }}</div>
-
-                {% if chat.message %}
-                  <div class="message-text">{{ chat.message }}</div>
-                {% endif %}
-
-                {% if chat.image %}
-                  <img src="{{ chat.image.url }}" alt="Chat image" class="chat-image" onclick="window.open(this.src, '_blank')" />
-                {% endif %}
-
-                <span class="time">
-                  {{ chat.created_at|date:'d M, h:i A' }}
-
-                  {% if chat.is_edited %}
-                    <span class="edited">(edited)</span>
-                  {% endif %}
-                </span>
-              </div>
+          {% if messages %}
+            <div class="django-messages">
+              {% for message in messages %}
+                <div class="django-message">{{ message }}</div>
+              {% endfor %}
             </div>
           {% endif %}
-        {% empty %}
-          <div class="empty-chat">No messages yet. Start the conversation.</div>
-        {% endfor %}
-      </div>
 
-      <!-- SELECTED IMAGE -->
-
-      <div class="selected-image" id="selectedImage">
-        <span class="selected-image-name" id="selectedImageName"></span>
-
-        <button type="button" class="remove-image" onclick="removeSelectedImage()">✕</button>
-      </div>
-
-      <!-- SEND FORM -->
-
-      <form method="POST" enctype="multipart/form-data" class="chat-form">
-        {% csrf_token %}
-
-        <input type="hidden" name="action" value="send" />
-
-        <!-- EMOJI -->
-
-        <button type="button" class="icon-button" title="Emoji" onclick="toggleEmojiPicker(event)">😀</button>
-
-        <!-- IMAGE -->
-
-        <button type="button" class="icon-button" title="Add image" onclick="document.getElementById('imageInput').click()">🖼️</button>
-
-        <input type="file" name="image" id="imageInput" accept="image/jpeg,image/png,image/webp,image/gif" onchange="showSelectedImage()" />
-
-        <!-- MESSAGE -->
-
-        <input type="text" name="message" id="messageInput" class="message-input" placeholder="Type a message..." maxlength="2000" autocomplete="off" />
-
-        <button type="submit" class="send-button">Send</button>
-
-        <!-- EMOJI PICKER -->
-
-        <div class="emoji-picker" id="emojiPicker">
-          <button type="button" class="emoji-button">😀</button>
-          <button type="button" class="emoji-button">😂</button>
-          <button type="button" class="emoji-button">😊</button>
-          <button type="button" class="emoji-button">😍</button>
-          <button type="button" class="emoji-button">🥰</button>
-          <button type="button" class="emoji-button">😘</button>
-
-          <button type="button" class="emoji-button">😎</button>
-          <button type="button" class="emoji-button">🤔</button>
-          <button type="button" class="emoji-button">😢</button>
-          <button type="button" class="emoji-button">😭</button>
-          <button type="button" class="emoji-button">😡</button>
-          <button type="button" class="emoji-button">😅</button>
-
-          <button type="button" class="emoji-button">👍</button>
-          <button type="button" class="emoji-button">👎</button>
-          <button type="button" class="emoji-button">👌</button>
-          <button type="button" class="emoji-button">🙏</button>
-          <button type="button" class="emoji-button">👏</button>
-          <button type="button" class="emoji-button">💪</button>
-
-          <button type="button" class="emoji-button">❤️</button>
-          <button type="button" class="emoji-button">💙</button>
-          <button type="button" class="emoji-button">💚</button>
-          <button type="button" class="emoji-button">🔥</button>
-          <button type="button" class="emoji-button">✅</button>
-          <button type="button" class="emoji-button">❌</button>
-
-          <button type="button" class="emoji-button">🔧</button>
-          <button type="button" class="emoji-button">🛠️</button>
-          <button type="button" class="emoji-button">🚰</button>
-          <button type="button" class="emoji-button">⚡</button>
-          <button type="button" class="emoji-button">🏠</button>
-          <button type="button" class="emoji-button">📍</button>
-        </div>
-      </form>
-    </div>
-
-    <!-- EDIT MODAL -->
-
-    <div class="edit-modal" id="editModal">
-      <div class="edit-box">
-        <h3>Edit Message</h3>
-
-        <form method="POST">
-          {% csrf_token %}
-
-          <input type="hidden" name="action" value="edit" />
-
-          <input type="hidden" name="message_id" id="editMessageId" />
-
-          <textarea name="message" id="editMessageText" maxlength="2000" required></textarea>
-
-          <div class="edit-actions">
-            <button type="button" class="cancel-button" onclick="closeEditModal()">Cancel</button>
-
-            <button type="submit" class="save-button">Save</button>
+          <div class="inbox-list">
+            {% for item in worker_chat_complaints %}
+              <a class="inbox-item" href="{% url 'complaint_chat' item.id %}">
+                <div class="inbox-main">
+                  <div class="inbox-title">{{ item.subject }}</div>
+                  <div class="inbox-meta">{{ item.tracking_id }} · {{ item.user.username }} · {{ item.status }}</div>
+                </div>
+                <div class="inbox-open">Open Chat →</div>
+              </a>
+            {% empty %}
+              <div class="inbox-empty">
+                <strong>No assigned complaint chats yet.</strong><br /><br />
+                When a complaint is assigned to you, it will appear here.
+              </div>
+            {% endfor %}
           </div>
-        </form>
-      </div>
-    </div>
+        </section>
+      {% else %}
+        <div class="chat-shell">
+          <section class="chat-card">
+            <header class="chat-header">
+              <div class="chat-person">
+                <div class="chat-avatar">
+                  {% if is_complaint_user and complaint.assigned_worker and complaint.assigned_worker.photo %}
+                    <img src="{{ complaint.assigned_worker.photo.url }}" alt="Worker" />
+                  {% elif is_assigned_worker %}
+                    {{ complaint.user.username|first|upper }}
+                  {% else %}
+                    💬
+                  {% endif %}
+                </div>
+                <div class="chat-title">
+                  <h1>
+                    {% if is_complaint_user %}
+                      {% if complaint.assigned_worker %}
+                        {{ complaint.assigned_worker.name }}
+                      {% else %}
+                        Complaint Chat
+                      {% endif %}
+                    {% else %}
+                      {{ complaint.user.username }}
+                    {% endif %}
+                  </h1>
+                  <p>{{ complaint.tracking_id }} · {{ complaint.subject }}</p>
+                </div>
+              </div>
+              <div class="header-status">{{ complaint.status }}</div>
+            </header>
 
-    <script>
-      // ==============================================
-      // AUTO SCROLL
-      // ==============================================
-      
-      const chatBox = document.getElementById('chatMessages')
-      
-      if (chatBox) {
-        chatBox.scrollTop = chatBox.scrollHeight
-      }
-      
-      // ==============================================
-      // THREE DOT MENU
-      // ==============================================
-      
-      function toggleMessageMenu(event, menuId) {
-        event.stopPropagation()
-      
-        document.querySelectorAll('.message-menu').forEach(function (menu) {
-          if (menu.id !== menuId) {
-            menu.classList.remove('show')
+            {% if messages %}
+              <div class="django-messages">
+                {% for message in messages %}
+                  <div class="django-message">{{ message }}</div>
+                {% endfor %}
+              </div>
+            {% endif %}
+
+            <div class="chat-messages" id="chatMessages">
+              {% for chat in chat_messages %}
+                <div class="message-row {% if chat.sender == request.user %}own{% endif %}">
+                  <div class="message-wrap">
+                    <div class="message-bubble">
+                      <div class="sender-name">
+                        {% if chat.sender == request.user %}
+                          You
+                        {% else %}
+                          {{ chat.sender.username }}
+                        {% endif %}
+                      </div>
+
+                      {% if chat.message %}
+                        <div class="message-text">{{ chat.message }}</div>
+                      {% endif %}
+
+                      {% if chat.image %}
+                        <a href="{{ chat.image.url }}" target="_blank" rel="noopener"><img class="message-image" src="{{ chat.image.url }}" alt="Chat image" /></a>
+                      {% endif %}
+
+                      <div class="message-meta">
+                        {% if chat.is_edited %}
+                          <span>edited</span>
+                        {% endif %}
+                        <span>{{ chat.created_at|date:'h:i A' }}</span>
+                      </div>
+                    </div>
+
+                    {% if chat.sender == request.user %}
+                      <button type="button" class="message-menu-button" data-menu-button="{{ chat.id }}">⋮</button>
+                      <div class="message-menu" id="messageMenu{{ chat.id }}">
+                        {% if chat.can_edit and chat.message %}
+                          <button type="button" class="menu-action edit-message-button" data-message-id="{{ chat.id }}" data-message-text="{{ chat.message|escapejs }}">Edit</button>
+                        {% endif %}
+
+                        <form method="post" class="delete-form" onsubmit="return confirm('Delete this message?');">
+                          {% csrf_token %}
+                          <input type="hidden" name="action" value="delete" />
+                          <input type="hidden" name="message_id" value="{{ chat.id }}" />
+                          <button type="submit" class="menu-action delete">Delete</button>
+                        </form>
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+              {% empty %}
+                <div class="empty-chat">
+                  <div>
+                    <div style="font-size:38px; margin-bottom:10px;">💬</div>
+                    <strong>No messages yet</strong><br /><br />
+                    Send the first message for this complaint.
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+
+            <div class="selected-image-strip" id="selectedImageStrip">
+              <span id="selectedImageName">Selected image</span>
+              <button type="button" class="remove-image" id="removeSelectedImage">×</button>
+            </div>
+
+            <div class="composer">
+              <div class="emoji-picker" id="emojiPicker">
+                <button type="button" class="emoji">😀</button><button type="button" class="emoji">😃</button>
+                <button type="button" class="emoji">😄</button><button type="button" class="emoji">😁</button>
+                <button type="button" class="emoji">😊</button><button type="button" class="emoji">🙂</button>
+                <button type="button" class="emoji">😍</button><button type="button" class="emoji">🥰</button>
+                <button type="button" class="emoji">😎</button><button type="button" class="emoji">🤔</button>
+                <button type="button" class="emoji">😢</button><button type="button" class="emoji">😭</button>
+                <button type="button" class="emoji">😡</button><button type="button" class="emoji">👍</button>
+                <button type="button" class="emoji">👎</button><button type="button" class="emoji">🙏</button>
+                <button type="button" class="emoji">👏</button><button type="button" class="emoji">👌</button>
+                <button type="button" class="emoji">❤️</button><button type="button" class="emoji">💙</button>
+                <button type="button" class="emoji">🔥</button><button type="button" class="emoji">🎉</button>
+                <button type="button" class="emoji">✅</button><button type="button" class="emoji">❌</button>
+                <button type="button" class="emoji">⚠️</button><button type="button" class="emoji">📍</button>
+                <button type="button" class="emoji">🛠️</button><button type="button" class="emoji">🚧</button>
+                <button type="button" class="emoji">⭐</button><button type="button" class="emoji">💯</button>
+              </div>
+
+              <form method="post" enctype="multipart/form-data" class="composer-form" id="sendMessageForm">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="send" />
+
+                <button type="button" class="composer-icon" id="emojiButton" aria-label="Emoji">😊</button>
+                <label class="composer-icon" for="chatImage" aria-label="Attach image">📎</label>
+                <input type="file" name="image" id="chatImage" accept="image/jpeg,image/png,image/webp,image/gif" hidden />
+
+                <textarea name="message" id="messageInput" maxlength="2000" placeholder="Type a message..."></textarea>
+                <button type="submit" class="send-button">Send</button>
+              </form>
+            </div>
+          </section>
+
+          <aside class="info-card">
+            <h2>Complaint Details</h2>
+            <div class="info-item">
+              <span class="info-label">Tracking ID</span><div class="info-value">{{ complaint.tracking_id }}</div>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Subject</span><div class="info-value">{{ complaint.subject }}</div>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Status</span><div class="info-value">
+                <span class="status-pill">{{ complaint.status }}</span>
+              </div>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Priority</span><div class="info-value">{{ complaint.priority }}</div>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Customer</span><div class="info-value">{{ complaint.user.username }}</div>
+            </div>
+            {% if complaint.assigned_worker %}
+              <div class="info-item">
+                <span class="info-label">Worker</span><div class="info-value">{{ complaint.assigned_worker.name }}</div>
+              </div>
+            {% endif %}
+          </aside>
+        </div>
+
+        <div class="edit-modal" id="editModal">
+          <div class="edit-box">
+            <h3>Edit Message</h3>
+            <form method="post" id="editMessageForm">
+              {% csrf_token %}
+              <input type="hidden" name="action" value="edit" />
+              <input type="hidden" name="message_id" id="editMessageId" />
+              <textarea name="message" id="editMessageText" maxlength="2000" required></textarea>
+              <div class="edit-actions">
+                <button type="button" class="cancel-edit" id="cancelEdit">Cancel</button>
+                <button type="submit" class="save-edit">Save</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      {% endif %}
+    </main>
+
+    {% if not chat_inbox %}
+      <script>
+        ;(function () {
+          const chatMessages = document.getElementById('chatMessages')
+          if (chatMessages) chatMessages.scrollTop = chatMessages.scrollHeight
+        
+          document.querySelectorAll('[data-menu-button]').forEach(function (button) {
+            button.addEventListener('click', function (event) {
+              event.stopPropagation()
+              const id = button.getAttribute('data-menu-button')
+              const target = document.getElementById('messageMenu' + id)
+              document.querySelectorAll('.message-menu.show').forEach(function (menu) {
+                if (menu !== target) menu.classList.remove('show')
+              })
+              if (target) target.classList.toggle('show')
+            })
+          })
+        
+          document.addEventListener('click', function () {
+            document.querySelectorAll('.message-menu.show').forEach(function (menu) {
+              menu.classList.remove('show')
+            })
+          })
+        
+          const emojiButton = document.getElementById('emojiButton')
+          const emojiPicker = document.getElementById('emojiPicker')
+          const messageInput = document.getElementById('messageInput')
+        
+          if (emojiButton && emojiPicker) {
+            emojiButton.addEventListener('click', function (event) {
+              event.stopPropagation()
+              emojiPicker.classList.toggle('show')
+            })
+            emojiPicker.addEventListener('click', function (event) {
+              event.stopPropagation()
+            })
+            document.addEventListener('click', function () {
+              emojiPicker.classList.remove('show')
+            })
           }
-        })
-      
-        const menu = document.getElementById(menuId)
-      
-        if (menu) {
-          menu.classList.toggle('show')
-        }
-      }
-      
-      // ==============================================
-      // EMOJI PICKER
-      // ==============================================
-      
-      function toggleEmojiPicker(event) {
-        event.stopPropagation()
-      
-        const picker = document.getElementById('emojiPicker')
-      
-        picker.classList.toggle('show')
-      }
-      
-      document.querySelectorAll('.emoji-button').forEach(function (button) {
-        button.addEventListener('click', function () {
-          const input = document.getElementById('messageInput')
-      
-          input.value += this.textContent
-      
-          input.focus()
-        })
-      })
-      
-      // ==============================================
-      // IMAGE SELECT
-      // ==============================================
-      
-      function showSelectedImage() {
-        const input = document.getElementById('imageInput')
-      
-        const selectedImage = document.getElementById('selectedImage')
-      
-        const selectedImageName = document.getElementById('selectedImageName')
-      
-        if (input.files && input.files.length > 0) {
-          selectedImageName.textContent = '🖼️ ' + input.files[0].name
-      
-          selectedImage.classList.add('show')
-        }
-      }
-      
-      function removeSelectedImage() {
-        const input = document.getElementById('imageInput')
-      
-        const selectedImage = document.getElementById('selectedImage')
-      
-        input.value = ''
-      
-        selectedImage.classList.remove('show')
-      }
-      
-      // ==============================================
-      // EDIT MESSAGE
-      // ==============================================
-      
-      function openEditModal(messageId, textElementId) {
-        document.querySelectorAll('.message-menu').forEach(function (menu) {
-          menu.classList.remove('show')
-        })
-      
-        const textElement = document.getElementById(textElementId)
-      
-        const messageText = textElement ? textElement.textContent.trim() : ''
-      
-        document.getElementById('editMessageId').value = messageId
-      
-        document.getElementById('editMessageText').value = messageText
-      
-        document.getElementById('editModal').classList.add('show')
-      }
-      
-      function closeEditModal() {
-        document.getElementById('editModal').classList.remove('show')
-      }
-      
-      // ==============================================
-      // OUTSIDE CLICK
-      // ==============================================
-      
-      document.addEventListener('click', function (event) {
-        document.querySelectorAll('.message-menu').forEach(function (menu) {
-          if (!menu.contains(event.target)) {
-            menu.classList.remove('show')
+        
+          document.querySelectorAll('.emoji').forEach(function (button) {
+            button.addEventListener('click', function () {
+              if (!messageInput) return
+              const start = messageInput.selectionStart || messageInput.value.length
+              const end = messageInput.selectionEnd || messageInput.value.length
+              messageInput.value = messageInput.value.slice(0, start) + button.textContent + messageInput.value.slice(end)
+              messageInput.focus()
+              const next = start + button.textContent.length
+              messageInput.setSelectionRange(next, next)
+            })
+          })
+        
+          const imageInput = document.getElementById('chatImage')
+          const imageStrip = document.getElementById('selectedImageStrip')
+          const imageName = document.getElementById('selectedImageName')
+          const removeImage = document.getElementById('removeSelectedImage')
+        
+          if (imageInput) {
+            imageInput.addEventListener('change', function () {
+              if (imageInput.files && imageInput.files[0]) {
+                imageName.textContent = imageInput.files[0].name
+                imageStrip.classList.add('show')
+              } else {
+                imageStrip.classList.remove('show')
+              }
+            })
           }
-        })
-      
-        const emojiPicker = document.getElementById('emojiPicker')
-      
-        if (emojiPicker && !emojiPicker.contains(event.target)) {
-          emojiPicker.classList.remove('show')
-        }
-      })
-      
-      // ==============================================
-      // KEEP EMOJI PICKER OPEN WHEN CLICKED
-      // ==============================================
-      
-      const emojiPicker = document.getElementById('emojiPicker')
-      
-      if (emojiPicker) {
-        emojiPicker.addEventListener('click', function (event) {
-          event.stopPropagation()
-        })
-      }
-      
-      // ==============================================
-      // CLOSE EDIT MODAL BY OUTSIDE CLICK
-      // ==============================================
-      
-      const editModal = document.getElementById('editModal')
-      
-      if (editModal) {
-        editModal.addEventListener('click', function (event) {
-          if (event.target === this) {
-            closeEditModal()
+          if (removeImage) {
+            removeImage.addEventListener('click', function () {
+              imageInput.value = ''
+              imageStrip.classList.remove('show')
+            })
           }
-        })
-      }
-    </script>
+        
+          const editModal = document.getElementById('editModal')
+          const editId = document.getElementById('editMessageId')
+          const editText = document.getElementById('editMessageText')
+          const cancelEdit = document.getElementById('cancelEdit')
+        
+          document.querySelectorAll('.edit-message-button').forEach(function (button) {
+            button.addEventListener('click', function (event) {
+              event.stopPropagation()
+              editId.value = button.getAttribute('data-message-id') || ''
+              editText.value = button.getAttribute('data-message-text') || ''
+              editModal.classList.add('show')
+              editText.focus()
+            })
+          })
+        
+          function closeEditModal() {
+            if (editModal) editModal.classList.remove('show')
+          }
+          if (cancelEdit) cancelEdit.addEventListener('click', closeEditModal)
+          if (editModal) {
+            editModal.addEventListener('click', function (event) {
+              if (event.target === editModal) closeEditModal()
+            })
+          }
+        })()
+      </script>
+    {% endif %}
   </body>
 </html>

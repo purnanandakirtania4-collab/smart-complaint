@@ -1,6 +1,8 @@
 import calendar
 import secrets
 import re
+import json
+import os
 from datetime import timedelta
 
 import razorpay
@@ -17,11 +19,14 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.core.files.storage import default_storage
+from django.core.files import File
+from django.contrib.staticfiles import finders
 from django.db import transaction
 from django.db.models import Avg, Count, Case, When, Value, IntegerField
 from django.utils import timezone
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
 
 from .models import (
     Complaint,
@@ -84,6 +89,91 @@ def _admin_account_redirect(request):
         return redirect('/admin/')
 
     return None
+
+
+
+
+# =========================================================
+# FREE PROFILE AVATAR HELPERS
+# =========================================================
+
+FREE_PROFILE_AVATARS = {
+    'avatar_01',
+    'avatar_02',
+    'avatar_03',
+    'avatar_04',
+    'avatar_05',
+    'avatar_06',
+    'avatar_07',
+    'avatar_08',
+    'avatar_09',
+    'avatar_10',
+    'avatar_11',
+    'avatar_12',
+    'avatar_13',
+    'avatar_14',
+    'avatar_15',
+    'avatar_16',
+    'avatar_17',
+    'avatar_18',
+    'avatar_19',
+    'avatar_20',
+    'avatar_21',
+    'avatar_22',
+    'avatar_23',
+    'avatar_24',
+    'avatar_25',
+    'avatar_26',
+    'avatar_27',
+    'avatar_28',
+    'avatar_29',
+    'avatar_30',
+    'avatar_31',
+    'avatar_32',
+    'avatar_33',
+    'avatar_34',
+    'avatar_35',
+    'avatar_36',
+    'avatar_37',
+    'avatar_38',
+    'avatar_39',
+    'avatar_40',
+}
+
+
+def _apply_free_profile_avatar(instance, field_name, avatar_id, filename_prefix):
+    """
+    Save one of Smart Complaint's bundled free avatars into the existing
+    ImageField. No model/database schema change is required.
+    """
+    if avatar_id not in FREE_PROFILE_AVATARS:
+        return False
+
+    relative_path = (
+        f'complaints/avatars/free/{avatar_id}.png'
+    )
+
+    source_path = finders.find(relative_path)
+
+    if not source_path:
+        return False
+
+    image_field = getattr(instance, field_name)
+
+    if image_field:
+        old_name = image_field.name
+
+        if old_name and default_storage.exists(old_name):
+            default_storage.delete(old_name)
+
+    with open(source_path, 'rb') as avatar_file:
+        image_field.save(
+            f'{filename_prefix}_{avatar_id}.png',
+            File(avatar_file),
+            save=False,
+        )
+
+    return True
 
 
 # =========================================================
@@ -361,6 +451,11 @@ def profile(request):
             'photo'
         )
 
+        free_avatar = request.POST.get(
+            'free_avatar',
+            ''
+        ).strip()
+
         if not email:
 
             messages.error(
@@ -463,6 +558,24 @@ def profile(request):
                     )
 
             user_profile.photo = photo
+
+        elif free_avatar:
+
+            if not _apply_free_profile_avatar(
+                user_profile,
+                'photo',
+                free_avatar,
+                f'user_{user.id}',
+            ):
+
+                messages.error(
+                    request,
+                    'Please select a valid free avatar.'
+                )
+
+                return redirect(
+                    'profile'
+                )
 
         user.first_name = first_name
         user.last_name = last_name
@@ -1714,6 +1827,11 @@ def worker_profile(request, worker_id):
             'photo'
         )
 
+        free_avatar = request.POST.get(
+            'free_avatar',
+            ''
+        ).strip()
+
         if (
             not name
             or not email
@@ -1813,6 +1931,25 @@ def worker_profile(request, worker_id):
                     )
 
             worker.photo = photo
+
+        elif free_avatar:
+
+            if not _apply_free_profile_avatar(
+                worker,
+                'photo',
+                free_avatar,
+                f'worker_{worker.id}',
+            ):
+
+                messages.error(
+                    request,
+                    'Please select a valid free avatar.'
+                )
+
+                return redirect(
+                    'worker_profile',
+                    worker_id=worker.id
+                )
 
         worker.name = name
         worker.phone = phone
@@ -3745,6 +3882,93 @@ def terms_conditions(request):
 
 
 # =========================================================
+# WORKER SUBSCRIPTION HELPERS
+# =========================================================
+
+def _razorpay_timestamp_to_datetime(value):
+    """Convert a Razorpay Unix timestamp to a timezone-aware datetime."""
+    if value in (None, ""):
+        return None
+
+    try:
+        return timezone.datetime.fromtimestamp(
+            int(value),
+            tz=timezone.get_current_timezone(),
+        )
+    except (TypeError, ValueError, OSError, OverflowError):
+        return None
+
+
+def _sync_worker_subscription_from_razorpay(
+    subscription,
+    razorpay_subscription,
+):
+    """Synchronise our WorkerSubscription with a verified Razorpay subscription."""
+    razorpay_status = str(
+        razorpay_subscription.get('status', '')
+    ).lower()
+
+    customer_id = razorpay_subscription.get('customer_id') or ''
+    plan_id = razorpay_subscription.get('plan_id') or ''
+
+    if customer_id:
+        subscription.razorpay_customer_id = customer_id
+
+    if plan_id:
+        subscription.razorpay_plan_id = plan_id
+
+    now = timezone.now()
+
+    # Our ₹49 introductory month starts as soon as Razorpay authenticates
+    # the mandate. The ₹149 plan itself starts on next_billing_at.
+    if razorpay_status in {'authenticated', 'active'}:
+        subscription.status = 'active'
+
+        if not subscription.started_at:
+            subscription.started_at = now
+
+        current_start = _razorpay_timestamp_to_datetime(
+            razorpay_subscription.get('current_start')
+        )
+        current_end = _razorpay_timestamp_to_datetime(
+            razorpay_subscription.get('current_end')
+        )
+        charge_at = _razorpay_timestamp_to_datetime(
+            razorpay_subscription.get('charge_at')
+        )
+
+        if current_start:
+            subscription.current_period_start = current_start
+        elif not subscription.current_period_start:
+            subscription.current_period_start = subscription.started_at
+
+        if current_end:
+            subscription.current_period_end = current_end
+        elif (
+            not subscription.current_period_end
+            and subscription.next_billing_at
+        ):
+            subscription.current_period_end = subscription.next_billing_at
+
+        if charge_at:
+            subscription.next_billing_at = charge_at
+
+    elif razorpay_status in {'created', 'pending', 'halted'}:
+        subscription.status = 'pending'
+
+    elif razorpay_status == 'cancelled':
+        subscription.status = 'cancelled'
+
+        if not subscription.cancelled_at:
+            subscription.cancelled_at = now
+
+    elif razorpay_status in {'completed', 'expired'}:
+        subscription.status = 'expired'
+
+    subscription.save()
+
+
+# =========================================================
 # WORKER SUBSCRIPTION PAYMENT
 # ₹49 NOW + ₹149/MONTH FROM NEXT MONTH
 # =========================================================
@@ -3753,301 +3977,208 @@ def terms_conditions(request):
 def worker_subscription_payment(request):
 
     try:
-
-        worker = (
-            request.user.worker_profile
-        )
+        worker = request.user.worker_profile
 
     except WorkerProfile.DoesNotExist:
-
         messages.error(
             request,
             'Worker access required.'
         )
-
-        return redirect(
-            'worker_login'
-        )
+        return redirect('worker_login')
 
     if not worker.is_approved:
-
         messages.error(
             request,
             'Your worker account is not approved.'
         )
+        return redirect('worker_login')
 
-        return redirect(
-            'worker_login'
-        )
-
-    subscription, created = (
-        WorkerSubscription.objects.get_or_create(
-            worker=worker
-        )
+    subscription, created = WorkerSubscription.objects.get_or_create(
+        worker=worker
     )
 
     if not subscription.terms_accepted:
-
         messages.error(
             request,
             'Please accept the Terms & Conditions first.'
         )
+        return redirect('terms_conditions')
 
-        return redirect(
-            'terms_conditions'
-        )
+    razorpay_key_id = getattr(settings, 'RAZORPAY_KEY_ID', '')
+    razorpay_key_secret = getattr(settings, 'RAZORPAY_KEY_SECRET', '')
+    razorpay_plan_id = getattr(settings, 'RAZORPAY_WORKER_PLAN_ID', '')
+
+    # Whenever the worker returns to this page, synchronise an existing
+    # Razorpay subscription. This also handles the future-start case where
+    # Razorpay reports "authenticated" after the ₹49 introductory payment.
+    if (
+        subscription.razorpay_subscription_id
+        and razorpay_key_id
+        and razorpay_key_secret
+    ):
+        try:
+            client = razorpay.Client(
+                auth=(razorpay_key_id, razorpay_key_secret)
+            )
+            existing_subscription = client.subscription.fetch(
+                subscription.razorpay_subscription_id
+            )
+            _sync_worker_subscription_from_razorpay(
+                subscription,
+                existing_subscription,
+            )
+        except Exception as error:
+            print('RAZORPAY SUBSCRIPTION SYNC ERROR:', error)
 
     if request.method == 'POST':
-
-        razorpay_key_id = getattr(
-            settings,
-            'RAZORPAY_KEY_ID',
-            ''
-        )
-
-        razorpay_key_secret = getattr(
-            settings,
-            'RAZORPAY_KEY_SECRET',
-            ''
-        )
-
-        razorpay_plan_id = getattr(
-            settings,
-            'RAZORPAY_WORKER_PLAN_ID',
-            ''
-        )
 
         if (
             not razorpay_key_id
             or not razorpay_key_secret
             or not razorpay_plan_id
         ):
-
             messages.error(
                 request,
                 'Razorpay subscription configuration is missing.'
             )
-
-            return redirect(
-                'worker_subscription_payment'
-            )
+            return redirect('worker_subscription_payment')
 
         try:
-
             client = razorpay.Client(
-                auth=(
-                    razorpay_key_id,
-                    razorpay_key_secret
-                )
+                auth=(razorpay_key_id, razorpay_key_secret)
             )
 
-            if (
-                subscription
-                .razorpay_subscription_id
-            ):
-
+            if subscription.razorpay_subscription_id:
                 try:
-
-                    existing_subscription = (
-                        client.subscription.fetch(
-                            subscription
-                            .razorpay_subscription_id
-                        )
+                    existing_subscription = client.subscription.fetch(
+                        subscription.razorpay_subscription_id
                     )
 
-                    razorpay_status = (
-                        existing_subscription.get(
-                            'status',
-                            ''
-                        )
+                    _sync_worker_subscription_from_razorpay(
+                        subscription,
+                        existing_subscription,
                     )
 
-                    short_url = (
-                        existing_subscription.get(
-                            'short_url'
-                        )
+                    razorpay_status = existing_subscription.get(
+                        'status',
+                        ''
                     )
+                    short_url = existing_subscription.get('short_url')
+
+                    if razorpay_status in {'authenticated', 'active'}:
+                        messages.success(
+                            request,
+                            'Your worker subscription is active.'
+                        )
+                        return redirect('worker_dashboard')
 
                     if (
                         razorpay_status
-                        in [
+                        in {
                             'created',
-                            'authenticated',
-                            'active',
                             'pending',
                             'halted',
-                        ]
+                        }
                         and short_url
                     ):
+                        return redirect(short_url)
 
-                        return redirect(
-                            short_url
-                        )
+                except Exception as error:
+                    print('RAZORPAY EXISTING SUBSCRIPTION ERROR:', error)
 
-                except Exception:
-                    pass
-
-            now = (
-                timezone.now()
-            )
-
-            first_regular_billing_date = (
-                add_one_month(
-                    now
-                )
-            )
-
+            now = timezone.now()
+            first_regular_billing_date = add_one_month(now)
             start_at_timestamp = int(
-                first_regular_billing_date
-                .timestamp()
+                first_regular_billing_date.timestamp()
             )
 
-            razorpay_subscription = (
-                client.subscription.create(
-                    {
-                        'plan_id':
-                            razorpay_plan_id,
-
-                        'total_count':
-                            12,
-
-                        'quantity':
-                            1,
-
-                        'customer_notify':
-                            True,
-
-                        'start_at':
-                            start_at_timestamp,
-
-                        'addons': [
-                            {
-                                'item': {
-                                    'name':
-                                        'First Month Subscription Fee',
-
-                                    'amount':
-                                        4900,
-
-                                    'currency':
-                                        'INR',
-                                }
+            razorpay_subscription = client.subscription.create(
+                {
+                    'plan_id': razorpay_plan_id,
+                    'total_count': 12,
+                    'quantity': 1,
+                    'customer_notify': True,
+                    'start_at': start_at_timestamp,
+                    'addons': [
+                        {
+                            'item': {
+                                'name': 'First Month Subscription Fee',
+                                'amount': 4900,
+                                'currency': 'INR',
                             }
-                        ],
-
-                        'notes': {
-                            'worker_id':
-                                str(worker.id),
-
-                            'worker_name':
-                                worker.name,
-
-                            'django_user_id':
-                                str(request.user.id),
-
-                            'subscription_type':
-                                'worker_monthly',
-                        },
-                    }
-                )
+                        }
+                    ],
+                    'notes': {
+                        'worker_id': str(worker.id),
+                        'worker_name': worker.name,
+                        'django_user_id': str(request.user.id),
+                        'subscription_type': 'worker_monthly',
+                    },
+                }
             )
 
-            razorpay_subscription_id = (
-                razorpay_subscription.get(
-                    'id',
-                    ''
-                )
+            razorpay_subscription_id = razorpay_subscription.get(
+                'id',
+                ''
             )
-
-            razorpay_short_url = (
-                razorpay_subscription.get(
-                    'short_url',
-                    ''
-                )
+            razorpay_short_url = razorpay_subscription.get(
+                'short_url',
+                ''
             )
 
             if not razorpay_subscription_id:
-
                 messages.error(
                     request,
                     'Razorpay did not return a subscription ID.'
                 )
-
-                return redirect(
-                    'worker_subscription_payment'
-                )
+                return redirect('worker_subscription_payment')
 
             subscription.razorpay_subscription_id = (
                 razorpay_subscription_id
             )
-
-            subscription.razorpay_plan_id = (
-                razorpay_plan_id
-            )
-
+            subscription.razorpay_plan_id = razorpay_plan_id
             subscription.first_month_price = 49
             subscription.monthly_price = 149
             subscription.status = 'pending'
-
-            subscription.next_billing_at = (
-                first_regular_billing_date
-            )
-
+            subscription.started_at = None
+            subscription.current_period_start = None
+            subscription.current_period_end = None
+            subscription.cancelled_at = None
+            subscription.next_billing_at = first_regular_billing_date
             subscription.save()
 
             if razorpay_short_url:
-
-                return redirect(
-                    razorpay_short_url
-                )
+                return redirect(razorpay_short_url)
 
             messages.success(
                 request,
                 'Subscription created successfully.'
             )
+            return redirect('worker_subscription_payment')
 
-            return redirect(
-                'worker_subscription_payment'
-            )
-
-        except razorpay.errors.BadRequestError as e:
-
-            print("RAZORPAY BAD REQUEST ERROR:", e)
-
+        except razorpay.errors.BadRequestError as error:
+            print('RAZORPAY BAD REQUEST ERROR:', error)
             messages.error(
                 request,
                 'Razorpay rejected the subscription request. Please check the subscription settings.'
             )
+            return redirect('worker_subscription_payment')
 
-            return redirect(
-                'worker_subscription_payment'
-            )
-
-        except razorpay.errors.ServerError as e:
-
-            print("RAZORPAY SERVER ERROR:", e)
-
+        except razorpay.errors.ServerError as error:
+            print('RAZORPAY SERVER ERROR:', error)
             messages.error(
                 request,
                 'Razorpay server is temporarily unavailable. Please try again.'
             )
+            return redirect('worker_subscription_payment')
 
-            return redirect(
-                'worker_subscription_payment'
-            )
-
-        except Exception as e:
-
-            print("RAZORPAY GENERAL ERROR:", e)
-
+        except Exception as error:
+            print('RAZORPAY GENERAL ERROR:', error)
             messages.error(
                 request,
                 'Unable to start subscription payment. Please try again.'
             )
-
-            return redirect(
-                'worker_subscription_payment'
-            )
+            return redirect('worker_subscription_payment')
 
     return render(
         request,
@@ -4059,6 +4190,119 @@ def worker_subscription_payment(request):
             'monthly_price': 149,
         }
     )
+
+
+# =========================================================
+# RAZORPAY WORKER SUBSCRIPTION WEBHOOK
+# =========================================================
+
+@csrf_exempt
+@require_POST
+def worker_subscription_webhook(request):
+    webhook_secret = (
+        getattr(settings, 'RAZORPAY_WEBHOOK_SECRET', '')
+        or os.environ.get('RAZORPAY_WEBHOOK_SECRET', '')
+    )
+    razorpay_key_id = getattr(settings, 'RAZORPAY_KEY_ID', '')
+    razorpay_key_secret = getattr(settings, 'RAZORPAY_KEY_SECRET', '')
+
+    if (
+        not webhook_secret
+        or not razorpay_key_id
+        or not razorpay_key_secret
+    ):
+        print('RAZORPAY WEBHOOK ERROR: webhook configuration is missing.')
+        return HttpResponse(status=503)
+
+    signature = request.headers.get('X-Razorpay-Signature', '')
+
+    if not signature:
+        return HttpResponse(status=400)
+
+    raw_body = request.body
+
+    try:
+        client = razorpay.Client(
+            auth=(razorpay_key_id, razorpay_key_secret)
+        )
+
+        client.utility.verify_webhook_signature(
+            raw_body.decode('utf-8'),
+            signature,
+            webhook_secret,
+        )
+
+    except Exception as error:
+        print('RAZORPAY WEBHOOK SIGNATURE ERROR:', error)
+        return HttpResponse(status=400)
+
+    try:
+        payload = json.loads(raw_body.decode('utf-8'))
+    except (UnicodeDecodeError, json.JSONDecodeError):
+        return HttpResponse(status=400)
+
+    event = payload.get('event', '')
+    event_payload = payload.get('payload', {})
+
+    razorpay_subscription = (
+        event_payload
+        .get('subscription', {})
+        .get('entity', {})
+    )
+
+    razorpay_subscription_id = razorpay_subscription.get('id', '')
+
+    # Payment events can contain the subscription id inside the payment
+    # entity instead of a subscription entity.
+    if not razorpay_subscription_id:
+        payment_entity = (
+            event_payload
+            .get('payment', {})
+            .get('entity', {})
+        )
+        razorpay_subscription_id = payment_entity.get(
+            'subscription_id',
+            ''
+        )
+
+    if not razorpay_subscription_id:
+        return HttpResponse(status=200)
+
+    subscription = (
+        WorkerSubscription.objects
+        .filter(
+            razorpay_subscription_id=razorpay_subscription_id
+        )
+        .first()
+    )
+
+    if not subscription:
+        return HttpResponse(status=200)
+
+    try:
+        # Fetching from Razorpay after signature verification means our local
+        # status is based on Razorpay's current server-side subscription state.
+        verified_subscription = client.subscription.fetch(
+            razorpay_subscription_id
+        )
+
+        _sync_worker_subscription_from_razorpay(
+            subscription,
+            verified_subscription,
+        )
+
+        print(
+            'RAZORPAY WORKER SUBSCRIPTION WEBHOOK:',
+            event,
+            razorpay_subscription_id,
+            verified_subscription.get('status', ''),
+        )
+
+    except Exception as error:
+        print('RAZORPAY WEBHOOK SYNC ERROR:', error)
+        return HttpResponse(status=500)
+
+    return HttpResponse(status=200)
 
 
 # =========================================================
@@ -4282,6 +4526,92 @@ def save_device_token(request):
         {
             'success': True,
             'role': role,
+        }
+    )
+
+
+# =========================================================
+# PAYMENT DETAILS - UI ONLY
+# =========================================================
+
+@login_required(login_url='login')
+def user_payment_details(request):
+    """Render the user payment details UI. Backend payment data will be connected later."""
+    return render(
+        request,
+        'complaints/User_Folder/user_payment_details.html',
+    )
+
+
+@login_required(login_url='worker_login')
+def worker_payment_details(request):
+    """Render the worker payment details UI. Backend payout data will be connected later."""
+    try:
+        worker = request.user.worker_profile
+    except WorkerProfile.DoesNotExist:
+        messages.error(
+            request,
+            'Worker access required.'
+        )
+        return redirect('worker_login')
+
+    if not worker.is_approved:
+        messages.error(
+            request,
+            'Your worker account is not approved yet.'
+        )
+        return redirect('worker_login')
+
+    return render(
+        request,
+        'complaints/Worker_Folder/worker_payment_details.html',
+        {
+            'worker': worker,
+        },
+    )
+
+
+# =========================================================
+# WORKER CHAT INBOX
+# =========================================================
+
+@login_required(login_url='worker_login')
+def worker_chats(request):
+
+    try:
+        worker = request.user.worker_profile
+    except WorkerProfile.DoesNotExist:
+        messages.error(
+            request,
+            'Worker access required.'
+        )
+        return redirect('worker_login')
+
+    if not worker.is_approved:
+        messages.error(
+            request,
+            'Your worker account is not approved yet.'
+        )
+        return redirect('worker_dashboard')
+
+    worker_chat_complaints = (
+        Complaint.objects
+        .filter(assigned_worker=worker)
+        .select_related(
+            'user',
+            'assigned_worker',
+            'assigned_worker__user',
+        )
+        .order_by('-created_at')
+    )
+
+    return render(
+        request,
+        'complaints/chat.html',
+        {
+            'chat_inbox': True,
+            'worker': worker,
+            'worker_chat_complaints': worker_chat_complaints,
         }
     )
 

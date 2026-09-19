@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -217,7 +218,118 @@
                 grid-column: auto;
             }
         }
-    </style>
+
+        /* ADVANCED PROFILE PHOTO */
+        .avatar-editor{position:relative;width:132px;height:132px;margin:auto}
+        .avatar-editor .avatar{width:120px;height:120px;margin:auto}
+        .avatar-camera{position:absolute;right:0;bottom:6px;width:42px;height:42px;border:3px solid #fff;border-radius:50%;background:linear-gradient(135deg,#0ea5e9,#2563eb);color:#fff;display:grid;place-items:center;cursor:pointer;box-shadow:0 8px 22px rgba(37,99,235,.35);z-index:4}
+        .avatar-camera .ui-icon{width:21px;height:21px}
+        .photo-menu{display:none;width:min(330px,calc(100vw - 48px));margin:14px auto 0;overflow:hidden;text-align:left;border:1px solid rgba(148,163,184,.35);border-radius:16px;background:#fff;box-shadow:0 18px 45px rgba(15,23,42,.2)}
+        .photo-menu.open{display:block}
+        .photo-menu-title{padding:14px 16px;font-size:15px;font-weight:900;border-bottom:1px solid #e2e8f0}
+        .photo-menu-item{width:100%;border:0;border-bottom:1px solid #eef2f7;background:transparent;color:inherit;padding:13px 16px;display:flex;align-items:center;gap:11px;font:inherit;cursor:pointer;text-align:left}
+        .photo-menu-item:last-child{border-bottom:0}.photo-menu-item:hover{background:rgba(59,130,246,.08)}
+        .photo-menu-item .ui-icon{width:20px;height:20px}.premium-mark{margin-left:auto;padding:3px 8px;border-radius:999px;background:#f59e0b;color:#fff;font-size:10px;font-weight:900}
+        .hidden-photo-input{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important}
+        .photo-preview-note{display:none;margin:12px auto 0;max-width:330px;padding:10px 12px;border-radius:11px;background:rgba(37,99,235,.09);font-size:12px;line-height:1.45}
+        .photo-preview-note.show{display:block}
+        body.sc-theme-dark .photo-menu,body.worker-theme-dark .photo-menu{background:#172033;border-color:#334155;color:#f8fafc}
+        body.sc-theme-glass .photo-menu,body.worker-theme-glass .photo-menu{background:rgba(15,23,42,.88);border-color:rgba(191,219,254,.25);color:#fff;backdrop-filter:blur(22px)}
+
+    
+        /* FREE AVATAR PICKER */
+        .avatar-modal-backdrop{
+            display:none;position:fixed;inset:0;z-index:9998;
+            background:rgba(2,6,23,.72);padding:18px;
+            align-items:center;justify-content:center;
+        }
+        .avatar-modal-backdrop.open{display:flex}
+        .avatar-modal{
+            width:min(520px,100%);max-height:82vh;overflow:auto;
+            border:1px solid rgba(148,163,184,.32);border-radius:22px;
+            background:#fff;color:#0f172a;padding:18px;
+            box-shadow:0 28px 80px rgba(2,6,23,.45);
+        }
+        .avatar-modal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+        .avatar-modal-head h3{margin:0;font-size:19px}
+        .avatar-modal-close{
+            width:38px;height:38px;border:0;border-radius:50%;cursor:pointer;
+            background:#e2e8f0;color:#0f172a;font-size:22px;line-height:1;
+        }
+        .avatar-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+        .avatar-choice{
+            border:2px solid transparent;border-radius:18px;padding:7px;
+            background:rgba(59,130,246,.07);cursor:pointer;transition:.18s ease;
+        }
+        .avatar-choice:hover,.avatar-choice.selected{
+            border-color:#38bdf8;transform:translateY(-2px);
+            box-shadow:0 8px 20px rgba(14,165,233,.20);
+        }
+        .avatar-choice img{display:block;width:100%;aspect-ratio:1;border-radius:14px;object-fit:cover}
+        .avatar-modal-note{margin:14px 2px 0;font-size:12px;opacity:.72;line-height:1.5}
+        body.sc-theme-dark .avatar-modal,body.worker-theme-dark .avatar-modal,
+        body.sc-theme-glass .avatar-modal,body.worker-theme-glass .avatar-modal{
+            background:#111c31;color:#f8fafc;border-color:#334155;
+        }
+        body.sc-theme-dark .avatar-modal-close,body.worker-theme-dark .avatar-modal-close,
+        body.sc-theme-glass .avatar-modal-close,body.worker-theme-glass .avatar-modal-close{
+            background:#263550;color:#fff;
+        }
+
+        .premium-avatar-choice{
+            position:relative;
+            border:1px solid rgba(245,158,11,.42);
+            background:rgba(245,158,11,.06);
+            border-radius:16px;
+            padding:6px;
+            cursor:pointer;
+            transition:.18s ease;
+        }
+        .premium-avatar-choice:hover{
+            transform:translateY(-2px);
+            border-color:#f59e0b;
+            box-shadow:0 10px 24px rgba(245,158,11,.18);
+        }
+        .premium-avatar-choice img{
+            display:block;
+            width:100%;
+            aspect-ratio:1;
+            border-radius:14px;
+            object-fit:cover;
+        }
+        .premium-crown{
+            position:absolute;
+            top:9px;
+            left:9px;
+            width:26px;
+            height:26px;
+            border-radius:9px;
+            display:grid;
+            place-items:center;
+            background:rgba(8,18,38,.88);
+            color:#fbbf24;
+            font-size:15px;
+            box-shadow:0 4px 12px rgba(0,0,0,.28);
+        }
+        .premium-avatar-title{
+            display:flex;
+            align-items:center;
+            gap:8px;
+        }
+        .premium-avatar-title .gold{color:#f59e0b}
+        .premium-upgrade-box{
+            margin-top:14px;
+            padding:13px 14px;
+            border:1px solid rgba(245,158,11,.35);
+            border-radius:14px;
+            background:rgba(245,158,11,.08);
+            font-size:12px;
+            line-height:1.55;
+        }
+
+        @media(max-width:480px){.avatar-grid{grid-template-columns:repeat(4,1fr);gap:8px}.avatar-modal{padding:14px}}
+
+</style>
 </head>
 
 <body>
@@ -234,16 +346,23 @@
             {% endif %}
 
             <div class="head">
-                <div class="avatar">
-                    {% if user_profile.photo %}
-                        <img src="{{ user_profile.photo.url }}" alt="Profile Photo">
-                    {% else %}
-                        <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
-                            <circle cx="12" cy="8" r="4"></circle>
-                            <path d="M4.5 21a7.5 7.5 0 0 1 15 0"></path>
-                        </svg>
-                    {% endif %}
+
+                <div class="avatar-editor">
+                    <div class="avatar" id="profileAvatar">
+                        {% if user_profile.photo %}<img src="{{ user_profile.photo.url }}" alt="Profile Photo">
+                        {% else %}<svg class="ui-icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"></circle><path d="M4.5 21a7.5 7.5 0 0 1 15 0"></path></svg>{% endif %}
+                    </div>
+                    <button class="avatar-camera" type="button" id="photoMenuButton" aria-label="Change profile photo"><svg class="ui-icon" viewBox="0 0 24 24"><path d="M4 7h3l2-3h6l2 3h3a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z"></path><circle cx="12" cy="13" r="4"></circle></svg></button>
                 </div>
+                <div class="photo-menu" id="photoMenu">
+                    <div class="photo-menu-title">Change Profile Photo</div>
+                    <button type="button" class="photo-menu-item" data-a="camera">📷 Take Photo</button>
+                    <button type="button" class="photo-menu-item" data-a="gallery">🖼️ Choose from Gallery</button>
+                    <button type="button" class="photo-menu-item" data-a="avatar">🙂 Choose Free Avatar</button>
+                    <button type="button" class="photo-menu-item" data-a="premium">👑 Premium Avatars <span class="premium-mark">PRO</span></button>
+                </div>
+                <div class="photo-preview-note" id="photoPreviewNote"></div>
+
 
                 <h1>My Profile</h1>
                 <div class="username">@{{ profile_user.username }}</div>
@@ -277,21 +396,10 @@
 
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
-
-                <div class="photo-section">
-                    <label class="label">
-                        <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M4 7h3l2-3h6l2 3h3a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z"></path>
-                            <circle cx="12" cy="13" r="4"></circle>
-                        </svg>
-                        Profile Photo
-                    </label>
-
-                    <input class="input" type="file" name="photo" accept="image/*">
-                    <p class="muted" style="margin-top:8px;">Maximum photo size: 5 MB</p>
-                </div>
-
-                <div class="form-grid">
+<input id="galleryPhotoInput" class="hidden-photo-input" type="file" name="photo" accept="image/*">
+<input id="freeAvatarInput" type="hidden" name="free_avatar" value="">
+<input id="cameraPhotoInput" class="hidden-photo-input" type="file" accept="image/*" capture="environment">
+<div class="form-grid">
                     <div class="form-group full">
                         <label class="label">Username</label>
                         <input class="input readonly" value="{{ profile_user.username }}" readonly>
@@ -345,5 +453,481 @@
             </div>
         </div>
     </main>
+
+
+<div class="avatar-modal-backdrop" id="freeAvatarModal" aria-hidden="true">
+    <div class="avatar-modal" role="dialog" aria-modal="true" aria-labelledby="freeAvatarTitle">
+        <div class="avatar-modal-head">
+            <h3 id="freeAvatarTitle">Choose Free Avatar</h3>
+            <button type="button" class="avatar-modal-close" id="freeAvatarClose" aria-label="Close">×</button>
+        </div>
+        <div class="avatar-grid">
+            <button type="button" class="avatar-choice" data-avatar-id="avatar_01">
+                <img src="{% static 'complaints/avatars/free/avatar_01.png' %}" alt="Free avatar 1">
+            </button>
+            <button type="button" class="avatar-choice" data-avatar-id="avatar_02">
+                <img src="{% static 'complaints/avatars/free/avatar_02.png' %}" alt="Free avatar 2">
+            </button>
+            <button type="button" class="avatar-choice" data-avatar-id="avatar_03">
+                <img src="{% static 'complaints/avatars/free/avatar_03.png' %}" alt="Free avatar 3">
+            </button>
+            <button type="button" class="avatar-choice" data-avatar-id="avatar_04">
+                <img src="{% static 'complaints/avatars/free/avatar_04.png' %}" alt="Free avatar 4">
+            </button>
+            <button type="button" class="avatar-choice" data-avatar-id="avatar_05">
+                <img src="{% static 'complaints/avatars/free/avatar_05.png' %}" alt="Free avatar 5">
+            </button>
+            <button type="button" class="avatar-choice" data-avatar-id="avatar_06">
+                <img src="{% static 'complaints/avatars/free/avatar_06.png' %}" alt="Free avatar 6">
+            </button>
+            <button type="button" class="avatar-choice" data-avatar-id="avatar_07">
+                <img src="{% static 'complaints/avatars/free/avatar_07.png' %}" alt="Free avatar 7">
+            </button>
+            <button type="button" class="avatar-choice" data-avatar-id="avatar_08">
+                <img src="{% static 'complaints/avatars/free/avatar_08.png' %}" alt="Free avatar 8">
+            </button>
+            <button type="button" class="avatar-choice" data-avatar-id="avatar_09">
+                <img src="{% static 'complaints/avatars/free/avatar_09.png' %}" alt="Free avatar 9">
+            </button>
+            <button type="button" class="avatar-choice" data-avatar-id="avatar_10">
+                <img src="{% static 'complaints/avatars/free/avatar_10.png' %}" alt="Free avatar 10">
+            </button>
+            <button type="button" class="avatar-choice" data-avatar-id="avatar_11">
+                <img src="{% static 'complaints/avatars/free/avatar_11.png' %}" alt="Free avatar 11">
+            </button>
+            <button type="button" class="avatar-choice" data-avatar-id="avatar_12">
+                <img src="{% static 'complaints/avatars/free/avatar_12.png' %}" alt="Free avatar 12">
+            </button>
+            <button type="button" class="avatar-choice" data-avatar-id="avatar_13">
+                <img src="{% static 'complaints/avatars/free/avatar_13.png' %}" alt="Free avatar 13">
+            </button>
+            <button type="button" class="avatar-choice" data-avatar-id="avatar_14">
+                <img src="{% static 'complaints/avatars/free/avatar_14.png' %}" alt="Free avatar 14">
+            </button>
+            <button type="button" class="avatar-choice" data-avatar-id="avatar_15">
+                <img src="{% static 'complaints/avatars/free/avatar_15.png' %}" alt="Free avatar 15">
+            </button>
+            <button type="button" class="avatar-choice" data-avatar-id="avatar_16">
+                <img src="{% static 'complaints/avatars/free/avatar_16.png' %}" alt="Free avatar 16">
+            </button>
+            <button type="button" class="avatar-choice" data-avatar-id="avatar_17">
+                <img src="{% static 'complaints/avatars/free/avatar_17.png' %}" alt="Free avatar 17">
+            </button>
+            <button type="button" class="avatar-choice" data-avatar-id="avatar_18">
+                <img src="{% static 'complaints/avatars/free/avatar_18.png' %}" alt="Free avatar 18">
+            </button>
+            <button type="button" class="avatar-choice" data-avatar-id="avatar_19">
+                <img src="{% static 'complaints/avatars/free/avatar_19.png' %}" alt="Free avatar 19">
+            </button>
+            <button type="button" class="avatar-choice" data-avatar-id="avatar_20">
+                <img src="{% static 'complaints/avatars/free/avatar_20.png' %}" alt="Free avatar 20">
+            </button>
+            <button type="button" class="avatar-choice" data-avatar-id="avatar_21">
+                <img src="{% static 'complaints/avatars/free/avatar_21.png' %}" alt="Free avatar 21">
+            </button>
+            <button type="button" class="avatar-choice" data-avatar-id="avatar_22">
+                <img src="{% static 'complaints/avatars/free/avatar_22.png' %}" alt="Free avatar 22">
+            </button>
+            <button type="button" class="avatar-choice" data-avatar-id="avatar_23">
+                <img src="{% static 'complaints/avatars/free/avatar_23.png' %}" alt="Free avatar 23">
+            </button>
+            <button type="button" class="avatar-choice" data-avatar-id="avatar_24">
+                <img src="{% static 'complaints/avatars/free/avatar_24.png' %}" alt="Free avatar 24">
+            </button>
+            <button type="button" class="avatar-choice" data-avatar-id="avatar_25">
+                <img src="{% static 'complaints/avatars/free/avatar_25.png' %}" alt="Free avatar 25">
+            </button>
+            <button type="button" class="avatar-choice" data-avatar-id="avatar_26">
+                <img src="{% static 'complaints/avatars/free/avatar_26.png' %}" alt="Free avatar 26">
+            </button>
+            <button type="button" class="avatar-choice" data-avatar-id="avatar_27">
+                <img src="{% static 'complaints/avatars/free/avatar_27.png' %}" alt="Free avatar 27">
+            </button>
+            <button type="button" class="avatar-choice" data-avatar-id="avatar_28">
+                <img src="{% static 'complaints/avatars/free/avatar_28.png' %}" alt="Free avatar 28">
+            </button>
+            <button type="button" class="avatar-choice" data-avatar-id="avatar_29">
+                <img src="{% static 'complaints/avatars/free/avatar_29.png' %}" alt="Free avatar 29">
+            </button>
+            <button type="button" class="avatar-choice" data-avatar-id="avatar_30">
+                <img src="{% static 'complaints/avatars/free/avatar_30.png' %}" alt="Free avatar 30">
+            </button>
+            <button type="button" class="avatar-choice" data-avatar-id="avatar_31">
+                <img src="{% static 'complaints/avatars/free/avatar_31.png' %}" alt="Free avatar 31">
+            </button>
+            <button type="button" class="avatar-choice" data-avatar-id="avatar_32">
+                <img src="{% static 'complaints/avatars/free/avatar_32.png' %}" alt="Free avatar 32">
+            </button>
+            <button type="button" class="avatar-choice" data-avatar-id="avatar_33">
+                <img src="{% static 'complaints/avatars/free/avatar_33.png' %}" alt="Free avatar 33">
+            </button>
+            <button type="button" class="avatar-choice" data-avatar-id="avatar_34">
+                <img src="{% static 'complaints/avatars/free/avatar_34.png' %}" alt="Free avatar 34">
+            </button>
+            <button type="button" class="avatar-choice" data-avatar-id="avatar_35">
+                <img src="{% static 'complaints/avatars/free/avatar_35.png' %}" alt="Free avatar 35">
+            </button>
+            <button type="button" class="avatar-choice" data-avatar-id="avatar_36">
+                <img src="{% static 'complaints/avatars/free/avatar_36.png' %}" alt="Free avatar 36">
+            </button>
+            <button type="button" class="avatar-choice" data-avatar-id="avatar_37">
+                <img src="{% static 'complaints/avatars/free/avatar_37.png' %}" alt="Free avatar 37">
+            </button>
+            <button type="button" class="avatar-choice" data-avatar-id="avatar_38">
+                <img src="{% static 'complaints/avatars/free/avatar_38.png' %}" alt="Free avatar 38">
+            </button>
+            <button type="button" class="avatar-choice" data-avatar-id="avatar_39">
+                <img src="{% static 'complaints/avatars/free/avatar_39.png' %}" alt="Free avatar 39">
+            </button>
+            <button type="button" class="avatar-choice" data-avatar-id="avatar_40">
+                <img src="{% static 'complaints/avatars/free/avatar_40.png' %}" alt="Free avatar 40">
+            </button>
+        </div>
+        <p class="avatar-modal-note">Select an avatar, then tap Save Profile to apply it permanently.</p>
+    </div>
+</div>
+
+
+<div class="avatar-modal-backdrop" id="premiumAvatarModal" aria-hidden="true">
+    <div class="avatar-modal" role="dialog" aria-modal="true" aria-labelledby="premiumAvatarTitle">
+        <div class="avatar-modal-head">
+            <h3 id="premiumAvatarTitle" class="premium-avatar-title">👑 Choose <span class="gold">Premium Avatar</span></h3>
+            <button type="button" class="avatar-modal-close" id="premiumAvatarClose" aria-label="Close">×</button>
+        </div>
+        <div class="avatar-grid">
+            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_01" aria-label="Premium avatar 1">
+                <span class="premium-crown">👑</span>
+                <img src="{% static 'complaints/avatars/premium/premium_avatar_01.png' %}" alt="Premium avatar 1">
+            </button>
+            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_02" aria-label="Premium avatar 2">
+                <span class="premium-crown">👑</span>
+                <img src="{% static 'complaints/avatars/premium/premium_avatar_02.png' %}" alt="Premium avatar 2">
+            </button>
+            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_03" aria-label="Premium avatar 3">
+                <span class="premium-crown">👑</span>
+                <img src="{% static 'complaints/avatars/premium/premium_avatar_03.png' %}" alt="Premium avatar 3">
+            </button>
+            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_04" aria-label="Premium avatar 4">
+                <span class="premium-crown">👑</span>
+                <img src="{% static 'complaints/avatars/premium/premium_avatar_04.png' %}" alt="Premium avatar 4">
+            </button>
+            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_05" aria-label="Premium avatar 5">
+                <span class="premium-crown">👑</span>
+                <img src="{% static 'complaints/avatars/premium/premium_avatar_05.png' %}" alt="Premium avatar 5">
+            </button>
+            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_06" aria-label="Premium avatar 6">
+                <span class="premium-crown">👑</span>
+                <img src="{% static 'complaints/avatars/premium/premium_avatar_06.png' %}" alt="Premium avatar 6">
+            </button>
+            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_07" aria-label="Premium avatar 7">
+                <span class="premium-crown">👑</span>
+                <img src="{% static 'complaints/avatars/premium/premium_avatar_07.png' %}" alt="Premium avatar 7">
+            </button>
+            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_08" aria-label="Premium avatar 8">
+                <span class="premium-crown">👑</span>
+                <img src="{% static 'complaints/avatars/premium/premium_avatar_08.png' %}" alt="Premium avatar 8">
+            </button>
+            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_09" aria-label="Premium avatar 9">
+                <span class="premium-crown">👑</span>
+                <img src="{% static 'complaints/avatars/premium/premium_avatar_09.png' %}" alt="Premium avatar 9">
+            </button>
+            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_10" aria-label="Premium avatar 10">
+                <span class="premium-crown">👑</span>
+                <img src="{% static 'complaints/avatars/premium/premium_avatar_10.png' %}" alt="Premium avatar 10">
+            </button>
+            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_11" aria-label="Premium avatar 11">
+                <span class="premium-crown">👑</span>
+                <img src="{% static 'complaints/avatars/premium/premium_avatar_11.png' %}" alt="Premium avatar 11">
+            </button>
+            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_12" aria-label="Premium avatar 12">
+                <span class="premium-crown">👑</span>
+                <img src="{% static 'complaints/avatars/premium/premium_avatar_12.png' %}" alt="Premium avatar 12">
+            </button>
+            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_13" aria-label="Premium avatar 13">
+                <span class="premium-crown">👑</span>
+                <img src="{% static 'complaints/avatars/premium/premium_avatar_13.png' %}" alt="Premium avatar 13">
+            </button>
+            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_14" aria-label="Premium avatar 14">
+                <span class="premium-crown">👑</span>
+                <img src="{% static 'complaints/avatars/premium/premium_avatar_14.png' %}" alt="Premium avatar 14">
+            </button>
+            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_15" aria-label="Premium avatar 15">
+                <span class="premium-crown">👑</span>
+                <img src="{% static 'complaints/avatars/premium/premium_avatar_15.png' %}" alt="Premium avatar 15">
+            </button>
+            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_16" aria-label="Premium avatar 16">
+                <span class="premium-crown">👑</span>
+                <img src="{% static 'complaints/avatars/premium/premium_avatar_16.png' %}" alt="Premium avatar 16">
+            </button>
+            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_17" aria-label="Premium avatar 17">
+                <span class="premium-crown">👑</span>
+                <img src="{% static 'complaints/avatars/premium/premium_avatar_17.png' %}" alt="Premium avatar 17">
+            </button>
+            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_18" aria-label="Premium avatar 18">
+                <span class="premium-crown">👑</span>
+                <img src="{% static 'complaints/avatars/premium/premium_avatar_18.png' %}" alt="Premium avatar 18">
+            </button>
+            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_19" aria-label="Premium avatar 19">
+                <span class="premium-crown">👑</span>
+                <img src="{% static 'complaints/avatars/premium/premium_avatar_19.png' %}" alt="Premium avatar 19">
+            </button>
+            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_20" aria-label="Premium avatar 20">
+                <span class="premium-crown">👑</span>
+                <img src="{% static 'complaints/avatars/premium/premium_avatar_20.png' %}" alt="Premium avatar 20">
+            </button>
+            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_21" aria-label="Premium avatar 21">
+                <span class="premium-crown">👑</span>
+                <img src="{% static 'complaints/avatars/premium/premium_avatar_21.png' %}" alt="Premium avatar 21">
+            </button>
+            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_22" aria-label="Premium avatar 22">
+                <span class="premium-crown">👑</span>
+                <img src="{% static 'complaints/avatars/premium/premium_avatar_22.png' %}" alt="Premium avatar 22">
+            </button>
+            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_23" aria-label="Premium avatar 23">
+                <span class="premium-crown">👑</span>
+                <img src="{% static 'complaints/avatars/premium/premium_avatar_23.png' %}" alt="Premium avatar 23">
+            </button>
+            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_24" aria-label="Premium avatar 24">
+                <span class="premium-crown">👑</span>
+                <img src="{% static 'complaints/avatars/premium/premium_avatar_24.png' %}" alt="Premium avatar 24">
+            </button>
+            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_25" aria-label="Premium avatar 25">
+                <span class="premium-crown">👑</span>
+                <img src="{% static 'complaints/avatars/premium/premium_avatar_25.png' %}" alt="Premium avatar 25">
+            </button>
+            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_26" aria-label="Premium avatar 26">
+                <span class="premium-crown">👑</span>
+                <img src="{% static 'complaints/avatars/premium/premium_avatar_26.png' %}" alt="Premium avatar 26">
+            </button>
+            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_27" aria-label="Premium avatar 27">
+                <span class="premium-crown">👑</span>
+                <img src="{% static 'complaints/avatars/premium/premium_avatar_27.png' %}" alt="Premium avatar 27">
+            </button>
+            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_28" aria-label="Premium avatar 28">
+                <span class="premium-crown">👑</span>
+                <img src="{% static 'complaints/avatars/premium/premium_avatar_28.png' %}" alt="Premium avatar 28">
+            </button>
+            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_29" aria-label="Premium avatar 29">
+                <span class="premium-crown">👑</span>
+                <img src="{% static 'complaints/avatars/premium/premium_avatar_29.png' %}" alt="Premium avatar 29">
+            </button>
+            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_30" aria-label="Premium avatar 30">
+                <span class="premium-crown">👑</span>
+                <img src="{% static 'complaints/avatars/premium/premium_avatar_30.png' %}" alt="Premium avatar 30">
+            </button>
+            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_31" aria-label="Premium avatar 31">
+                <span class="premium-crown">👑</span>
+                <img src="{% static 'complaints/avatars/premium/premium_avatar_31.png' %}" alt="Premium avatar 31">
+            </button>
+            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_32" aria-label="Premium avatar 32">
+                <span class="premium-crown">👑</span>
+                <img src="{% static 'complaints/avatars/premium/premium_avatar_32.png' %}" alt="Premium avatar 32">
+            </button>
+            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_33" aria-label="Premium avatar 33">
+                <span class="premium-crown">👑</span>
+                <img src="{% static 'complaints/avatars/premium/premium_avatar_33.png' %}" alt="Premium avatar 33">
+            </button>
+            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_34" aria-label="Premium avatar 34">
+                <span class="premium-crown">👑</span>
+                <img src="{% static 'complaints/avatars/premium/premium_avatar_34.png' %}" alt="Premium avatar 34">
+            </button>
+            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_35" aria-label="Premium avatar 35">
+                <span class="premium-crown">👑</span>
+                <img src="{% static 'complaints/avatars/premium/premium_avatar_35.png' %}" alt="Premium avatar 35">
+            </button>
+            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_36" aria-label="Premium avatar 36">
+                <span class="premium-crown">👑</span>
+                <img src="{% static 'complaints/avatars/premium/premium_avatar_36.png' %}" alt="Premium avatar 36">
+            </button>
+            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_37" aria-label="Premium avatar 37">
+                <span class="premium-crown">👑</span>
+                <img src="{% static 'complaints/avatars/premium/premium_avatar_37.png' %}" alt="Premium avatar 37">
+            </button>
+            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_38" aria-label="Premium avatar 38">
+                <span class="premium-crown">👑</span>
+                <img src="{% static 'complaints/avatars/premium/premium_avatar_38.png' %}" alt="Premium avatar 38">
+            </button>
+            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_39" aria-label="Premium avatar 39">
+                <span class="premium-crown">👑</span>
+                <img src="{% static 'complaints/avatars/premium/premium_avatar_39.png' %}" alt="Premium avatar 39">
+            </button>
+            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_40" aria-label="Premium avatar 40">
+                <span class="premium-crown">👑</span>
+                <img src="{% static 'complaints/avatars/premium/premium_avatar_40.png' %}" alt="Premium avatar 40">
+            </button>
+        </div>
+        <div class="premium-upgrade-box">
+            👑 Premium collection preview. Premium avatar selection will unlock with the Premium membership system.
+        </div>
+    </div>
+</div>
+
+<script>
+(function(){
+    const menuButton = document.getElementById('photoMenuButton');
+    const menu = document.getElementById('photoMenu');
+    const galleryInput = document.getElementById('galleryPhotoInput');
+    const cameraInput = document.getElementById('cameraPhotoInput');
+    const avatarInput = document.getElementById('freeAvatarInput');
+    const avatarPreview = document.getElementById('profileAvatar');
+    const noteBox = document.getElementById('photoPreviewNote');
+    const modal = document.getElementById('freeAvatarModal');
+    const modalClose = document.getElementById('freeAvatarClose');
+    const premiumModal = document.getElementById('premiumAvatarModal');
+    const premiumModalClose = document.getElementById('premiumAvatarClose');
+
+    if (!menuButton || !menu || !galleryInput || !avatarPreview) return;
+
+    function showNote(text){
+        if (!noteBox) return;
+        noteBox.textContent = text;
+        noteBox.classList.add('show');
+    }
+
+    function previewFile(file){
+        if (!file) return;
+
+        if (!file.type.startsWith('image/')){
+            showNote('Please choose an image file.');
+            return;
+        }
+
+        if (file.size > 5 * 1024 * 1024){
+            showNote('Maximum photo size is 5 MB.');
+            return;
+        }
+
+        if (avatarInput) avatarInput.value = '';
+
+        const reader = new FileReader();
+        reader.onload = function(event){
+            avatarPreview.innerHTML =
+                '<img src="' + event.target.result + '" alt="Profile photo preview">';
+            showNote('Photo selected. Save Profile to apply it.');
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function openAvatarModal(){
+        if (!modal) return;
+        modal.classList.add('open');
+        modal.setAttribute('aria-hidden', 'false');
+        menu.classList.remove('open');
+    }
+
+    function closeAvatarModal(){
+        if (!modal) return;
+        modal.classList.remove('open');
+        modal.setAttribute('aria-hidden', 'true');
+    }
+    function openPremiumAvatarModal(){
+        if (!premiumModal) return;
+        premiumModal.classList.add('open');
+        premiumModal.setAttribute('aria-hidden', 'false');
+        menu.classList.remove('open');
+    }
+
+    function closePremiumAvatarModal(){
+        if (!premiumModal) return;
+        premiumModal.classList.remove('open');
+        premiumModal.setAttribute('aria-hidden', 'true');
+    }
+
+    menuButton.addEventListener('click', function(){
+        menu.classList.toggle('open');
+    });
+
+    menu.querySelectorAll('[data-a]').forEach(function(button){
+        button.addEventListener('click', function(){
+            const action = button.dataset.a;
+
+            if (action === 'gallery'){
+                galleryInput.removeAttribute('capture');
+                galleryInput.click();
+                menu.classList.remove('open');
+            }
+
+            if (action === 'camera'){
+                if (cameraInput) cameraInput.click();
+                menu.classList.remove('open');
+            }
+
+            if (action === 'avatar'){
+                openAvatarModal();
+            }
+
+            if (action === 'premium'){
+                openPremiumAvatarModal();
+            }
+        });
+    });
+
+    galleryInput.addEventListener('change', function(){
+        previewFile(galleryInput.files[0]);
+    });
+
+    if (cameraInput){
+        cameraInput.addEventListener('change', function(){
+            if (!cameraInput.files[0]) return;
+
+            try{
+                const transfer = new DataTransfer();
+                transfer.items.add(cameraInput.files[0]);
+                galleryInput.files = transfer.files;
+            }catch(error){
+                // Some WebViews do not allow assigning FileList.
+            }
+
+            previewFile(cameraInput.files[0]);
+        });
+    }
+
+    if (modalClose) modalClose.addEventListener('click', closeAvatarModal);
+
+    if (premiumModalClose) premiumModalClose.addEventListener('click', closePremiumAvatarModal);
+
+    if (premiumModal){
+        premiumModal.addEventListener('click', function(event){
+            if (event.target === premiumModal) closePremiumAvatarModal();
+        });
+
+        premiumModal.querySelectorAll('.premium-avatar-choice').forEach(function(choice){
+            choice.addEventListener('click', function(){
+                showNote('👑 This avatar is Premium. Premium membership unlock will be connected in the Premium phase.');
+            });
+        });
+    }
+
+
+    if (modal){
+        modal.addEventListener('click', function(event){
+            if (event.target === modal) closeAvatarModal();
+        });
+
+        modal.querySelectorAll('.avatar-choice').forEach(function(choice){
+            choice.addEventListener('click', function(){
+                const avatarId = choice.dataset.avatarId;
+                const image = choice.querySelector('img');
+
+                modal.querySelectorAll('.avatar-choice').forEach(function(item){
+                    item.classList.remove('selected');
+                });
+                choice.classList.add('selected');
+
+                if (avatarInput) avatarInput.value = avatarId;
+                galleryInput.value = '';
+                if (cameraInput) cameraInput.value = '';
+
+                avatarPreview.innerHTML =
+                    '<img src="' + image.src + '" alt="Selected free avatar">';
+
+                showNote('Free avatar selected. Save Profile to apply it.');
+                closeAvatarModal();
+            });
+        });
+    }
+})();
+</script>
+
 </body>
 </html>

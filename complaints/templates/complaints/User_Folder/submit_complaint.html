@@ -3,240 +3,325 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-
     <title>Submit Complaint | Smart Complaint</title>
 
     {% include 'complaints/base_style.html' %}
 
-    <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
     <style>
+      * {
+        box-sizing: border-box;
+      }
+      
+      .sc-submit-page {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 30px 20px 55px;
+      }
+      
+      .submit-hero {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 22px;
+      }
+      
+      .submit-heading {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      
+      .submit-heading-icon {
+        width: 64px;
+        height: 64px;
+        border-radius: 18px;
+        display: grid;
+        place-items: center;
+        color: #60a5fa;
+        background: rgba(59, 130, 246, 0.16);
+        border: 1px solid rgba(147, 197, 253, 0.35);
+      }
+      
+      .submit-heading-icon svg {
+        width: 34px;
+        height: 34px;
+      }
+      
+      .submit-heading h1 {
+        margin: 0;
+        color: #fff;
+        font-size: 32px;
+        font-weight: 900;
+      }
+      
+      .submit-heading p {
+        margin: 7px 0 0;
+        color: #bfdbfe;
+        line-height: 1.6;
+      }
+      
+      .city-banner {
+        min-width: 330px;
+        padding: 17px 20px;
+        border: 1px solid rgba(45, 212, 191, 0.38);
+        border-radius: 16px;
+        background: linear-gradient(135deg, rgba(5, 150, 105, 0.2), rgba(14, 165, 233, 0.2));
+        color: #fff;
+      }
+      
+      .city-banner strong {
+        display: block;
+        font-size: 16px;
+        margin-bottom: 5px;
+      }
+      
+      .city-banner small {
+        color: #dbeafe;
+      }
+      
+      .stepper {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0;
+        padding: 20px 25px;
+        margin-bottom: 22px;
+        border: 1px solid rgba(96, 165, 250, 0.35);
+        border-radius: 18px;
+        background: rgba(15, 40, 85, 0.46);
+        backdrop-filter: blur(18px);
+      }
+      
+      .step {
+        position: relative;
+        text-align: center;
+        color: #a9c4ee;
+        font-size: 12px;
+        font-weight: 800;
+      }
+      
+      .step:not(:last-child)::after {
+        content: '';
+        position: absolute;
+        top: 19px;
+        left: 60%;
+        width: 80%;
+        height: 2px;
+        background: rgba(148, 163, 184, 0.35);
+      }
+      
+      .step-number {
+        position: relative;
+        z-index: 2;
+        width: 40px;
+        height: 40px;
+        margin: 0 auto 8px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        background: #254875;
+        border: 1px solid rgba(147, 197, 253, 0.35);
+        color: #fff;
+        font-size: 15px;
+        font-weight: 900;
+      }
+      
+      .step.active .step-number {
+        background: linear-gradient(135deg, #2563eb, #0ea5e9);
+        box-shadow: 0 0 20px rgba(14, 165, 233, 0.45);
+      }
+      
+      .step.active {
+        color: #fff;
+      }
+      
+      .submit-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 300px;
+        gap: 22px;
+        align-items: start;
+      }
+      
+      .form-panel,
+      .side-card {
+        border: 1px solid rgba(147, 197, 253, 0.3);
+        border-radius: 18px;
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.13), rgba(255, 255, 255, 0.065), rgba(99, 102, 241, 0.08));
+        backdrop-filter: blur(22px);
+        box-shadow: 0 22px 60px rgba(2, 6, 23, 0.25);
+      }
+      
+      .form-panel {
+        padding: 24px;
+      }
+      
+      .form-section {
+        margin-bottom: 26px;
+      }
+      
+      .form-section:last-child {
+        margin-bottom: 0;
+      }
+      
+      .section-heading {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 17px;
+      }
+      
+      .section-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(135deg, #2563eb, #0ea5e9);
+        color: #fff;
+      }
+      
+      .section-icon svg,
       .ui-icon {
         width: 21px;
         height: 21px;
-        display: inline-block;
-        vertical-align: middle;
         fill: none;
         stroke: currentColor;
         stroke-width: 2;
         stroke-linecap: round;
         stroke-linejoin: round;
-        flex-shrink: 0;
       }
       
-      .icon-title {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 9px;
+      .section-heading h2 {
+        margin: 0;
+        color: #fff;
+        font-size: 20px;
+        font-weight: 900;
       }
       
-      .icon-button {
-        display: inline-flex !important;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
+      .section-heading p {
+        margin: 4px 0 0;
+        color: #a9c4ee;
+        font-size: 13px;
       }
       
-      .header-icon {
-        color: #1d4ed8;
-      }
-      
-      .header-icon .ui-icon {
-        width: 34px;
-        height: 34px;
-      }
-      
-      .section h2 {
-        display: flex;
-        align-items: center;
-        gap: 9px;
-      }
-      
-      .search-icon {
-        color: #64748b;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      
-      .search-icon .ui-icon {
-        width: 19px;
-        height: 19px;
-      }
-      
-      .avatar {
-        color: #1d4ed8;
-      }
-      
-      .avatar .ui-icon {
-        width: 23px;
-        height: 23px;
-      }
-      
-      .priority-label {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-      
-      .priority-dot {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        display: inline-block;
-        flex-shrink: 0;
-      }
-      
-      .priority-dot.normal {
-        background: #16a34a;
-      }
-      .priority-dot.high {
-        background: #f59e0b;
-      }
-      .priority-dot.emergency {
-        background: #dc2626;
-      }
-      
-      .photo-symbol {
-        width: 64px;
-        height: 64px;
-        margin: 0 auto 10px;
-        border-radius: 18px;
+      .form-grid {
         display: grid;
-        place-items: center;
-        background: #eff6ff;
-        color: #2563eb;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
       }
       
-      .photo-symbol .ui-icon {
-        width: 31px;
-        height: 31px;
+      .form-group {
+        margin-bottom: 16px;
       }
       
-      .wrap {
-        padding: 32px;
+      .form-group.full {
+        grid-column: 1/-1;
       }
       
-      .header {
-        text-align: center;
-        margin-bottom: 28px;
+      .label {
+        display: block;
+        margin-bottom: 7px;
+        color: #eef6ff;
+        font-size: 13px;
+        font-weight: 800;
       }
       
-      .header-icon {
-        width: 70px;
-        height: 70px;
-        border-radius: 20px;
-        background: #dbeafe;
-        display: grid;
-        place-items: center;
-        font-size: 32px;
-        margin: auto;
+      .input,
+      .textarea {
+        width: 100%;
+        padding: 13px 14px;
+        border: 1px solid rgba(191, 219, 254, 0.28);
+        border-radius: 11px;
+        outline: none;
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+        font: inherit;
       }
       
-      .header h1 {
-        margin: 14px 0 8px;
+      .textarea {
+        min-height: 120px;
+        resize: vertical;
       }
       
-      .section {
-        margin-bottom: 25px;
+      .input::placeholder,
+      .textarea::placeholder {
+        color: rgba(219, 234, 254, 0.55);
       }
       
-      .search {
-        position: relative;
-      }
-      
-      .search input {
-        padding-left: 44px;
-      }
-      
-      .search-icon {
-        position: absolute;
-        left: 15px;
-        top: 13px;
+      .input:focus,
+      .textarea:focus {
+        border-color: #38bdf8;
+        box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.12);
       }
       
       .assignment-choice-grid {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 12px;
-        margin-top: 14px;
-        margin-bottom: 18px;
+        gap: 13px;
       }
       
-      .assignment-choice {
+      .assignment-choice,
+      .priority-option {
         position: relative;
-        display: block;
         cursor: pointer;
       }
       
-      .assignment-choice input {
+      .assignment-choice input,
+      .priority-option input {
         position: absolute;
         opacity: 0;
         pointer-events: none;
       }
       
       .assignment-card {
-        min-height: 116px;
         height: 100%;
+        min-height: 115px;
         padding: 16px;
-        border: 2px solid #e2e8f0;
+        border: 1px solid rgba(191, 219, 254, 0.25);
         border-radius: 14px;
-        background: #ffffff;
-        transition: 0.2s;
-      }
-      
-      .assignment-card:hover {
-        border-color: #93c5fd;
-        transform: translateY(-2px);
+        background: rgba(255, 255, 255, 0.07);
+        transition: 0.2s ease;
       }
       
       .assignment-choice input:checked + .assignment-card {
-        border-color: #2563eb;
-        background: #eff6ff;
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        border-color: #38bdf8;
+        background: rgba(37, 99, 235, 0.2);
+        box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.1);
       }
       
       .assignment-card-title {
         display: flex;
         align-items: center;
-        gap: 9px;
-        color: #172554;
+        gap: 8px;
+        color: #fff;
         font-weight: 900;
-        margin-bottom: 7px;
-      }
-      
-      .assignment-card-title .ui-icon {
-        color: #2563eb;
+        margin-bottom: 8px;
       }
       
       .assignment-card small {
-        display: block;
-        color: #64748b;
+        color: #b9cbea;
         line-height: 1.55;
       }
       
       .smart-badge {
-        display: inline-flex;
-        align-items: center;
+        margin-left: auto;
         padding: 4px 8px;
-        margin-left: 4px;
         border-radius: 999px;
-        background: #dcfce7;
-        color: #166534;
-        font-size: 11px;
-        font-weight: 900;
+        background: rgba(16, 185, 129, 0.18);
+        color: #6ee7b7;
+        font-size: 10px;
       }
       
       .smart-info {
-        margin-top: 12px;
-        padding: 13px 14px;
-        border: 1px solid #bfdbfe;
-        border-radius: 12px;
-        background: #eff6ff;
-        color: #1e3a8a;
-        font-size: 13px;
+        margin-top: 13px;
+        padding: 12px 14px;
+        border-radius: 11px;
+        border: 1px solid rgba(56, 189, 248, 0.25);
+        background: rgba(14, 165, 233, 0.1);
+        color: #bae6fd;
+        font-size: 12px;
         line-height: 1.6;
       }
       
@@ -249,28 +334,45 @@
         display: block;
       }
       
+      .search {
+        position: relative;
+        margin-top: 12px;
+      }
+      
+      .search-icon {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #93c5fd;
+      }
+      
+      .search .input {
+        padding-left: 44px;
+      }
+      
       .workers {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
         gap: 12px;
         margin-top: 14px;
       }
       
       .worker {
-        border: 1px solid #dbeafe;
-        background: #f8fafc;
+        position: relative;
+        padding: 15px;
+        border: 1px solid rgba(191, 219, 254, 0.23);
         border-radius: 14px;
-        padding: 16px;
+        background: rgba(255, 255, 255, 0.07);
         cursor: pointer;
         transition: 0.2s;
-        position: relative;
       }
       
       .worker:hover,
       .worker.selected {
-        border-color: #2563eb;
-        background: #eff6ff;
         transform: translateY(-2px);
+        border-color: #38bdf8;
+        background: rgba(37, 99, 235, 0.18);
       }
       
       .worker input {
@@ -279,202 +381,367 @@
       }
       
       .avatar {
-        width: 44px;
-        height: 44px;
-        border-radius: 50%;
-        background: #dbeafe;
+        width: 46px;
+        height: 46px;
         display: grid;
         place-items: center;
-        font-size: 22px;
-        margin-bottom: 10px;
+        margin-bottom: 9px;
+        border-radius: 50%;
+        overflow: hidden;
+        background: rgba(96, 165, 250, 0.18);
+        color: #bfdbfe;
       }
       
       .worker-name {
-        font-weight: 800;
+        color: #fff;
+        font-weight: 900;
       }
       
       .worker-id {
-        font-size: 13px;
-        color: #2563eb;
-        font-weight: 800;
         margin: 4px 0;
+        color: #7dd3fc;
+        font-size: 12px;
+        font-weight: 800;
       }
       
       .worker-exp {
-        font-size: 13px;
-        color: #64748b;
+        color: #b6c7e3;
+        font-size: 12px;
       }
       
       .selected {
-        margin-top: 14px;
-        padding: 12px;
-        background: #ecfdf5;
-        border: 1px solid #bbf7d0;
-        border-radius: 10px;
-        color: #166534;
-      }
-      
-      .divider {
-        height: 1px;
-        background: #e2e8f0;
-        margin: 28px 0;
-      }
-      
-      .photo-box {
-        border: 2px dashed #bfdbfe;
-        background: #f8fafc;
-        border-radius: 16px;
-        padding: 20px;
-        text-align: center;
-      }
-      
-      .photo-input {
-        margin-top: 15px;
-      }
-      
-      .photo-preview {
-        display: none;
-        margin-top: 18px;
-      }
-      
-      .photo-preview img {
-        width: 100%;
-        max-width: 420px;
-        max-height: 350px;
-        object-fit: cover;
-        border-radius: 14px;
-        border: 1px solid #dbeafe;
-      }
-      
-      .map-box {
         margin-top: 12px;
-      }
-      
-      #map {
-        width: 100%;
-        height: 350px;
-        border-radius: 14px;
-        border: 1px solid #dbeafe;
-        overflow: hidden;
-      }
-      
-      .location-buttons {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 12px;
-        flex-wrap: wrap;
-      }
-      
-      .location-info {
-        margin-top: 12px;
-        padding: 12px;
+        padding: 11px;
         border-radius: 10px;
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        font-size: 14px;
+        background: rgba(16, 185, 129, 0.13);
+        border: 1px solid rgba(52, 211, 153, 0.25);
+        color: #a7f3d0;
       }
       
       .priority-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         gap: 12px;
-        margin-top: 14px;
-      }
-      
-      .priority-option {
-        position: relative;
-        display: block;
-        cursor: pointer;
-      }
-      
-      .priority-option input {
-        position: absolute;
-        opacity: 0;
-        pointer-events: none;
       }
       
       .priority-card {
-        min-height: 118px;
-        padding: 16px;
-        border: 2px solid #e2e8f0;
-        border-radius: 14px;
-        background: #ffffff;
+        min-height: 90px;
+        padding: 14px;
+        border: 1px solid rgba(191, 219, 254, 0.24);
+        border-radius: 13px;
+        background: rgba(255, 255, 255, 0.07);
+        color: #fff;
         transition: 0.2s;
       }
       
       .priority-card strong {
         display: block;
-        margin-bottom: 7px;
-        font-size: 16px;
+        margin-bottom: 6px;
       }
       
       .priority-card small {
-        color: #64748b;
-        line-height: 1.5;
+        color: #b9cbea;
       }
       
-      .priority-option input:checked + .priority-card {
-        border-color: #2563eb;
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-      }
-      
-      .priority-normal {
-        background: #f8fafc;
-      }
-      .priority-high {
-        background: #fff7ed;
-      }
-      .priority-emergency {
-        background: #fef2f2;
+      .priority-option input:checked + .priority-normal {
+        border-color: #10b981;
+        background: rgba(16, 185, 129, 0.14);
       }
       
       .priority-option input:checked + .priority-high {
         border-color: #f59e0b;
+        background: rgba(245, 158, 11, 0.14);
       }
       
       .priority-option input:checked + .priority-emergency {
-        border-color: #dc2626;
+        border-color: #f43f5e;
+        background: rgba(244, 63, 94, 0.14);
       }
       
-      .bottom {
+      .priority-dot {
+        width: 9px;
+        height: 9px;
+        display: inline-block;
+        border-radius: 50%;
+        margin-right: 7px;
+      }
+      
+      .normal {
+        background: #10b981;
+      }
+      .high {
+        background: #f59e0b;
+      }
+      .emergency {
+        background: #f43f5e;
+      }
+      
+      .photo-box {
+        padding: 20px;
         text-align: center;
+        border: 2px dashed rgba(125, 211, 252, 0.4);
+        border-radius: 15px;
+        background: rgba(14, 165, 233, 0.06);
+      }
+      
+      .photo-symbol {
+        width: 60px;
+        height: 60px;
+        display: grid;
+        place-items: center;
+        margin: 0 auto 10px;
+        border-radius: 16px;
+        background: rgba(37, 99, 235, 0.18);
+        color: #7dd3fc;
+      }
+      
+      .photo-input {
+        width: 100%;
+        margin-top: 14px;
+        color: #dbeafe;
+      }
+      
+      .photo-preview {
+        display: none;
+        margin-top: 16px;
+      }
+      
+      .photo-preview img {
+        width: 100%;
+        max-width: 420px;
+        max-height: 320px;
+        object-fit: cover;
+        border-radius: 13px;
+      }
+      
+      .location-buttons {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 12px;
+      }
+      
+      #map {
+        width: 100%;
+        height: 330px;
+        border-radius: 15px;
+        border: 1px solid rgba(147, 197, 253, 0.35);
+        overflow: hidden;
+      }
+      
+      .location-info {
+        margin-top: 12px;
+        padding: 12px 14px;
+        border-radius: 11px;
+        background: rgba(255, 255, 255, 0.07);
+        border: 1px solid rgba(191, 219, 254, 0.22);
+        color: #dbeafe;
+        line-height: 1.7;
+      }
+      
+      .submit-actions {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
         margin-top: 24px;
       }
       
-      @media (max-width: 650px) {
-        .wrap {
-          padding: 24px 18px;
-        }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 12px 18px;
+        border: 0;
+        border-radius: 11px;
+        cursor: pointer;
+        text-decoration: none;
+        font-weight: 900;
+      }
       
+      .btn-primary {
+        color: #fff;
+        background: linear-gradient(135deg, #2563eb, #0ea5e9);
+        box-shadow: 0 10px 25px rgba(37, 99, 235, 0.25);
+      }
+      
+      .btn-dark {
+        color: #fff;
+        background: rgba(15, 23, 42, 0.45);
+        border: 1px solid rgba(191, 219, 254, 0.25);
+      }
+      
+      .side-stack {
+        display: grid;
+        gap: 16px;
+      }
+      
+      .side-card {
+        padding: 18px;
+        color: #fff;
+      }
+      
+      .side-card h3 {
+        margin: 0 0 14px;
+        font-size: 17px;
+      }
+      
+      .tip-list {
+        display: grid;
+        gap: 11px;
+      }
+      
+      .tip {
+        display: flex;
+        align-items: flex-start;
+        gap: 9px;
+        color: #dbeafe;
+        font-size: 13px;
+        line-height: 1.45;
+      }
+      
+      .tip-check {
+        width: 21px;
+        height: 21px;
+        flex: 0 0 21px;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        background: #10b981;
+        color: #fff;
+        font-size: 12px;
+        font-weight: 900;
+      }
+      
+      .benefits {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+        margin-top: 22px;
+      }
+      
+      .benefit {
+        padding: 17px;
+        border-radius: 15px;
+        border: 1px solid rgba(147, 197, 253, 0.25);
+        background: rgba(255, 255, 255, 0.06);
+        color: #fff;
+      }
+      
+      .benefit strong {
+        display: block;
+        margin-bottom: 6px;
+      }
+      
+      .benefit small {
+        color: #b9cbea;
+        line-height: 1.5;
+      }
+      
+      .message {
+        margin-bottom: 16px;
+        padding: 12px 14px;
+        border-radius: 11px;
+        background: rgba(59, 130, 246, 0.14);
+        border: 1px solid rgba(147, 197, 253, 0.28);
+        color: #fff;
+      }
+      
+      @media (max-width: 950px) {
+        .submit-layout {
+          grid-template-columns: 1fr;
+        }
+        .side-stack {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .city-banner {
+          display: none;
+        }
+      }
+      
+      @media (max-width: 700px) {
+        .sc-submit-page {
+          padding: 20px 14px 40px;
+        }
+        .submit-heading h1 {
+          font-size: 26px;
+        }
+        .submit-heading-icon {
+          width: 54px;
+          height: 54px;
+        }
+        .stepper {
+          padding: 16px 8px;
+        }
+        .step {
+          font-size: 10px;
+        }
+        .step:not(:last-child)::after {
+          left: 62%;
+          width: 76%;
+        }
+        .form-panel {
+          padding: 17px;
+        }
+        .form-grid,
+        .assignment-choice-grid,
+        .priority-grid,
+        .benefits,
+        .side-stack {
+          grid-template-columns: 1fr;
+        }
+        .submit-actions {
+          flex-direction: column;
+        }
+        .submit-actions .btn {
+          width: 100%;
+        }
         #map {
           height: 280px;
-        }
-      
-        .priority-grid {
-          grid-template-columns: 1fr;
-        }
-      
-        .assignment-choice-grid {
-          grid-template-columns: 1fr;
         }
       }
     </style>
   </head>
 
   <body>
-    <div class="page">
-      <div class="card wrap">
-        <div class="header">
-          <div class="header-icon">
-            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M9 5h6"></path>
-              <path d="M9 3h6a2 2 0 0 1 2 2v1h2a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h2V5a2 2 0 0 1 2-2z"></path>
-            </svg>
+    {% include 'complaints/User_Folder/navbar.html' %}
+
+    <main class="page">
+      <div class="sc-submit-page">
+        <header class="submit-hero">
+          <div class="submit-heading">
+            <div class="submit-heading-icon">
+              <svg class="ui-icon" viewBox="0 0 24 24">
+                <path d="M9 5h6"></path>
+                <path d="M9 3h6a2 2 0 0 1 2 2v1h2a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h2V5a2 2 0 0 1 2-2z"></path>
+              </svg>
+            </div>
+
+            <div>
+              <h1>Submit a New Complaint</h1>
+              <p>Report the issue clearly. Smart Complaint will help connect it with the right worker.</p>
+            </div>
           </div>
 
-          <h1>Submit Your Complaint</h1>
+          <div class="city-banner">
+            <strong>🌿 A Cleaner, Safer, Smarter City</strong>
+            <small>Your small report can make a big difference.</small>
+          </div>
+        </header>
 
-          <p class="muted">Add complaint details, photo and exact location.</p>
+        <div class="stepper">
+          <div class="step active">
+            <div class="step-number">1</div>Complaint Details
+          </div>
+          <div class="step">
+            <div class="step-number">2</div>Location
+          </div>
+          <div class="step">
+            <div class="step-number">3</div>Photos
+          </div>
+          <div class="step">
+            <div class="step-number">4</div>Review & Submit
+          </div>
         </div>
 
         {% if messages %}
@@ -483,308 +750,283 @@
           {% endfor %}
         {% endif %}
 
-        <form method="post" enctype="multipart/form-data" id="complaintForm">
-          {% csrf_token %}
+        <div class="submit-layout">
+          <section class="form-panel">
+            <form method="post" enctype="multipart/form-data" id="complaintForm">
+              {% csrf_token %}
 
-          <!-- ========================================= -->
-          <!-- SMART WORKER ASSIGNMENT -->
-          <!-- ========================================= -->
+              <section class="form-section">
+                <div class="section-heading">
+                  <div class="section-icon">📝</div>
+                  <div>
+                    <h2>Complaint Details</h2>
+                    <p>Tell us about the issue you are facing.</p>
+                  </div>
+                </div>
 
-          <div class="section">
-            <h2>
-              <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
-                <circle cx="12" cy="12" r="3"></circle>
-                <path d="M12 2v4"></path>
-                <path d="M12 18v4"></path>
-                <path d="M2 12h4"></path>
-                <path d="M18 12h4"></path>
-                <path d="m4.93 4.93 2.83 2.83"></path>
-                <path d="m16.24 16.24 2.83 2.83"></path>
-                <path d="m4.93 19.07 2.83-2.83"></path>
-                <path d="m16.24 7.76 2.83-2.83"></path>
-              </svg>Worker Assignment
-            </h2>
-
-            <p class="muted">Let Smart Complaint choose the best available worker automatically, or choose a worker yourself.</p>
-
-            <div class="assignment-choice-grid">
-              <label class="assignment-choice">
-                <input type="radio" name="assignment_mode" value="smart" id="smartAssignment" checked />
-
-                <div class="assignment-card">
-                  <div class="assignment-card-title">
-                    <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
-                      <circle cx="12" cy="12" r="3"></circle>
-                      <path d="M12 2v4"></path>
-                      <path d="M12 18v4"></path>
-                      <path d="M2 12h4"></path>
-                      <path d="M18 12h4"></path>
-                    </svg>Smart Auto Assign
-                    <span class="smart-badge">Recommended</span>
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label class="label">Your Name</label>
+                    <input class="input" name="name" value="{{ request.user.get_full_name }}" required />
                   </div>
 
-                  <small>System checks approved workers, active workload, user rating, experience and completed work.</small>
-                </div>
-              </label>
-
-              <label class="assignment-choice">
-                <input type="radio" name="assignment_mode" value="manual" id="manualAssignment" />
-
-                <div class="assignment-card">
-                  <div class="assignment-card-title">
-                    <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
-                      <circle cx="12" cy="8" r="4"></circle>
-                      <path d="M5 21v-2a7 7 0 0 1 14 0v2"></path>
-                    </svg>Choose Worker Myself
+                  <div class="form-group">
+                    <label class="label">Email Address</label>
+                    <input class="input" type="email" name="email" value="{{ request.user.email }}" required />
                   </div>
 
-                  <small>Open the approved worker list and manually select a worker.</small>
+                  <div class="form-group full">
+                    <label class="label">Complaint Subject</label>
+                    <input class="input" name="subject" placeholder="Example: Street light not working" required />
+                  </div>
+
+                  <div class="form-group full">
+                    <label class="label">Detailed Description</label>
+                    <textarea class="textarea" name="description" placeholder="Describe your complaint in detail..." required></textarea>
+                  </div>
                 </div>
-              </label>
-            </div>
 
-            <div class="smart-info" id="smartInfo">Smart Auto Assign is selected. The best approved worker will be selected automatically when you submit the complaint.</div>
+                <label class="label">Priority Level</label>
 
-            <div class="manual-worker-area" id="manualWorkerArea">
-              <p class="muted">Search by worker name, username or Worker ID.</p>
-
-              <div class="search" style="margin-top:14px">
-                <span class="search-icon">
-                  <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
-                    <circle cx="11" cy="11" r="7"></circle>
-                    <path d="M20 20l-4-4"></path>
-                  </svg>
-                </span>
-
-                <input class="input" id="workerSearch" placeholder="Search worker..." autocomplete="off" />
-              </div>
-
-              <div class="workers" id="workerList">
-                {% for worker in workers %}
-                  <label class="worker" data-search="{{ worker.name|lower }} {{ worker.user.username|lower }} {{ worker.worker_id|lower }}">
-                    <input type="radio" name="worker" value="{{ worker.id }}" />
-
-                    <div class="avatar">
-                      {% if worker.photo %}
-                        <img src="{{ worker.photo.url }}" alt="{{ worker.name }}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />
-                      {% else %}
-                        <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
-                          <circle cx="12" cy="8" r="4"></circle>
-                          <path d="M5 21v-2a7 7 0 0 1 14 0v2"></path>
-                          <path d="M8 4h8"></path>
-                        </svg>
-                      {% endif %}
+                <div class="priority-grid">
+                  <label class="priority-option">
+                    <input type="radio" name="priority" value="Normal" checked required />
+                    <div class="priority-card priority-normal">
+                      <strong>
+                        <span class="priority-dot normal"></span>
+                        Normal
+                      </strong>
+                      <small>Regular complaint with normal handling order.</small>
                     </div>
-
-                    <div class="worker-name">{{ worker.name }}</div>
-                    <div class="worker-id">{{ worker.worker_id }}</div>
-                    <div class="worker-exp">Experience: {{ worker.experience }}</div>
                   </label>
-                {% empty %}
-                  <div class="message">No approved workers are currently available.</div>
-                {% endfor %}
-              </div>
 
-              <div id="noWorker" class="message" style="display:none;margin-top:12px">No worker found.</div>
+                  <label class="priority-option">
+                    <input type="radio" name="priority" value="High" />
+                    <div class="priority-card priority-high">
+                      <strong>
+                        <span class="priority-dot high"></span>
+                        High Priority
+                      </strong>
+                      <small>Important issue that should be handled sooner.</small>
+                    </div>
+                  </label>
 
-              <div id="selectedWorker" class="selected" style="display:none">
-                Selected:
-                <strong id="selectedWorkerName"></strong>
-              </div>
-            </div>
-          </div>
+                  <label class="priority-option">
+                    <input type="radio" name="priority" value="Emergency" />
+                    <div class="priority-card priority-emergency">
+                      <strong>
+                        <span class="priority-dot emergency"></span>
+                        Emergency
+                      </strong>
+                      <small>Urgent issue requiring immediate attention.</small>
+                    </div>
+                  </label>
+                </div>
+              </section>
 
-          <div class="divider"></div>
-
-          <!-- ========================================= -->
-          <!-- DETAILS -->
-          <!-- ========================================= -->
-
-          <div class="section">
-            <h2>
-              <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M9 5h6"></path>
-                <path d="M9 3h6a2 2 0 0 1 2 2v1h2a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h2V5a2 2 0 0 1 2-2z"></path>
-              </svg>Complaint Details
-            </h2>
-
-            <div class="form-group">
-              <label class="label">Your Name</label>
-
-              <input class="input" name="name" value="{{ request.user.get_full_name }}" required />
-            </div>
-
-            <div class="form-group">
-              <label class="label">Email Address</label>
-
-              <input class="input" type="email" name="email" value="{{ request.user.email }}" required />
-            </div>
-
-            <div class="form-group">
-              <label class="label">Complaint Subject</label>
-
-              <input class="input" name="subject" placeholder="Example: Road light not working" required />
-            </div>
-
-            <div class="form-group">
-              <label class="label">Complaint Description</label>
-
-              <textarea class="textarea" name="description" placeholder="Explain your problem in detail..." required></textarea>
-            </div>
-
-            <div class="form-group">
-              <label class="label">Complaint Priority</label>
-
-              <p class="muted" style="margin-top:6px;">Choose Emergency only when the problem needs immediate attention.</p>
-
-              <div class="priority-grid">
-                <label class="priority-option">
-                  <input type="radio" name="priority" value="Normal" checked required />
-                  <div class="priority-card priority-normal">
-                    <strong class="priority-label"><span class="priority-dot normal"></span>Normal</strong>
-                    <small>Regular complaint. Normal handling order.</small>
+              <section class="form-section">
+                <div class="section-heading">
+                  <div class="section-icon">👷</div>
+                  <div>
+                    <h2>Worker Assignment</h2>
+                    <p>Use Smart Auto Assign or manually choose an available worker.</p>
                   </div>
-                </label>
+                </div>
 
-                <label class="priority-option">
-                  <input type="radio" name="priority" value="High" />
-                  <div class="priority-card priority-high">
-                    <strong class="priority-label"><span class="priority-dot high"></span>High Priority</strong>
-                    <small>Important problem that should be handled sooner.</small>
+                <div class="assignment-choice-grid">
+                  <label class="assignment-choice">
+                    <input type="radio" name="assignment_mode" value="smart" id="smartAssignment" checked />
+
+                    <div class="assignment-card">
+                      <div class="assignment-card-title">
+                        ⚡ Smart Auto Assign
+                        <span class="smart-badge">Recommended</span>
+                      </div>
+
+                      <small>System automatically checks approved workers, workload, ratings, experience and completed work.</small>
+                    </div>
+                  </label>
+
+                  <label class="assignment-choice">
+                    <input type="radio" name="assignment_mode" value="manual" id="manualAssignment" />
+
+                    <div class="assignment-card">
+                      <div class="assignment-card-title">👤 Choose Worker Myself</div>
+
+                      <small>Open the available worker list and select a worker yourself.</small>
+                    </div>
+                  </label>
+                </div>
+
+                <div class="smart-info" id="smartInfo">Smart Auto Assign is selected. The best approved available worker will be selected automatically when you submit the complaint.</div>
+
+                <div class="manual-worker-area" id="manualWorkerArea">
+                  <label class="label">Search Available Worker</label>
+
+                  <div class="search">
+                    <span class="search-icon">⌕</span>
+                    <input class="input" id="workerSearch" placeholder="Search by name, username or Worker ID..." autocomplete="off" />
                   </div>
-                </label>
 
-                <label class="priority-option">
-                  <input type="radio" name="priority" value="Emergency" />
-                  <div class="priority-card priority-emergency">
-                    <strong class="priority-label"><span class="priority-dot emergency"></span>Emergency</strong>
-                    <small>Urgent problem requiring immediate worker attention.</small>
+                  <div class="workers" id="workerList">
+                    {% for worker in workers %}
+                      <label class="worker" data-search="{{ worker.name|lower }} {{ worker.user.username|lower }} {{ worker.worker_id|lower }}">
+                        <input type="radio" name="worker" value="{{ worker.id }}" />
+
+                        <div class="avatar">
+                          {% if worker.photo %}
+                            <img src="{{ worker.photo.url }}" alt="{{ worker.name }}" style="width:100%;height:100%;object-fit:cover;" />
+                          {% else %}
+                            👷
+                          {% endif %}
+                        </div>
+
+                        <div class="worker-name">{{ worker.name }}</div>
+                        <div class="worker-id">{{ worker.worker_id }}</div>
+                        <div class="worker-exp">Experience: {{ worker.experience }}</div>
+                      </label>
+                    {% empty %}
+                      <div class="message">No approved workers are currently available.</div>
+                    {% endfor %}
                   </div>
-                </label>
+
+                  <div id="noWorker" class="message" style="display:none;margin-top:12px;">No worker found.</div>
+
+                  <div id="selectedWorker" class="selected" style="display:none;">
+                    Selected:
+                    <strong id="selectedWorkerName"></strong>
+                  </div>
+                </div>
+              </section>
+
+              <section class="form-section">
+                <div class="section-heading">
+                  <div class="section-icon">📍</div>
+                  <div>
+                    <h2>Complaint Location</h2>
+                    <p>Use your current location or select the exact place on the map.</p>
+                  </div>
+                </div>
+
+                <div class="location-buttons">
+                  <button type="button" class="btn btn-primary" id="currentLocationBtn">📍 Use My Current Location</button>
+                </div>
+
+                <div id="map"></div>
+
+                <div class="location-info">
+                  Latitude:
+                  <strong id="latitudeText">Not selected</strong>
+                  <br />
+                  Longitude:
+                  <strong id="longitudeText">Not selected</strong>
+                </div>
+
+                <input type="hidden" name="latitude" id="latitude" />
+                <input type="hidden" name="longitude" id="longitude" />
+              </section>
+
+              <section class="form-section">
+                <div class="section-heading">
+                  <div class="section-icon">📷</div>
+                  <div>
+                    <h2>Complaint Photo</h2>
+                    <p>Take a clear photo or choose an image showing the problem.</p>
+                  </div>
+                </div>
+
+                <div class="photo-box">
+                  <div class="photo-symbol">📷</div>
+
+                  <strong style="color:#fff;">Add Problem Photo</strong>
+
+                  <input class="photo-input" type="file" name="photo" id="photoInput" accept="image/*" capture="environment" required />
+
+                  <div class="photo-preview" id="photoPreviewBox">
+                    <p style="color:#dbeafe;">
+                      <strong>Photo Preview</strong>
+                    </p>
+                    <img id="photoPreview" alt="Complaint Photo Preview" />
+                  </div>
+                </div>
+              </section>
+
+              <div class="submit-actions">
+                <a class="btn btn-dark" href="{% url 'home' %}">← Cancel</a>
+
+                <button type="submit" class="btn btn-primary">Continue to Payment →</button>
               </div>
-            </div>
-          </div>
+            </form>
+          </section>
 
-          <div class="divider"></div>
+          <aside class="side-stack">
+            <section class="side-card">
+              <h3>💡 Quick Tips</h3>
 
-          <!-- ========================================= -->
-          <!-- PHOTO -->
-          <!-- ========================================= -->
+              <div class="tip-list">
+                <div class="tip">
+                  <span class="tip-check">✓</span>
+                  Use a clear and short complaint title.
+                </div>
 
-          <div class="section">
-            <h2>
-              <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M4 7h3l2-3h6l2 3h3a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z"></path>
-                <circle cx="12" cy="13" r="4"></circle>
-              </svg>Complaint Photo
-            </h2>
+                <div class="tip">
+                  <span class="tip-check">✓</span>
+                  Provide the exact complaint location.
+                </div>
 
-            <p class="muted">Take a photo or choose an image showing the problem.</p>
+                <div class="tip">
+                  <span class="tip-check">✓</span>
+                  Add a clear and relevant problem photo.
+                </div>
 
-            <div class="photo-box">
-              <div class="photo-symbol">
-                <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M4 7h3l2-3h6l2 3h3a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z"></path>
-                  <circle cx="12" cy="13" r="4"></circle>
-                </svg>
+                <div class="tip">
+                  <span class="tip-check">✓</span>
+                  Explain the issue properly in the description.
+                </div>
+
+                <div class="tip">
+                  <span class="tip-check">✓</span>
+                  Choose Emergency only for urgent problems.
+                </div>
               </div>
+            </section>
 
-              <strong>Add Problem Photo</strong>
+            <section class="side-card">
+              <h3>🔎 Track Your Complaint</h3>
+              <p style="color:#bfdbfe;line-height:1.6;font-size:13px;">After submitting, use your Tracking ID to check the latest status.</p>
 
-              <br />
+              <a href="{% url 'check_status' %}" class="btn btn-dark" style="width:100%;margin-top:8px;">Check Complaint Status</a>
+            </section>
 
-              <input class="photo-input" type="file" name="photo" id="photoInput" accept="image/*" capture="environment" required />
-
-              <div class="photo-preview" id="photoPreviewBox">
-                <p>
-                  <strong>Photo Preview</strong>
-                </p>
-
-                <img id="photoPreview" alt="Complaint Photo Preview" />
-              </div>
-            </div>
-          </div>
-
-          <div class="divider"></div>
-
-          <!-- ========================================= -->
-          <!-- LOCATION -->
-          <!-- ========================================= -->
-
-          <div class="section">
-            <h2>
-              <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M12 21s7-5.1 7-12a7 7 0 1 0-14 0c0 6.9 7 12 7 12z"></path>
-                <circle cx="12" cy="9" r="2.5"></circle>
-              </svg>Complaint Location
-            </h2>
-
-            <p class="muted">Use your current location or tap the exact place on the map.</p>
-
-            <div class="location-buttons">
-              <button type="button" class="btn btn-primary icon-button" id="currentLocationBtn">
-                <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M12 21s7-5.1 7-12a7 7 0 1 0-14 0c0 6.9 7 12 7 12z"></path>
-                  <circle cx="12" cy="9" r="2.5"></circle>
-                </svg>Use My Current Location
-              </button>
-            </div>
-
-            <div class="map-box">
-              <div id="map"></div>
-            </div>
-
-            <div class="location-info">
-              Latitude:
-              <strong id="latitudeText">Not selected</strong>
-
-              <br />
-
-              Longitude:
-              <strong id="longitudeText">Not selected</strong>
-            </div>
-
-            <input type="hidden" name="latitude" id="latitude" />
-
-            <input type="hidden" name="longitude" id="longitude" />
-          </div>
-
-          <button type="submit" class="btn btn-primary icon-button" style="width:100%;font-size:16px">
-            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="m22 2-7 20-4-9-9-4z"></path>
-              <path d="M22 2 11 13"></path>
-            </svg>Continue to Payment
-          </button>
-        </form>
-
-        <div class="bottom">
-          <a class="btn btn-dark icon-button" href="{% url 'check_status' %}">
-            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <circle cx="11" cy="11" r="7"></circle>
-              <path d="M20 20l-4-4"></path>
-            </svg>Check Complaint Status
-          </a>
-
-          <br />
-
-          <a href="{% url 'home' %}" style="
-                    display:inline-block;
-                    margin-top:15px;
-                    color:#2563eb;
-                    font-weight:700;
-                ">← Back to Home</a>
+            <section class="side-card">
+              <h3>🌿 Report Today for a Better Tomorrow</h3>
+              <p style="color:#bfdbfe;line-height:1.6;font-size:13px;">Your report helps keep the community cleaner, safer and better.</p>
+            </section>
+          </aside>
         </div>
-      </div>
-    </div>
 
-    <!-- Leaflet JavaScript -->
+        <section class="benefits">
+          <div class="benefit">
+            <strong>🛡️ Quick Response</strong>
+            <small>Your complaint reaches an available worker quickly.</small>
+          </div>
+
+          <div class="benefit">
+            <strong>📊 Track Progress</strong>
+            <small>Follow complaint status and important updates.</small>
+          </div>
+
+          <div class="benefit">
+            <strong>🌱 Cleaner Community</strong>
+            <small>Together we can build a cleaner and safer community.</small>
+          </div>
+        </section>
+      </div>
+    </main>
+
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script>
-      /* =========================================
-                           SMART / MANUAL WORKER ASSIGNMENT
-                        ========================================= */
-      
       const smartAssignment = document.getElementById('smartAssignment')
       const manualAssignment = document.getElementById('manualAssignment')
       const smartInfo = document.getElementById('smartInfo')
@@ -809,10 +1051,6 @@
       manualAssignment.addEventListener('change', updateAssignmentMode)
       updateAssignmentMode()
       
-      /* =========================================
-                           WORKER SEARCH
-                        ========================================= */
-      
       search.addEventListener('input', function () {
         const q = search.value.toLowerCase().trim()
         let count = 0
@@ -820,18 +1058,11 @@
         cards.forEach(function (card) {
           const ok = card.dataset.search.includes(q)
           card.style.display = ok ? 'block' : 'none'
-      
-          if (ok) {
-            count++
-          }
+          if (ok) count++
         })
       
         noWorker.style.display = count ? 'none' : 'block'
       })
-      
-      /* =========================================
-                           MANUAL WORKER SELECT
-                        ========================================= */
       
       cards.forEach(function (card) {
         const radio = card.querySelector('input[name="worker"]')
@@ -853,14 +1084,8 @@
         })
       })
       
-      /* =========================================
-                           PHOTO PREVIEW
-                        ========================================= */
-      
       const photoInput = document.getElementById('photoInput')
-      
       const photoPreview = document.getElementById('photoPreview')
-      
       const photoPreviewBox = document.getElementById('photoPreviewBox')
       
       photoInput.addEventListener('change', function () {
@@ -868,17 +1093,13 @@
       
         if (!file) {
           photoPreviewBox.style.display = 'none'
-      
           return
         }
       
         if (!file.type.startsWith('image/')) {
           alert('Please select an image file.')
-      
           this.value = ''
-      
           photoPreviewBox.style.display = 'none'
-      
           return
         }
       
@@ -886,11 +1107,8 @@
       
         if (file.size > maxSize) {
           alert('Photo size should be less than 5 MB.')
-      
           this.value = ''
-      
           photoPreviewBox.style.display = 'none'
-      
           return
         }
       
@@ -898,16 +1116,11 @@
       
         reader.onload = function (event) {
           photoPreview.src = event.target.result
-      
           photoPreviewBox.style.display = 'block'
         }
       
         reader.readAsDataURL(file)
       })
-      
-      /* =========================================
-                           MAP
-                        ========================================= */
       
       const map = L.map('map').setView([20.5937, 78.9629], 5)
       
@@ -918,22 +1131,16 @@
       
       let marker = null
       
-      /* =========================================
-                           SET LOCATION
-                        ========================================= */
-      
       function setLocation(lat, lng) {
         lat = Number(lat)
         lng = Number(lng)
       
         if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
           alert('Invalid location received.')
-      
           return
         }
       
         document.getElementById('latitude').value = lat
-      
         document.getElementById('longitude').value = lng
       
         document.getElementById('latitudeText').textContent = lat.toFixed(6)
@@ -943,13 +1150,10 @@
         if (marker) {
           marker.setLatLng([lat, lng])
         } else {
-          marker = L.marker([lat, lng], {
-            draggable: true
-          }).addTo(map)
+          marker = L.marker([lat, lng], { draggable: true }).addTo(map)
       
           marker.on('dragend', function () {
             const position = marker.getLatLng()
-      
             setLocation(position.lat, position.lng)
           })
         }
@@ -957,57 +1161,34 @@
         map.setView([lat, lng], 16)
       }
       
-      /* =========================================
-                           ANDROID NATIVE LOCATION RECEIVER
-                        
-                           MainActivity.kt calls:
-                           window.receiveAndroidLocation(lat, lng)
-                        ========================================= */
-      
       window.receiveAndroidLocation = function (lat, lng) {
         setLocation(Number(lat), Number(lng))
       
         const button = document.getElementById('currentLocationBtn')
       
-        button.textContent = 'Current Location Selected'
-      
+        button.textContent = '✓ Current Location Selected'
         button.disabled = false
       }
-      
-      /* =========================================
-                           MAP CLICK
-                        ========================================= */
       
       map.on('click', function (event) {
         setLocation(event.latlng.lat, event.latlng.lng)
       })
-      
-      /* =========================================
-                           NORMAL BROWSER LOCATION
-                        ========================================= */
       
       function useBrowserLocation() {
         const button = document.getElementById('currentLocationBtn')
       
         if (!navigator.geolocation) {
           alert('Location is not supported in this browser.')
-      
-          button.textContent = 'Use My Current Location'
-      
+          button.textContent = '📍 Use My Current Location'
           button.disabled = false
-      
           return
         }
       
         navigator.geolocation.getCurrentPosition(
           function (position) {
-            const lat = position.coords.latitude
+            setLocation(position.coords.latitude, position.coords.longitude)
       
-            const lng = position.coords.longitude
-      
-            setLocation(lat, lng)
-      
-            button.textContent = 'Current Location Selected'
+            button.textContent = '✓ Current Location Selected'
       
             button.disabled = false
           },
@@ -1015,7 +1196,7 @@
           function () {
             alert('Unable to get location. Please allow location permission or select location manually on the map.')
       
-            button.textContent = 'Use My Current Location'
+            button.textContent = '📍 Use My Current Location'
       
             button.disabled = false
           },
@@ -1028,32 +1209,17 @@
         )
       }
       
-      /* =========================================
-                           CURRENT LOCATION BUTTON
-                        
-                           Android app:
-                               Android.getCurrentLocation()
-                        
-                           Normal browser:
-                               navigator.geolocation
-                        ========================================= */
-      
       document.getElementById('currentLocationBtn').addEventListener('click', function () {
         const button = this
       
         button.textContent = 'Finding Location...'
-      
         button.disabled = true
       
-        /*
-         * Check whether page is running
-         * inside our Android WebView.
-         */
         if (typeof Android !== 'undefined' && typeof Android.getCurrentLocation === 'function') {
           try {
             Android.getCurrentLocation()
           } catch (error) {
-            button.textContent = 'Use My Current Location'
+            button.textContent = '📍 Use My Current Location'
       
             button.disabled = false
       
@@ -1063,18 +1229,12 @@
           return
         }
       
-        /*
-         * Normal browser fallback.
-         */
         useBrowserLocation()
       })
       
-      /* =========================================
-                           FORM CHECK
-            ========================================= */
-      
       document.getElementById('complaintForm').addEventListener('submit', function (event) {
         const latitude = document.getElementById('latitude').value
+      
         const longitude = document.getElementById('longitude').value
       
         if (!latitude || !longitude) {

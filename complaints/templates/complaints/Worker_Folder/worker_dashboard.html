@@ -2216,6 +2216,13 @@
 
     </style>
 
+
+<style>
+.worker-page .page{width:min(1180px,calc(100% - 32px));padding-top:30px}.dashboard-header{display:none}.dashboard-summary{position:relative;padding:28px!important;background:linear-gradient(135deg,rgba(3,78,93,.92),rgba(8,105,111,.72),rgba(13,148,136,.55))!important;border:1px solid rgba(45,212,191,.28)!important;color:#fff!important}.dashboard-summary:after{content:"👷";position:absolute;right:34px;top:20px;font-size:82px;opacity:.92}.dashboard-summary-main{padding-right:120px}.dashboard-summary-avatar{width:84px!important;height:84px!important;min-width:84px!important;border-color:#d5fffa!important;background:#ccfbf1!important}.dashboard-summary-kicker{color:#99f6e4!important}.dashboard-summary-text h2{color:#fff!important;font-size:31px!important}.dashboard-summary-text p{color:#ccfbf1!important;max-width:700px}.worker-id-pill{background:rgba(255,255,255,.12)!important;color:#e6fffb!important}.approved-pill{background:rgba(16,185,129,.20)!important;color:#a7f3d0!important;border:1px solid rgba(52,211,153,.22)}.section-title{font-size:20px!important;margin-top:22px!important}.complaint{background:rgba(8,47,73,.72)!important;border:1px solid rgba(45,212,191,.17)!important;color:#e6fffb!important;box-shadow:0 18px 44px rgba(2,6,23,.24)!important}.complaint-head h2,.complaint-user-name,.info b{color:#fff!important}.tracking-id,.complaint-user-meta,.photo-note{color:#a8c5d1!important}.desc,.complaint-user-profile,.info,.photo-box,.location-box,.rating-box,.otp-box{background:rgba(255,255,255,.055)!important;border-color:rgba(148,163,184,.16)!important;color:#dbeafe!important}.photo-title,.location-title,.otp-title,.rating-title{color:#99f6e4!important}.worker-dashboard-design-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:18px 0 24px}.worker-dashboard-stat{padding:18px;border-radius:17px;border:1px solid rgba(45,212,191,.18);background:linear-gradient(145deg,rgba(5,63,91,.86),rgba(8,92,104,.64));color:#fff;text-align:center;box-shadow:0 14px 34px rgba(2,6,23,.20)}.worker-dashboard-stat span{display:block;color:#99f6e4;font-size:12px}.worker-dashboard-stat b{display:block;margin-top:7px;font-size:28px}.worker-dashboard-stat small{display:block;margin-top:5px;color:#94a3b8}.worker-dashboard-stat:first-child b{color:#7dd3fc}
+body.worker-theme-light .complaint{background:#fff!important;color:#172554!important;border-color:#dbeafe!important}body.worker-theme-light .complaint-head h2,body.worker-theme-light .complaint-user-name,body.worker-theme-light .info b{color:#172554!important}body.worker-theme-light .desc,body.worker-theme-light .complaint-user-profile,body.worker-theme-light .info,body.worker-theme-light .photo-box,body.worker-theme-light .location-box,body.worker-theme-light .rating-box,body.worker-theme-light .otp-box{background:#f8fafc!important;color:#334155!important;border-color:#e2e8f0!important}body.worker-theme-light .worker-dashboard-stat{background:#fff;color:#172554;border-color:#dbeafe}body.worker-theme-light .worker-dashboard-stat b{color:#172554}body.worker-theme-light .worker-dashboard-stat span{color:#0f766e}
+@media(max-width:760px){.dashboard-summary:after{display:none}.dashboard-summary-main{padding-right:0}.worker-dashboard-design-stats{grid-template-columns:repeat(2,1fr)}}@media(max-width:480px){.worker-page .page{width:calc(100% - 20px)}.dashboard-summary{padding:20px!important}.dashboard-summary-main{align-items:flex-start}.dashboard-summary-text h2{font-size:25px!important}.worker-dashboard-design-stats{gap:10px}.worker-dashboard-stat{padding:14px 8px}}
+</style>
+
 </head>
 
 
@@ -2388,6 +2395,13 @@
 
         </section>
 
+
+        <section class="worker-dashboard-design-stats">
+            <div class="worker-dashboard-stat"><span>Assigned Complaints</span><b>{{ complaints|length }}</b><small>Current list</small></div>
+            <div class="worker-dashboard-stat"><span>In Progress</span><b>—</b><small>Live count next</small></div>
+            <div class="worker-dashboard-stat"><span>Resolved</span><b>—</b><small>Live count next</small></div>
+            <div class="worker-dashboard-stat"><span>Total Completed</span><b>—</b><small>Live count next</small></div>
+        </section>
 
         <!-- =================================================
              ASSIGNED COMPLAINTS

@@ -1,1428 +1,1053 @@
 {% load static %}
 
 <style>
-    :root {
-        --sc-glass-rgb: 37, 99, 235;
-        --sc-glass-rgb-2: 79, 70, 229;
-    }
-
-    /* =====================================================
-       ICON
-    ===================================================== */
-
-    .sc-svg-icon {
-        width: 22px;
-        height: 22px;
-        display: block;
-        fill: none;
-        stroke: currentColor;
-        stroke-width: 2;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-    }
-
-    /* =====================================================
-       MENU BUTTON
-    ===================================================== */
-
+  :root {
+    --sc-glass-rgb: 37, 99, 235;
+    --sc-glass-rgb-2: 79, 70, 229;
+  }
+  
+  /* =====================================================
+         ICON
+      ===================================================== */
+  
+  .sc-svg-icon {
+    width: 22px;
+    height: 22px;
+    display: block;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  
+  /* =====================================================
+         MENU BUTTON
+      ===================================================== */
+  
+  .sc-menu-button {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+  
+    width: 46px;
+    height: 46px;
+  
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 14px;
+  
+    background: rgba(255, 255, 255, 0.92);
+    color: #1e3a8a;
+  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+    cursor: pointer;
+  
+    z-index: 950;
+  
+    box-shadow: 0 7px 22px rgba(15, 23, 42, 0.16);
+  
+    transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease, transform 0.2s ease;
+  }
+  
+  .sc-menu-button:hover {
+    transform: translateY(-1px);
+  }
+  
+  .sc-menu-button .sc-svg-icon {
+    width: 25px;
+    height: 25px;
+  }
+  
+  /* =====================================================
+         OVERLAY
+      ===================================================== */
+  
+  .sc-sidebar-overlay {
+    position: fixed;
+    inset: 0;
+  
+    background: rgba(15, 23, 42, 0.5);
+  
+    opacity: 0;
+    visibility: hidden;
+  
+    transition: 0.3s ease;
+  
+    z-index: 998;
+  }
+  
+  .sc-sidebar-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  /* =====================================================
+         SIDEBAR
+      ===================================================== */
+  
+  .sc-sidebar {
+    position: fixed;
+  
+    top: 0;
+    left: 0;
+  
+    width: 285px;
+    max-width: 88vw;
+  
+    height: 100vh;
+  
+    background: #ffffff;
+  
+    transform: translateX(-105%);
+  
+    transition: transform 0.32s ease, background 0.25s ease, border-color 0.25s ease;
+  
+    z-index: 999;
+  
+    display: flex;
+    flex-direction: column;
+  
+    box-shadow: 10px 0 30px rgba(15, 23, 42, 0.2);
+  
+    overflow-y: auto;
+  }
+  
+  .sc-sidebar.open {
+    transform: translateX(0);
+  }
+  
+  /* =====================================================
+         HEADER
+      ===================================================== */
+  
+  .sc-sidebar-header {
+    padding: 20px 16px;
+  
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  
+    border-bottom: 1px solid #e2e8f0;
+  }
+  
+  .sc-sidebar-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  
+    color: #172554;
+  
+    font-size: 19px;
+    font-weight: 800;
+  }
+  
+  .sc-sidebar-logo {
+    width: 42px;
+    height: 42px;
+  
+    border-radius: 13px;
+  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+    background: linear-gradient(135deg, #4f46e5, #2563eb);
+  
+    color: #ffffff;
+  }
+  
+  .sc-close-button {
+    width: 38px;
+    height: 38px;
+  
+    border: none;
+  
+    border-radius: 11px;
+  
+    background: #f1f5f9;
+    color: #475569;
+  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+    cursor: pointer;
+  }
+  
+  /* =====================================================
+         USER
+      ===================================================== */
+  
+  .sc-user-box {
+    margin: 14px 12px 8px;
+  
+    padding: 14px;
+  
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+  
+    background: #f8fafc;
+  }
+  
+  .sc-avatar {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+  
+    border-radius: 50%;
+  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+    background: #dbeafe;
+    color: #1d4ed8;
+  }
+  
+  .sc-user-name {
+    color: #172554;
+    font-weight: 800;
+  
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  .sc-user-type {
+    margin-top: 3px;
+    color: #64748b;
+    font-size: 12px;
+  }
+  
+  /* =====================================================
+         MENU
+      ===================================================== */
+  
+  .sc-menu {
+    flex: 1;
+  
+    padding: 10px 12px 22px;
+  
+    display: flex;
+    flex-direction: column;
+  
+    gap: 8px;
+  }
+  
+  .sc-menu-link,
+  .sc-appearance-button {
+    min-height: 52px;
+  
+    padding: 11px 14px;
+  
+    border: 1px solid transparent;
+    border-radius: 14px;
+  
+    display: flex;
+    align-items: center;
+  
+    gap: 14px;
+  
+    text-decoration: none;
+  
+    background: transparent;
+  
+    color: #64748b;
+  
+    font-size: 15px;
+    font-weight: 700;
+  
+    font-family: inherit;
+  
+    cursor: pointer;
+  
+    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+  }
+  
+  .sc-menu-link:hover,
+  .sc-appearance-button:hover {
+    background: #eef2ff;
+    color: #4338ca;
+  
+    transform: translateX(3px);
+  }
+  
+  .sc-menu-icon {
+    width: 30px;
+    min-width: 30px;
+  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .sc-notification-text {
+    flex: 1;
+  }
+  
+  .sc-notification-badge {
+    min-width: 24px;
+    height: 24px;
+  
+    padding: 0 7px;
+  
+    border-radius: 999px;
+  
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  
+    background: #dc2626;
+    color: #ffffff;
+  
+    font-size: 12px;
+    font-weight: 800;
+  }
+  
+  .sc-logout {
+    color: #dc2626;
+  }
+  
+  .sc-logout:hover {
+    color: #dc2626;
+    background: #fee2e2;
+  }
+  
+  /* =====================================================
+         APPEARANCE PANEL
+      ===================================================== */
+  
+  .sc-appearance-panel {
+    margin-top: 4px;
+  
+    padding: 14px;
+  
+    border-radius: 16px;
+  
+    background: #f8fafc;
+  
+    border: 1px solid #e2e8f0;
+  
+    display: none;
+  }
+  
+  .sc-appearance-panel.open {
+    display: block;
+  }
+  
+  .sc-appearance-title {
+    font-size: 13px;
+    font-weight: 800;
+  
+    color: #475569;
+  
+    margin-bottom: 10px;
+  }
+  
+  .sc-theme-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  
+    gap: 7px;
+  }
+  
+  .sc-theme-option {
+    border: 1px solid #cbd5e1;
+  
+    border-radius: 10px;
+  
+    padding: 9px 6px;
+  
+    background: #ffffff;
+  
+    color: #475569;
+  
+    cursor: pointer;
+  
+    font-size: 12px;
+    font-weight: 800;
+  
+    font-family: inherit;
+  }
+  
+  .sc-theme-option.active {
+    background: #2563eb;
+    border-color: #2563eb;
+  
+    color: #ffffff;
+  }
+  
+  .sc-glass-colors {
+    margin-top: 14px;
+  
+    display: none;
+  }
+  
+  .sc-glass-colors.show {
+    display: block;
+  }
+  
+  .sc-glass-color-title {
+    font-size: 12px;
+    font-weight: 800;
+  
+    color: #64748b;
+  
+    margin-bottom: 9px;
+  }
+  
+  .sc-color-options {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  
+    flex-wrap: wrap;
+  }
+  
+  .sc-color-option {
+    width: 30px;
+    height: 30px;
+  
+    border: 3px solid transparent;
+  
+    border-radius: 50%;
+  
+    cursor: pointer;
+  
+    padding: 0;
+  
+    box-shadow: 0 3px 10px rgba(15, 23, 42, 0.14);
+  }
+  
+  .sc-color-option.active {
+    border-color: #ffffff;
+  
+    outline: 2px solid #0f172a;
+  }
+  
+  .sc-color-blue {
+    background: #2563eb;
+  }
+  
+  .sc-color-indigo {
+    background: #4f46e5;
+  }
+  
+  .sc-color-teal {
+    background: #0f766e;
+  }
+  
+  .sc-color-purple {
+    background: #7c3aed;
+  }
+  
+  .sc-color-slate {
+    background: #475569;
+  }
+  
+  /* =====================================================
+         LIGHT THEME
+      ===================================================== */
+  
+  body.sc-theme-light .sc-sidebar {
+    background: #ffffff;
+  }
+  
+  body.sc-theme-light .sc-menu-button {
+    background: #ffffff;
+    color: #1e3a8a;
+  }
+  
+  /* =====================================================
+         DARK THEME
+      ===================================================== */
+  
+  body.sc-theme-dark {
+    background: #0f172a !important;
+    color: #e2e8f0 !important;
+  }
+  
+  body.sc-theme-dark .sc-sidebar {
+    background: #111827;
+  }
+  
+  body.sc-theme-dark .sc-sidebar-header {
+    border-color: #263247;
+  }
+  
+  body.sc-theme-dark .sc-sidebar-title,
+  body.sc-theme-dark .sc-user-name {
+    color: #f8fafc;
+  }
+  
+  body.sc-theme-dark .sc-user-box {
+    background: #1e293b;
+    border-color: #334155;
+  }
+  
+  body.sc-theme-dark .sc-user-type {
+    color: #94a3b8;
+  }
+  
+  body.sc-theme-dark .sc-avatar {
+    background: #1e3a5f;
+    color: #bfdbfe;
+  }
+  
+  body.sc-theme-dark .sc-menu-link,
+  body.sc-theme-dark .sc-appearance-button {
+    color: #cbd5e1;
+  }
+  
+  body.sc-theme-dark .sc-menu-link:hover,
+  body.sc-theme-dark .sc-appearance-button:hover {
+    background: #312e81;
+    color: #ffffff;
+  }
+  
+  body.sc-theme-dark .sc-close-button {
+    background: #1e293b;
+    color: #ffffff;
+  }
+  
+  body.sc-theme-dark .sc-appearance-panel {
+    background: #1e293b;
+    border-color: #334155;
+  }
+  
+  body.sc-theme-dark .sc-appearance-title,
+  body.sc-theme-dark .sc-glass-color-title {
+    color: #cbd5e1;
+  }
+  
+  body.sc-theme-dark .sc-theme-option {
+    background: #0f172a;
+    border-color: #475569;
+    color: #cbd5e1;
+  }
+  
+  body.sc-theme-dark .sc-theme-option.active {
+    background: #2563eb;
+    border-color: #2563eb;
+    color: #ffffff;
+  }
+  
+  body.sc-theme-dark .sc-menu-button {
+    background: #1e293b;
+    color: #ffffff;
+  }
+  
+  body.sc-theme-dark .sc-color-option.active {
+    outline-color: #ffffff;
+  }
+  
+  /* =====================================================
+         GLASS THEME
+      ===================================================== */
+  
+  body.sc-theme-glass {
+    background: radial-gradient(circle at 15% 15%, rgba(var(--sc-glass-rgb), 0.45), transparent 35%), radial-gradient(circle at 85% 85%, rgba(var(--sc-glass-rgb-2), 0.35), transparent 40%), linear-gradient(135deg, #0f172a, #1e293b, #172554) !important;
+  
+    background-attachment: fixed !important;
+  
+    color: #ffffff;
+  }
+  
+  body.sc-theme-glass .sc-menu-button {
+    background: rgba(var(--sc-glass-rgb), 0.17);
+  
+    border-color: rgba(255, 255, 255, 0.25);
+  
+    color: #ffffff;
+  
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+  
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 8px 25px rgba(15, 23, 42, 0.2);
+  }
+  
+  body.sc-theme-glass .sc-sidebar {
+    background: linear-gradient(180deg, rgba(var(--sc-glass-rgb), 0.2), rgba(15, 23, 42, 0.26));
+  
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+  
+    backdrop-filter: blur(28px);
+    -webkit-backdrop-filter: blur(28px);
+  }
+  
+  body.sc-theme-glass .sc-sidebar-header {
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+  
+  body.sc-theme-glass .sc-sidebar-title,
+  body.sc-theme-glass .sc-user-name {
+    color: #ffffff;
+  }
+  
+  body.sc-theme-glass .sc-user-type {
+    color: rgba(255, 255, 255, 0.7);
+  }
+  
+  body.sc-theme-glass .sc-user-box,
+  body.sc-theme-glass .sc-appearance-panel {
+    background: rgba(255, 255, 255, 0.08);
+  
+    border-color: rgba(255, 255, 255, 0.15);
+  
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+  
+  body.sc-theme-glass .sc-avatar {
+    background: rgba(255, 255, 255, 0.12);
+  
+    color: #ffffff;
+  }
+  
+  body.sc-theme-glass .sc-menu-link,
+  body.sc-theme-glass .sc-appearance-button {
+    background: rgba(255, 255, 255, 0.07);
+  
+    border-color: rgba(255, 255, 255, 0.1);
+  
+    color: #ffffff;
+  
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  
+  body.sc-theme-glass .sc-menu-link:hover,
+  body.sc-theme-glass .sc-appearance-button:hover {
+    background: rgba(var(--sc-glass-rgb), 0.24);
+  
+    border-color: rgba(255, 255, 255, 0.22);
+  
+    color: #ffffff;
+  }
+  
+  body.sc-theme-glass .sc-close-button {
+    background: rgba(255, 255, 255, 0.08);
+  
+    color: #ffffff;
+  }
+  
+  body.sc-theme-glass .sc-appearance-title,
+  body.sc-theme-glass .sc-glass-color-title {
+    color: rgba(255, 255, 255, 0.8);
+  }
+  
+  body.sc-theme-glass .sc-theme-option {
+    background: rgba(255, 255, 255, 0.08);
+  
+    border-color: rgba(255, 255, 255, 0.14);
+  
+    color: #ffffff;
+  }
+  
+  body.sc-theme-glass .sc-theme-option.active {
+    background: rgba(var(--sc-glass-rgb), 0.75);
+  
+    border-color: rgba(255, 255, 255, 0.25);
+  }
+  
+  body.sc-theme-glass .sc-logout {
+    color: #fecaca;
+  }
+  
+  body.sc-theme-glass .sc-logout:hover {
+    background: rgba(220, 38, 38, 0.22);
+  }
+  
+  /* =====================================================
+         MOBILE
+      ===================================================== */
+  
+  @media (max-width: 700px) {
     .sc-menu-button {
-        position: fixed;
-        top: 16px;
-        left: 16px;
-
-        width: 46px;
-        height: 46px;
-
-        border: 1px solid rgba(255, 255, 255, 0.22);
-        border-radius: 14px;
-
-        background: rgba(255, 255, 255, 0.92);
-        color: #1e3a8a;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        cursor: pointer;
-
-        z-index: 950;
-
-        box-shadow:
-            0 7px 22px
-            rgba(15, 23, 42, 0.16);
-
-        transition:
-            background 0.25s ease,
-            color 0.25s ease,
-            border-color 0.25s ease,
-            transform 0.2s ease;
+      top: 12px;
+      left: 12px;
+  
+      width: 43px;
+      height: 43px;
     }
-
-    .sc-menu-button:hover {
-        transform: translateY(-1px);
-    }
-
-    .sc-menu-button .sc-svg-icon {
-        width: 25px;
-        height: 25px;
-    }
-
-    /* =====================================================
-       OVERLAY
-    ===================================================== */
-
-    .sc-sidebar-overlay {
-        position: fixed;
-        inset: 0;
-
-        background: rgba(15, 23, 42, 0.50);
-
-        opacity: 0;
-        visibility: hidden;
-
-        transition: 0.3s ease;
-
-        z-index: 998;
-    }
-
-    .sc-sidebar-overlay.active {
-        opacity: 1;
-        visibility: visible;
-    }
-
-    /* =====================================================
-       SIDEBAR
-    ===================================================== */
-
+  
     .sc-sidebar {
-        position: fixed;
-
-        top: 0;
-        left: 0;
-
-        width: 285px;
-        max-width: 88vw;
-
-        height: 100vh;
-
-        background: #ffffff;
-
-        transform: translateX(-105%);
-
-        transition:
-            transform 0.32s ease,
-            background 0.25s ease,
-            border-color 0.25s ease;
-
-        z-index: 999;
-
-        display: flex;
-        flex-direction: column;
-
-        box-shadow:
-            10px 0 30px
-            rgba(15, 23, 42, 0.20);
-
-        overflow-y: auto;
+      width: 280px;
     }
-
-    .sc-sidebar.open {
-        transform: translateX(0);
-    }
-
-    /* =====================================================
-       HEADER
-    ===================================================== */
-
-    .sc-sidebar-header {
-        padding: 20px 16px;
-
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-
-        border-bottom: 1px solid #e2e8f0;
-    }
-
-    .sc-sidebar-title {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-
-        color: #172554;
-
-        font-size: 19px;
-        font-weight: 800;
-    }
-
-    .sc-sidebar-logo {
-        width: 42px;
-        height: 42px;
-
-        border-radius: 13px;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        background:
-            linear-gradient(
-                135deg,
-                #4f46e5,
-                #2563eb
-            );
-
-        color: #ffffff;
-    }
-
-    .sc-close-button {
-        width: 38px;
-        height: 38px;
-
-        border: none;
-
-        border-radius: 11px;
-
-        background: #f1f5f9;
-        color: #475569;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        cursor: pointer;
-    }
-
-    /* =====================================================
-       USER
-    ===================================================== */
-
-    .sc-user-box {
-        margin: 14px 12px 8px;
-
-        padding: 14px;
-
-        display: flex;
-        align-items: center;
-        gap: 12px;
-
-        border: 1px solid #e2e8f0;
-        border-radius: 16px;
-
-        background: #f8fafc;
-    }
-
-    .sc-avatar {
-        width: 48px;
-        height: 48px;
-        min-width: 48px;
-
-        border-radius: 50%;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        background: #dbeafe;
-        color: #1d4ed8;
-    }
-
-    .sc-user-name {
-        color: #172554;
-        font-weight: 800;
-
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    .sc-user-type {
-        margin-top: 3px;
-        color: #64748b;
-        font-size: 12px;
-    }
-
-    /* =====================================================
-       MENU
-    ===================================================== */
-
-    .sc-menu {
-        flex: 1;
-
-        padding: 10px 12px 22px;
-
-        display: flex;
-        flex-direction: column;
-
-        gap: 8px;
-    }
-
-    .sc-menu-link,
-    .sc-appearance-button {
-        min-height: 52px;
-
-        padding: 11px 14px;
-
-        border: 1px solid transparent;
-        border-radius: 14px;
-
-        display: flex;
-        align-items: center;
-
-        gap: 14px;
-
-        text-decoration: none;
-
-        background: transparent;
-
-        color: #64748b;
-
-        font-size: 15px;
-        font-weight: 700;
-
-        font-family: inherit;
-
-        cursor: pointer;
-
-        transition:
-            background 0.2s ease,
-            color 0.2s ease,
-            transform 0.2s ease,
-            border-color 0.2s ease;
-    }
-
-    .sc-menu-link:hover,
-    .sc-appearance-button:hover {
-        background: #eef2ff;
-        color: #4338ca;
-
-        transform: translateX(3px);
-    }
-
-    .sc-menu-icon {
-        width: 30px;
-        min-width: 30px;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .sc-notification-text {
-        flex: 1;
-    }
-
-    .sc-notification-badge {
-        min-width: 24px;
-        height: 24px;
-
-        padding: 0 7px;
-
-        border-radius: 999px;
-
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-
-        background: #dc2626;
-        color: #ffffff;
-
-        font-size: 12px;
-        font-weight: 800;
-    }
-
-    .sc-logout {
-        color: #dc2626;
-    }
-
-    .sc-logout:hover {
-        color: #dc2626;
-        background: #fee2e2;
-    }
-
-    /* =====================================================
-       APPEARANCE PANEL
-    ===================================================== */
-
-    .sc-appearance-panel {
-        margin-top: 4px;
-
-        padding: 14px;
-
-        border-radius: 16px;
-
-        background: #f8fafc;
-
-        border: 1px solid #e2e8f0;
-
-        display: none;
-    }
-
-    .sc-appearance-panel.open {
-        display: block;
-    }
-
-    .sc-appearance-title {
-        font-size: 13px;
-        font-weight: 800;
-
-        color: #475569;
-
-        margin-bottom: 10px;
-    }
-
-    .sc-theme-options {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-
-        gap: 7px;
-    }
-
-    .sc-theme-option {
-        border: 1px solid #cbd5e1;
-
-        border-radius: 10px;
-
-        padding: 9px 6px;
-
-        background: #ffffff;
-
-        color: #475569;
-
-        cursor: pointer;
-
-        font-size: 12px;
-        font-weight: 800;
-
-        font-family: inherit;
-    }
-
-    .sc-theme-option.active {
-        background: #2563eb;
-        border-color: #2563eb;
-
-        color: #ffffff;
-    }
-
-    .sc-glass-colors {
-        margin-top: 14px;
-
-        display: none;
-    }
-
-    .sc-glass-colors.show {
-        display: block;
-    }
-
-    .sc-glass-color-title {
-        font-size: 12px;
-        font-weight: 800;
-
-        color: #64748b;
-
-        margin-bottom: 9px;
-    }
-
-    .sc-color-options {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-
-        flex-wrap: wrap;
-    }
-
-    .sc-color-option {
-        width: 30px;
-        height: 30px;
-
-        border: 3px solid transparent;
-
-        border-radius: 50%;
-
-        cursor: pointer;
-
-        padding: 0;
-
-        box-shadow:
-            0 3px 10px
-            rgba(15, 23, 42, 0.14);
-    }
-
-    .sc-color-option.active {
-        border-color: #ffffff;
-
-        outline: 2px solid #0f172a;
-    }
-
-    .sc-color-blue {
-        background: #2563eb;
-    }
-
-    .sc-color-indigo {
-        background: #4f46e5;
-    }
-
-    .sc-color-teal {
-        background: #0f766e;
-    }
-
-    .sc-color-purple {
-        background: #7c3aed;
-    }
-
-    .sc-color-slate {
-        background: #475569;
-    }
-
-    /* =====================================================
-       LIGHT THEME
-    ===================================================== */
-
-    body.sc-theme-light .sc-sidebar {
-        background: #ffffff;
-    }
-
-    body.sc-theme-light .sc-menu-button {
-        background: #ffffff;
-        color: #1e3a8a;
-    }
-
-    /* =====================================================
-       DARK THEME
-    ===================================================== */
-
-    body.sc-theme-dark {
-        background: #0f172a !important;
-        color: #e2e8f0 !important;
-    }
-
-    body.sc-theme-dark .sc-sidebar {
-        background: #111827;
-    }
-
-    body.sc-theme-dark .sc-sidebar-header {
-        border-color: #263247;
-    }
-
-    body.sc-theme-dark .sc-sidebar-title,
-    body.sc-theme-dark .sc-user-name {
-        color: #f8fafc;
-    }
-
-    body.sc-theme-dark .sc-user-box {
-        background: #1e293b;
-        border-color: #334155;
-    }
-
-    body.sc-theme-dark .sc-user-type {
-        color: #94a3b8;
-    }
-
-    body.sc-theme-dark .sc-avatar {
-        background: #1e3a5f;
-        color: #bfdbfe;
-    }
-
-    body.sc-theme-dark .sc-menu-link,
-    body.sc-theme-dark .sc-appearance-button {
-        color: #cbd5e1;
-    }
-
-    body.sc-theme-dark .sc-menu-link:hover,
-    body.sc-theme-dark .sc-appearance-button:hover {
-        background: #312e81;
-        color: #ffffff;
-    }
-
-    body.sc-theme-dark .sc-close-button {
-        background: #1e293b;
-        color: #ffffff;
-    }
-
-    body.sc-theme-dark .sc-appearance-panel {
-        background: #1e293b;
-        border-color: #334155;
-    }
-
-    body.sc-theme-dark .sc-appearance-title,
-    body.sc-theme-dark .sc-glass-color-title {
-        color: #cbd5e1;
-    }
-
-    body.sc-theme-dark .sc-theme-option {
-        background: #0f172a;
-        border-color: #475569;
-        color: #cbd5e1;
-    }
-
-    body.sc-theme-dark .sc-theme-option.active {
-        background: #2563eb;
-        border-color: #2563eb;
-        color: #ffffff;
-    }
-
-    body.sc-theme-dark .sc-menu-button {
-        background: #1e293b;
-        color: #ffffff;
-    }
-
-    body.sc-theme-dark .sc-color-option.active {
-        outline-color: #ffffff;
-    }
-
-    /* =====================================================
-       GLASS THEME
-    ===================================================== */
-
-    body.sc-theme-glass {
-        background:
-            radial-gradient(
-                circle at 15% 15%,
-                rgba(var(--sc-glass-rgb), 0.45),
-                transparent 35%
-            ),
-            radial-gradient(
-                circle at 85% 85%,
-                rgba(var(--sc-glass-rgb-2), 0.35),
-                transparent 40%
-            ),
-            linear-gradient(
-                135deg,
-                #0f172a,
-                #1e293b,
-                #172554
-            ) !important;
-
-        background-attachment: fixed !important;
-
-        color: #ffffff;
-    }
-
-    body.sc-theme-glass .sc-menu-button {
-        background: rgba(var(--sc-glass-rgb), 0.17);
-
-        border-color:
-            rgba(255, 255, 255, 0.25);
-
-        color: #ffffff;
-
-        backdrop-filter: blur(18px);
-        -webkit-backdrop-filter: blur(18px);
-
-        box-shadow:
-            inset 0 1px 0
-            rgba(255, 255, 255, 0.25),
-            0 8px 25px
-            rgba(15, 23, 42, 0.20);
-    }
-
-    body.sc-theme-glass .sc-sidebar {
-        background:
-            linear-gradient(
-                180deg,
-                rgba(var(--sc-glass-rgb), 0.20),
-                rgba(15, 23, 42, 0.26)
-            );
-
-        border-right:
-            1px solid
-            rgba(255, 255, 255, 0.20);
-
-        backdrop-filter: blur(28px);
-        -webkit-backdrop-filter: blur(28px);
-    }
-
-    body.sc-theme-glass .sc-sidebar-header {
-        border-color:
-            rgba(255, 255, 255, 0.15);
-    }
-
-    body.sc-theme-glass .sc-sidebar-title,
-    body.sc-theme-glass .sc-user-name {
-        color: #ffffff;
-    }
-
-    body.sc-theme-glass .sc-user-type {
-        color:
-            rgba(255, 255, 255, 0.70);
-    }
-
-    body.sc-theme-glass .sc-user-box,
-    body.sc-theme-glass .sc-appearance-panel {
-        background:
-            rgba(255, 255, 255, 0.08);
-
-        border-color:
-            rgba(255, 255, 255, 0.15);
-
-        backdrop-filter: blur(14px);
-        -webkit-backdrop-filter: blur(14px);
-    }
-
-    body.sc-theme-glass .sc-avatar {
-        background:
-            rgba(255, 255, 255, 0.12);
-
-        color: #ffffff;
-    }
-
-    body.sc-theme-glass .sc-menu-link,
-    body.sc-theme-glass .sc-appearance-button {
-        background:
-            rgba(255, 255, 255, 0.07);
-
-        border-color:
-            rgba(255, 255, 255, 0.10);
-
-        color: #ffffff;
-
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-    }
-
-    body.sc-theme-glass .sc-menu-link:hover,
-    body.sc-theme-glass .sc-appearance-button:hover {
-        background:
-            rgba(var(--sc-glass-rgb), 0.24);
-
-        border-color:
-            rgba(255, 255, 255, 0.22);
-
-        color: #ffffff;
-    }
-
-    body.sc-theme-glass .sc-close-button {
-        background:
-            rgba(255, 255, 255, 0.08);
-
-        color: #ffffff;
-    }
-
-    body.sc-theme-glass .sc-appearance-title,
-    body.sc-theme-glass .sc-glass-color-title {
-        color:
-            rgba(255, 255, 255, 0.80);
-    }
-
-    body.sc-theme-glass .sc-theme-option {
-        background:
-            rgba(255, 255, 255, 0.08);
-
-        border-color:
-            rgba(255, 255, 255, 0.14);
-
-        color: #ffffff;
-    }
-
-    body.sc-theme-glass .sc-theme-option.active {
-        background:
-            rgba(var(--sc-glass-rgb), 0.75);
-
-        border-color:
-            rgba(255, 255, 255, 0.25);
-    }
-
-    body.sc-theme-glass .sc-logout {
-        color: #fecaca;
-    }
-
-    body.sc-theme-glass .sc-logout:hover {
-        background:
-            rgba(220, 38, 38, 0.22);
-    }
-
-    /* =====================================================
-       MOBILE
-    ===================================================== */
-
-    @media (max-width: 700px) {
-        .sc-menu-button {
-            top: 12px;
-            left: 12px;
-
-            width: 43px;
-            height: 43px;
-        }
-
-        .sc-sidebar {
-            width: 280px;
-        }
-    }
+  }
 </style>
 
-
-<button
-    type="button"
-    class="sc-menu-button"
-    id="scMenuButton"
-    aria-label="Open menu"
->
-    <svg
-        class="sc-svg-icon"
-        viewBox="0 0 24 24"
-        aria-hidden="true"
-    >
-        <path d="M4 7h16"></path>
-        <path d="M4 12h16"></path>
-        <path d="M4 17h16"></path>
-    </svg>
+<button type="button" class="sc-menu-button" id="scMenuButton" aria-label="Open menu">
+  <svg class="sc-svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M4 7h16"></path>
+    <path d="M4 12h16"></path>
+    <path d="M4 17h16"></path>
+  </svg>
 </button>
 
+<div class="sc-sidebar-overlay" id="scSidebarOverlay"></div>
 
-<div
-    class="sc-sidebar-overlay"
-    id="scSidebarOverlay"
-></div>
+<aside class="sc-sidebar" id="scSidebar">
+  <div class="sc-sidebar-header">
+    <div class="sc-sidebar-title">
+      <div class="sc-sidebar-logo">
+        <svg class="sc-svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 3l7 3v5c0 4.8-2.9 8.1-7 10-4.1-1.9-7-5.2-7-10V6l7-3z"></path>
+          <path d="M9.5 12l1.7 1.7L15 9.9"></path>
+        </svg>
+      </div>
 
-
-<aside
-    class="sc-sidebar"
-    id="scSidebar"
->
-
-    <div class="sc-sidebar-header">
-
-        <div class="sc-sidebar-title">
-
-            <div class="sc-sidebar-logo">
-                <svg
-                    class="sc-svg-icon"
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                >
-                    <path d="M12 3l7 3v5c0 4.8-2.9 8.1-7 10-4.1-1.9-7-5.2-7-10V6l7-3z"></path>
-                    <path d="M9.5 12l1.7 1.7L15 9.9"></path>
-                </svg>
-            </div>
-
-            <span>
-                Menu
-            </span>
-
-        </div>
-
-
-        <button
-            type="button"
-            class="sc-close-button"
-            id="scCloseButton"
-            aria-label="Close menu"
-        >
-            <svg
-                class="sc-svg-icon"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-            >
-                <path d="M6 6l12 12"></path>
-                <path d="M18 6L6 18"></path>
-            </svg>
-        </button>
-
+      <span>Menu</span>
     </div>
 
+    <button type="button" class="sc-close-button" id="scCloseButton" aria-label="Close menu">
+      <svg class="sc-svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M6 6l12 12"></path>
+        <path d="M18 6L6 18"></path>
+      </svg>
+    </button>
+  </div>
 
-    <div class="sc-user-box">
-
-        <div class="sc-avatar">
-            <svg
-                class="sc-svg-icon"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-            >
-                <circle cx="12" cy="8" r="4"></circle>
-                <path d="M4.5 21a7.5 7.5 0 0 1 15 0"></path>
-            </svg>
-        </div>
-
-
-        <div>
-
-            <div class="sc-user-name">
-                {{ request.user.username }}
-            </div>
-
-            <div class="sc-user-type">
-                User Account
-            </div>
-
-        </div>
-
+  <div class="sc-user-box">
+    <div class="sc-avatar">
+      <svg class="sc-svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="8" r="4"></circle>
+        <path d="M4.5 21a7.5 7.5 0 0 1 15 0"></path>
+      </svg>
     </div>
 
+    <div>
+      <div class="sc-user-name">{{ request.user.username }}</div>
 
-    <nav class="sc-menu">
+      <div class="sc-user-type">User Account</div>
+    </div>
+  </div>
 
-        <a
-            href="{% url 'profile' %}"
-            class="sc-menu-link"
-        >
-            <span class="sc-menu-icon">
-                <svg
-                    class="sc-svg-icon"
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                >
-                    <circle cx="12" cy="8" r="4"></circle>
-                    <path d="M4.5 21a7.5 7.5 0 0 1 15 0"></path>
-                </svg>
-            </span>
+  <nav class="sc-menu">
+    <a href="{% url 'profile' %}" class="sc-menu-link">
+      <span class="sc-menu-icon">
+        <svg class="sc-svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="8" r="4"></circle>
+          <path d="M4.5 21a7.5 7.5 0 0 1 15 0"></path>
+        </svg>
+      </span>
 
-            <span>
-                Profile
-            </span>
-        </a>
+      <span>Profile</span>
+    </a>
 
+    <a href="{% url 'notifications' %}" class="sc-menu-link">
+      <span class="sc-menu-icon">
+        <svg class="sc-svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
+          <path d="M10 21h4"></path>
+        </svg>
+      </span>
 
-        <a
-            href="{% url 'notifications' %}"
-            class="sc-menu-link"
-        >
-            <span class="sc-menu-icon">
-                <svg
-                    class="sc-svg-icon"
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                >
-                    <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
-                    <path d="M10 21h4"></path>
-                </svg>
-            </span>
+      <span class="sc-notification-text">Notifications</span>
 
-            <span class="sc-notification-text">
-                Notifications
-            </span>
+      {% if unread_notification_count %}
+        <span class="sc-notification-badge">{{ unread_notification_count }}</span>
+      {% endif %}
+    </a>
 
-            {% if unread_notification_count %}
-                <span class="sc-notification-badge">
-                    {{ unread_notification_count }}
-                </span>
-            {% endif %}
-        </a>
+    <a href="{% url 'user_payment_details' %}" class="sc-menu-link">
+      <span class="sc-menu-icon">💳</span>
 
+      <span>Payment Details</span>
+    </a>
 
-        <a
-            href="{% url 'user_settings' %}"
-            class="sc-menu-link"
-        >
-            <span class="sc-menu-icon">
-                <svg
-                    class="sc-svg-icon"
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                >
-                    <circle cx="12" cy="12" r="3"></circle>
-                    <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21h-4v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H3v-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6V3h4v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.1v4H21a1.7 1.7 0 0 0-1.6 1z"></path>
-                </svg>
-            </span>
+    <a href="{% url 'user_settings' %}" class="sc-menu-link">
+      <span class="sc-menu-icon">
+        <svg class="sc-svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21h-4v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H3v-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6V3h4v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.1v4H21a1.7 1.7 0 0 0-1.6 1z"></path>
+        </svg>
+      </span>
 
-            <span>
-                Settings
-            </span>
-        </a>
+      <span>Settings</span>
+    </a>
 
+    <!-- APPEARANCE -->
 
-        <!-- APPEARANCE -->
+    <button type="button" class="sc-appearance-button" id="scAppearanceButton">
+      <span class="sc-menu-icon">🎨</span>
 
-        <button
-            type="button"
-            class="sc-appearance-button"
-            id="scAppearanceButton"
-        >
-            <span class="sc-menu-icon">
-                🎨
-            </span>
+      <span>Appearance</span>
+    </button>
 
-            <span>
-                Appearance
-            </span>
-        </button>
+    <div class="sc-appearance-panel" id="scAppearancePanel">
+      <div class="sc-appearance-title">Choose Theme</div>
 
+      <div class="sc-theme-options">
+        <button type="button" class="sc-theme-option" data-theme="light">Light</button>
 
-        <div
-            class="sc-appearance-panel"
-            id="scAppearancePanel"
-        >
+        <button type="button" class="sc-theme-option" data-theme="dark">Dark</button>
 
-            <div class="sc-appearance-title">
-                Choose Theme
-            </div>
+        <button type="button" class="sc-theme-option" data-theme="glass">Glass</button>
+      </div>
 
+      <div class="sc-glass-colors" id="scGlassColors">
+        <div class="sc-glass-color-title">Glass Color</div>
 
-            <div class="sc-theme-options">
+        <div class="sc-color-options">
+          <button type="button" class="sc-color-option sc-color-blue" data-color="blue" aria-label="Blue Glass" title="Blue"></button>
 
-                <button
-                    type="button"
-                    class="sc-theme-option"
-                    data-theme="light"
-                >
-                    Light
-                </button>
+          <button type="button" class="sc-color-option sc-color-indigo" data-color="indigo" aria-label="Indigo Glass" title="Indigo"></button>
 
-                <button
-                    type="button"
-                    class="sc-theme-option"
-                    data-theme="dark"
-                >
-                    Dark
-                </button>
+          <button type="button" class="sc-color-option sc-color-teal" data-color="teal" aria-label="Teal Glass" title="Teal"></button>
 
-                <button
-                    type="button"
-                    class="sc-theme-option"
-                    data-theme="glass"
-                >
-                    Glass
-                </button>
+          <button type="button" class="sc-color-option sc-color-purple" data-color="purple" aria-label="Purple Glass" title="Purple"></button>
 
-            </div>
-
-
-            <div
-                class="sc-glass-colors"
-                id="scGlassColors"
-            >
-
-                <div class="sc-glass-color-title">
-                    Glass Color
-                </div>
-
-
-                <div class="sc-color-options">
-
-                    <button
-                        type="button"
-                        class="sc-color-option sc-color-blue"
-                        data-color="blue"
-                        aria-label="Blue Glass"
-                        title="Blue"
-                    ></button>
-
-                    <button
-                        type="button"
-                        class="sc-color-option sc-color-indigo"
-                        data-color="indigo"
-                        aria-label="Indigo Glass"
-                        title="Indigo"
-                    ></button>
-
-                    <button
-                        type="button"
-                        class="sc-color-option sc-color-teal"
-                        data-color="teal"
-                        aria-label="Teal Glass"
-                        title="Teal"
-                    ></button>
-
-                    <button
-                        type="button"
-                        class="sc-color-option sc-color-purple"
-                        data-color="purple"
-                        aria-label="Purple Glass"
-                        title="Purple"
-                    ></button>
-
-                    <button
-                        type="button"
-                        class="sc-color-option sc-color-slate"
-                        data-color="slate"
-                        aria-label="Slate Glass"
-                        title="Slate"
-                    ></button>
-
-                </div>
-
-            </div>
-
+          <button type="button" class="sc-color-option sc-color-slate" data-color="slate" aria-label="Slate Glass" title="Slate"></button>
         </div>
+      </div>
+    </div>
 
+    <a href="{% url 'logout' %}" class="sc-menu-link sc-logout">
+      <span class="sc-menu-icon">
+        <svg class="sc-svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+          <path d="M16 17l5-5-5-5"></path>
+          <path d="M21 12H9"></path>
+        </svg>
+      </span>
 
-        <a
-            href="{% url 'logout' %}"
-            class="sc-menu-link sc-logout"
-        >
-            <span class="sc-menu-icon">
-                <svg
-                    class="sc-svg-icon"
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                >
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                    <path d="M16 17l5-5-5-5"></path>
-                    <path d="M21 12H9"></path>
-                </svg>
-            </span>
-
-            <span>
-                Logout
-            </span>
-        </a>
-
-    </nav>
-
+      <span>Logout</span>
+    </a>
+  </nav>
 </aside>
 
-
 <script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const sidebar = document.getElementById('scSidebar')
+  
+    const overlay = document.getElementById('scSidebarOverlay')
+  
+    const menuButton = document.getElementById('scMenuButton')
+  
+    const closeButton = document.getElementById('scCloseButton')
+  
+    const appearanceButton = document.getElementById('scAppearanceButton')
+  
+    const appearancePanel = document.getElementById('scAppearancePanel')
+  
+    const glassColors = document.getElementById('scGlassColors')
+  
+    const themeButtons = document.querySelectorAll('.sc-theme-option')
+  
+    const colorButtons = document.querySelectorAll('.sc-color-option')
+  
+    const glassColorMap = {
+      blue: {
+        primary: '37, 99, 235',
+        secondary: '59, 130, 246'
+      },
+  
+      indigo: {
+        primary: '79, 70, 229',
+        secondary: '99, 102, 241'
+      },
+  
+      teal: {
+        primary: '15, 118, 110',
+        secondary: '20, 184, 166'
+      },
+  
+      purple: {
+        primary: '124, 58, 237',
+        secondary: '147, 51, 234'
+      },
+  
+      slate: {
+        primary: '71, 85, 105',
+        secondary: '100, 116, 139'
+      }
+    }
+  
+    function openSidebar() {
+      sidebar.classList.add('open')
+  
+      overlay.classList.add('active')
+  
+      document.body.style.overflow = 'hidden'
+    }
+  
+    function closeSidebar() {
+      sidebar.classList.remove('open')
+  
+      overlay.classList.remove('active')
+  
+      document.body.style.overflow = ''
+    }
+  
+    function setGlassColor(color) {
+      const selected = glassColorMap[color] || glassColorMap.blue
+  
+      document.documentElement.style.setProperty('--sc-glass-rgb', selected.primary)
+  
+      document.documentElement.style.setProperty('--sc-glass-rgb-2', selected.secondary)
+  
+      colorButtons.forEach(function (button) {
+        button.classList.toggle('active', button.dataset.color === color)
+      })
+  
+      localStorage.setItem('smartComplaintGlassColor', color)
+    }
+  
+    function setTheme(theme) {
+      document.body.classList.remove('sc-theme-light', 'sc-theme-dark', 'sc-theme-glass', 'dark-mode')
+  
+      if (theme === 'dark') {
+        document.body.classList.add('sc-theme-dark')
+      } else if (theme === 'glass') {
+        document.body.classList.add('sc-theme-glass')
+      } else {
+        document.body.classList.add('sc-theme-light')
+  
+        theme = 'light'
+      }
+  
+      themeButtons.forEach(function (button) {
+        button.classList.toggle('active', button.dataset.theme === theme)
+      })
+  
+      glassColors.classList.toggle('show', theme === 'glass')
+  
+      localStorage.setItem('smartComplaintThemeV2', theme)
+    }
+  
+    menuButton.addEventListener('click', openSidebar)
+  
+    closeButton.addEventListener('click', closeSidebar)
+  
+    overlay.addEventListener('click', closeSidebar)
+  
+    appearanceButton.addEventListener('click', function () {
+      appearancePanel.classList.toggle('open')
+    })
+  
+    themeButtons.forEach(function (button) {
+      button.addEventListener('click', function () {
+        setTheme(this.dataset.theme)
+      })
+    })
+  
+    colorButtons.forEach(function (button) {
+      button.addEventListener('click', function () {
+        setGlassColor(this.dataset.color)
+  
+        setTheme('glass')
+      })
+    })
+  
+    const savedTheme = localStorage.getItem('smartComplaintThemeV2') || 'light'
+  
+    const savedColor = localStorage.getItem('smartComplaintGlassColor') || 'blue'
+  
+    setGlassColor(savedColor)
+  
+    setTheme(savedTheme)
+  
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && sidebar.classList.contains('open')) {
+        closeSidebar()
+      }
+    })
+  
+    let touchStartX = 0
+    let touchEndX = 0
+  
     document.addEventListener(
-        "DOMContentLoaded",
-        function () {
-
-            const sidebar =
-                document.getElementById(
-                    "scSidebar"
-                );
-
-            const overlay =
-                document.getElementById(
-                    "scSidebarOverlay"
-                );
-
-            const menuButton =
-                document.getElementById(
-                    "scMenuButton"
-                );
-
-            const closeButton =
-                document.getElementById(
-                    "scCloseButton"
-                );
-
-            const appearanceButton =
-                document.getElementById(
-                    "scAppearanceButton"
-                );
-
-            const appearancePanel =
-                document.getElementById(
-                    "scAppearancePanel"
-                );
-
-            const glassColors =
-                document.getElementById(
-                    "scGlassColors"
-                );
-
-            const themeButtons =
-                document.querySelectorAll(
-                    ".sc-theme-option"
-                );
-
-            const colorButtons =
-                document.querySelectorAll(
-                    ".sc-color-option"
-                );
-
-
-            const glassColorMap = {
-                blue: {
-                    primary: "37, 99, 235",
-                    secondary: "59, 130, 246"
-                },
-
-                indigo: {
-                    primary: "79, 70, 229",
-                    secondary: "99, 102, 241"
-                },
-
-                teal: {
-                    primary: "15, 118, 110",
-                    secondary: "20, 184, 166"
-                },
-
-                purple: {
-                    primary: "124, 58, 237",
-                    secondary: "147, 51, 234"
-                },
-
-                slate: {
-                    primary: "71, 85, 105",
-                    secondary: "100, 116, 139"
-                }
-            };
-
-
-            function openSidebar() {
-                sidebar.classList.add(
-                    "open"
-                );
-
-                overlay.classList.add(
-                    "active"
-                );
-
-                document.body.style.overflow =
-                    "hidden";
-            }
-
-
-            function closeSidebar() {
-                sidebar.classList.remove(
-                    "open"
-                );
-
-                overlay.classList.remove(
-                    "active"
-                );
-
-                document.body.style.overflow =
-                    "";
-            }
-
-
-            function setGlassColor(color) {
-
-                const selected =
-                    glassColorMap[color] ||
-                    glassColorMap.blue;
-
-
-                document.documentElement.style.setProperty(
-                    "--sc-glass-rgb",
-                    selected.primary
-                );
-
-                document.documentElement.style.setProperty(
-                    "--sc-glass-rgb-2",
-                    selected.secondary
-                );
-
-
-                colorButtons.forEach(
-                    function (button) {
-
-                        button.classList.toggle(
-                            "active",
-                            button.dataset.color === color
-                        );
-                    }
-                );
-
-
-                localStorage.setItem(
-                    "smartComplaintGlassColor",
-                    color
-                );
-            }
-
-
-            function setTheme(theme) {
-
-                document.body.classList.remove(
-                    "sc-theme-light",
-                    "sc-theme-dark",
-                    "sc-theme-glass",
-                    "dark-mode"
-                );
-
-
-                if (theme === "dark") {
-                    document.body.classList.add(
-                        "sc-theme-dark"
-                    );
-                }
-
-                else if (theme === "glass") {
-                    document.body.classList.add(
-                        "sc-theme-glass"
-                    );
-                }
-
-                else {
-                    document.body.classList.add(
-                        "sc-theme-light"
-                    );
-
-                    theme = "light";
-                }
-
-
-                themeButtons.forEach(
-                    function (button) {
-
-                        button.classList.toggle(
-                            "active",
-                            button.dataset.theme === theme
-                        );
-                    }
-                );
-
-
-                glassColors.classList.toggle(
-                    "show",
-                    theme === "glass"
-                );
-
-
-                localStorage.setItem(
-                    "smartComplaintThemeV2",
-                    theme
-                );
-            }
-
-
-            menuButton.addEventListener(
-                "click",
-                openSidebar
-            );
-
-
-            closeButton.addEventListener(
-                "click",
-                closeSidebar
-            );
-
-
-            overlay.addEventListener(
-                "click",
-                closeSidebar
-            );
-
-
-            appearanceButton.addEventListener(
-                "click",
-                function () {
-
-                    appearancePanel.classList.toggle(
-                        "open"
-                    );
-                }
-            );
-
-
-            themeButtons.forEach(
-                function (button) {
-
-                    button.addEventListener(
-                        "click",
-                        function () {
-
-                            setTheme(
-                                this.dataset.theme
-                            );
-                        }
-                    );
-                }
-            );
-
-
-            colorButtons.forEach(
-                function (button) {
-
-                    button.addEventListener(
-                        "click",
-                        function () {
-
-                            setGlassColor(
-                                this.dataset.color
-                            );
-
-                            setTheme(
-                                "glass"
-                            );
-                        }
-                    );
-                }
-            );
-
-
-            const savedTheme =
-                localStorage.getItem(
-                    "smartComplaintThemeV2"
-                ) || "light";
-
-
-            const savedColor =
-                localStorage.getItem(
-                    "smartComplaintGlassColor"
-                ) || "blue";
-
-
-            setGlassColor(
-                savedColor
-            );
-
-
-            setTheme(
-                savedTheme
-            );
-
-
-            document.addEventListener(
-                "keydown",
-                function (event) {
-
-                    if (
-                        event.key === "Escape" &&
-                        sidebar.classList.contains(
-                            "open"
-                        )
-                    ) {
-
-                        closeSidebar();
-                    }
-                }
-            );
-
-
-            let touchStartX = 0;
-            let touchEndX = 0;
-
-
-            document.addEventListener(
-                "touchstart",
-                function (event) {
-
-                    touchStartX =
-                        event.changedTouches[0]
-                            .screenX;
-                },
-                {
-                    passive: true
-                }
-            );
-
-
-            document.addEventListener(
-                "touchend",
-                function (event) {
-
-                    touchEndX =
-                        event.changedTouches[0]
-                            .screenX;
-
-
-                    const distance =
-                        touchEndX -
-                        touchStartX;
-
-
-                    if (
-                        touchStartX < 45 &&
-                        distance > 70 &&
-                        !sidebar.classList.contains(
-                            "open"
-                        )
-                    ) {
-
-                        openSidebar();
-                    }
-
-
-                    if (
-                        sidebar.classList.contains(
-                            "open"
-                        ) &&
-                        distance < -70
-                    ) {
-
-                        closeSidebar();
-                    }
-                },
-                {
-                    passive: true
-                }
-            );
-
+      'touchstart',
+      function (event) {
+        touchStartX = event.changedTouches[0].screenX
+      },
+      {
+        passive: true
+      }
+    )
+  
+    document.addEventListener(
+      'touchend',
+      function (event) {
+        touchEndX = event.changedTouches[0].screenX
+  
+        const distance = touchEndX - touchStartX
+  
+        if (touchStartX < 45 && distance > 70 && !sidebar.classList.contains('open')) {
+          openSidebar()
         }
-    );
+  
+        if (sidebar.classList.contains('open') && distance < -70) {
+          closeSidebar()
+        }
+      },
+      {
+        passive: true
+      }
+    )
+  })
 </script>
+<style>
+  .sc-menu-button {
+    background: rgba(7, 35, 72, 0.88) !important;
+    color: #fff !important;
+    border: 1px solid rgba(96, 165, 250, 0.28) !important;
+    box-shadow: 0 10px 28px rgba(2, 6, 23, 0.28) !important;
+  }
+  .sc-sidebar {
+    background: linear-gradient(180deg, #061b36, #08254a 55%, #071b35) !important;
+    border-right: 1px solid rgba(96, 165, 250, 0.22) !important;
+    color: #fff !important;
+  }
+  .sc-sidebar-header {
+    border-color: rgba(148, 163, 184, 0.16) !important;
+  }
+  .sc-sidebar-title,
+  .sc-user-name {
+    color: #fff !important;
+  }
+  .sc-user-box {
+    background: rgba(255, 255, 255, 0.06) !important;
+    border-color: rgba(148, 163, 184, 0.14) !important;
+  }
+  .sc-user-type {
+    color: #a8c5e8 !important;
+  }
+  .sc-avatar {
+    background: linear-gradient(145deg, #2563eb, #38bdf8) !important;
+    color: #fff !important;
+    border: 2px solid rgba(255, 255, 255, 0.7);
+  }
+  .sc-menu-link,
+  .sc-appearance-button {
+    color: #dbeafe !important;
+  }
+  .sc-menu-link:hover,
+  .sc-appearance-button:hover {
+    background: rgba(37, 99, 235, 0.22) !important;
+    color: #fff !important;
+  }
+  .sc-appearance-panel {
+    background: rgba(255, 255, 255, 0.06) !important;
+    border-color: rgba(148, 163, 184, 0.15) !important;
+  }
+  .sc-appearance-title,
+  .sc-glass-color-title {
+    color: #dbeafe !important;
+  }
+  .sc-close-button {
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: #fff !important;
+  }
+  .sc-logout {
+    color: #fecaca !important;
+  }
+</style>

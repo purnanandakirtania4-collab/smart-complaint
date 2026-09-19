@@ -1,689 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-    <title>Home | Smart Complaint</title>
-
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>User Dashboard | Smart Complaint</title>
     {% include 'complaints/base_style.html' %}
-
     <style>
-      /* =====================================================
-                 ICON
-              ===================================================== */
-      
-      .home-icon {
-        width: 38px;
-        height: 38px;
-      
-        display: block;
-      
-        margin: 0 auto 13px;
-      
-        fill: none;
-        stroke: currentColor;
-      
-        stroke-width: 1.8;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-      }
-      
-      /* =====================================================
-                 HERO
-              ===================================================== */
-      
-      .hero {
-        padding: 44px 28px 30px;
-      
-        text-align: center;
-      }
-      
-      .hero h1 {
-        margin: 0;
-      
-        color: #ffffff;
-      
-        font-size: 42px;
-        font-weight: 900;
-      
-        line-height: 1.2;
-      
-        text-shadow: 0 3px 18px rgba(2, 6, 23, 0.34);
-      }
-      
-      .hero p {
-        max-width: 700px;
-      
-        margin: 14px auto 0;
-      
-        color: #dbeafe;
-      
-        font-size: 16px;
-      
-        line-height: 1.7;
-      }
-      
-      /* =====================================================
-                 ACTION GRID
-              ===================================================== */
-      
-      .actions {
-        display: grid;
-      
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      
-        grid-template-areas:
-          'submit status worker'
-          'complaints complaints complaints';
-      
-        gap: 16px;
-      
-        margin-top: 32px;
-      }
-      
-      .action-submit {
-        grid-area: submit;
-      }
-      
-      .action-status {
-        grid-area: status;
-      }
-      
-      .action-worker {
-        grid-area: worker;
-      }
-      
-      .action-complaints {
-        grid-area: complaints;
-      }
-      
-      /* =====================================================
-                 ACTION CARD
-              ===================================================== */
-      
-      .action {
-        position: relative;
-      
-        min-height: 150px;
-      
-        display: flex;
-        flex-direction: column;
-      
-        align-items: center;
-        justify-content: center;
-      
-        padding: 22px;
-      
-        overflow: hidden;
-      
-        border: 1px solid #e2e8f0;
-      
-        border-radius: 17px;
-      
-        background: #ffffff;
-      
-        text-decoration: none;
-      
-        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.1);
-      
-        transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.3s ease, border-color 0.3s ease;
-      }
-      
-      .action::before {
-        content: '';
-      
-        position: absolute;
-      
-        width: 110px;
-        height: 110px;
-      
-        top: -65px;
-        right: -55px;
-      
-        border-radius: 50%;
-      
-        opacity: 0;
-      
-        transition: opacity 0.25s ease, transform 0.25s ease;
-      }
-      
-      .action:hover {
-        transform: translateY(-4px);
-      
-        box-shadow: 0 14px 32px rgba(15, 23, 42, 0.15);
-      }
-      
-      .action:hover::before {
-        opacity: 1;
-      
-        transform: scale(1.25);
-      }
-      
-      .action-title {
-        position: relative;
-      
-        z-index: 2;
-      
-        color: #172554;
-      
-        font-size: 17px;
-        font-weight: 900;
-      }
-      
-      .action-subtext {
-        position: relative;
-      
-        z-index: 2;
-      
-        display: block;
-      
-        max-width: 270px;
-      
-        margin-top: 7px;
-      
-        color: #64748b;
-      
-        font-size: 12px;
-        font-weight: 600;
-      
-        line-height: 1.5;
-      
-        text-align: center;
-      }
-      
-      /* =====================================================
-                 ACTION COLORS
-              ===================================================== */
-      
-      .action-submit {
-        color: #2563eb;
-      }
-      
-      .action-submit::before {
-        background: rgba(37, 99, 235, 0.12);
-      }
-      
-      .action-status {
-        color: #0f766e;
-      }
-      
-      .action-status::before {
-        background: rgba(13, 148, 136, 0.12);
-      }
-      
-      .action-worker {
-        color: #ea580c;
-      }
-      
-      .action-worker::before {
-        background: rgba(234, 88, 12, 0.12);
-      }
-      
-      .action-complaints {
-        color: #4f46e5;
-      }
-      
-      .action-complaints::before {
-        background: rgba(79, 70, 229, 0.12);
-      }
-      
-      /* =====================================================
-                 HOW IT WORKS PANEL
-              ===================================================== */
-      
-      .panel {
-        margin-top: 26px;
-      
-        padding: 28px;
-      }
-      
-      .panel h2 {
-        margin: 0;
-      
-        color: #172554;
-      
-        font-size: 23px;
-        font-weight: 900;
-      }
-      
-      .panel-description {
-        margin-top: 10px;
-      }
-      
-      /* =====================================================
-                 FEATURES
-              ===================================================== */
-      
-      .feature-grid {
-        display: grid;
-      
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      
-        gap: 15px;
-      
-        margin-top: 21px;
-      }
-      
-      .feature {
-        min-height: 155px;
-      
-        padding: 20px;
-      
-        border: 1px solid #e2e8f0;
-      
-        border-radius: 14px;
-      
-        background: #f8fafc;
-      
-        transition: transform 0.2s ease, background 0.3s ease, border-color 0.3s ease;
-      }
-      
-      .feature:hover {
-        transform: translateY(-3px);
-      }
-      
-      .feature-number {
-        width: 38px;
-        height: 38px;
-      
-        display: inline-flex;
-      
-        align-items: center;
-        justify-content: center;
-      
-        margin-bottom: 13px;
-      
-        border-radius: 11px;
-      
-        background: #e0e7ff;
-      
-        color: #3730a3;
-      
-        font-size: 14px;
-        font-weight: 900;
-      }
-      
-      .feature b {
-        display: block;
-      
-        margin-bottom: 7px;
-      
-        color: #172554;
-      
-        font-size: 15px;
-      }
-      
-      /* =====================================================
-                 DARK MODE
-              ===================================================== */
-      
-      body.sc-theme-dark .hero h1 {
-        color: #ffffff;
-      }
-      
-      body.sc-theme-dark .hero p {
-        color: #cbd5e1;
-      }
-      
-      body.sc-theme-dark .action {
-        background: #1e293b;
-      
-        border-color: #334155;
-      }
-      
-      body.sc-theme-dark .action-title {
-        color: #f8fafc;
-      }
-      
-      body.sc-theme-dark .action-subtext {
-        color: #94a3b8;
-      }
-      
-      body.sc-theme-dark .panel {
-        background: #1e293b !important;
-      
-        border-color: #334155 !important;
-      }
-      
-      body.sc-theme-dark .panel h2 {
-        color: #f8fafc;
-      }
-      
-      body.sc-theme-dark .feature {
-        background: #172033;
-      
-        border-color: #334155;
-      }
-      
-      body.sc-theme-dark .feature b {
-        color: #f8fafc;
-      }
-      
-      body.sc-theme-dark .feature-number {
-        background: #312e81;
-      
-        color: #e0e7ff;
-      }
-      
-      /* =====================================================
-                 GLASS MODE
-              ===================================================== */
-      
-      body.sc-theme-glass .hero h1 {
-        color: #ffffff;
-      }
-      
-      body.sc-theme-glass .hero p {
-        color: rgba(219, 234, 254, 0.9);
-      }
-      
-      /* =====================================================
-                 GLASS ACTION CARDS
-              ===================================================== */
-      
-      body.sc-theme-glass .action {
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.13), rgba(96, 165, 250, 0.065));
-      
-        border: 1px solid rgba(191, 219, 254, 0.27);
-      
-        box-shadow: 0 18px 42px rgba(2, 6, 23, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.11);
-      
-        backdrop-filter: blur(18px);
-      
-        -webkit-backdrop-filter: blur(18px);
-      }
-      
-      body.sc-theme-glass .action:hover {
-        background: linear-gradient(135deg, rgba(var(--app-primary-rgb), 0.2), rgba(255, 255, 255, 0.1));
-      
-        border-color: rgba(191, 219, 254, 0.45);
-      
-        box-shadow: 0 22px 50px rgba(2, 6, 23, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.16);
-      }
-      
-      body.sc-theme-glass .action-title {
-        color: #ffffff;
-      
-        text-shadow: 0 2px 8px rgba(2, 6, 23, 0.24);
-      }
-      
-      body.sc-theme-glass .action-subtext {
-        color: rgba(219, 234, 254, 0.76);
-      }
-      
-      body.sc-theme-glass .action-submit {
-        color: #60a5fa;
-      }
-      
-      body.sc-theme-glass .action-status {
-        color: #2dd4bf;
-      }
-      
-      body.sc-theme-glass .action-worker {
-        color: #fb923c;
-      }
-      
-      body.sc-theme-glass .action-complaints {
-        color: #a5b4fc;
-      }
-      
-      /* =====================================================
-                 GLASS PANEL
-              ===================================================== */
-      
-      body.sc-theme-glass .panel {
-        background: linear-gradient(135deg, rgba(96, 165, 250, 0.13), rgba(255, 255, 255, 0.075), rgba(99, 102, 241, 0.08)) !important;
-      
-        border: 1px solid rgba(191, 219, 254, 0.27) !important;
-      
-        color: #ffffff !important;
-      
-        box-shadow: 0 24px 58px rgba(2, 6, 23, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.12);
-      
-        backdrop-filter: blur(24px);
-      
-        -webkit-backdrop-filter: blur(24px);
-      }
-      
-      body.sc-theme-glass .panel h2 {
-        color: #ffffff;
-      }
-      
-      /* =====================================================
-                 GLASS FEATURES
-              ===================================================== */
-      
-      body.sc-theme-glass .feature {
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(59, 130, 246, 0.06));
-      
-        border: 1px solid rgba(191, 219, 254, 0.24);
-      
-        color: #ffffff;
-      
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
-      
-        backdrop-filter: blur(14px);
-      
-        -webkit-backdrop-filter: blur(14px);
-      }
-      
-      body.sc-theme-glass .feature b {
-        color: #ffffff;
-      }
-      
-      body.sc-theme-glass .feature-number {
-        background: rgba(var(--app-primary-rgb), 0.28);
-      
-        border: 1px solid rgba(191, 219, 254, 0.24);
-      
-        color: #ffffff;
-      }
-      
-      body.sc-theme-glass .feature .muted {
-        color: rgba(219, 234, 254, 0.76) !important;
-      }
-      
-      /* =====================================================
-                 MOBILE
-              ===================================================== */
-      
-      @media (max-width: 800px) {
-        .hero {
-          padding: 42px 15px 25px;
-        }
-      
-        .hero h1 {
-          font-size: 34px;
-        }
-      
-        .actions {
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-      
-          grid-template-areas:
-            'submit status'
-            'worker complaints';
-        }
-      
-        .feature-grid {
-          grid-template-columns: 1fr;
-        }
-      }
-      
-      @media (max-width: 600px) {
-        .hero {
-          padding: 35px 10px 22px;
-        }
-      
-        .hero h1 {
-          font-size: 29px;
-      
-          line-height: 1.25;
-        }
-      
-        .hero p {
-          font-size: 14px;
-        }
-      
-        .actions {
-          grid-template-columns: 1fr;
-      
-          grid-template-areas:
-            'submit'
-            'status'
-            'worker'
-            'complaints';
-        }
-      
-        .action {
-          min-height: 135px;
-      
-          padding: 19px;
-        }
-      
-        .panel {
-          padding: 20px;
-        }
-      }
+        .ud-page{width:min(1180px,calc(100% - 32px));margin:0 auto;padding:88px 0 34px}
+        .ud-shell{display:grid;gap:18px}
+        .ud-hero{position:relative;overflow:hidden;display:grid;grid-template-columns:1fr 280px;gap:24px;align-items:center;padding:30px;border:1px solid rgba(96,165,250,.30);border-radius:22px;background:linear-gradient(135deg,rgba(15,42,91,.96),rgba(30,64,175,.82),rgba(91,33,182,.76));box-shadow:0 24px 65px rgba(2,6,23,.30);color:#fff}
+        .ud-hero:after{content:"";position:absolute;width:260px;height:260px;border-radius:50%;right:-70px;top:-100px;background:rgba(139,92,246,.25);filter:blur(2px)}
+        .ud-kicker{font-size:16px;font-weight:800;margin-bottom:8px}.ud-hero h1{margin:0;font-size:34px;line-height:1.12;color:#fff}.ud-hero p{max-width:650px;margin:12px 0 0;color:#dbeafe;line-height:1.65}
+        .ud-hero-art{position:relative;z-index:2;min-height:150px;display:flex;align-items:center;justify-content:center}
+        .ud-illustration{width:150px;height:150px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#60a5fa,#8b5cf6);border:8px solid rgba(255,255,255,.12);box-shadow:0 20px 45px rgba(2,6,23,.28);font-size:70px}
+        .ud-quote{position:absolute;left:0;top:8px;max-width:128px;padding:11px 12px;border-radius:12px;background:rgba(15,23,42,.48);border:1px solid rgba(255,255,255,.16);font-size:12px;font-weight:800;line-height:1.45}
+        .ud-actions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+        .ud-action{min-height:132px;padding:20px;border-radius:18px;border:1px solid rgba(148,163,184,.25);display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:9px;color:#fff;box-shadow:0 16px 38px rgba(2,6,23,.18);transition:.22s ease;backdrop-filter:blur(16px)}
+        .ud-action:hover{transform:translateY(-4px);box-shadow:0 20px 45px rgba(2,6,23,.25)}
+        .ud-action-icon{width:48px;height:48px;border-radius:13px;display:grid;place-items:center;font-size:25px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.15)}
+        .ud-action strong{font-size:15px}.ud-action small{color:rgba(255,255,255,.72);line-height:1.4}
+        .ud-blue{background:linear-gradient(145deg,rgba(8,70,160,.92),rgba(30,64,175,.70))}.ud-teal{background:linear-gradient(145deg,rgba(6,95,103,.92),rgba(13,148,136,.62))}.ud-orange{background:linear-gradient(145deg,rgba(124,45,18,.88),rgba(234,88,12,.55))}.ud-purple{background:linear-gradient(145deg,rgba(76,29,149,.90),rgba(124,58,237,.58))}
+        .ud-grid{display:grid;grid-template-columns:1.35fr .85fr;gap:18px}.ud-panel{padding:22px;border-radius:20px;border:1px solid rgba(148,163,184,.22);background:rgba(15,45,82,.64);box-shadow:0 18px 46px rgba(2,6,23,.20);backdrop-filter:blur(18px);color:#fff}
+        .ud-panel-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}.ud-panel h2{margin:0;color:#fff;font-size:19px}.ud-view{color:#93c5fd;font-size:13px;font-weight:800}
+        .ud-activity{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.ud-stat{padding:15px;border-radius:15px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.09)}.ud-stat span{display:block;color:#cbd5e1;font-size:11px}.ud-stat b{display:block;margin-top:8px;font-size:26px;color:#fff}.ud-stat-note{font-size:12px;color:#94a3b8!important;line-height:1.45}
+        .ud-recent{display:grid;gap:10px}.ud-row{display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.07)}.ud-row-icon{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:rgba(37,99,235,.32)}.ud-row-main{flex:1;min-width:0}.ud-row-main b{display:block;font-size:13px}.ud-row-main small{color:#94a3b8}.ud-pill{padding:6px 9px;border-radius:999px;background:rgba(59,130,246,.20);color:#bfdbfe;font-size:11px;font-weight:800}
+        .ud-tips{display:grid;gap:12px}.ud-tip{display:flex;gap:10px;align-items:center;color:#dbeafe;font-size:13px}.ud-check{color:#34d399;font-weight:900}.ud-banner{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:22px 26px;border-radius:19px;border:1px solid rgba(52,211,153,.25);background:linear-gradient(100deg,rgba(5,92,92,.72),rgba(14,116,144,.64),rgba(37,99,235,.56));color:#fff}.ud-banner h3{margin:0 0 5px;color:#fff}.ud-banner p{margin:0;color:#dbeafe;font-size:13px}.ud-banner-art{font-size:42px}
+        body.sc-theme-light .ud-panel{background:#fff;color:#172554;border-color:#dbeafe}body.sc-theme-light .ud-panel h2,body.sc-theme-light .ud-stat b,body.sc-theme-light .ud-row-main b{color:#172554}body.sc-theme-light .ud-stat,body.sc-theme-light .ud-row{background:#f8fafc;border-color:#e2e8f0}body.sc-theme-light .ud-tip{color:#334155}
+        @media(max-width:850px){.ud-hero{grid-template-columns:1fr}.ud-hero-art{display:none}.ud-actions{grid-template-columns:repeat(2,1fr)}.ud-grid{grid-template-columns:1fr}.ud-activity{grid-template-columns:repeat(2,1fr)}}
+        @media(max-width:520px){.ud-page{width:min(100% - 20px,1180px);padding-top:78px}.ud-hero{padding:22px}.ud-hero h1{font-size:28px}.ud-actions{grid-template-columns:1fr 1fr}.ud-action{min-height:120px;padding:14px}.ud-action small{display:none}.ud-activity{grid-template-columns:1fr 1fr}.ud-banner{padding:18px}.ud-banner-art{display:none}}
     </style>
-  </head>
+</head>
+<body>
+{% include 'complaints/User_Folder/navbar.html' %}
+<main class="ud-page">
+    <div class="ud-shell">
+        <section class="ud-hero">
+            <div>
+                <div class="ud-kicker">👋 Welcome Back,</div>
+                <h1>{{ request.user.first_name|default:request.user.username }}</h1>
+                <p>Have an issue? We’re here to help. Submit, track, and resolve your complaints easily from one clean dashboard.</p>
+            </div>
+            <div class="ud-hero-art"><div class="ud-quote">A Cleaner<br>Safer Community<br>Together!</div><div class="ud-illustration">👨‍💻</div></div>
+        </section>
 
-  <body>
-    {% include 'complaints/User_Folder/navbar.html' %}
+        <section class="ud-actions">
+            <a class="ud-action ud-blue" href="{% url 'submit_complaint' %}"><span class="ud-action-icon">✎</span><strong>Submit Complaint</strong><small>Create a new complaint</small></a>
+            <a class="ud-action ud-teal" href="{% url 'check_status' %}"><span class="ud-action-icon">⌕</span><strong>Check Status</strong><small>Track with your ID</small></a>
+            <a class="ud-action ud-orange" href="{% url 'worker_details' %}"><span class="ud-action-icon">👥</span><strong>Find Worker</strong><small>Browse approved workers</small></a>
+            <a class="ud-action ud-purple" href="{% url 'my_complaints' %}"><span class="ud-action-icon">☷</span><strong>My Complaints</strong><small>View complaint history</small></a>
+        </section>
 
-    <main class="page">
-      <!--  =================================================
-             HERO
-        ==================================================  -->
+        <section class="ud-panel">
+            <div class="ud-panel-head"><h2>Your Activity</h2><a class="ud-view" href="{% url 'my_complaints' %}">View All →</a></div>
+            <div class="ud-activity">
+                <div class="ud-stat"><span>📥 Total Complaints</span><b>—</b><span class="ud-stat-note">Live count connects next</span></div>
+                <div class="ud-stat"><span>🛠 In Progress</span><b>—</b><span class="ud-stat-note">Live count connects next</span></div>
+                <div class="ud-stat"><span>🛡 Resolved</span><b>—</b><span class="ud-stat-note">Live count connects next</span></div>
+                <div class="ud-stat"><span>⏳ Pending</span><b>—</b><span class="ud-stat-note">Live count connects next</span></div>
+            </div>
+        </section>
 
-      <section class="hero">
-        <h1>Smart Complaint Management</h1>
-
-        <p>Submit complaints, choose an approved worker, track progress, and view your complaint history from one place.</p>
-
-        <!--  =============================================
-                 HOME ACTIONS
-            ==============================================  -->
-
-        <div class="actions">
-          <!--  =========================================
-                     SUBMIT COMPLAINT
-                ==========================================  -->
-
-          <a class="action action-submit" href="{% url 'submit_complaint' %}">
-            <svg class="home-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12 20h9"></path>
-
-              <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4z"></path>
-            </svg>
-
-            <span class="action-title">Submit Complaint</span>
-
-            <span class="action-subtext">Create a new complaint with photo and location.</span>
-          </a>
-
-          <!--  =========================================
-                     CHECK STATUS
-                ==========================================  -->
-
-          <a class="action action-status" href="{% url 'check_status' %}">
-            <svg class="home-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <circle cx="11" cy="11" r="7"></circle>
-
-              <path d="M20 20l-4-4"></path>
-
-              <path d="M8.5 11l1.7 1.7 3.5-3.5"></path>
-            </svg>
-
-            <span class="action-title">Check Status</span>
-
-            <span class="action-subtext">Track complaint progress using your Tracking ID.</span>
-          </a>
-
-          <!--  =========================================
-                     FIND WORKER
-                ==========================================  -->
-
-          <a class="action action-worker" href="{% url 'worker_details' %}">
-            <svg class="home-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <circle cx="12" cy="7" r="4"></circle>
-
-              <path d="M5 21v-2a7 7 0 0 1 14 0v2"></path>
-
-              <path d="M8 3h8"></path>
-
-              <path d="M9 3l-1 3"></path>
-
-              <path d="M15 3l1 3"></path>
-            </svg>
-
-            <span class="action-title">Find Worker</span>
-
-            <span class="action-subtext">Browse approved workers and view their details.</span>
-          </a>
-
-          <!--  =========================================
-                     MY COMPLAINTS
-                ==========================================  -->
-
-          <a class="action action-complaints" href="{% url 'my_complaints' %}">
-            <svg class="home-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M9 5h11"></path>
-
-              <path d="M9 12h11"></path>
-
-              <path d="M9 19h11"></path>
-
-              <path d="M4 5h.01"></path>
-
-              <path d="M4 12h.01"></path>
-
-              <path d="M4 19h.01"></path>
-            </svg>
-
-            <span class="action-title">My Complaints</span>
-
-            <span class="action-subtext">View all complaints submitted from your account.</span>
-          </a>
+        <div class="ud-grid">
+            <section class="ud-panel">
+                <div class="ud-panel-head"><h2>Recent Complaints</h2><a class="ud-view" href="{% url 'my_complaints' %}">View All →</a></div>
+                <div class="ud-recent">
+                    <div class="ud-row"><span class="ud-row-icon">📋</span><div class="ud-row-main"><b>Your latest complaints will appear here</b><small>Connection will be added in the next step</small></div><span class="ud-pill">Ready</span></div>
+                    <div class="ud-row"><span class="ud-row-icon">🔎</span><div class="ud-row-main"><b>Track every complaint easily</b><small>Use Check Status anytime</small></div><span class="ud-pill">Track</span></div>
+                </div>
+            </section>
+            <section class="ud-panel">
+                <div class="ud-panel-head"><h2>💡 Quick Tips</h2></div>
+                <div class="ud-tips"><div class="ud-tip"><span class="ud-check">✓</span>Add clear photos</div><div class="ud-tip"><span class="ud-check">✓</span>Share exact location</div><div class="ud-tip"><span class="ud-check">✓</span>Choose correct category</div><div class="ud-tip"><span class="ud-check">✓</span>Track your complaint regularly</div></div>
+            </section>
         </div>
-      </section>
 
-      <!--  =================================================
-             HOW IT WORKS
-        ==================================================  -->
-
-      <section class="card panel">
-        <h2>How it works</h2>
-
-        <p class="muted panel-description">Submit your complaint, choose Smart Auto Assign or select a worker manually, and keep the Tracking ID for future status checks.</p>
-
-        <div class="feature-grid">
-          <div class="feature">
-            <span class="feature-number">01</span>
-
-            <b>Find Workers</b>
-
-            <span class="muted">View approved workers, their Worker IDs, skills and service details.</span>
-          </div>
-
-          <div class="feature">
-            <span class="feature-number">02</span>
-
-            <b>Submit Complaint</b>
-
-            <span class="muted">Add the problem details, photo, priority and complaint location.</span>
-          </div>
-
-          <div class="feature">
-            <span class="feature-number">03</span>
-
-            <b>Track Progress</b>
-
-            <span class="muted">Follow Pending, In Progress and Resolved status.</span>
-          </div>
-        </div>
-      </section>
-    </main>
-  </body>
+        <section class="ud-banner"><div><h3>🌿 Together for a Better Tomorrow</h3><p>Your voice makes a cleaner, safer and smarter community.</p></div><div class="ud-banner-art">🏙️🌱</div></section>
+    </div>
+</main>
+</body>
 </html>
