@@ -28,6 +28,20 @@ urlpatterns = [
         name="user_payment_details",
     ),
 
+    # =====================================================
+    # RAZORPAY TEST PAYMENT
+    # =====================================================
+
+    path(
+        "payment/create-order/",
+        views.create_test_payment_order,
+        name="create_test_payment_order",
+    ),
+    path(
+        "payment/verify/",
+        views.verify_test_payment,
+        name="verify_test_payment",
+    ),
     path(
         "change-password/",
         views.user_change_password,

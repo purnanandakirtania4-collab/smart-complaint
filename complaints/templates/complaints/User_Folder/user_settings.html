@@ -1057,7 +1057,476 @@
           background: rgba(255, 255, 255, 0.02);
         }
       }
-    </style>
+
+      /* =====================================================
+         PREMIUM THEMES - FUTURE UI
+         ===================================================== */
+      .premium-theme-item {
+        position: relative;
+      }
+
+      .premium-settings-icon,
+      .premium-modal-icon {
+        background: linear-gradient(145deg, #eef2ff, #eff6ff) !important;
+        color: #4f46e5 !important;
+      }
+
+      .premium-title-line {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .premium-title-line h3 {
+        margin-bottom: 0;
+      }
+
+      .future-badge,
+      .locked-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        border-radius: 999px;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+      }
+
+      .future-badge {
+        padding: 5px 8px;
+        background: #eef2ff;
+        color: #4f46e5;
+        border: 1px solid #c7d2fe;
+      }
+
+      .future-badge .ui-icon,
+      .locked-badge .ui-icon {
+        width: 13px;
+        height: 13px;
+      }
+
+      .premium-action .ui-icon {
+        width: 17px;
+        height: 17px;
+      }
+
+      .premium-modal-card {
+        max-width: 720px;
+      }
+
+      .modal-kicker {
+        margin-top: 3px;
+        color: #64748b;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+      }
+
+      .premium-theme-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .premium-theme-card {
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        background: #fff;
+        box-shadow: 0 10px 28px rgba(15, 23, 42, .07);
+      }
+
+      .theme-preview {
+        position: relative;
+        height: 128px;
+        overflow: hidden;
+        padding: 20px;
+        isolation: isolate;
+      }
+
+      .preview-orb {
+        position: absolute;
+        display: block;
+        border-radius: 50%;
+        filter: blur(2px);
+        opacity: .82;
+        z-index: -1;
+      }
+
+      .preview-panel {
+        width: 74%;
+        height: 88px;
+        margin: 0 auto;
+        padding: 17px;
+        display: flex;
+        flex-direction: column;
+        gap: 9px;
+        border-radius: 14px;
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        box-shadow: 0 14px 30px rgba(2, 6, 23, .18);
+      }
+
+      .preview-panel span {
+        display: block;
+        height: 8px;
+        border-radius: 999px;
+      }
+
+      .preview-panel span:nth-child(1) { width: 58%; }
+      .preview-panel span:nth-child(2) { width: 82%; }
+      .preview-panel span:nth-child(3) { width: 68%; }
+
+      .aurora-theme-preview .theme-preview {
+        background: linear-gradient(135deg, #071a2d, #102b4e 55%, #192044);
+      }
+      .aurora-theme-preview .orb-one {
+        width: 95px; height: 95px; left: -15px; top: -20px;
+        background: #2dd4bf;
+      }
+      .aurora-theme-preview .orb-two {
+        width: 100px; height: 100px; right: -18px; bottom: -38px;
+        background: #8b5cf6;
+      }
+      .aurora-theme-preview .preview-panel {
+        background: rgba(255,255,255,.13);
+        border: 1px solid rgba(255,255,255,.22);
+      }
+      .aurora-theme-preview .preview-panel span { background: rgba(255,255,255,.72); }
+
+      .midnight-theme-preview .theme-preview {
+        background: linear-gradient(145deg, #020617, #0f172a 58%, #172554);
+      }
+      .midnight-theme-preview .orb-one {
+        width: 90px; height: 90px; left: -25px; bottom: -30px;
+        background: #2563eb;
+      }
+      .midnight-theme-preview .orb-two {
+        width: 72px; height: 72px; right: 0; top: -25px;
+        background: #0ea5e9;
+      }
+      .midnight-theme-preview .preview-panel {
+        background: rgba(15,23,42,.78);
+        border: 1px solid rgba(96,165,250,.22);
+      }
+      .midnight-theme-preview .preview-panel span { background: #60a5fa; }
+
+      .royal-theme-preview .theme-preview {
+        background: linear-gradient(145deg, #1e103f, #3b1768 55%, #111827);
+      }
+      .royal-theme-preview .orb-one {
+        width: 95px; height: 95px; left: -22px; top: -28px;
+        background: #a855f7;
+      }
+      .royal-theme-preview .orb-two {
+        width: 92px; height: 92px; right: -20px; bottom: -28px;
+        background: #ec4899;
+      }
+      .royal-theme-preview .preview-panel {
+        background: rgba(255,255,255,.12);
+        border: 1px solid rgba(233,213,255,.25);
+      }
+      .royal-theme-preview .preview-panel span { background: #e9d5ff; }
+
+      .ocean-theme-preview .theme-preview {
+        background: linear-gradient(145deg, #042f49, #075985 55%, #0f172a);
+      }
+      .ocean-theme-preview .orb-one {
+        width: 98px; height: 98px; left: -24px; bottom: -34px;
+        background: #22d3ee;
+      }
+      .ocean-theme-preview .orb-two {
+        width: 80px; height: 80px; right: -12px; top: -20px;
+        background: #38bdf8;
+      }
+      .ocean-theme-preview .preview-panel {
+        background: rgba(255,255,255,.13);
+        border: 1px solid rgba(186,230,253,.25);
+      }
+      .ocean-theme-preview .preview-panel span { background: #bae6fd; }
+
+      .theme-card-footer {
+        min-height: 102px;
+        padding: 14px;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .theme-card-footer strong {
+        display: block;
+        margin-bottom: 5px;
+        color: #0f172a;
+        font-size: 14px;
+      }
+
+      .theme-card-footer small {
+        display: block;
+        color: #64748b;
+        font-size: 11px;
+        line-height: 1.45;
+      }
+
+      .locked-badge {
+        flex: 0 0 auto;
+        padding: 5px 7px;
+        background: #f8fafc;
+        color: #64748b;
+        border: 1px solid #e2e8f0;
+      }
+
+      .premium-note {
+        margin-top: 16px;
+        padding: 13px 14px;
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        border: 1px solid #bfdbfe;
+        border-radius: 12px;
+        background: #eff6ff;
+        color: #1e3a8a;
+      }
+
+      .premium-note > .ui-icon {
+        width: 19px;
+        height: 19px;
+        margin-top: 1px;
+      }
+
+      .premium-note strong,
+      .premium-note span {
+        display: block;
+      }
+
+      .premium-note strong {
+        margin-bottom: 3px;
+        font-size: 13px;
+      }
+
+      .premium-note span {
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      .settings-back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .settings-back-link .ui-icon {
+        width: 18px;
+        height: 18px;
+      }
+
+      .modal-close .ui-icon {
+        width: 18px;
+        height: 18px;
+      }
+
+      body.sc-theme-dark .modal-kicker { color: #94a3b8; }
+      body.sc-theme-dark .premium-theme-card {
+        background: #0f172a;
+        border-color: #334155;
+      }
+      body.sc-theme-dark .theme-card-footer strong { color: #f8fafc; }
+      body.sc-theme-dark .theme-card-footer small { color: #94a3b8; }
+      body.sc-theme-dark .locked-badge {
+        background: #1e293b;
+        border-color: #334155;
+        color: #cbd5e1;
+      }
+      body.sc-theme-dark .premium-note {
+        background: rgba(37,99,235,.12);
+        border-color: rgba(96,165,250,.25);
+        color: #bfdbfe;
+      }
+
+      body.sc-theme-glass .modal-kicker { color: rgba(219,234,254,.68); }
+      body.sc-theme-glass .premium-theme-card {
+        background: rgba(255,255,255,.07);
+        border-color: rgba(191,219,254,.18);
+        box-shadow: 0 14px 34px rgba(2,6,23,.18);
+      }
+      body.sc-theme-glass .theme-card-footer strong { color: #fff; }
+      body.sc-theme-glass .theme-card-footer small { color: rgba(219,234,254,.72); }
+      body.sc-theme-glass .locked-badge {
+        background: rgba(255,255,255,.08);
+        border-color: rgba(255,255,255,.14);
+        color: #dbeafe;
+      }
+      body.sc-theme-glass .future-badge {
+        background: rgba(129,140,248,.12);
+        border-color: rgba(165,180,252,.22);
+        color: #c7d2fe;
+      }
+      body.sc-theme-glass .premium-note {
+        background: rgba(59,130,246,.09);
+        border-color: rgba(147,197,253,.2);
+        color: #dbeafe;
+      }
+
+      @media (max-width: 650px) {
+        .premium-theme-grid { grid-template-columns: 1fr; }
+        .premium-modal-card { max-height: 94vh; }
+        .theme-preview { height: 118px; }
+        .theme-card-footer { min-height: auto; }
+      }
+
+    
+      /* TEMPORARY FULL-PAGE PREMIUM THEME TEST */
+      .try-theme-btn {
+        flex: 0 0 auto;
+        border: 1px solid #c7d2fe;
+        border-radius: 999px;
+        padding: 7px 10px;
+        background: #eef2ff;
+        color: #4338ca;
+        font: inherit;
+        font-size: 10px;
+        font-weight: 900;
+        cursor: pointer;
+      }
+      .theme-test-bar {
+        position: fixed;
+        left: 50%;
+        bottom: 18px;
+        transform: translateX(-50%);
+        z-index: 10050;
+        display: none;
+        align-items: center;
+        gap: 10px;
+        width: min(92vw, 560px);
+        padding: 11px 13px;
+        border-radius: 14px;
+        background: rgba(15,23,42,.92);
+        color: #fff;
+        box-shadow: 0 18px 45px rgba(2,6,23,.35);
+        backdrop-filter: blur(14px);
+      }
+      .theme-test-bar.active { display: flex; }
+      .theme-test-bar strong { flex: 1; font-size: 12px; }
+      .theme-test-bar button {
+        border: 0; border-radius: 9px; padding: 8px 11px;
+        background: #fff; color: #0f172a; font-weight: 900; cursor: pointer;
+      }
+
+      body.preview-aurora,
+      body.preview-midnight,
+      body.preview-royal,
+      body.preview-ocean {
+        min-height: 100vh;
+        background-attachment: fixed !important;
+      }
+      body.preview-aurora { background: radial-gradient(circle at 12% 12%, rgba(45,212,191,.28), transparent 28%), radial-gradient(circle at 88% 18%, rgba(139,92,246,.30), transparent 30%), linear-gradient(145deg,#061826,#102b4e 55%,#171a38) !important; }
+      body.preview-midnight { background: radial-gradient(circle at 85% 8%, rgba(37,99,235,.22), transparent 28%), linear-gradient(145deg,#020617,#0f172a 55%,#172554) !important; }
+      body.preview-royal { background: radial-gradient(circle at 12% 12%, rgba(168,85,247,.30), transparent 28%), radial-gradient(circle at 88% 20%, rgba(236,72,153,.20), transparent 30%), linear-gradient(145deg,#190c35,#35145f 55%,#111827) !important; }
+      body.preview-ocean { background: radial-gradient(circle at 15% 12%, rgba(34,211,238,.27), transparent 28%), linear-gradient(145deg,#032638,#075985 55%,#0f172a) !important; }
+
+      body.preview-aurora .settings-card, body.preview-aurora .modal-card,
+      body.preview-royal .settings-card, body.preview-royal .modal-card,
+      body.preview-ocean .settings-card, body.preview-ocean .modal-card {
+        background: rgba(255,255,255,.10) !important;
+        border: 1px solid rgba(255,255,255,.20) !important;
+        box-shadow: 0 24px 60px rgba(2,6,23,.28) !important;
+        backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      }
+      body.preview-midnight .settings-card, body.preview-midnight .modal-card {
+        background: rgba(15,23,42,.88) !important;
+        border: 1px solid rgba(96,165,250,.18) !important;
+        box-shadow: 0 24px 60px rgba(0,0,0,.34) !important;
+      }
+      body.preview-aurora .settings-text h3, body.preview-aurora .modal-header h2, body.preview-aurora .modal-label,
+      body.preview-midnight .settings-text h3, body.preview-midnight .modal-header h2, body.preview-midnight .modal-label,
+      body.preview-royal .settings-text h3, body.preview-royal .modal-header h2, body.preview-royal .modal-label,
+      body.preview-ocean .settings-text h3, body.preview-ocean .modal-header h2, body.preview-ocean .modal-label { color:#fff !important; }
+      body.preview-aurora .settings-text p, body.preview-midnight .settings-text p,
+      body.preview-royal .settings-text p, body.preview-ocean .settings-text p { color:rgba(226,232,240,.82) !important; }
+      body.preview-aurora .settings-item, body.preview-midnight .settings-item,
+      body.preview-royal .settings-item, body.preview-ocean .settings-item { border-color:rgba(255,255,255,.13) !important; }
+      body.preview-aurora .settings-icon, body.preview-midnight .settings-icon,
+      body.preview-royal .settings-icon, body.preview-ocean .settings-icon {
+        background:rgba(255,255,255,.12) !important; color:#fff !important;
+      }
+      body.preview-aurora .modal-input, body.preview-aurora .modal-select, body.preview-aurora .modal-textarea,
+      body.preview-midnight .modal-input, body.preview-midnight .modal-select, body.preview-midnight .modal-textarea,
+      body.preview-royal .modal-input, body.preview-royal .modal-select, body.preview-royal .modal-textarea,
+      body.preview-ocean .modal-input, body.preview-ocean .modal-select, body.preview-ocean .modal-textarea {
+        background:rgba(255,255,255,.09) !important; border-color:rgba(255,255,255,.20) !important; color:#fff !important;
+      }
+
+
+      .premium-theme-grid { grid-template-columns:1fr !important; }
+      .premium-theme-card.royal-theme-preview { max-width:520px; margin:0 auto; width:100%; }
+      .royal-apply-btn { padding:8px 12px; border:0; border-radius:999px; color:#fff; background:linear-gradient(135deg,#7e22ce,#d946ef); font-weight:900; cursor:pointer; box-shadow:0 9px 22px rgba(126,34,206,.25); }
+      .royal-theme-actions { display:flex; flex-wrap:wrap; gap:9px; margin-top:12px; }
+      body.sc-theme-royal .premium-theme-card { background:rgba(255,255,255,.08)!important; border-color:rgba(233,213,255,.18)!important; }
+      body.sc-theme-royal .theme-card-footer strong { color:#fff!important; }
+      body.sc-theme-royal .theme-card-footer small { color:rgba(237,233,254,.72)!important; }
+
+
+      .appearance-modal-card{max-width:760px}
+      .appearance-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+      .appearance-card{padding:0 0 13px;overflow:hidden;border:1px solid #e2e8f0;border-radius:15px;background:#fff;color:#0f172a;text-align:left;font-family:inherit;cursor:pointer;transition:.2s ease}
+      .appearance-card:hover{transform:translateY(-2px);box-shadow:0 15px 34px rgba(15,23,42,.12)}
+      .appearance-art{display:block;height:94px;margin-bottom:12px}
+      .appearance-card strong,.appearance-card small{display:block;padding:0 13px}
+      .appearance-card strong{font-size:14px}.appearance-card small{margin-top:4px;color:#64748b;font-size:11px}
+      .light-preview .appearance-art{background:linear-gradient(145deg,#fff,#eef2f7)}
+      .dark-preview .appearance-art{background:linear-gradient(145deg,#020617,#1e293b)}
+      .glass-preview .appearance-art{background:radial-gradient(circle at 15% 15%,#22d3ee,transparent 34%),linear-gradient(145deg,#06243d,#0b3b67)}
+      .royal-preview .appearance-art{background:radial-gradient(circle at 15% 15%,#a855f7,transparent 34%),radial-gradient(circle at 85% 80%,#d946ef,transparent 34%),linear-gradient(145deg,#1e103f,#111827)}
+      .royalblue-preview .appearance-art{background:radial-gradient(circle at 15% 15%,#3b82f6,transparent 34%),radial-gradient(circle at 85% 80%,#6366f1,transparent 34%),linear-gradient(145deg,#050b1d,#17134b)}
+      .emerald-preview .appearance-art{background:radial-gradient(circle at 15% 15%,#10b981,transparent 34%),radial-gradient(circle at 85% 80%,#06b6d4,transparent 34%),linear-gradient(145deg,#031713,#082b38)}
+      .rose-preview .appearance-art{background:radial-gradient(circle at 15% 15%,#e11d48,transparent 34%),radial-gradient(circle at 85% 80%,#a855f7,transparent 34%),linear-gradient(145deg,#1c0710,#2d123f)}
+      .appearance-note{margin:15px 0 0;padding:12px 13px;border-radius:11px;background:#f8fafc;border:1px solid #e2e8f0;color:#64748b;font-size:11px;line-height:1.55}
+      body.sc-theme-dark .appearance-card,body.sc-theme-royal .appearance-card,body.sc-theme-royalblue .appearance-card,body.sc-theme-emerald .appearance-card,body.sc-theme-rose .appearance-card{background:rgba(15,23,42,.75);border-color:rgba(255,255,255,.14);color:#fff}
+      body.sc-theme-dark .appearance-card small,body.sc-theme-royal .appearance-card small,body.sc-theme-royalblue .appearance-card small,body.sc-theme-emerald .appearance-card small,body.sc-theme-rose .appearance-card small{color:#cbd5e1}
+      @media(max-width:600px){.appearance-grid{grid-template-columns:1fr}}
+
+      /* =====================================================
+         SETTINGS LIVE THEME PICKER - 11 THEMES
+         ===================================================== */
+      .appearance-modal-card { max-width: 780px; }
+      .appearance-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:13px; }
+      .appearance-card { padding:0 0 13px; overflow:hidden; border:1px solid #e2e8f0; border-radius:15px; background:#fff; color:#0f172a; text-align:left; font-family:inherit; cursor:pointer; transition:.2s ease; }
+      .appearance-card:hover { transform:translateY(-2px); box-shadow:0 15px 34px rgba(15,23,42,.12); }
+      .appearance-card.is-active { outline:3px solid rgba(59,130,246,.35); border-color:#60a5fa; }
+      .appearance-art { display:block; height:94px; margin-bottom:12px; }
+      .appearance-card strong,.appearance-card small { display:block; padding:0 13px; }
+      .appearance-card strong { font-size:14px; }
+      .appearance-card small { margin-top:4px; color:#64748b; font-size:11px; }
+      .light-preview .appearance-art{background:linear-gradient(145deg,#fff,#eef2f7)}
+      .dark-preview .appearance-art{background:linear-gradient(145deg,#020617,#1e293b)}
+      .glass-preview .appearance-art{background:radial-gradient(circle at 15% 15%,#22d3ee,transparent 34%),linear-gradient(145deg,#06243d,#0b3b67)}
+      .royal-preview .appearance-art{background:radial-gradient(circle at 15% 15%,#a855f7,transparent 34%),radial-gradient(circle at 85% 80%,#d946ef,transparent 34%),linear-gradient(145deg,#1e103f,#111827)}
+      .royalblue-preview .appearance-art{background:radial-gradient(circle at 15% 15%,#3b82f6,transparent 34%),radial-gradient(circle at 85% 80%,#6366f1,transparent 34%),linear-gradient(145deg,#050b1d,#17134b)}
+      .emerald-preview .appearance-art{background:radial-gradient(circle at 15% 15%,#10b981,transparent 34%),radial-gradient(circle at 85% 80%,#06b6d4,transparent 34%),linear-gradient(145deg,#031713,#082b38)}
+      .rose-preview .appearance-art{background:radial-gradient(circle at 15% 15%,#e11d48,transparent 34%),radial-gradient(circle at 85% 80%,#a855f7,transparent 34%),linear-gradient(145deg,#1c0710,#2d123f)}
+      .sunset-preview .appearance-art{background:radial-gradient(circle at 18% 18%,#fb7185,transparent 34%),radial-gradient(circle at 82% 78%,#f59e0b,transparent 34%),linear-gradient(145deg,#431407,#4c1d95)}
+      .cyber-preview .appearance-art{background:radial-gradient(circle at 18% 18%,#22d3ee,transparent 34%),radial-gradient(circle at 82% 78%,#a3e635,transparent 34%),linear-gradient(145deg,#020617,#083344)}
+      .gold-preview .appearance-art{background:radial-gradient(circle at 18% 18%,#facc15,transparent 34%),radial-gradient(circle at 82% 78%,#f97316,transparent 34%),linear-gradient(145deg,#1c1917,#422006)}
+      .slate-preview .appearance-art{background:radial-gradient(circle at 18% 18%,#94a3b8,transparent 34%),radial-gradient(circle at 82% 78%,#38bdf8,transparent 34%),linear-gradient(145deg,#0f172a,#1e293b)}
+      .appearance-note { margin:15px 0 0; padding:12px 13px; border-radius:11px; background:#f8fafc; border:1px solid #e2e8f0; color:#64748b; font-size:11px; line-height:1.55; }
+      @media(max-width:600px){.appearance-grid{grid-template-columns:1fr}}
+
+
+      /* Premium theme locking */
+      .appearance-card { position:relative; }
+      .appearance-card .premium-badge { position:absolute; top:9px; right:9px; z-index:2; padding:5px 8px; border-radius:999px; background:rgba(15,23,42,.86); color:#fff; font-size:9px; font-weight:800; letter-spacing:.05em; box-shadow:0 5px 15px rgba(15,23,42,.18); }
+      .appearance-card.is-locked { opacity:.72; }
+      .appearance-card.is-locked .appearance-art { filter:saturate(.65) brightness(.82); }
+      .appearance-card.is-locked::after { content:""; position:absolute; inset:0; pointer-events:none; background:rgba(15,23,42,.08); }
+      .premium-lock-button { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); z-index:4; display:none; align-items:center; gap:6px; padding:8px 11px; border:1px solid rgba(255,255,255,.42); border-radius:999px; background:rgba(15,23,42,.9); color:#fff; font-size:10px; font-weight:900; letter-spacing:.06em; box-shadow:0 8px 24px rgba(15,23,42,.28); pointer-events:none; }
+      .appearance-card.is-locked .premium-lock-button { display:inline-flex; }
+      .premium-lock-button svg { width:14px; height:14px; fill:currentColor; flex:0 0 14px; }
+      .premium-status-note { margin:12px 0 0; padding:11px 13px; border-radius:11px; background:#fffbeb; border:1px solid #fde68a; color:#92400e; font-size:11px; line-height:1.5; }
+</style>
   </head>
 
   <body>
@@ -1171,6 +1640,27 @@
           </div>
 
           <button type="button" class="settings-action" onclick="openModal('addressModal')">Manage</button>
+        </div>
+
+        <!-- =====================================
+             APPEARANCE
+        ====================================== -->
+        <div class="section-label">Appearance</div>
+
+        <div class="settings-item appearance-settings-item">
+          <div class="settings-left">
+            <div class="settings-icon">
+              <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 3a9 9 0 1 0 0 18h1.2a1.8 1.8 0 0 0 0-3.6h-1a2 2 0 0 1 0-4H15a6 6 0 0 0 0-12Z"></path>
+                <circle cx="7.5" cy="10" r=".8"></circle><circle cx="9.5" cy="6.8" r=".8"></circle><circle cx="14" cy="6.5" r=".8"></circle>
+              </svg>
+            </div>
+            <div class="settings-text">
+              <h3>Appearance</h3>
+              <p>Choose from 11 live themes. Your selection is saved on this device.</p>
+            </div>
+          </div>
+          <button type="button" class="settings-action" onclick="openModal('appearanceModal')">Choose Theme</button>
         </div>
 
         <!--    =====================================
@@ -1291,7 +1781,7 @@
       <!-- BACK -->
 
       <div class="back-box">
-        <a href="{% url 'home' %}" class="btn btn-light">← Back to Home</a>
+        <a href="{% url 'home' %}" class="btn btn-light settings-back-link"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"></path><path d="M9 12h11"></path></svg><span>Back to Home</span></a>
       </div>
     </div>
 
@@ -1318,7 +1808,7 @@
             <h2>Change Password</h2>
           </div>
 
-          <button type="button" class="modal-close" onclick="closeModal('passwordModal')">✕</button>
+          <button type="button" class="modal-close" onclick="closeModal('passwordModal')" aria-label="Close"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
         </div>
 
         <div class="modal-body">
@@ -1373,7 +1863,7 @@
             <h2>Address / Location</h2>
           </div>
 
-          <button type="button" class="modal-close" onclick="closeModal('addressModal')">✕</button>
+          <button type="button" class="modal-close" onclick="closeModal('addressModal')" aria-label="Close"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
         </div>
 
         <div class="modal-body">
@@ -1415,6 +1905,43 @@
       </div>
     </div>
 
+    <!-- =====================================================
+         APPEARANCE MODAL
+    ====================================================== -->
+    <div class="settings-modal" id="appearanceModal">
+      <div class="modal-card appearance-modal-card">
+        <div class="modal-header">
+          <div>
+            <h2>Appearance</h2>
+            <div class="modal-kicker">Choose your app theme</div>
+          </div>
+          <button type="button" class="modal-close" onclick="closeModal('appearanceModal')" aria-label="Close">
+            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="appearance-grid">
+            <button type="button" class="appearance-card light-preview" data-user-theme="light"><span class="appearance-art"></span><strong>White</strong><small>Clean & simple</small></button>
+            <button type="button" class="appearance-card dark-preview" data-user-theme="dark"><span class="appearance-art"></span><strong>Dark</strong><small>Comfortable dark mode</small></button>
+            <button type="button" class="appearance-card glass-preview" data-user-theme="glass"><span class="appearance-art"></span><strong>Ocean Glass</strong><small>Classic blue glass</small></button>
+            <button type="button" class="appearance-card royal-preview" data-user-theme="royal" data-premium-theme="true"><span class="appearance-art"></span><span class="premium-badge">PREMIUM</span><span class="premium-lock-button" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 16 3 7l5 3 4-6 4 6 5-3-2 9H5Zm0 2h14v2H5v-2Z"/></svg><span>PREMIUM</span></span><strong>Royal Purple Glass</strong><small>Luxury violet glass</small></button>
+            <button type="button" class="appearance-card royalblue-preview" data-user-theme="royalblue" data-premium-theme="true"><span class="appearance-art"></span><span class="premium-badge">PREMIUM</span><span class="premium-lock-button" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 16 3 7l5 3 4-6 4 6 5-3-2 9H5Zm0 2h14v2H5v-2Z"/></svg><span>PREMIUM</span></span><strong>Royal Blue Glass</strong><small>Professional sapphire glass</small></button>
+            <button type="button" class="appearance-card emerald-preview" data-user-theme="emerald" data-premium-theme="true"><span class="appearance-art"></span><span class="premium-badge">PREMIUM</span><span class="premium-lock-button" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 16 3 7l5 3 4-6 4 6 5-3-2 9H5Zm0 2h14v2H5v-2Z"/></svg><span>PREMIUM</span></span><strong>Emerald Glass</strong><small>Premium green glass</small></button>
+            <button type="button" class="appearance-card rose-preview" data-user-theme="rose" data-premium-theme="true"><span class="appearance-art"></span><span class="premium-badge">PREMIUM</span><span class="premium-lock-button" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 16 3 7l5 3 4-6 4 6 5-3-2 9H5Zm0 2h14v2H5v-2Z"/></svg><span>PREMIUM</span></span><strong>Rose Royal Glass</strong><small>Elegant rose & violet</small></button>
+            <button type="button" class="appearance-card sunset-preview" data-user-theme="sunset" data-premium-theme="true"><span class="appearance-art"></span><span class="premium-badge">PREMIUM</span><span class="premium-lock-button" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 16 3 7l5 3 4-6 4 6 5-3-2 9H5Zm0 2h14v2H5v-2Z"/></svg><span>PREMIUM</span></span><strong>Sunset Glass</strong><small>Warm coral & violet</small></button>
+            <button type="button" class="appearance-card cyber-preview" data-user-theme="cyber" data-premium-theme="true"><span class="appearance-art"></span><span class="premium-badge">PREMIUM</span><span class="premium-lock-button" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 16 3 7l5 3 4-6 4 6 5-3-2 9H5Zm0 2h14v2H5v-2Z"/></svg><span>PREMIUM</span></span><strong>Cyber Glass</strong><small>Cyan & neon green</small></button>
+            <button type="button" class="appearance-card gold-preview" data-user-theme="gold" data-premium-theme="true"><span class="appearance-art"></span><span class="premium-badge">PREMIUM</span><span class="premium-lock-button" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 16 3 7l5 3 4-6 4 6 5-3-2 9H5Zm0 2h14v2H5v-2Z"/></svg><span>PREMIUM</span></span><strong>Golden Glass</strong><small>Premium amber & gold</small></button>
+            <button type="button" class="appearance-card slate-preview" data-user-theme="slate" data-premium-theme="true"><span class="appearance-art"></span><span class="premium-badge">PREMIUM</span><span class="premium-lock-button" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 16 3 7l5 3 4-6 4 6 5-3-2 9H5Zm0 2h14v2H5v-2Z"/></svg><span>PREMIUM</span></span><strong>Slate Glass</strong><small>Professional steel blue</small></button>
+          </div>
+          {% if user_is_premium %}
+          <p class="appearance-note">Premium active — all 11 themes are unlocked.</p>
+          {% else %}
+          <p class="premium-status-note">Free plan: White, Dark and Ocean Glass are unlocked. Premium themes are locked.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
     <!--    =====================================================
          TERMS MODAL
     ======================================================    -->
@@ -1438,7 +1965,7 @@
             <h2>User Terms & Conditions</h2>
           </div>
 
-          <button type="button" class="modal-close" onclick="closeModal('termsModal')">✕</button>
+          <button type="button" class="modal-close" onclick="closeModal('termsModal')" aria-label="Close"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
         </div>
 
         <div class="modal-body">
@@ -1494,7 +2021,7 @@
             <h2>Help & Support</h2>
           </div>
 
-          <button type="button" class="modal-close" onclick="closeModal('supportModal')">✕</button>
+          <button type="button" class="modal-close" onclick="closeModal('supportModal')" aria-label="Close"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
         </div>
 
         <div class="modal-body">
@@ -1563,7 +2090,7 @@
             <h2>About</h2>
           </div>
 
-          <button type="button" class="modal-close" onclick="closeModal('aboutModal')">✕</button>
+          <button type="button" class="modal-close" onclick="closeModal('aboutModal')" aria-label="Close"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
         </div>
 
         <div class="modal-body">
@@ -1616,7 +2143,7 @@
               <h2>Delete Account</h2>
             </div>
 
-            <button type="button" class="modal-close" onclick="closeModal('deleteModal')">✕</button>
+            <button type="button" class="modal-close" onclick="closeModal('deleteModal')" aria-label="Close"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
           </div>
 
           <div class="modal-body">
@@ -1736,5 +2263,42 @@
         }
       })
     </script>
-  </body>
+
+
+
+
+
+
+<script>
+(function () {
+  "use strict";
+  const buttons = document.querySelectorAll('[data-user-theme]');
+  const isPremium = {{ user_is_premium|yesno:"true,false" }};
+  if (window.SmartComplaintTheme) window.SmartComplaintTheme.setUserPremiumAccess(isPremium);
+  function markActive(theme) {
+    buttons.forEach(function (btn) {
+      btn.classList.toggle('is-active', btn.dataset.userTheme === theme);
+      btn.classList.toggle('is-locked', btn.dataset.premiumTheme === 'true' && !isPremium);
+    });
+  }
+  buttons.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      if (!window.SmartComplaintTheme) return;
+      if (btn.dataset.premiumTheme === 'true' && !isPremium) {
+        showUiMessage('This is a Premium theme. Premium access is not active on your account.');
+        return;
+      }
+      const theme = window.SmartComplaintTheme.setUserTheme(btn.dataset.userTheme);
+      markActive(theme);
+      closeModal('appearanceModal');
+    });
+  });
+  if (window.SmartComplaintTheme) markActive(window.SmartComplaintTheme.getUserTheme());
+  document.addEventListener('smartComplaintThemeChanged', function (event) {
+    if (!event.detail.workerPage) markActive(event.detail.theme);
+  });
+})();
+</script>
+
+</body>
 </html>

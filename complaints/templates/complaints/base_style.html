@@ -866,21 +866,134 @@
         }
     }
 
+
+
+    /* =====================================================
+       LIVE PREMIUM THEMES (shared by User + Worker)
+       ===================================================== */
+    body.sc-theme-royal, body.worker-theme-royal { --app-primary-rgb:124,58,237; --app-secondary-rgb:168,85,247; --theme-bg1:#160b2d; --theme-bg2:#25104a; --theme-bg3:#111827; }
+    body.sc-theme-royalblue, body.worker-theme-royalblue { --app-primary-rgb:37,99,235; --app-secondary-rgb:99,102,241; --theme-bg1:#050b1d; --theme-bg2:#111f4d; --theme-bg3:#17134b; }
+    body.sc-theme-emerald, body.worker-theme-emerald { --app-primary-rgb:16,185,129; --app-secondary-rgb:6,182,212; --theme-bg1:#031713; --theme-bg2:#06382d; --theme-bg3:#082b38; }
+    body.sc-theme-rose, body.worker-theme-rose { --app-primary-rgb:225,29,72; --app-secondary-rgb:168,85,247; --theme-bg1:#1c0710; --theme-bg2:#4a1230; --theme-bg3:#2d123f; }
+    body.sc-theme-sunset, body.worker-theme-sunset { --app-primary-rgb:249,115,22; --app-secondary-rgb:168,85,247; --theme-bg1:#431407; --theme-bg2:#7c2d12; --theme-bg3:#4c1d95; }
+    body.sc-theme-cyber, body.worker-theme-cyber { --app-primary-rgb:34,211,238; --app-secondary-rgb:34,197,94; --theme-bg1:#020617; --theme-bg2:#083344; --theme-bg3:#14532d; }
+    body.sc-theme-gold, body.worker-theme-gold { --app-primary-rgb:245,158,11; --app-secondary-rgb:250,204,21; --theme-bg1:#1c1917; --theme-bg2:#422006; --theme-bg3:#451a03; }
+    body.sc-theme-slate, body.worker-theme-slate { --app-primary-rgb:56,189,248; --app-secondary-rgb:100,116,139; --theme-bg1:#0f172a; --theme-bg2:#1e293b; --theme-bg3:#111827; }
+
+    body:is(.sc-theme-royal,.sc-theme-royalblue,.sc-theme-emerald,.sc-theme-rose,.sc-theme-sunset,.sc-theme-cyber,.sc-theme-gold,.sc-theme-slate,
+             .worker-theme-royal,.worker-theme-royalblue,.worker-theme-emerald,.worker-theme-rose,.worker-theme-sunset,.worker-theme-cyber,.worker-theme-gold,.worker-theme-slate) {
+        --app-text:#ffffff;
+        --app-muted:rgba(226,232,240,.82);
+        --app-card-bg:rgba(15,23,42,.58);
+        --app-card-border:rgba(255,255,255,.18);
+        --app-input-bg:rgba(255,255,255,.09);
+        --app-input-border:rgba(255,255,255,.20);
+        color-scheme:dark;
+        color:#fff !important;
+        background:
+          radial-gradient(circle at 10% 12%, rgba(var(--app-primary-rgb),.48), transparent 31%),
+          radial-gradient(circle at 90% 78%, rgba(var(--app-secondary-rgb),.30), transparent 35%),
+          linear-gradient(135deg,var(--theme-bg1),var(--theme-bg2) 55%,var(--theme-bg3)) !important;
+        background-attachment:fixed !important;
+    }
+
+    body:is(.sc-theme-royal,.sc-theme-royalblue,.sc-theme-emerald,.sc-theme-rose,.sc-theme-sunset,.sc-theme-cyber,.sc-theme-gold,.sc-theme-slate,
+             .worker-theme-royal,.worker-theme-royalblue,.worker-theme-emerald,.worker-theme-rose,.worker-theme-sunset,.worker-theme-cyber,.worker-theme-gold,.worker-theme-slate)
+      :is(.card,.theme-glass-surface) {
+        background:linear-gradient(135deg,rgba(255,255,255,.14),rgba(255,255,255,.055)) !important;
+        border:1px solid rgba(255,255,255,.18) !important;
+        color:#fff !important;
+        box-shadow:0 24px 60px rgba(2,6,23,.34), inset 0 1px 0 rgba(255,255,255,.10) !important;
+        backdrop-filter:blur(22px); -webkit-backdrop-filter:blur(22px);
+    }
+
+    body:is(.sc-theme-royal,.sc-theme-royalblue,.sc-theme-emerald,.sc-theme-rose,.sc-theme-sunset,.sc-theme-cyber,.sc-theme-gold,.sc-theme-slate,
+             .worker-theme-royal,.worker-theme-royalblue,.worker-theme-emerald,.worker-theme-rose,.worker-theme-sunset,.worker-theme-cyber,.worker-theme-gold,.worker-theme-slate)
+      :is(h1,h2,h3,h4,h5,h6,.label) { color:#fff !important; }
+
+    body:is(.sc-theme-royal,.sc-theme-royalblue,.sc-theme-emerald,.sc-theme-rose,.sc-theme-sunset,.sc-theme-cyber,.sc-theme-gold,.sc-theme-slate,
+             .worker-theme-royal,.worker-theme-royalblue,.worker-theme-emerald,.worker-theme-rose,.worker-theme-sunset,.worker-theme-cyber,.worker-theme-gold,.worker-theme-slate)
+      .muted { color:rgba(226,232,240,.78) !important; }
+
+    body:is(.sc-theme-royal,.sc-theme-royalblue,.sc-theme-emerald,.sc-theme-rose,.sc-theme-sunset,.sc-theme-cyber,.sc-theme-gold,.sc-theme-slate,
+             .worker-theme-royal,.worker-theme-royalblue,.worker-theme-emerald,.worker-theme-rose,.worker-theme-sunset,.worker-theme-cyber,.worker-theme-gold,.worker-theme-slate)
+      :is(.input,.textarea,.select,input,select,textarea) {
+        color-scheme:dark;
+    }
+
+    body:is(.sc-theme-royal,.sc-theme-royalblue,.sc-theme-emerald,.sc-theme-rose,.sc-theme-sunset,.sc-theme-cyber,.sc-theme-gold,.sc-theme-slate,
+             .worker-theme-royal,.worker-theme-royalblue,.worker-theme-emerald,.worker-theme-rose,.worker-theme-sunset,.worker-theme-cyber,.worker-theme-gold,.worker-theme-slate)
+      :is(.input,.textarea,.select) {
+        background:rgba(255,255,255,.09) !important;
+        border-color:rgba(255,255,255,.20) !important;
+        color:#fff !important;
+    }
+
+    body:is(.sc-theme-royal,.sc-theme-royalblue,.sc-theme-emerald,.sc-theme-rose,.sc-theme-sunset,.sc-theme-cyber,.sc-theme-gold,.sc-theme-slate,
+             .worker-theme-royal,.worker-theme-royalblue,.worker-theme-emerald,.worker-theme-rose,.worker-theme-sunset,.worker-theme-cyber,.worker-theme-gold,.worker-theme-slate)
+      .btn-primary {
+        background:linear-gradient(135deg,rgb(var(--app-primary-rgb)),rgb(var(--app-secondary-rgb))) !important;
+        color:#fff !important;
+        box-shadow:0 10px 28px rgba(var(--app-primary-rgb),.30);
+    }
+
+    body:is(.sc-theme-royal,.sc-theme-royalblue,.sc-theme-emerald,.sc-theme-rose,.sc-theme-sunset,.sc-theme-cyber,.sc-theme-gold,.sc-theme-slate,
+             .worker-theme-royal,.worker-theme-royalblue,.worker-theme-emerald,.worker-theme-rose,.worker-theme-sunset,.worker-theme-cyber,.worker-theme-gold,.worker-theme-slate)
+      .theme-choice-btn {
+        background:rgba(255,255,255,.10); border-color:rgba(255,255,255,.20); color:#fff;
+        backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+    }
+
+    @media (max-width:650px) {
+      body:is(.sc-theme-royal,.sc-theme-royalblue,.sc-theme-emerald,.sc-theme-rose,.sc-theme-sunset,.sc-theme-cyber,.sc-theme-gold,.sc-theme-slate,
+               .worker-theme-royal,.worker-theme-royalblue,.worker-theme-emerald,.worker-theme-rose,.worker-theme-sunset,.worker-theme-cyber,.worker-theme-gold,.worker-theme-slate) {
+        background-attachment:scroll !important;
+      }
+    }
+
 </style>
 
 
 <script>
 (function () {
+    "use strict";
+
+    const THEMES = ["light","dark","glass","royal","royalblue","emerald","rose","sunset","cyber","gold","slate"];
+    const FREE_THEMES = ["light","dark","glass"];
+    const PREMIUM_THEMES = THEMES.filter(function (theme) { return !FREE_THEMES.includes(theme); });
+    const USER_KEY = "smartComplaintThemeV2";
+    const WORKER_KEY = "workerThemeV2";
+    const USER_LEGACY_KEY = "smartComplaintLiveThemeV3";
+    const WORKER_LEGACY_KEY = "workerLiveThemeV3";
+    const USER_PREMIUM_KEY = "smartComplaintPremiumThemeAccessV1";
+    const WORKER_PREMIUM_KEY = "workerPremiumThemeAccessV1";
+
     const colorMap = {
-        blue:   { primary: "37, 99, 235", secondary: "14, 165, 233" },
-        indigo: { primary: "79, 70, 229", secondary: "99, 102, 241" },
-        teal:   { primary: "13, 148, 136", secondary: "6, 182, 212" },
-        purple: { primary: "124, 58, 237", secondary: "168, 85, 247" },
-        slate:  { primary: "71, 85, 105", secondary: "100, 116, 139" }
+        blue:{primary:"37, 99, 235",secondary:"14, 165, 233"},
+        indigo:{primary:"79, 70, 229",secondary:"99, 102, 241"},
+        teal:{primary:"13, 148, 136",secondary:"6, 182, 212"},
+        purple:{primary:"124, 58, 237",secondary:"168, 85, 247"},
+        slate:{primary:"71, 85, 105",secondary:"100, 116, 139"}
     };
 
-    function validTheme(theme) {
-        return ["light", "dark", "glass"].includes(theme) ? theme : "light";
+    function validTheme(theme) { return THEMES.includes(theme) ? theme : "light"; }
+    function isPremiumTheme(theme) { return PREMIUM_THEMES.includes(validTheme(theme)); }
+    function hasPremiumAccess(workerPage) {
+        return localStorage.getItem(workerPage ? WORKER_PREMIUM_KEY : USER_PREMIUM_KEY) === "1";
+    }
+    function allowedTheme(theme, workerPage) {
+        theme = validTheme(theme);
+        return isPremiumTheme(theme) && !hasPremiumAccess(workerPage) ? "glass" : theme;
+    }
+    function setPremiumAccess(workerPage, enabled) {
+        localStorage.setItem(workerPage ? WORKER_PREMIUM_KEY : USER_PREMIUM_KEY, enabled ? "1" : "0");
+        const theme = allowedTheme(savedTheme(workerPage), workerPage);
+        if (theme !== savedTheme(workerPage)) {
+            localStorage.setItem(workerPage ? WORKER_KEY : USER_KEY, theme);
+            localStorage.setItem(workerPage ? WORKER_LEGACY_KEY : USER_LEGACY_KEY, theme);
+        }
+        applyTheme(theme, workerPage);
+        return enabled;
     }
 
     function applyGlobalColor(colorName) {
@@ -889,77 +1002,71 @@
         document.documentElement.style.setProperty("--app-secondary-rgb", selected.secondary);
     }
 
+    function clearThemeClasses() {
+        if (!document.body) return;
+        THEMES.forEach(function (theme) {
+            document.body.classList.remove("sc-theme-" + theme, "worker-theme-" + theme);
+        });
+        document.body.classList.remove("dark-mode", "worker-dark-mode");
+    }
+
     function applyTheme(theme, workerPage) {
         if (!document.body) return;
-
         theme = validTheme(theme);
+        clearThemeClasses();
+        document.body.classList.add((workerPage ? "worker-theme-" : "sc-theme-") + theme);
+        document.dispatchEvent(new CustomEvent("smartComplaintThemeChanged", {detail:{theme:theme,workerPage:workerPage}}));
+    }
 
-        if (workerPage) {
-            document.body.classList.remove(
-                "worker-theme-light",
-                "worker-theme-dark",
-                "worker-theme-glass",
-                "worker-dark-mode"
-            );
-            document.body.classList.add("worker-theme-" + theme);
-        } else {
-            document.body.classList.remove(
-                "sc-theme-light",
-                "sc-theme-dark",
-                "sc-theme-glass",
-                "dark-mode"
-            );
-            document.body.classList.add("sc-theme-" + theme);
-        }
-
-        document.dispatchEvent(
-            new CustomEvent("smartComplaintThemeChanged", {
-                detail: { theme: theme, workerPage: workerPage }
-            })
-        );
+    function savedTheme(workerPage) {
+        const primaryKey = workerPage ? WORKER_KEY : USER_KEY;
+        const legacyKey = workerPage ? WORKER_LEGACY_KEY : USER_LEGACY_KEY;
+        return allowedTheme(localStorage.getItem(primaryKey) || localStorage.getItem(legacyKey) || "light", workerPage);
     }
 
     function applySavedTheme() {
         if (!document.body) return;
-
-        const isWorkerPage = document.body.classList.contains("worker-page");
-
-        if (isWorkerPage) {
-            const theme = validTheme(localStorage.getItem("workerThemeV2") || "light");
-            const color = localStorage.getItem("workerGlassColorV2") || "blue";
-            applyGlobalColor(color);
-            applyTheme(theme, true);
-        } else {
-            const theme = validTheme(localStorage.getItem("smartComplaintThemeV2") || "light");
-            const color = localStorage.getItem("smartComplaintGlassColor") || "blue";
-            applyGlobalColor(color);
-            applyTheme(theme, false);
-        }
+        const workerPage = document.body.classList.contains("worker-page");
+        const color = localStorage.getItem(workerPage ? "workerGlassColorV2" : "smartComplaintGlassColor") || "blue";
+        applyGlobalColor(color);
+        applyTheme(savedTheme(workerPage), workerPage);
     }
 
     function setUserTheme(theme) {
-        theme = validTheme(theme);
-        localStorage.setItem("smartComplaintThemeV2", theme);
+        theme = allowedTheme(theme, false);
+        localStorage.setItem(USER_KEY, theme);
+        localStorage.setItem(USER_LEGACY_KEY, theme);
         applyTheme(theme, false);
+        return theme;
     }
 
     function setWorkerTheme(theme) {
-        theme = validTheme(theme);
-        localStorage.setItem("workerThemeV2", theme);
+        theme = allowedTheme(theme, true);
+        localStorage.setItem(WORKER_KEY, theme);
+        localStorage.setItem(WORKER_LEGACY_KEY, theme);
         applyTheme(theme, true);
-    }
-
-    if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", applySavedTheme);
-    } else {
-        applySavedTheme();
+        return theme;
     }
 
     window.SmartComplaintTheme = {
+        themes: THEMES.slice(),
+        freeThemes: FREE_THEMES.slice(),
+        premiumThemes: PREMIUM_THEMES.slice(),
+        validTheme: validTheme,
+        isPremiumTheme: isPremiumTheme,
+        hasUserPremiumAccess: function(){ return hasPremiumAccess(false); },
+        hasWorkerPremiumAccess: function(){ return hasPremiumAccess(true); },
+        setUserPremiumAccess: function(enabled){ return setPremiumAccess(false, !!enabled); },
+        setWorkerPremiumAccess: function(enabled){ return setPremiumAccess(true, !!enabled); },
         applySavedTheme: applySavedTheme,
         applyGlobalColor: applyGlobalColor,
         setUserTheme: setUserTheme,
-        setWorkerTheme: setWorkerTheme
+        setWorkerTheme: setWorkerTheme,
+        getUserTheme: function(){ return savedTheme(false); },
+        getWorkerTheme: function(){ return savedTheme(true); }
     };
+
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", applySavedTheme);
+    else applySavedTheme();
 })();
 </script>

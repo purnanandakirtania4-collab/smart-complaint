@@ -63,6 +63,11 @@ class UserProfile(models.Model):
         null=True,
         blank=True,
     )
+
+    # Premium theme entitlement for normal users.
+    # This can be switched by admin now and connected to a user payment plan later.
+    is_premium = models.BooleanField(default=False)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -432,6 +437,17 @@ class WorkerSubscription(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    @property
+    def is_premium_active(self):
+        """Return True only while the worker subscription is usable."""
+        if self.status != "active":
+            return False
+
+        if self.current_period_end and self.current_period_end <= timezone.now():
+            return False
+
+        return True
+
     def __str__(self):
         return f"{self.worker.worker_id or 'PENDING'} - {self.status}"
 
@@ -678,3 +694,149 @@ class ChatMessage(models.Model):
 
     def __str__(self):
         return f"{self.complaint.tracking_id} - {self.sender.username}"
+
+
+class PaymentTransaction(models.Model):
+    PAYMENT_FOR_CHOICES = [
+        ("complaint", "Complaint / Service"),
+        ("worker_subscription", "Worker Subscription"),
+        ("other", "Other"),
+    ]
+
+    STATUS_CHOICES = [
+        ("created", "Created"),
+        ("pending", "Pending"),
+        ("paid", "Paid"),
+        ("failed", "Failed"),
+        ("refunded", "Refunded"),
+        ("cancelled", "Cancelled"),
+    ]
+
+    payer = models.ForeignKey(
+        User,
+        on_delete=models.PROTECT,
+        related_name="payment_transactions",
+    )
+    complaint = models.ForeignKey(
+        Complaint,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="payment_transactions",
+    )
+    worker_subscription = models.ForeignKey(
+        WorkerSubscription,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="payment_transactions",
+    )
+
+    payment_for = models.CharField(
+        max_length=30,
+        choices=PAYMENT_FOR_CHOICES,
+        default="other",
+    )
+
+    # Store money as Decimal, never float.
+    amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        validators=[MinValueValidator(0)],
+    )
+    currency = models.CharField(
+        max_length=3,
+        default="INR",
+    )
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default="created",
+    )
+
+    # Gateway identifiers are safe to store.
+    # Razorpay key secret/signature secret must NEVER be stored here.
+    razorpay_order_id = models.CharField(
+        max_length=100,
+        blank=True,
+        default="",
+        db_index=True,
+    )
+    razorpay_payment_id = models.CharField(
+        max_length=100,
+        blank=True,
+        default="",
+        db_index=True,
+    )
+
+    receipt = models.CharField(
+        max_length=100,
+        blank=True,
+        default="",
+    )
+    description = models.CharField(
+        max_length=255,
+        blank=True,
+        default="",
+    )
+
+    paid_at = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+    failed_at = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+    refunded_at = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        indexes = [
+            models.Index(fields=["status", "created_at"]),
+            models.Index(fields=["payer", "created_at"]),
+        ]
+
+    def __str__(self):
+        return (
+            f"{self.payer.username} - "
+            f"{self.payment_for} - "
+            f"{self.currency} {self.amount} - "
+            f"{self.status}"
+        )
+
+
+class PaymentEvent(models.Model):
+    transaction = models.ForeignKey(
+        PaymentTransaction,
+        on_delete=models.CASCADE,
+        related_name="events",
+    )
+    event_type = models.CharField(
+        max_length=100,
+    )
+    gateway_event_id = models.CharField(
+        max_length=150,
+        blank=True,
+        default="",
+        unique=True,
+        null=True,
+    )
+    payload = models.JSONField(
+        default=dict,
+        blank=True,
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.transaction_id} - {self.event_type}"

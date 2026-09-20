@@ -5,3 +5,4 @@ __pycache__/
 db.sqlite3
 media/
 staticfiles/
+before_railway_deploy_backup.patch

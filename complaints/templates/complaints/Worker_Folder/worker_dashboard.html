@@ -2214,7 +2214,63 @@
 
         }
 
-    </style>
+    
+        /* =====================================================
+           PROFESSIONAL DASHBOARD POLISH
+           ===================================================== */
+        .worker-page { --panel-radius: 20px; }
+        .worker-page .dashboard-summary,
+        .worker-page .complaint {
+            border-radius: var(--panel-radius);
+            border: 1px solid rgba(203,213,225,.72);
+            box-shadow: 0 22px 55px rgba(15,23,42,.11);
+        }
+        .worker-page .dashboard-summary { position: relative; overflow: hidden; }
+        .worker-page .dashboard-summary::before {
+            content: ""; position: absolute; inset: 0 0 auto 0; height: 3px;
+            background: linear-gradient(90deg,#2563eb,#0ea5e9,#4f46e5);
+        }
+        .worker-page .complaint { transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
+        .worker-page .complaint:hover { transform: translateY(-2px); box-shadow: 0 28px 68px rgba(15,23,42,.15); border-color:#bfdbfe; }
+        .worker-page .complaint-head h2, .worker-page .dashboard-summary-text h2 { letter-spacing:-.02em; }
+        .worker-page .priority-badge, .worker-page .status, .worker-page .worker-id-pill, .worker-page .approved-pill {
+            border: 1px solid rgba(148,163,184,.18);
+        }
+        .worker-page .desc, .worker-page .complaint-user-profile, .worker-page .info,
+        .worker-page .photo-box, .worker-page .after-photo-box, .worker-page .location-box,
+        .worker-page .otp-box, .worker-page .rating-box, .worker-page .submitted-rating {
+            border-radius: 16px;
+        }
+        .worker-page .btn, .worker-page button, .worker-page .chat-btn, .worker-page .map-button {
+            border-radius: 12px;
+        }
+        .rating-star {
+            display:inline-block; width:28px; height:28px; background:#cbd5e1;
+            clip-path:polygon(50% 3%,61% 36%,96% 36%,68% 56%,79% 91%,50% 70%,21% 91%,32% 56%,4% 36%,39% 36%);
+        }
+        .rating-star.is-filled { background:#f59e0b; }
+        .stars label { display:grid; place-items:center; width:38px; height:38px; color:transparent; }
+        .stars label .rating-star { width:31px; height:31px; background:#cbd5e1; transition:transform .18s ease,background .18s ease; }
+        .stars label:hover .rating-star,
+        .stars label:hover ~ label .rating-star,
+        .stars input:checked ~ label .rating-star { background:#f59e0b; transform:scale(1.06); }
+        .submitted-stars { display:flex; gap:4px; align-items:center; }
+        .submitted-stars .rating-star { width:23px; height:23px; }
+        body.worker-theme-glass .worker-page .dashboard-summary,
+        body.worker-theme-glass .worker-page .complaint {
+            background:linear-gradient(135deg,rgba(255,255,255,.15),rgba(59,130,246,.07))!important;
+            border-color:rgba(191,219,254,.25)!important;
+            box-shadow:0 26px 64px rgba(2,6,23,.30),inset 0 1px 0 rgba(255,255,255,.10)!important;
+            backdrop-filter:blur(22px); -webkit-backdrop-filter:blur(22px);
+        }
+        body.worker-theme-dark .worker-page .dashboard-summary,
+        body.worker-theme-dark .worker-page .complaint { background:#1e293b!important; border-color:#334155!important; }
+        @media(max-width:650px){
+            .worker-page .dashboard-summary,.worker-page .complaint{border-radius:17px;}
+            .worker-page .complaint{padding:18px!important;}
+        }
+
+</style>
 
 
 <style>
@@ -3044,11 +3100,11 @@ body.worker-theme-light .complaint{background:#fff!important;color:#172554!impor
 
                                 {% if complaint.after_photo %}
 
-                                    🔄 Replace After Photo
+                                     Replace After Photo
 
                                 {% else %}
 
-                                    📤 Upload After Photo
+                                     Upload After Photo
 
                                 {% endif %}
 
@@ -3335,35 +3391,15 @@ body.worker-theme-light .complaint{background:#fff!important;color:#172554!impor
 
                             <div class="submitted-stars">
 
-                                {% if complaint.worker_rating.stars >= 1 %}
-                                    ★
-                                {% else %}
-                                    ☆
-                                {% endif %}
+                                <span class="rating-star {% if complaint.worker_rating.stars >= 1 %}is-filled{% endif %}" aria-hidden="true"></span>
 
-                                {% if complaint.worker_rating.stars >= 2 %}
-                                    ★
-                                {% else %}
-                                    ☆
-                                {% endif %}
+                                <span class="rating-star {% if complaint.worker_rating.stars >= 2 %}is-filled{% endif %}" aria-hidden="true"></span>
 
-                                {% if complaint.worker_rating.stars >= 3 %}
-                                    ★
-                                {% else %}
-                                    ☆
-                                {% endif %}
+                                <span class="rating-star {% if complaint.worker_rating.stars >= 3 %}is-filled{% endif %}" aria-hidden="true"></span>
 
-                                {% if complaint.worker_rating.stars >= 4 %}
-                                    ★
-                                {% else %}
-                                    ☆
-                                {% endif %}
+                                <span class="rating-star {% if complaint.worker_rating.stars >= 4 %}is-filled{% endif %}" aria-hidden="true"></span>
 
-                                {% if complaint.worker_rating.stars >= 5 %}
-                                    ★
-                                {% else %}
-                                    ☆
-                                {% endif %}
+                                <span class="rating-star {% if complaint.worker_rating.stars >= 5 %}is-filled{% endif %}" aria-hidden="true"></span>
 
                             </div>
 
@@ -3453,9 +3489,7 @@ body.worker-theme-light .complaint{background:#fff!important;color:#172554!impor
 
                                     <label
                                         for="user-star-5-{{ complaint.id }}"
-                                    >
-                                        ★
-                                    </label>
+                                    ><span class="rating-star is-filled" aria-hidden="true"></span></label>
 
 
                                     <input
@@ -3467,9 +3501,7 @@ body.worker-theme-light .complaint{background:#fff!important;color:#172554!impor
 
                                     <label
                                         for="user-star-4-{{ complaint.id }}"
-                                    >
-                                        ★
-                                    </label>
+                                    ><span class="rating-star is-filled" aria-hidden="true"></span></label>
 
 
                                     <input
@@ -3481,9 +3513,7 @@ body.worker-theme-light .complaint{background:#fff!important;color:#172554!impor
 
                                     <label
                                         for="user-star-3-{{ complaint.id }}"
-                                    >
-                                        ★
-                                    </label>
+                                    ><span class="rating-star is-filled" aria-hidden="true"></span></label>
 
 
                                     <input
@@ -3495,9 +3525,7 @@ body.worker-theme-light .complaint{background:#fff!important;color:#172554!impor
 
                                     <label
                                         for="user-star-2-{{ complaint.id }}"
-                                    >
-                                        ★
-                                    </label>
+                                    ><span class="rating-star is-filled" aria-hidden="true"></span></label>
 
 
                                     <input
@@ -3509,9 +3537,7 @@ body.worker-theme-light .complaint{background:#fff!important;color:#172554!impor
 
                                     <label
                                         for="user-star-1-{{ complaint.id }}"
-                                    >
-                                        ★
-                                    </label>
+                                    ><span class="rating-star is-filled" aria-hidden="true"></span></label>
 
 
                                 </div>

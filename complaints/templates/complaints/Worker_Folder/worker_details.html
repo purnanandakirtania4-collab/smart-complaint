@@ -72,7 +72,7 @@
     {% include 'complaints/navbar.html' %}
     <main class="page">
       <div class="head">
-        <h1>👷 Find a Worker</h1><p style="color:#dbeafe;margin-top:8px">View approved worker profiles before selecting one for a complaint.</p>
+        <h1> Find a Worker</h1><p style="color:#dbeafe;margin-top:8px">View approved worker profiles before selecting one for a complaint.</p>
       </div>
       <div class="search">
         <input class="input" id="workerSearch" placeholder="Search by name, username or Worker ID" />
@@ -81,7 +81,7 @@
         {% for worker in workers %}
           <article class="card worker-card" data-search="{{ worker.name|lower }} {{ worker.user.username|lower }} {{ worker.worker_id|lower }}">
             <div class="top">
-              <div class="avatar">👷</div>
+              <div class="avatar"></div>
               <div>
                 <div class="name">{{ worker.name }}</div>
                 <div class="id">{{ worker.worker_id }}</div>

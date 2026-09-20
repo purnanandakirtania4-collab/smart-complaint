@@ -2,1386 +2,2249 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Payment Details - Smart Complaint</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>User Settings | Smart Complaint</title>
+
+    {% include 'complaints/base_style.html' %}
 
     <style>
+      /* =========================================
+                             COMMON
+                          ========================================= */
+      
       * {
         box-sizing: border-box;
+      }
+      
+      .ui-icon {
+        width: 21px;
+        height: 21px;
+      
+        display: inline-block;
+      
+        fill: none;
+        stroke: currentColor;
+      
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      
+        flex-shrink: 0;
+      }
+      
+      /* =========================================
+                             PAGE WRAPPER
+                          ========================================= */
+      
+      .settings-wrapper {
+        max-width: 900px;
+      
+        margin: 30px auto;
+      
+        padding: 0 15px 45px;
+      }
+      
+      /* =========================================
+                             HEADER
+                          ========================================= */
+      
+      .settings-header {
+        color: white;
+      
+        margin-bottom: 22px;
+      }
+      
+      .settings-header h1 {
+        margin: 0 0 7px;
+      
+        display: flex;
+        align-items: center;
+      
+        gap: 10px;
+      
+        font-size: 30px;
+      }
+      
+      .settings-header h1 .ui-icon {
+        width: 26px;
+        height: 26px;
+      }
+      
+      .settings-header p {
         margin: 0;
-        padding: 0;
-      }
       
-      :root {
-        --bg-1: #06152d;
-        --bg-2: #092d58;
-        --card: rgba(13, 48, 88, 0.78);
-        --card-2: rgba(16, 61, 108, 0.72);
-        --border: rgba(125, 190, 255, 0.22);
-        --primary: #1677ff;
-        --primary-2: #0ea5e9;
-        --text: #f8fbff;
-        --muted: #a9c4e4;
-        --green: #22c55e;
-        --red: #ef4444;
-        --purple: #a855f7;
-        --shadow: 0 18px 45px rgba(0, 0, 0, 0.22);
-      }
+        font-size: 15px;
       
-      html,
-      body {
-        min-height: 100%;
-      }
-      
-      body {
-        font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-      
-        color: var(--text);
-      
-        background: radial-gradient(circle at 90% 10%, rgba(14, 165, 233, 0.18), transparent 30%), radial-gradient(circle at 10% 85%, rgba(37, 99, 235, 0.16), transparent 30%), linear-gradient(135deg, var(--bg-1), var(--bg-2));
-      
-        overflow-x: hidden;
-      }
-      
-      button,
-      a {
-        font: inherit;
-      }
-      
-      .payment-page {
-        width: min(1180px, calc(100% - 32px));
-        margin: 0 auto;
-        padding: 32px 0 45px;
+        opacity: 0.95;
       }
       
       /* =========================================
-                       HEADER
-                    ========================================= */
+                             CARD
+                          ========================================= */
       
-      .payment-hero {
-        position: relative;
-        overflow: hidden;
+      .settings-card {
+        background: white;
       
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 24px;
-      
-        padding: 30px;
-      
-        border: 1px solid rgba(120, 190, 255, 0.3);
-        border-radius: 24px;
-      
-        background: linear-gradient(135deg, rgba(37, 99, 235, 0.92), rgba(14, 165, 233, 0.62));
-      
-        box-shadow: var(--shadow);
-      }
-      
-      .payment-hero::after {
-        content: '';
-        position: absolute;
-      
-        width: 240px;
-        height: 240px;
-      
-        right: -60px;
-        top: -90px;
-      
-        border-radius: 50%;
-      
-        background: rgba(255, 255, 255, 0.08);
-      }
-      
-      .hero-main {
-        position: relative;
-        z-index: 2;
-      
-        display: flex;
-        align-items: center;
-        gap: 18px;
-      }
-      
-      .hero-icon {
-        width: 72px;
-        height: 72px;
-        min-width: 72px;
-      
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      
-        border-radius: 20px;
-      
-        background: rgba(255, 255, 255, 0.14);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-      
-        font-size: 34px;
-      }
-      
-      .hero-text h1 {
-        font-size: 32px;
-        line-height: 1.15;
-        margin-bottom: 7px;
-      }
-      
-      .hero-text p {
-        color: #e0f2fe;
-        line-height: 1.6;
-      }
-      
-      .secure-box {
-        position: relative;
-        z-index: 2;
-      
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      
-        min-width: 190px;
-        padding: 14px 16px;
-      
-        border-radius: 16px;
-      
-        background: rgba(2, 24, 55, 0.22);
-        border: 1px solid rgba(255, 255, 255, 0.16);
-      }
-      
-      .secure-icon {
-        width: 44px;
-        height: 44px;
-      
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      
-        border-radius: 14px;
-      
-        background: rgba(14, 165, 233, 0.25);
-      
-        font-size: 22px;
-      }
-      
-      .secure-box strong {
-        display: block;
-        margin-bottom: 3px;
-      }
-      
-      .secure-box small {
-        color: #dbeafe;
-        line-height: 1.4;
-      }
-      
-      /* =========================================
-                       SUMMARY
-                    ========================================= */
-      
-      .summary-grid {
-        display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 16px;
-      
-        margin-top: 20px;
-      }
-      
-      .summary-card {
-        min-width: 0;
-        padding: 22px;
-      
-        border-radius: 20px;
-        border: 1px solid var(--border);
-      
-        background: linear-gradient(145deg, rgba(13, 48, 88, 0.92), rgba(9, 38, 73, 0.82));
-      
-        box-shadow: var(--shadow);
-      }
-      
-      .summary-card.green {
-        border-color: rgba(34, 197, 94, 0.45);
-      }
-      
-      .summary-card.blue {
-        border-color: rgba(14, 165, 233, 0.45);
-      }
-      
-      .summary-card.purple {
-        border-color: rgba(168, 85, 247, 0.45);
-      }
-      
-      .summary-card.red {
-        border-color: rgba(239, 68, 68, 0.45);
-      }
-      
-      .summary-icon {
-        width: 46px;
-        height: 46px;
-      
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      
-        margin-bottom: 17px;
-      
-        border-radius: 14px;
-      
-        background: rgba(22, 119, 255, 0.2);
-      
-        font-size: 22px;
-      }
-      
-      .summary-card.green .summary-icon {
-        background: rgba(34, 197, 94, 0.18);
-      }
-      
-      .summary-card.purple .summary-icon {
-        background: rgba(168, 85, 247, 0.18);
-      }
-      
-      .summary-card.red .summary-icon {
-        background: rgba(239, 68, 68, 0.18);
-      }
-      
-      .summary-title {
-        color: var(--muted);
-        font-size: 13px;
-        font-weight: 700;
-        margin-bottom: 8px;
-      }
-      
-      .summary-value {
-        font-size: 29px;
-        font-weight: 800;
-        margin-bottom: 5px;
-      }
-      
-      .summary-note {
-        color: var(--muted);
-        font-size: 12px;
-      }
-      
-      /* =========================================
-                       MAIN CARD
-                    ========================================= */
-      
-      .section-card {
-        margin-top: 20px;
-      
-        overflow: hidden;
-      
-        border-radius: 22px;
-        border: 1px solid var(--border);
-      
-        background: linear-gradient(145deg, rgba(12, 45, 83, 0.92), rgba(7, 32, 62, 0.88));
-      
-        box-shadow: var(--shadow);
-      }
-      
-      .section-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 15px;
-      
-        padding: 20px 22px;
-      
-        border-bottom: 1px solid var(--border);
-      }
-      
-      .section-title {
-        display: flex;
-        align-items: center;
-        gap: 11px;
-      
-        font-size: 18px;
-        font-weight: 800;
-      }
-      
-      .filter-button {
-        border: 1px solid var(--border);
-        border-radius: 12px;
-      
-        padding: 10px 13px;
-      
-        color: var(--text);
-      
-        background: rgba(36, 105, 170, 0.24);
-      
-        cursor: default;
-      }
-      
-      /* =========================================
-                       EMPTY PAYMENT HISTORY
-                    ========================================= */
-      
-      .empty-state {
-        min-height: 330px;
-      
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-      
-        text-align: center;
-      
-        padding: 35px 20px;
-      }
-      
-      .empty-icon {
-        width: 82px;
-        height: 82px;
-      
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      
-        margin-bottom: 18px;
-      
-        border-radius: 50%;
-      
-        background: rgba(66, 153, 225, 0.16);
-        border: 1px solid rgba(125, 190, 255, 0.18);
-      
-        font-size: 36px;
-      }
-      
-      .empty-state h2 {
-        font-size: 22px;
-        margin-bottom: 9px;
-      }
-      
-      .empty-state p {
-        max-width: 470px;
-      
-        color: var(--muted);
-      
-        line-height: 1.65;
-      }
-      
-      /* =========================================
-                       FUTURE TRANSACTION ROW
-                       hidden until backend connection
-                    ========================================= */
-      
-      .transaction-list {
-        display: none;
-        padding: 18px;
-      }
-      
-      /* =========================================
-                       HELP
-                    ========================================= */
-      
-      .help-card {
-        margin-top: 20px;
-      
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 22px;
-      
-        padding: 22px;
-      
-        border-radius: 20px;
-        border: 1px solid var(--border);
-      
-        background: rgba(13, 52, 94, 0.74);
-      
-        box-shadow: var(--shadow);
-      }
-      
-      .help-left {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-      }
-      
-      .help-icon {
-        width: 52px;
-        height: 52px;
-        min-width: 52px;
-      
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      
-        border-radius: 16px;
-      
-        background: rgba(22, 119, 255, 0.22);
-      
-        font-size: 25px;
-      }
-      
-      .help-text h3 {
-        margin-bottom: 5px;
-      }
-      
-      .help-text p {
-        color: var(--muted);
-        line-height: 1.55;
-        font-size: 14px;
-      }
-      
-      .support-button {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-      
-        min-width: 160px;
-      
-        padding: 12px 17px;
-      
-        border: 1px solid rgba(125, 190, 255, 0.42);
-        border-radius: 12px;
-      
-        background: rgba(22, 119, 255, 0.18);
-      
-        color: #ffffff;
-      
-        font-weight: 700;
-      
-        cursor: default;
-      }
-      
-      /* =========================================
-                       INFO NOTE
-                    ========================================= */
-      
-      .ui-note {
-        margin-top: 18px;
-      
-        padding: 13px 16px;
-      
-        border-radius: 14px;
-      
-        color: #bfdbfe;
-      
-        background: rgba(2, 24, 55, 0.42);
-        border: 1px solid rgba(125, 190, 255, 0.14);
-      
-        font-size: 12px;
-        line-height: 1.6;
-      }
-      
-      /* =========================================
-                       RESPONSIVE
-                    ========================================= */
-      
-      @media (max-width: 900px) {
-        .summary-grid {
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-      
-        .payment-hero {
-          align-items: flex-start;
-        }
-      }
-      
-      @media (max-width: 650px) {
-        .payment-page {
-          width: min(100% - 20px, 1180px);
-          padding-top: 15px;
-        }
-      
-        .payment-hero {
-          padding: 20px;
-          border-radius: 20px;
-      
-          flex-direction: column;
-        }
-      
-        .hero-main {
-          align-items: flex-start;
-        }
-      
-        .hero-icon {
-          width: 58px;
-          height: 58px;
-          min-width: 58px;
-      
-          font-size: 27px;
-        }
-      
-        .hero-text h1 {
-          font-size: 25px;
-        }
-      
-        .secure-box {
-          width: 100%;
-        }
-      
-        .summary-grid {
-          grid-template-columns: 1fr 1fr;
-          gap: 10px;
-        }
-      
-        .summary-card {
-          padding: 17px;
-        }
-      
-        .summary-value {
-          font-size: 24px;
-        }
-      
-        .section-header {
-          padding: 17px;
-        }
-      
-        .empty-state {
-          min-height: 300px;
-        }
-      
-        .help-card {
-          flex-direction: column;
-          align-items: stretch;
-        }
-      
-        .support-button {
-          width: 100%;
-        }
-      }
-      
-      @media (max-width: 420px) {
-        .summary-grid {
-          grid-template-columns: 1fr;
-        }
-      
-        .hero-main {
-          gap: 12px;
-        }
-      
-        .section-header {
-          align-items: flex-start;
-          flex-direction: column;
-        }
-      }
-      
-      /* =========================================
-               MONEY MANAGEMENT UI
-               UI only - backend connection later
-               ========================================= */
-      .money-grid {
-        display: grid;
-        grid-template-columns: 1.1fr 0.9fr;
-        gap: 20px;
-        margin-top: 20px;
-      }
-      
-      .money-card {
-        padding: 22px;
-        border-radius: 22px;
-        border: 1px solid var(--border);
-        background: linear-gradient(145deg, rgba(12, 45, 83, 0.92), rgba(7, 32, 62, 0.88));
-        box-shadow: var(--shadow);
-      }
-      
-      .money-card-title {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 8px;
-        font-size: 18px;
-        font-weight: 800;
-      }
-      
-      .money-card-subtitle {
-        color: var(--muted);
-        font-size: 13px;
-        line-height: 1.55;
-        margin-bottom: 18px;
-      }
-      
-      .balance-box {
-        padding: 20px;
-        border: 1px solid rgba(125, 190, 255, 0.24);
         border-radius: 18px;
-        background: rgba(22, 119, 255, 0.12);
+      
+        padding: 22px;
+      
+        box-shadow: 0 5px 22px rgba(0, 0, 0, 0.09);
       }
       
-      .balance-label {
-        color: var(--muted);
+      /* =========================================
+                             SECTION LABEL
+                          ========================================= */
+      
+      .section-label {
+        margin: 3px 0 10px;
+      
+        color: #64748b;
+      
+        font-size: 12px;
+        font-weight: 800;
+      
+        text-transform: uppercase;
+      
+        letter-spacing: 0.7px;
+      }
+      
+      .section-label:not(:first-child) {
+        margin-top: 26px;
+      }
+      
+      /* =========================================
+                             SETTINGS ITEM
+                          ========================================= */
+      
+      .settings-item {
+        display: flex;
+      
+        align-items: center;
+      
+        justify-content: space-between;
+      
+        gap: 18px;
+      
+        padding: 17px 0;
+      
+        border-bottom: 1px solid #e2e8f0;
+      }
+      
+      .settings-item:last-child {
+        border-bottom: none;
+      }
+      
+      /* =========================================
+                             LEFT CONTENT
+                          ========================================= */
+      
+      .settings-left {
+        min-width: 0;
+      
+        display: flex;
+      
+        align-items: center;
+      
+        gap: 14px;
+      }
+      
+      /* =========================================
+                             ICON
+                          ========================================= */
+      
+      .settings-icon {
+        width: 47px;
+        height: 47px;
+      
+        display: grid;
+      
+        place-items: center;
+      
+        flex-shrink: 0;
+      
+        border-radius: 13px;
+      
+        background: #eff6ff;
+      
+        color: #2563eb;
+      }
+      
+      .settings-icon .ui-icon {
+        width: 22px;
+        height: 22px;
+      }
+      
+      /* =========================================
+                             TEXT
+                          ========================================= */
+      
+      .settings-text {
+        min-width: 0;
+      }
+      
+      .settings-text h3 {
+        margin: 0 0 4px;
+      
+        color: #0f172a;
+      
+        font-size: 16px;
+        font-weight: 750;
+      }
+      
+      .settings-text p {
+        margin: 0;
+      
+        color: #64748b;
+      
+        font-size: 13px;
+      
+        line-height: 1.5;
+      }
+      
+      /* =========================================
+                             BUTTON
+                          ========================================= */
+      
+      .settings-action {
+        min-width: 104px;
+      
+        padding: 10px 15px;
+      
+        display: inline-flex;
+      
+        align-items: center;
+      
+        justify-content: center;
+      
+        gap: 7px;
+      
+        border: none;
+      
+        border-radius: 9px;
+      
+        background: #2563eb;
+      
+        color: white;
+      
+        text-decoration: none;
+      
         font-size: 13px;
         font-weight: 700;
-      }
       
-      .balance-amount {
-        margin: 7px 0 4px;
-        font-size: 34px;
-        font-weight: 900;
-      }
+        white-space: nowrap;
       
-      .balance-note {
-        color: var(--muted);
-        font-size: 12px;
-      }
-      
-      .action-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
-        margin-top: 16px;
-      }
-      
-      .money-action {
-        min-height: 74px;
-        padding: 12px 8px;
-        border: 1px solid rgba(125, 190, 255, 0.25);
-        border-radius: 14px;
-        background: rgba(22, 119, 255, 0.14);
-        color: var(--text);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 7px;
-        font-weight: 800;
         cursor: pointer;
-        transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+      
+        transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
       }
       
-      .money-action:hover {
-        transform: translateY(-2px);
-        background: rgba(22, 119, 255, 0.24);
-        border-color: rgba(125, 190, 255, 0.5);
+      .settings-action:hover {
+        background: #1d4ed8;
+      
+        transform: translateY(-1px);
+      
+        box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
       }
       
-      .money-action span:first-child {
-        font-size: 21px;
+      /* =========================================
+                             DELETE OPTION
+                          ========================================= */
+      
+      .delete-item .settings-icon {
+        background: #fef2f2;
+      
+        color: #dc2626;
       }
       
-      .bank-list {
-        display: grid;
-        gap: 12px;
+      .delete-item .settings-text h3 {
+        color: #b91c1c;
       }
       
-      .bank-empty {
-        padding: 18px;
-        border: 1px dashed rgba(125, 190, 255, 0.34);
-        border-radius: 16px;
-        color: var(--muted);
-        text-align: center;
-        line-height: 1.6;
+      .danger-action {
+        background: #dc2626;
       }
       
-      .bank-add-button {
-        width: 100%;
-        margin-top: 12px;
-        padding: 13px 16px;
-        border: 1px solid rgba(125, 190, 255, 0.42);
-        border-radius: 13px;
-        background: rgba(22, 119, 255, 0.2);
-        color: #fff;
-        font-weight: 800;
-        cursor: pointer;
+      .danger-action:hover {
+        background: #b91c1c;
+      
+        box-shadow: 0 4px 10px rgba(220, 38, 38, 0.2);
       }
       
-      .feature-strip {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 12px;
+      /* =========================================
+                             BACK BUTTON
+                          ========================================= */
+      
+      .back-box {
         margin-top: 20px;
       }
       
-      .feature-item {
-        padding: 16px;
-        border: 1px solid var(--border);
-        border-radius: 16px;
-        background: rgba(13, 52, 94, 0.68);
-      }
+      /* =========================================
+                             MODAL BACKGROUND
+                          ========================================= */
       
-      .feature-item strong {
-        display: block;
-        margin: 7px 0 4px;
-      }
-      
-      .feature-item small {
-        color: var(--muted);
-        line-height: 1.45;
-      }
-      
-      .payment-modal {
+      .settings-modal {
         position: fixed;
+      
         inset: 0;
+      
         z-index: 9999;
+      
         display: none;
+      
         align-items: center;
+      
         justify-content: center;
-        padding: 18px;
-        background: rgba(1, 10, 24, 0.72);
-        backdrop-filter: blur(8px);
+      
+        padding: 20px;
+      
+        background: rgba(15, 23, 42, 0.68);
+      
+        backdrop-filter: blur(3px);
       }
       
-      .payment-modal.open {
+      .settings-modal.show {
         display: flex;
       }
+      
+      /* =========================================
+                             MODAL CARD
+                          ========================================= */
       
       .modal-card {
-        width: min(520px, 100%);
+        width: 100%;
+      
+        max-width: 560px;
+      
         max-height: 90vh;
+      
         overflow-y: auto;
-        padding: 22px;
-        border: 1px solid rgba(125, 190, 255, 0.28);
-        border-radius: 22px;
-        background: #092746;
-        box-shadow: 0 25px 70px rgba(0, 0, 0, 0.42);
+      
+        background: white;
+      
+        border-radius: 18px;
+      
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+      
+        animation: modalOpen 0.18s ease;
       }
       
-      .modal-head {
+      @keyframes modalOpen {
+        from {
+          opacity: 0;
+      
+          transform: translateY(10px) scale(0.98);
+        }
+      
+        to {
+          opacity: 1;
+      
+          transform: translateY(0) scale(1);
+        }
+      }
+      
+      /* =========================================
+                             MODAL HEADER
+                          ========================================= */
+      
+      .modal-header {
+        padding: 20px 22px;
+      
         display: flex;
+      
         align-items: center;
+      
         justify-content: space-between;
-        gap: 14px;
-        margin-bottom: 18px;
+      
+        gap: 15px;
+      
+        border-bottom: 1px solid #e2e8f0;
       }
       
-      .modal-head h2 {
-        font-size: 21px;
+      .modal-title-box {
+        display: flex;
+      
+        align-items: center;
+      
+        gap: 11px;
+      }
+      
+      .modal-title-icon {
+        width: 40px;
+        height: 40px;
+      
+        display: grid;
+      
+        place-items: center;
+      
+        border-radius: 11px;
+      
+        background: #eff6ff;
+      
+        color: #2563eb;
+      }
+      
+      .modal-title-icon .ui-icon {
+        width: 20px;
+        height: 20px;
+      }
+      
+      .modal-header h2 {
+        margin: 0;
+      
+        color: #0f172a;
+      
+        font-size: 19px;
       }
       
       .modal-close {
-        width: 38px;
-        height: 38px;
-        border: 1px solid var(--border);
-        border-radius: 11px;
-        background: rgba(255, 255, 255, 0.06);
-        color: #fff;
+        width: 36px;
+        height: 36px;
+      
+        display: grid;
+      
+        place-items: center;
+      
+        flex-shrink: 0;
+      
+        border: none;
+      
+        border-radius: 9px;
+      
+        background: #f1f5f9;
+      
+        color: #475569;
+      
         cursor: pointer;
-        font-size: 20px;
       }
+      
+      .modal-close:hover {
+        background: #e2e8f0;
+      }
+      
+      /* =========================================
+                             MODAL BODY
+                          ========================================= */
+      
+      .modal-body {
+        padding: 22px;
+      }
+      
+      .modal-description {
+        margin: 0 0 20px;
+      
+        color: #64748b;
+      
+        font-size: 14px;
+      
+        line-height: 1.6;
+      }
+      
+      /* =========================================
+                             FORM
+                          ========================================= */
       
       .form-group {
-        margin-bottom: 14px;
+        margin-bottom: 17px;
       }
       
-      .form-group label {
+      .form-group:last-child {
+        margin-bottom: 0;
+      }
+      
+      .form-label {
         display: block;
+      
         margin-bottom: 7px;
-        color: #dbeafe;
+      
+        color: #334155;
+      
         font-size: 13px;
-        font-weight: 800;
+        font-weight: 700;
       }
       
       .form-control {
         width: 100%;
-        min-height: 46px;
-        padding: 11px 13px;
-        border: 1px solid rgba(125, 190, 255, 0.28);
-        border-radius: 12px;
-        outline: none;
-        background: rgba(2, 24, 55, 0.58);
-        color: #fff;
-        font: inherit;
-      }
       
-      .form-control::placeholder {
-        color: #7f9dbd;
+        padding: 11px 12px;
+      
+        border: 1px solid #cbd5e1;
+      
+        border-radius: 9px;
+      
+        outline: none;
+      
+        background: white;
+      
+        color: #0f172a;
+      
+        font-size: 14px;
+      
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
       }
       
       .form-control:focus {
-        border-color: #38bdf8;
+        border-color: #2563eb;
+      
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
       }
       
-      select.form-control option {
-        color: #0f172a;
-        background: #fff;
+      textarea.form-control {
+        min-height: 105px;
+      
+        resize: vertical;
       }
       
-      .modal-submit {
-        width: 100%;
-        min-height: 48px;
-        margin-top: 5px;
+      /* =========================================
+                             TWO COLUMN FORM
+                          ========================================= */
+      
+      .form-row {
+        display: grid;
+      
+        grid-template-columns: 1fr 1fr;
+      
+        gap: 14px;
+      }
+      
+      /* =========================================
+                             MODAL FOOTER
+                          ========================================= */
+      
+      .modal-footer {
+        padding: 16px 22px 22px;
+      
+        display: flex;
+      
+        align-items: center;
+      
+        justify-content: flex-end;
+      
+        gap: 10px;
+      }
+      
+      .modal-btn {
+        padding: 10px 16px;
+      
         border: none;
-        border-radius: 13px;
-        background: linear-gradient(135deg, #2563eb, #0ea5e9);
-        color: #fff;
-        font-weight: 900;
+      
+        border-radius: 9px;
+      
+        font-size: 13px;
+        font-weight: 700;
+      
         cursor: pointer;
       }
       
-      .modal-info {
-        margin-top: 12px;
-        color: var(--muted);
+      .modal-btn-secondary {
+        background: #e2e8f0;
+      
+        color: #334155;
+      }
+      
+      .modal-btn-secondary:hover {
+        background: #cbd5e1;
+      }
+      
+      .modal-btn-primary {
+        background: #2563eb;
+      
+        color: white;
+      }
+      
+      .modal-btn-primary:hover {
+        background: #1d4ed8;
+      }
+      
+      .modal-btn-danger {
+        background: #dc2626;
+      
+        color: white;
+      }
+      
+      .modal-btn-danger:hover {
+        background: #b91c1c;
+      }
+      
+      /* =========================================
+                             TERMS BOX
+                          ========================================= */
+      
+      .terms-box {
+        padding: 16px;
+      
+        border: 1px solid #e2e8f0;
+      
+        border-radius: 11px;
+      
+        background: #f8fafc;
+      
+        color: #475569;
+      
+        font-size: 13px;
+      
+        line-height: 1.7;
+      }
+      
+      .terms-box h3 {
+        margin: 0 0 8px;
+      
+        color: #0f172a;
+      
+        font-size: 15px;
+      }
+      
+      .terms-box p {
+        margin: 0 0 15px;
+      }
+      
+      .terms-box p:last-child {
+        margin-bottom: 0;
+      }
+      
+      /* =========================================
+                             ABOUT
+                          ========================================= */
+      
+      .about-logo {
+        width: 70px;
+        height: 70px;
+      
+        margin: 0 auto 15px;
+      
+        display: grid;
+      
+        place-items: center;
+      
+        border-radius: 20px;
+      
+        background: #eff6ff;
+      
+        color: #2563eb;
+      }
+      
+      .about-logo .ui-icon {
+        width: 34px;
+        height: 34px;
+      }
+      
+      .about-content {
+        text-align: center;
+      }
+      
+      .about-content h3 {
+        margin: 0 0 5px;
+      
+        color: #0f172a;
+      
+        font-size: 21px;
+      }
+      
+      .about-content p {
+        margin: 0 0 8px;
+      
+        color: #64748b;
+      
+        font-size: 13px;
+      
+        line-height: 1.6;
+      }
+      
+      .app-version {
+        display: inline-block;
+      
+        margin-top: 8px;
+      
+        padding: 6px 11px;
+      
+        border-radius: 20px;
+      
+        background: #f1f5f9;
+      
+        color: #475569;
+      
         font-size: 12px;
+        font-weight: 700;
+      }
+      
+      /* =========================================
+                             WARNING BOX
+                          ========================================= */
+      
+      .warning-box {
+        padding: 14px;
+      
+        margin-bottom: 18px;
+      
+        display: flex;
+      
+        align-items: flex-start;
+      
+        gap: 10px;
+      
+        border: 1px solid #fecaca;
+      
+        border-radius: 10px;
+      
+        background: #fef2f2;
+      
+        color: #991b1b;
+      
+        font-size: 13px;
+      
         line-height: 1.55;
       }
       
-      @media (max-width: 800px) {
-        .money-grid {
-          grid-template-columns: 1fr;
-        }
-        .feature-strip {
-          grid-template-columns: 1fr;
-        }
+      .warning-box .ui-icon {
+        margin-top: 1px;
       }
       
-      @media (max-width: 460px) {
-        .action-grid {
-          grid-template-columns: 1fr;
+      /* =========================================
+                             UI MESSAGE
+                          ========================================= */
+      
+      .ui-message {
+        position: fixed;
+      
+        left: 50%;
+        bottom: 25px;
+      
+        z-index: 10000;
+      
+        display: none;
+      
+        transform: translateX(-50%);
+      
+        padding: 11px 17px;
+      
+        border-radius: 10px;
+      
+        background: #0f172a;
+      
+        color: white;
+      
+        font-size: 13px;
+        font-weight: 650;
+      
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      }
+      
+      .ui-message.show {
+        display: block;
+      
+        animation: messageIn 0.2s ease;
+      }
+      
+      @keyframes messageIn {
+        from {
+          opacity: 0;
+      
+          transform: translate(-50%, 8px);
         }
-        .money-action {
-          min-height: 56px;
-          flex-direction: row;
-        }
-        .balance-amount {
-          font-size: 29px;
+      
+        to {
+          opacity: 1;
+      
+          transform: translate(-50%, 0);
         }
       }
       
       /* =========================================
-               QR + SCANNER COMBINED UI
-               ========================================= */
-      .qr-pay-card {
-        margin-top: 20px;
-        padding: 22px;
-        border: 1px solid var(--border);
-        border-radius: 22px;
-        background: linear-gradient(145deg, rgba(12, 45, 83, 0.92), rgba(7, 32, 62, 0.88));
-        box-shadow: var(--shadow);
+                             DARK MODE
+                          ========================================= */
+      
+      body.dark-mode .settings-card,
+      body.dark-mode .modal-card {
+        background: #1e293b;
       }
       
-      .qr-pay-title {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 7px;
-        font-size: 18px;
-        font-weight: 800;
+      body.dark-mode .settings-item,
+      body.dark-mode .modal-header {
+        border-color: #334155;
       }
       
-      .qr-pay-subtitle {
-        margin-bottom: 18px;
-        color: var(--muted);
-        font-size: 13px;
-        line-height: 1.55;
+      body.dark-mode .settings-icon,
+      body.dark-mode .modal-title-icon {
+        background: #334155;
+      
+        color: #bfdbfe;
       }
       
-      .scanner-frame {
-        position: relative;
-        min-height: 280px;
-        overflow: hidden;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 1px solid rgba(125, 190, 255, 0.25);
-        border-radius: 18px;
-        background: rgba(1, 14, 34, 0.62);
+      body.dark-mode .settings-text h3,
+      body.dark-mode .modal-header h2,
+      body.dark-mode .terms-box h3,
+      body.dark-mode .about-content h3 {
+        color: #f8fafc;
       }
       
-      .scanner-box {
-        width: 175px;
-        height: 175px;
-        border: 2px solid #38bdf8;
-        border-radius: 18px;
-        position: relative;
+      body.dark-mode .settings-text p,
+      body.dark-mode .modal-description,
+      body.dark-mode .about-content p {
+        color: #cbd5e1;
       }
       
-      .scanner-box::before {
-        content: '';
-        position: absolute;
-        left: 12px;
-        right: 12px;
-        top: 50%;
-        height: 2px;
-        background: #22c55e;
-        box-shadow: 0 0 14px rgba(34, 197, 94, 0.8);
+      body.dark-mode .section-label {
+        color: #94a3b8;
       }
       
-      .scanner-label {
-        position: absolute;
-        left: 15px;
-        right: 15px;
-        bottom: 17px;
-        color: var(--muted);
-        font-size: 12px;
-        text-align: center;
+      body.dark-mode .form-label {
+        color: #e2e8f0;
       }
       
-      .scanner-actions {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
-        margin-top: 14px;
+      body.dark-mode .form-control {
+        background: #0f172a;
+      
+        border-color: #475569;
+      
+        color: white;
       }
       
-      .scanner-button {
-        min-height: 48px;
-        padding: 11px 13px;
-        border: 1px solid rgba(125, 190, 255, 0.35);
-        border-radius: 13px;
-        background: rgba(22, 119, 255, 0.17);
-        color: #fff;
-        font-weight: 800;
-        cursor: pointer;
+      body.dark-mode .modal-close {
+        background: #334155;
+      
+        color: #e2e8f0;
       }
       
-      .scanner-button:hover {
-        background: rgba(22, 119, 255, 0.27);
+      body.dark-mode .terms-box {
+        background: #0f172a;
+      
+        border-color: #334155;
+      
+        color: #cbd5e1;
       }
       
-      .linked-qr-panel {
-        display: none;
-        margin-top: 14px;
-        padding: 18px;
-        border: 1px solid rgba(125, 190, 255, 0.25);
-        border-radius: 18px;
-        background: rgba(2, 24, 55, 0.35);
-        text-align: center;
+      body.dark-mode .app-version {
+        background: #334155;
+      
+        color: #cbd5e1;
       }
       
-      .linked-qr-panel.open {
-        display: block;
+      body.dark-mode .delete-item .settings-icon {
+        background: rgba(220, 38, 38, 0.15);
+      
+        color: #fca5a5;
       }
       
-      .linked-qr-placeholder {
-        width: 142px;
-        height: 142px;
-        margin: 0 auto 12px;
-        display: grid;
-        place-items: center;
-        border-radius: 16px;
-        background: #fff;
-        color: #0f172a;
-        font-size: 54px;
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.22);
+      body.dark-mode .delete-item .settings-text h3 {
+        color: #fca5a5;
       }
       
-      .linked-qr-panel strong {
-        display: block;
-        margin-bottom: 6px;
-      }
+      /* =========================================
+                             MOBILE
+                          ========================================= */
       
-      .linked-qr-panel small {
-        color: var(--muted);
-        line-height: 1.5;
-      }
+      @media (max-width: 650px) {
+        .settings-wrapper {
+          margin-top: 20px;
       
-      .qr-safety {
-        margin-top: 14px;
-        padding: 13px 14px;
-        border: 1px solid rgba(249, 115, 22, 0.28);
-        border-radius: 14px;
-        background: rgba(249, 115, 22, 0.08);
-        color: #fed7aa;
-        font-size: 12px;
-        line-height: 1.55;
-      }
+          padding: 0 12px 30px;
+        }
       
-      @media (max-width: 460px) {
-        .scanner-actions {
+        .settings-header h1 {
+          font-size: 25px;
+        }
+      
+        .settings-card {
+          padding: 14px 16px;
+        }
+      
+        .settings-item {
+          align-items: flex-start;
+      
+          flex-direction: column;
+      
+          gap: 13px;
+        }
+      
+        .settings-left {
+          width: 100%;
+        }
+      
+        .settings-action {
+          width: 100%;
+        }
+      
+        .form-row {
           grid-template-columns: 1fr;
         }
       
-        .scanner-frame {
-          min-height: 250px;
+        .modal-card {
+          max-height: 94vh;
+        }
+      
+        .modal-footer {
+          flex-direction: column-reverse;
+        }
+      
+        .modal-btn {
+          width: 100%;
         }
       }
-    </style>
+      
+      /* =====================================================
+                     FINAL LIGHT / DARK / GLASS THEME SUPPORT
+                  ===================================================== */
+      
+      body.sc-theme-light .settings-card,
+      body.sc-theme-light .modal-card {
+        background: #ffffff !important;
+        border: 1px solid #e2e8f0 !important;
+        color: #172554 !important;
+      }
+      
+      body.sc-theme-light .settings-item,
+      body.sc-theme-light .modal-header {
+        border-color: #e2e8f0 !important;
+      }
+      body.sc-theme-light .settings-text h3,
+      body.sc-theme-light .modal-header h2,
+      body.sc-theme-light .terms-box h3,
+      body.sc-theme-light .about-content h3 {
+        color: #0f172a !important;
+      }
+      body.sc-theme-light .settings-text p,
+      body.sc-theme-light .modal-description,
+      body.sc-theme-light .about-content p {
+        color: #64748b !important;
+      }
+      
+      body.sc-theme-dark .settings-card,
+      body.sc-theme-dark .modal-card {
+        background: #1e293b !important;
+        border: 1px solid #334155 !important;
+        color: #e2e8f0 !important;
+      }
+      
+      body.sc-theme-dark .settings-item,
+      body.sc-theme-dark .modal-header {
+        border-color: #334155 !important;
+      }
+      body.sc-theme-dark .settings-icon,
+      body.sc-theme-dark .modal-title-icon {
+        background: #334155 !important;
+        color: #bfdbfe !important;
+      }
+      body.sc-theme-dark .settings-text h3,
+      body.sc-theme-dark .modal-header h2,
+      body.sc-theme-dark .terms-box h3,
+      body.sc-theme-dark .about-content h3 {
+        color: #f8fafc !important;
+      }
+      body.sc-theme-dark .settings-text p,
+      body.sc-theme-dark .modal-description,
+      body.sc-theme-dark .about-content p {
+        color: #cbd5e1 !important;
+      }
+      body.sc-theme-dark .section-label {
+        color: #94a3b8 !important;
+      }
+      body.sc-theme-dark .form-label {
+        color: #e2e8f0 !important;
+      }
+      body.sc-theme-dark .form-control {
+        background: #0f172a !important;
+        border-color: #475569 !important;
+        color: #ffffff !important;
+      }
+      body.sc-theme-dark .modal-close,
+      body.sc-theme-dark .app-version {
+        background: #334155 !important;
+        color: #e2e8f0 !important;
+      }
+      body.sc-theme-dark .terms-box {
+        background: #0f172a !important;
+        border-color: #334155 !important;
+        color: #cbd5e1 !important;
+      }
+      
+      body.sc-theme-glass .settings-card,
+      body.sc-theme-glass .modal-card {
+        background: linear-gradient(135deg, rgba(96, 165, 250, 0.14), rgba(255, 255, 255, 0.075), rgba(99, 102, 241, 0.08)) !important;
+        border: 1px solid rgba(191, 219, 254, 0.28) !important;
+        color: #ffffff !important;
+        box-shadow: 0 30px 75px rgba(2, 6, 23, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+      }
+      
+      body.sc-theme-glass .settings-item,
+      body.sc-theme-glass .modal-header {
+        border-color: rgba(191, 219, 254, 0.16) !important;
+      }
+      
+      body.sc-theme-glass .section-label {
+        color: rgba(219, 234, 254, 0.72) !important;
+      }
+      
+      body.sc-theme-glass .settings-text h3,
+      body.sc-theme-glass .modal-header h2,
+      body.sc-theme-glass .terms-box h3,
+      body.sc-theme-glass .about-content h3 {
+        color: #ffffff !important;
+      }
+      
+      body.sc-theme-glass .settings-text p,
+      body.sc-theme-glass .modal-description,
+      body.sc-theme-glass .about-content p {
+        color: rgba(219, 234, 254, 0.78) !important;
+      }
+      
+      body.sc-theme-glass .settings-icon,
+      body.sc-theme-glass .modal-title-icon,
+      body.sc-theme-glass .about-logo {
+        background: rgba(255, 255, 255, 0.11) !important;
+        border: 1px solid rgba(255, 255, 255, 0.18) !important;
+        color: #bfdbfe !important;
+      }
+      
+      body.sc-theme-glass .form-label {
+        color: rgba(255, 255, 255, 0.92) !important;
+      }
+      body.sc-theme-glass .form-control {
+        background: rgba(255, 255, 255, 0.09) !important;
+        border: 1px solid rgba(191, 219, 254, 0.22) !important;
+        color: #ffffff !important;
+      }
+      body.sc-theme-glass .form-control::placeholder {
+        color: rgba(219, 234, 254, 0.55) !important;
+      }
+      body.sc-theme-glass select.form-control option {
+        background: #0f172a;
+        color: #ffffff;
+      }
+      
+      body.sc-theme-glass .terms-box {
+        background: rgba(255, 255, 255, 0.07) !important;
+        border-color: rgba(191, 219, 254, 0.18) !important;
+        color: rgba(219, 234, 254, 0.84) !important;
+      }
+      
+      body.sc-theme-glass .modal-close,
+      body.sc-theme-glass .app-version {
+        background: rgba(255, 255, 255, 0.1) !important;
+        color: #ffffff !important;
+        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+      }
+      
+      body.sc-theme-glass .settings-action {
+        border: 1px solid rgba(255, 255, 255, 0.18) !important;
+        color: #ffffff !important;
+      }
+      
+      body.sc-theme-glass .delete-item .settings-icon {
+        background: rgba(220, 38, 38, 0.13) !important;
+        border-color: rgba(252, 165, 165, 0.2) !important;
+        color: #fca5a5 !important;
+      }
+      body.sc-theme-glass .delete-item .settings-text h3 {
+        color: #fca5a5 !important;
+      }
+      body.sc-theme-glass .warning-box {
+        background: rgba(220, 38, 38, 0.1) !important;
+        border-color: rgba(252, 165, 165, 0.22) !important;
+        color: #fecaca !important;
+      }
+      
+      @media (max-width: 650px) {
+        body.sc-theme-glass .settings-card,
+        body.sc-theme-glass .modal-card {
+          backdrop-filter: blur(18px);
+          -webkit-backdrop-filter: blur(18px);
+        }
+        body.sc-theme-glass .settings-item {
+          background: rgba(255, 255, 255, 0.02);
+        }
+      }
+
+      /* =====================================================
+         PREMIUM THEMES - FUTURE UI
+         ===================================================== */
+      .premium-theme-item {
+        position: relative;
+      }
+
+      .premium-settings-icon,
+      .premium-modal-icon {
+        background: linear-gradient(145deg, #eef2ff, #eff6ff) !important;
+        color: #4f46e5 !important;
+      }
+
+      .premium-title-line {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .premium-title-line h3 {
+        margin-bottom: 0;
+      }
+
+      .future-badge,
+      .locked-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        border-radius: 999px;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+      }
+
+      .future-badge {
+        padding: 5px 8px;
+        background: #eef2ff;
+        color: #4f46e5;
+        border: 1px solid #c7d2fe;
+      }
+
+      .future-badge .ui-icon,
+      .locked-badge .ui-icon {
+        width: 13px;
+        height: 13px;
+      }
+
+      .premium-action .ui-icon {
+        width: 17px;
+        height: 17px;
+      }
+
+      .premium-modal-card {
+        max-width: 720px;
+      }
+
+      .modal-kicker {
+        margin-top: 3px;
+        color: #64748b;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+      }
+
+      .premium-theme-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .premium-theme-card {
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        background: #fff;
+        box-shadow: 0 10px 28px rgba(15, 23, 42, .07);
+      }
+
+      .theme-preview {
+        position: relative;
+        height: 128px;
+        overflow: hidden;
+        padding: 20px;
+        isolation: isolate;
+      }
+
+      .preview-orb {
+        position: absolute;
+        display: block;
+        border-radius: 50%;
+        filter: blur(2px);
+        opacity: .82;
+        z-index: -1;
+      }
+
+      .preview-panel {
+        width: 74%;
+        height: 88px;
+        margin: 0 auto;
+        padding: 17px;
+        display: flex;
+        flex-direction: column;
+        gap: 9px;
+        border-radius: 14px;
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        box-shadow: 0 14px 30px rgba(2, 6, 23, .18);
+      }
+
+      .preview-panel span {
+        display: block;
+        height: 8px;
+        border-radius: 999px;
+      }
+
+      .preview-panel span:nth-child(1) { width: 58%; }
+      .preview-panel span:nth-child(2) { width: 82%; }
+      .preview-panel span:nth-child(3) { width: 68%; }
+
+      .aurora-theme-preview .theme-preview {
+        background: linear-gradient(135deg, #071a2d, #102b4e 55%, #192044);
+      }
+      .aurora-theme-preview .orb-one {
+        width: 95px; height: 95px; left: -15px; top: -20px;
+        background: #2dd4bf;
+      }
+      .aurora-theme-preview .orb-two {
+        width: 100px; height: 100px; right: -18px; bottom: -38px;
+        background: #8b5cf6;
+      }
+      .aurora-theme-preview .preview-panel {
+        background: rgba(255,255,255,.13);
+        border: 1px solid rgba(255,255,255,.22);
+      }
+      .aurora-theme-preview .preview-panel span { background: rgba(255,255,255,.72); }
+
+      .midnight-theme-preview .theme-preview {
+        background: linear-gradient(145deg, #020617, #0f172a 58%, #172554);
+      }
+      .midnight-theme-preview .orb-one {
+        width: 90px; height: 90px; left: -25px; bottom: -30px;
+        background: #2563eb;
+      }
+      .midnight-theme-preview .orb-two {
+        width: 72px; height: 72px; right: 0; top: -25px;
+        background: #0ea5e9;
+      }
+      .midnight-theme-preview .preview-panel {
+        background: rgba(15,23,42,.78);
+        border: 1px solid rgba(96,165,250,.22);
+      }
+      .midnight-theme-preview .preview-panel span { background: #60a5fa; }
+
+      .royal-theme-preview .theme-preview {
+        background: linear-gradient(145deg, #1e103f, #3b1768 55%, #111827);
+      }
+      .royal-theme-preview .orb-one {
+        width: 95px; height: 95px; left: -22px; top: -28px;
+        background: #a855f7;
+      }
+      .royal-theme-preview .orb-two {
+        width: 92px; height: 92px; right: -20px; bottom: -28px;
+        background: #ec4899;
+      }
+      .royal-theme-preview .preview-panel {
+        background: rgba(255,255,255,.12);
+        border: 1px solid rgba(233,213,255,.25);
+      }
+      .royal-theme-preview .preview-panel span { background: #e9d5ff; }
+
+      .ocean-theme-preview .theme-preview {
+        background: linear-gradient(145deg, #042f49, #075985 55%, #0f172a);
+      }
+      .ocean-theme-preview .orb-one {
+        width: 98px; height: 98px; left: -24px; bottom: -34px;
+        background: #22d3ee;
+      }
+      .ocean-theme-preview .orb-two {
+        width: 80px; height: 80px; right: -12px; top: -20px;
+        background: #38bdf8;
+      }
+      .ocean-theme-preview .preview-panel {
+        background: rgba(255,255,255,.13);
+        border: 1px solid rgba(186,230,253,.25);
+      }
+      .ocean-theme-preview .preview-panel span { background: #bae6fd; }
+
+      .theme-card-footer {
+        min-height: 102px;
+        padding: 14px;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .theme-card-footer strong {
+        display: block;
+        margin-bottom: 5px;
+        color: #0f172a;
+        font-size: 14px;
+      }
+
+      .theme-card-footer small {
+        display: block;
+        color: #64748b;
+        font-size: 11px;
+        line-height: 1.45;
+      }
+
+      .locked-badge {
+        flex: 0 0 auto;
+        padding: 5px 7px;
+        background: #f8fafc;
+        color: #64748b;
+        border: 1px solid #e2e8f0;
+      }
+
+      .premium-note {
+        margin-top: 16px;
+        padding: 13px 14px;
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        border: 1px solid #bfdbfe;
+        border-radius: 12px;
+        background: #eff6ff;
+        color: #1e3a8a;
+      }
+
+      .premium-note > .ui-icon {
+        width: 19px;
+        height: 19px;
+        margin-top: 1px;
+      }
+
+      .premium-note strong,
+      .premium-note span {
+        display: block;
+      }
+
+      .premium-note strong {
+        margin-bottom: 3px;
+        font-size: 13px;
+      }
+
+      .premium-note span {
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      .settings-back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .settings-back-link .ui-icon {
+        width: 18px;
+        height: 18px;
+      }
+
+      .modal-close .ui-icon {
+        width: 18px;
+        height: 18px;
+      }
+
+      body.sc-theme-dark .modal-kicker { color: #94a3b8; }
+      body.sc-theme-dark .premium-theme-card {
+        background: #0f172a;
+        border-color: #334155;
+      }
+      body.sc-theme-dark .theme-card-footer strong { color: #f8fafc; }
+      body.sc-theme-dark .theme-card-footer small { color: #94a3b8; }
+      body.sc-theme-dark .locked-badge {
+        background: #1e293b;
+        border-color: #334155;
+        color: #cbd5e1;
+      }
+      body.sc-theme-dark .premium-note {
+        background: rgba(37,99,235,.12);
+        border-color: rgba(96,165,250,.25);
+        color: #bfdbfe;
+      }
+
+      body.sc-theme-glass .modal-kicker { color: rgba(219,234,254,.68); }
+      body.sc-theme-glass .premium-theme-card {
+        background: rgba(255,255,255,.07);
+        border-color: rgba(191,219,254,.18);
+        box-shadow: 0 14px 34px rgba(2,6,23,.18);
+      }
+      body.sc-theme-glass .theme-card-footer strong { color: #fff; }
+      body.sc-theme-glass .theme-card-footer small { color: rgba(219,234,254,.72); }
+      body.sc-theme-glass .locked-badge {
+        background: rgba(255,255,255,.08);
+        border-color: rgba(255,255,255,.14);
+        color: #dbeafe;
+      }
+      body.sc-theme-glass .future-badge {
+        background: rgba(129,140,248,.12);
+        border-color: rgba(165,180,252,.22);
+        color: #c7d2fe;
+      }
+      body.sc-theme-glass .premium-note {
+        background: rgba(59,130,246,.09);
+        border-color: rgba(147,197,253,.2);
+        color: #dbeafe;
+      }
+
+      @media (max-width: 650px) {
+        .premium-theme-grid { grid-template-columns: 1fr; }
+        .premium-modal-card { max-height: 94vh; }
+        .theme-preview { height: 118px; }
+        .theme-card-footer { min-height: auto; }
+      }
+
+    
+      /* TEMPORARY FULL-PAGE PREMIUM THEME TEST */
+      .try-theme-btn {
+        flex: 0 0 auto;
+        border: 1px solid #c7d2fe;
+        border-radius: 999px;
+        padding: 7px 10px;
+        background: #eef2ff;
+        color: #4338ca;
+        font: inherit;
+        font-size: 10px;
+        font-weight: 900;
+        cursor: pointer;
+      }
+      .theme-test-bar {
+        position: fixed;
+        left: 50%;
+        bottom: 18px;
+        transform: translateX(-50%);
+        z-index: 10050;
+        display: none;
+        align-items: center;
+        gap: 10px;
+        width: min(92vw, 560px);
+        padding: 11px 13px;
+        border-radius: 14px;
+        background: rgba(15,23,42,.92);
+        color: #fff;
+        box-shadow: 0 18px 45px rgba(2,6,23,.35);
+        backdrop-filter: blur(14px);
+      }
+      .theme-test-bar.active { display: flex; }
+      .theme-test-bar strong { flex: 1; font-size: 12px; }
+      .theme-test-bar button {
+        border: 0; border-radius: 9px; padding: 8px 11px;
+        background: #fff; color: #0f172a; font-weight: 900; cursor: pointer;
+      }
+
+      body.preview-aurora,
+      body.preview-midnight,
+      body.preview-royal,
+      body.preview-ocean {
+        min-height: 100vh;
+        background-attachment: fixed !important;
+      }
+      body.preview-aurora { background: radial-gradient(circle at 12% 12%, rgba(45,212,191,.28), transparent 28%), radial-gradient(circle at 88% 18%, rgba(139,92,246,.30), transparent 30%), linear-gradient(145deg,#061826,#102b4e 55%,#171a38) !important; }
+      body.preview-midnight { background: radial-gradient(circle at 85% 8%, rgba(37,99,235,.22), transparent 28%), linear-gradient(145deg,#020617,#0f172a 55%,#172554) !important; }
+      body.preview-royal { background: radial-gradient(circle at 12% 12%, rgba(168,85,247,.30), transparent 28%), radial-gradient(circle at 88% 20%, rgba(236,72,153,.20), transparent 30%), linear-gradient(145deg,#190c35,#35145f 55%,#111827) !important; }
+      body.preview-ocean { background: radial-gradient(circle at 15% 12%, rgba(34,211,238,.27), transparent 28%), linear-gradient(145deg,#032638,#075985 55%,#0f172a) !important; }
+
+      body.preview-aurora .settings-card, body.preview-aurora .modal-card,
+      body.preview-royal .settings-card, body.preview-royal .modal-card,
+      body.preview-ocean .settings-card, body.preview-ocean .modal-card {
+        background: rgba(255,255,255,.10) !important;
+        border: 1px solid rgba(255,255,255,.20) !important;
+        box-shadow: 0 24px 60px rgba(2,6,23,.28) !important;
+        backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      }
+      body.preview-midnight .settings-card, body.preview-midnight .modal-card {
+        background: rgba(15,23,42,.88) !important;
+        border: 1px solid rgba(96,165,250,.18) !important;
+        box-shadow: 0 24px 60px rgba(0,0,0,.34) !important;
+      }
+      body.preview-aurora .settings-text h3, body.preview-aurora .modal-header h2, body.preview-aurora .modal-label,
+      body.preview-midnight .settings-text h3, body.preview-midnight .modal-header h2, body.preview-midnight .modal-label,
+      body.preview-royal .settings-text h3, body.preview-royal .modal-header h2, body.preview-royal .modal-label,
+      body.preview-ocean .settings-text h3, body.preview-ocean .modal-header h2, body.preview-ocean .modal-label { color:#fff !important; }
+      body.preview-aurora .settings-text p, body.preview-midnight .settings-text p,
+      body.preview-royal .settings-text p, body.preview-ocean .settings-text p { color:rgba(226,232,240,.82) !important; }
+      body.preview-aurora .settings-item, body.preview-midnight .settings-item,
+      body.preview-royal .settings-item, body.preview-ocean .settings-item { border-color:rgba(255,255,255,.13) !important; }
+      body.preview-aurora .settings-icon, body.preview-midnight .settings-icon,
+      body.preview-royal .settings-icon, body.preview-ocean .settings-icon {
+        background:rgba(255,255,255,.12) !important; color:#fff !important;
+      }
+      body.preview-aurora .modal-input, body.preview-aurora .modal-select, body.preview-aurora .modal-textarea,
+      body.preview-midnight .modal-input, body.preview-midnight .modal-select, body.preview-midnight .modal-textarea,
+      body.preview-royal .modal-input, body.preview-royal .modal-select, body.preview-royal .modal-textarea,
+      body.preview-ocean .modal-input, body.preview-ocean .modal-select, body.preview-ocean .modal-textarea {
+        background:rgba(255,255,255,.09) !important; border-color:rgba(255,255,255,.20) !important; color:#fff !important;
+      }
+
+
+      .premium-theme-grid { grid-template-columns:1fr !important; }
+      .premium-theme-card.royal-theme-preview { max-width:520px; margin:0 auto; width:100%; }
+      .royal-apply-btn { padding:8px 12px; border:0; border-radius:999px; color:#fff; background:linear-gradient(135deg,#7e22ce,#d946ef); font-weight:900; cursor:pointer; box-shadow:0 9px 22px rgba(126,34,206,.25); }
+      .royal-theme-actions { display:flex; flex-wrap:wrap; gap:9px; margin-top:12px; }
+      body.sc-theme-royal .premium-theme-card { background:rgba(255,255,255,.08)!important; border-color:rgba(233,213,255,.18)!important; }
+      body.sc-theme-royal .theme-card-footer strong { color:#fff!important; }
+      body.sc-theme-royal .theme-card-footer small { color:rgba(237,233,254,.72)!important; }
+
+
+      .appearance-modal-card{max-width:760px}
+      .appearance-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+      .appearance-card{padding:0 0 13px;overflow:hidden;border:1px solid #e2e8f0;border-radius:15px;background:#fff;color:#0f172a;text-align:left;font-family:inherit;cursor:pointer;transition:.2s ease}
+      .appearance-card:hover{transform:translateY(-2px);box-shadow:0 15px 34px rgba(15,23,42,.12)}
+      .appearance-art{display:block;height:94px;margin-bottom:12px}
+      .appearance-card strong,.appearance-card small{display:block;padding:0 13px}
+      .appearance-card strong{font-size:14px}.appearance-card small{margin-top:4px;color:#64748b;font-size:11px}
+      .light-preview .appearance-art{background:linear-gradient(145deg,#fff,#eef2f7)}
+      .dark-preview .appearance-art{background:linear-gradient(145deg,#020617,#1e293b)}
+      .glass-preview .appearance-art{background:radial-gradient(circle at 15% 15%,#22d3ee,transparent 34%),linear-gradient(145deg,#06243d,#0b3b67)}
+      .royal-preview .appearance-art{background:radial-gradient(circle at 15% 15%,#a855f7,transparent 34%),radial-gradient(circle at 85% 80%,#d946ef,transparent 34%),linear-gradient(145deg,#1e103f,#111827)}
+      .royalblue-preview .appearance-art{background:radial-gradient(circle at 15% 15%,#3b82f6,transparent 34%),radial-gradient(circle at 85% 80%,#6366f1,transparent 34%),linear-gradient(145deg,#050b1d,#17134b)}
+      .emerald-preview .appearance-art{background:radial-gradient(circle at 15% 15%,#10b981,transparent 34%),radial-gradient(circle at 85% 80%,#06b6d4,transparent 34%),linear-gradient(145deg,#031713,#082b38)}
+      .rose-preview .appearance-art{background:radial-gradient(circle at 15% 15%,#e11d48,transparent 34%),radial-gradient(circle at 85% 80%,#a855f7,transparent 34%),linear-gradient(145deg,#1c0710,#2d123f)}
+      .appearance-note{margin:15px 0 0;padding:12px 13px;border-radius:11px;background:#f8fafc;border:1px solid #e2e8f0;color:#64748b;font-size:11px;line-height:1.55}
+      body.sc-theme-dark .appearance-card,body.sc-theme-royal .appearance-card,body.sc-theme-royalblue .appearance-card,body.sc-theme-emerald .appearance-card,body.sc-theme-rose .appearance-card{background:rgba(15,23,42,.75);border-color:rgba(255,255,255,.14);color:#fff}
+      body.sc-theme-dark .appearance-card small,body.sc-theme-royal .appearance-card small,body.sc-theme-royalblue .appearance-card small,body.sc-theme-emerald .appearance-card small,body.sc-theme-rose .appearance-card small{color:#cbd5e1}
+      @media(max-width:600px){.appearance-grid{grid-template-columns:1fr}}
+
+
+      .crimson-preview .appearance-art{background:radial-gradient(circle at 15% 15%,#ef4444,transparent 34%),radial-gradient(circle at 85% 80%,#be185d,transparent 34%),linear-gradient(145deg,#1b0609,#2b0b22)}
+      .teal-preview .appearance-art{background:radial-gradient(circle at 15% 15%,#14b8a6,transparent 34%),radial-gradient(circle at 85% 80%,#0e7490,transparent 34%),linear-gradient(145deg,#031817,#082f49)}
+      .amber-preview .appearance-art{background:radial-gradient(circle at 15% 15%,#f59e0b,transparent 34%),radial-gradient(circle at 85% 80%,#ea580c,transparent 34%),linear-gradient(145deg,#1c1003,#3b1608)}
+      .indigo-preview .appearance-art{background:radial-gradient(circle at 15% 15%,#6366f1,transparent 34%),radial-gradient(circle at 85% 80%,#8b5cf6,transparent 34%),linear-gradient(145deg,#080a24,#2e1065)}
+
+</style>
   </head>
 
   <body>
-    <!--  
-        USER PAYMENT DETAILS UI
+    <!--    =========================================
+         NAVBAR
+    =========================================    -->
 
-        Backend connection will be added later.
-        No fake transaction/payment data is shown.
-      -->
+    {% include 'complaints/User_Folder/navbar.html' %}
 
-    <main class="payment-page">
-      <!--   =====================================
-             HEADER
-        ======================================   -->
+    <!--    =========================================
+         SETTINGS PAGE
+    =========================================    -->
 
-      <section class="payment-hero">
-        <div class="hero-main">
-          <div class="hero-icon">💳</div>
+    {% if messages %}
+      <div class="settings-wrapper" style="padding-bottom:0; margin-bottom:0;">
+        {% for message in messages %}
+          <div style="margin-bottom:10px; padding:12px 14px; border-radius:10px; background:rgba(15,23,42,.88); color:#fff; font-size:14px;">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
 
-          <div class="hero-text">
-            <h1>Payment Details</h1>
+    <div class="settings-wrapper">
+      <!-- HEADER -->
 
-            <p>View your complaint and service payments.</p>
-          </div>
-        </div>
+      <div class="settings-header">
+        <h1>
+          <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="3"></circle>
 
-        <div class="secure-box">
-          <div class="secure-icon">🔒</div>
+            <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21h-4v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H3v-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6V3h4v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.1v4H21a1.7 1.7 0 0 0-1.6 1z"></path>
+          </svg>User Settings
+        </h1>
 
-          <div>
-            <strong>Secure Payments</strong>
+        <p>Manage your account, security and support options.</p>
+      </div>
 
-            <small>Your payment information is protected.</small>
-          </div>
-        </div>
-      </section>
+      <!--    =========================================
+             SETTINGS CARD
+        =========================================    -->
 
-      <!--   =====================================
-             PAYMENT SUMMARY
-        ======================================   -->
+      <div class="settings-card">
+        <!--    =====================================
+                 ACCOUNT
+            ======================================    -->
 
-      <section class="summary-grid">
-        <article class="summary-card green">
-          <div class="summary-icon">₹</div>
+        <div class="section-label">Account</div>
 
-          <div class="summary-title">Total Paid</div>
+        <!-- PROFILE -->
 
-          <div class="summary-value">₹0</div>
+        <div class="settings-item">
+          <div class="settings-left">
+            <div class="settings-icon">
+              <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="8" r="4"></circle>
 
-          <div class="summary-note">All time payments</div>
-        </article>
+                <path d="M4.5 21a7.5 7.5 0 0 1 15 0"></path>
+              </svg>
+            </div>
 
-        <article class="summary-card blue">
-          <div class="summary-icon">🧾</div>
+            <div class="settings-text">
+              <h3>Profile</h3>
 
-          <div class="summary-title">Total Payments</div>
-
-          <div class="summary-value">0</div>
-
-          <div class="summary-note">Transactions</div>
-        </article>
-
-        <article class="summary-card purple">
-          <div class="summary-icon">✓</div>
-
-          <div class="summary-title">Successful</div>
-
-          <div class="summary-value">0</div>
-
-          <div class="summary-note">Payments</div>
-        </article>
-
-        <article class="summary-card red">
-          <div class="summary-icon">×</div>
-
-          <div class="summary-title">Failed</div>
-
-          <div class="summary-value">0</div>
-
-          <div class="summary-note">Payments</div>
-        </article>
-      </section>
-
-      <!--  =====================================
-           MONEY MANAGEMENT - UI ONLY
-           =====================================  -->
-      <section class="money-grid">
-        <article class="money-card">
-          <div class="money-card-title">
-            <span>💰</span><span>Wallet & Bank</span>
-          </div>
-          <div class="money-card-subtitle">Manage your payment balance and saved bank accounts.</div>
-
-          <div class="balance-box">
-            <div class="balance-label">Available wallet balance</div>
-            <div class="balance-amount">₹0</div>
-            <div class="balance-note">Real balance will be shown after backend connection.</div>
-          </div>
-
-          <div class="action-grid">
-            <button type="button" class="money-action" data-modal="addMoneyModal"><span>＋</span><span>Add Money</span></button>
-            <button type="button" class="money-action" data-modal="withdrawModal"><span>🏦</span><span>Withdraw</span></button>
-            <button type="button" class="money-action" data-modal="transferModal"><span>⇄</span><span>Transfer</span></button>
-          </div>
-        </article>
-
-        <article class="money-card">
-          <div class="money-card-title">
-            <span>🏛️</span><span>Bank Accounts</span>
-          </div>
-          <div class="money-card-subtitle">Select a saved bank or add a new Savings / Current account.</div>
-
-          <div class="bank-list">
-            <div class="bank-empty">
-              <strong>No bank account added</strong><br />
-              Your saved bank accounts will appear here with masked account numbers.
+              <p>View or update your personal profile.</p>
             </div>
           </div>
 
-          <button type="button" class="bank-add-button" data-modal="bankModal">＋ Add Bank Account</button>
-        </article>
-      </section>
-
-      <section class="feature-strip">
-        <div class="feature-item">
-          <span>⭐</span>
-          <strong>Primary Bank</strong>
-          <small>Choose one saved account as the default account for withdrawals and payouts.</small>
-        </div>
-        <div class="feature-item">
-          <span>🛡️</span>
-          <strong>Secure Confirmation</strong>
-          <small>Transfer and withdrawal confirmation will be connected securely with the backend.</small>
-        </div>
-        <div class="feature-item">
-          <span>📋</span>
-          <strong>Transfer Status</strong>
-          <small>Pending, successful and failed transfers or withdrawals will appear in transaction history.</small>
-        </div>
-      </section>
-
-      <!--  =====================================
-           QR + SCANNER - UI ONLY
-           Bank/QR relationship comes from saved bank account
-           =====================================  -->
-      <section class="qr-pay-card">
-        <div class="qr-pay-title">
-          <span>📷</span>
-          <span>QR & Scanner</span>
+          <a href="{% url 'profile' %}" class="settings-action">Open Profile</a>
         </div>
 
-        <div class="qr-pay-subtitle">Scan a payment QR, or view the QR already linked with your saved bank/payment account.</div>
+        <!-- CHANGE PASSWORD -->
 
-        <div class="scanner-frame">
-          <div class="scanner-box"></div>
-          <div class="scanner-label">Camera scanner preview will appear here after integration.</div>
-        </div>
+        <div class="settings-item">
+          <div class="settings-left">
+            <div class="settings-icon">
+              <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="8" cy="15" r="4"></circle>
 
-        <div class="scanner-actions">
-          <button type="button" class="scanner-button" data-ui-submit>📷 Open Scanner</button>
+                <path d="m11 12 9-9"></path>
 
-          <button type="button" class="scanner-button" id="qrGalleryButton">▦ QR + Gallery</button>
-        </div>
+                <path d="m17 3 4 4"></path>
+              </svg>
+            </div>
 
-        <div class="linked-qr-panel" id="linkedQrPanel">
-          <div class="linked-qr-placeholder">▦</div>
-          <strong>Bank-linked QR</strong>
-          <small>After backend connection, the QR associated with the bank/payment account already added in Bank Accounts will appear here. No separate bank selection is required. Gallery QR scanning will also be available from this area.</small>
-        </div>
+            <div class="settings-text">
+              <h3>Change Password</h3>
 
-        <div class="qr-safety">🔐 Before payment confirmation, recipient name/payment identity and amount should be shown. Scanning a QR must never trigger an automatic payment.</div>
-      </section>
-
-      <!--   =====================================
-             PAYMENT HISTORY
-        ======================================   -->
-
-      <section class="section-card">
-        <div class="section-header">
-          <div class="section-title">
-            <span>💳</span>
-            <span>Payment History</span>
+              <p>Update your account password securely.</p>
+            </div>
           </div>
 
-          <button type="button" class="filter-button" aria-label="Payment filter">All Payments</button>
+          <button type="button" class="settings-action" onclick="openModal('passwordModal')">Change</button>
         </div>
 
-        <!--  
-                EMPTY STATE
+        <!-- ADDRESS -->
 
-                Later backend connection ke baad:
-                payment records hone par transaction list show hogi.
-              -->
+        <div class="settings-item">
+          <div class="settings-left">
+            <div class="settings-icon">
+              <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 21s7-5.1 7-12a7 7 0 1 0-14 0c0 6.9 7 12 7 12z"></path>
 
-        <div class="empty-state">
-          <div class="empty-icon">🧾</div>
+                <circle cx="12" cy="9" r="2.5"></circle>
+              </svg>
+            </div>
 
-          <h2>No payments yet</h2>
+            <div class="settings-text">
+              <h3>Address / Location</h3>
 
-          <p>Your payment history will appear here after you make a payment.</p>
+              <p>Manage your saved address and location.</p>
+            </div>
+          </div>
+
+          <button type="button" class="settings-action" onclick="openModal('addressModal')">Manage</button>
         </div>
 
-        <!--  
-                Reserved for real backend transactions.
-                Currently intentionally hidden.
-              -->
+        <!-- =====================================
+             APPEARANCE
+        ====================================== -->
+        <div class="section-label">Theme</div>
 
-        <div class="transaction-list"></div>
-      </section>
+        <div class="settings-item appearance-settings-item">
+          <div class="settings-left">
+            <div class="settings-icon">
+              <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 3a9 9 0 1 0 0 18h1.2a1.8 1.8 0 0 0 0-3.6h-1a2 2 0 0 1 0-4H15a6 6 0 0 0 0-12Z"></path>
+                <circle cx="7.5" cy="10" r=".8"></circle><circle cx="9.5" cy="6.8" r=".8"></circle><circle cx="14" cy="6.5" r=".8"></circle>
+              </svg>
+            </div>
+            <div class="settings-text">
+              <h3>Theme</h3>
+              <p>Choose White, Dark or a professional Glass color theme.</p>
+            </div>
+          </div>
+          <button type="button" class="settings-action" onclick="openModal('appearanceModal')">Choose Theme</button>
+        </div>
 
-      <!--   =====================================
-             SUPPORT
-        ======================================   -->
+        <!--    =====================================
+                 SUPPORT & INFORMATION
+            ======================================    -->
 
-      <section class="help-card">
-        <div class="help-left">
-          <div class="help-icon">🎧</div>
+        <div class="section-label">Support & Information</div>
 
-          <div class="help-text">
-            <h3>Need Help?</h3>
+        <!-- TERMS -->
 
-            <p>If you have any payment related issue, contact Smart Complaint support.</p>
+        <div class="settings-item">
+          <div class="settings-left">
+            <div class="settings-icon">
+              <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M6 2h8l4 4v16H6z"></path>
+
+                <path d="M14 2v5h5"></path>
+
+                <path d="M9 12h6"></path>
+
+                <path d="M9 16h6"></path>
+              </svg>
+            </div>
+
+            <div class="settings-text">
+              <h3>User Terms & Conditions</h3>
+
+              <p>Read the rules and conditions for using Smart Complaint.</p>
+            </div>
+          </div>
+
+          <button type="button" class="settings-action" onclick="openModal('termsModal')">View</button>
+        </div>
+
+        <!-- HELP -->
+
+        <div class="settings-item">
+          <div class="settings-left">
+            <div class="settings-icon">
+              <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="9"></circle>
+
+                <path d="M9.8 9a2.4 2.4 0 1 1 3.9 1.9c-.9.7-1.7 1.1-1.7 2.6"></path>
+
+                <path d="M12 17h.01"></path>
+              </svg>
+            </div>
+
+            <div class="settings-text">
+              <h3>Help & Support</h3>
+
+              <p>Get help with complaints, account issues or app problems.</p>
+            </div>
+          </div>
+
+          <button type="button" class="settings-action" onclick="openModal('supportModal')">Get Help</button>
+        </div>
+
+        <!-- ABOUT -->
+
+        <div class="settings-item">
+          <div class="settings-left">
+            <div class="settings-icon">
+              <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="9"></circle>
+
+                <path d="M12 11v6"></path>
+
+                <path d="M12 7h.01"></path>
+              </svg>
+            </div>
+
+            <div class="settings-text">
+              <h3>About Smart Complaint</h3>
+
+              <p>Learn more about Smart Complaint and this application.</p>
+            </div>
+          </div>
+
+          <button type="button" class="settings-action" onclick="openModal('aboutModal')">About</button>
+        </div>
+
+        <!--    =====================================
+                 ACCOUNT MANAGEMENT
+            ======================================    -->
+
+        <div class="section-label">Account Management</div>
+
+        <!-- DELETE ACCOUNT -->
+
+        <div class="settings-item delete-item">
+          <div class="settings-left">
+            <div class="settings-icon">
+              <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M3 6h18"></path>
+
+                <path d="M8 6V4h8v2"></path>
+
+                <path d="M19 6l-1 15H6L5 6"></path>
+
+                <path d="M10 11v6"></path>
+
+                <path d="M14 11v6"></path>
+              </svg>
+            </div>
+
+            <div class="settings-text">
+              <h3>Delete Account</h3>
+
+              <p>Permanently delete your Smart Complaint account.</p>
+            </div>
+          </div>
+
+          <button type="button" class="settings-action danger-action" onclick="openModal('deleteModal')">Delete</button>
+        </div>
+      </div>
+
+      <!-- BACK -->
+
+      <div class="back-box">
+        <a href="{% url 'home' %}" class="btn btn-light settings-back-link"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"></path><path d="M9 12h11"></path></svg><span>Back to Home</span></a>
+      </div>
+    </div>
+
+    <!--    =====================================================
+         CHANGE PASSWORD MODAL
+    ======================================================    -->
+
+    <div class="settings-modal" id="passwordModal">
+      <div class="modal-card">
+        <form method="post" action="{% url 'user_change_password' %}">
+          {% csrf_token %}
+        <div class="modal-header">
+          <div class="modal-title-box">
+            <div class="modal-title-icon">
+              <svg class="ui-icon" viewBox="0 0 24 24">
+                <circle cx="8" cy="15" r="4"></circle>
+
+                <path d="m11 12 9-9"></path>
+
+                <path d="m17 3 4 4"></path>
+              </svg>
+            </div>
+
+            <h2>Change Password</h2>
+          </div>
+
+          <button type="button" class="modal-close" onclick="closeModal('passwordModal')" aria-label="Close"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+        </div>
+
+        <div class="modal-body">
+          <p class="modal-description">Create a strong password to keep your account secure.</p>
+
+          <div class="form-group">
+            <label class="form-label">Current Password</label>
+
+            <input type="password" class="form-control" name="current_password" placeholder="Enter current password" autocomplete="current-password" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">New Password</label>
+
+            <input type="password" class="form-control" name="new_password" placeholder="Enter new password" autocomplete="new-password" minlength="6" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Confirm New Password</label>
+
+            <input type="password" class="form-control" name="confirm_password" placeholder="Confirm new password" autocomplete="new-password" minlength="6" required />
           </div>
         </div>
 
-        <button type="button" class="support-button">💬 Contact Support</button>
-      </section>
+        <div class="modal-footer">
+          <button type="button" class="modal-btn modal-btn-secondary" onclick="closeModal('passwordModal')">Cancel</button>
 
-      <div class="ui-note">Payment backend is not connected to this page yet. Real amounts and transaction history will be connected later.</div>
-    </main>
-
-    <!--  =====================================
-         PAYMENT ACTION MODALS - UI ONLY
-         =====================================  -->
-    <div class="payment-modal" id="bankModal" aria-hidden="true">
-      <div class="modal-card">
-        <div class="modal-head">
-          <h2>🏦 Add Bank Account</h2>
-          <button type="button" class="modal-close" data-close-modal>×</button>
+          <button type="submit" class="modal-btn modal-btn-primary">Update Password</button>
         </div>
-        <div class="form-group">
-          <label>Bank</label>
-          <select class="form-control">
-            <option value="">Select Bank</option>
-            <option>State Bank of India</option>
-            <option>HDFC Bank</option>
-            <option>ICICI Bank</option>
-            <option>Axis Bank</option>
-            <option>Punjab National Bank</option>
-            <option>Bank of Baroda</option>
-            <option>Canara Bank</option>
-            <option>Union Bank of India</option>
-            <option>Other Bank</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Account Holder Name</label>
-          <input class="form-control" type="text" placeholder="Enter account holder name" />
-        </div>
-        <div class="form-group">
-          <label>Account Type</label>
-          <select class="form-control">
-            <option>Savings Account</option>
-            <option>Current Account</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Account Number</label>
-          <input class="form-control" type="text" inputmode="numeric" placeholder="Enter account number" />
-        </div>
-        <div class="form-group">
-          <label>Confirm Account Number</label>
-          <input class="form-control" type="text" inputmode="numeric" placeholder="Re-enter account number" />
-        </div>
-        <div class="form-group">
-          <label>IFSC Code</label>
-          <input class="form-control" type="text" autocomplete="off" placeholder="Enter IFSC code" />
-        </div>
-        <button type="button" class="modal-submit" data-ui-submit>Save Bank Account</button>
-        <div class="modal-info">UI only for now. Bank details are not saved until the backend is connected.</div>
+        </form>
       </div>
     </div>
 
-    <div class="payment-modal" id="addMoneyModal" aria-hidden="true">
+    <!--    =====================================================
+         ADDRESS MODAL
+    ======================================================    -->
+
+    <div class="settings-modal" id="addressModal">
       <div class="modal-card">
-        <div class="modal-head">
-          <h2>＋ Add Money</h2>
-          <button type="button" class="modal-close" data-close-modal>×</button>
+        <form method="post" action="{% url 'user_update_address' %}">
+          {% csrf_token %}
+        <div class="modal-header">
+          <div class="modal-title-box">
+            <div class="modal-title-icon">
+              <svg class="ui-icon" viewBox="0 0 24 24">
+                <path d="M12 21s7-5.1 7-12a7 7 0 1 0-14 0c0 6.9 7 12 7 12z"></path>
+
+                <circle cx="12" cy="9" r="2.5"></circle>
+              </svg>
+            </div>
+
+            <h2>Address / Location</h2>
+          </div>
+
+          <button type="button" class="modal-close" onclick="closeModal('addressModal')" aria-label="Close"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
         </div>
-        <div class="form-group">
-          <label>Amount</label>
-          <input class="form-control" type="number" min="1" inputmode="decimal" placeholder="₹ Enter amount" />
+
+        <div class="modal-body">
+          <p class="modal-description">Add your preferred address. Later we can connect this with map and location services.</p>
+
+          <div class="form-group">
+            <label class="form-label">Full Address</label>
+
+            <textarea class="form-control" name="address" maxlength="500" placeholder="House number, street, area..." required>{{ user_profile.address }}</textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">City</label>
+
+              <input type="text" class="form-control" name="city" maxlength="100" value="{{ user_profile.city }}" placeholder="Enter city" required />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">State</label>
+
+              <input type="text" class="form-control" name="state" maxlength="100" value="{{ user_profile.state }}" placeholder="Enter state" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">PIN Code</label>
+
+            <input type="text" class="form-control" name="pincode" maxlength="6" inputmode="numeric" pattern="[0-9]{6}" value="{{ user_profile.pincode }}" placeholder="Enter PIN code" required />
+          </div>
         </div>
-        <div class="form-group">
-          <label>Payment Method</label>
-          <select class="form-control">
-            <option>UPI</option>
-            <option>Bank Account</option>
-            <option>Payment Gateway</option>
-          </select>
+
+        <div class="modal-footer">
+          <button type="button" class="modal-btn modal-btn-secondary" onclick="closeModal('addressModal')">Cancel</button>
+
+          <button type="submit" class="modal-btn modal-btn-primary">Save Address</button>
         </div>
-        <button type="button" class="modal-submit" data-ui-submit>Continue</button>
-        <div class="modal-info">No real payment will be made from this UI until payment backend integration is completed.</div>
+        </form>
       </div>
     </div>
 
-    <div class="payment-modal" id="withdrawModal" aria-hidden="true">
-      <div class="modal-card">
-        <div class="modal-head">
-          <h2>🏦 Withdraw Money</h2>
-          <button type="button" class="modal-close" data-close-modal>×</button>
+    <!-- =====================================================
+         APPEARANCE MODAL
+    ====================================================== -->
+    <div class="settings-modal" id="appearanceModal">
+      <div class="modal-card appearance-modal-card">
+        <div class="modal-header">
+          <div>
+            <h2>Theme</h2>
+            <div class="modal-kicker">Choose your app theme</div>
+          </div>
+          <button type="button" class="modal-close" onclick="closeModal('appearanceModal')" aria-label="Close">
+            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+          </button>
         </div>
-        <div class="form-group">
-          <label>Withdraw Amount</label>
-          <input class="form-control" type="number" min="1" inputmode="decimal" placeholder="₹ Enter amount" />
+        <div class="modal-body">
+          <div class="appearance-grid">
+            <button type="button" class="appearance-card light-preview" data-user-theme="light"><span class="appearance-art"></span><strong>White</strong><small>Clean & simple</small></button>
+            <button type="button" class="appearance-card dark-preview" data-user-theme="dark"><span class="appearance-art"></span><strong>Dark</strong><small>Comfortable dark mode</small></button>
+            <button type="button" class="appearance-card glass-preview" data-user-theme="glass"><span class="appearance-art"></span><strong>Ocean Glass</strong><small>Classic blue glass</small></button>
+            <button type="button" class="appearance-card royal-preview" data-user-theme="royal"><span class="appearance-art"></span><strong>Royal Purple Glass</strong><small>Luxury violet glass</small></button>
+            <button type="button" class="appearance-card royalblue-preview" data-user-theme="royalblue"><span class="appearance-art"></span><strong>Royal Blue Glass</strong><small>Professional sapphire glass</small></button>
+            <button type="button" class="appearance-card emerald-preview" data-user-theme="emerald"><span class="appearance-art"></span><strong>Emerald Glass</strong><small>Premium green glass</small></button>
+            <button type="button" class="appearance-card rose-preview" data-user-theme="rose"><span class="appearance-art"></span><strong>Rose Royal Glass</strong><small>Elegant rose & violet</small></button>
+            <button type="button" class="appearance-card crimson-preview" data-user-theme="crimson"><span class="appearance-art"></span><strong>Crimson Glass</strong><small>Bold premium red</small></button>
+            <button type="button" class="appearance-card teal-preview" data-user-theme="teal"><span class="appearance-art"></span><strong>Teal Glass</strong><small>Modern teal & cyan</small></button>
+            <button type="button" class="appearance-card amber-preview" data-user-theme="amber"><span class="appearance-art"></span><strong>Amber Glass</strong><small>Warm luxury amber</small></button>
+            <button type="button" class="appearance-card indigo-preview" data-user-theme="indigo"><span class="appearance-art"></span><strong>Indigo Glass</strong><small>Deep indigo & violet</small></button>
+          </div>
+          <p class="appearance-note">All 11 themes are available for testing now. Premium locking can be added later after you choose the final collection.</p>
         </div>
-        <div class="form-group">
-          <label>Withdraw To</label>
-          <select class="form-control">
-            <option value="">Select saved bank account</option>
-          </select>
-        </div>
-        <button type="button" class="modal-submit" data-ui-submit>Review Withdrawal</button>
-        <div class="modal-info">A saved bank account and sufficient real balance will be required after backend connection.</div>
       </div>
     </div>
 
-    <div class="payment-modal" id="transferModal" aria-hidden="true">
+    <!--    =====================================================
+         TERMS MODAL
+    ======================================================    -->
+
+    <div class="settings-modal" id="termsModal">
       <div class="modal-card">
-        <div class="modal-head">
-          <h2>⇄ Transfer Money</h2>
-          <button type="button" class="modal-close" data-close-modal>×</button>
+        <div class="modal-header">
+          <div class="modal-title-box">
+            <div class="modal-title-icon">
+              <svg class="ui-icon" viewBox="0 0 24 24">
+                <path d="M6 2h8l4 4v16H6z"></path>
+
+                <path d="M14 2v5h5"></path>
+
+                <path d="M9 12h6"></path>
+
+                <path d="M9 16h6"></path>
+              </svg>
+            </div>
+
+            <h2>User Terms & Conditions</h2>
+          </div>
+
+          <button type="button" class="modal-close" onclick="closeModal('termsModal')" aria-label="Close"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
         </div>
-        <div class="form-group">
-          <label>Recipient</label>
-          <input class="form-control" type="text" placeholder="User / Worker / payment ID" />
+
+        <div class="modal-body">
+          <div class="terms-box">
+            <h3>1. Account Responsibility</h3>
+
+            <p>Users are responsible for providing correct account information and keeping their login details secure.</p>
+
+            <h3>2. Complaint Information</h3>
+
+            <p>Users should provide accurate complaint details, location information and supporting photos when required.</p>
+
+            <h3>3. Proper Use</h3>
+
+            <p>Smart Complaint should not be used for false, misleading, abusive or unlawful complaints.</p>
+
+            <h3>4. Service Updates</h3>
+
+            <p>Features, policies and services may be updated as the Smart Complaint platform develops.</p>
+
+            <h3>5. Final Terms</h3>
+
+            <p>These terms explain the current rules for using Smart Complaint. A public legal Terms page can be published before production release.</p>
+          </div>
         </div>
-        <div class="form-group">
-          <label>Amount</label>
-          <input class="form-control" type="number" min="1" inputmode="decimal" placeholder="₹ Enter amount" />
+
+        <div class="modal-footer">
+          <button type="button" class="modal-btn modal-btn-primary" onclick="closeModal('termsModal')">Close</button>
         </div>
-        <div class="form-group">
-          <label>Note (Optional)</label>
-          <input class="form-control" type="text" maxlength="120" placeholder="Payment note" />
-        </div>
-        <button type="button" class="modal-submit" data-ui-submit>Review Transfer</button>
-        <div class="modal-info">Recipient validation, balance checks and secure confirmation will be connected later.</div>
       </div>
     </div>
+
+    <!--    =====================================================
+         HELP & SUPPORT MODAL
+    ======================================================    -->
+
+    <div class="settings-modal" id="supportModal">
+      <div class="modal-card">
+        <form method="post" action="{% url 'user_support_request' %}">
+          {% csrf_token %}
+        <div class="modal-header">
+          <div class="modal-title-box">
+            <div class="modal-title-icon">
+              <svg class="ui-icon" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="9"></circle>
+
+                <path d="M9.8 9a2.4 2.4 0 1 1 3.9 1.9c-.9.7-1.7 1.1-1.7 2.6"></path>
+
+                <path d="M12 17h.01"></path>
+              </svg>
+            </div>
+
+            <h2>Help & Support</h2>
+          </div>
+
+          <button type="button" class="modal-close" onclick="closeModal('supportModal')" aria-label="Close"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+        </div>
+
+        <div class="modal-body">
+          <p class="modal-description">Tell us what type of problem you are facing.</p>
+
+          <div class="form-group">
+            <label class="form-label">Issue Type</label>
+
+            <select class="form-control" name="issue_type" required>
+              <option value="">Select an issue</option>
+
+              <option>Complaint Issue</option>
+
+              <option>Worker Issue</option>
+
+              <option>Payment Issue</option>
+
+              <option>Account Issue</option>
+
+              <option>Technical Problem</option>
+
+              <option>Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Subject</label>
+
+            <input type="text" class="form-control" name="subject" maxlength="150" placeholder="Enter subject" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Message</label>
+
+            <textarea class="form-control" name="message" maxlength="2000" placeholder="Explain your problem..." required></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="modal-btn modal-btn-secondary" onclick="closeModal('supportModal')">Cancel</button>
+
+          <button type="submit" class="modal-btn modal-btn-primary">Send Request</button>
+        </div>
+        </form>
+      </div>
+    </div>
+
+    <!--    =====================================================
+         ABOUT MODAL
+    ======================================================    -->
+
+    <div class="settings-modal" id="aboutModal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <div class="modal-title-box">
+            <div class="modal-title-icon">
+              <svg class="ui-icon" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="9"></circle>
+
+                <path d="M12 11v6"></path>
+
+                <path d="M12 7h.01"></path>
+              </svg>
+            </div>
+
+            <h2>About</h2>
+          </div>
+
+          <button type="button" class="modal-close" onclick="closeModal('aboutModal')" aria-label="Close"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="about-content">
+            <div class="about-logo">
+              <svg class="ui-icon" viewBox="0 0 24 24">
+                <path d="M4 20V10l8-6 8 6v10"></path>
+
+                <path d="M9 20v-6h6v6"></path>
+              </svg>
+            </div>
+
+            <h3>Smart Complaint</h3>
+
+            <p>Smart Complaint is designed to help users submit, track and manage service complaints efficiently.</p>
+
+            <p>The platform helps connect users with suitable workers and provides complaint tracking, communication and service-management features.</p>
+
+            <span class="app-version">Version 1.0</span>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="modal-btn modal-btn-primary" onclick="closeModal('aboutModal')">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!--    =====================================================
+         DELETE ACCOUNT MODAL
+    ======================================================    -->
+
+    <div class="settings-modal" id="deleteModal">
+      <div class="modal-card">
+        <form method="post" action="{% url 'user_delete_account' %}" id="userDeleteAccountForm">
+          {% csrf_token %}
+
+          <div class="modal-header">
+            <div class="modal-title-box">
+              <div class="modal-title-icon" style="background: #fef2f2; color: #dc2626;">
+                <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M3 6h18"></path>
+                  <path d="M8 6V4h8v2"></path>
+                  <path d="M19 6l-1 15H6L5 6"></path>
+                  <path d="M10 11v6"></path>
+                  <path d="M14 11v6"></path>
+                </svg>
+              </div>
+
+              <h2>Delete Account</h2>
+            </div>
+
+            <button type="button" class="modal-close" onclick="closeModal('deleteModal')" aria-label="Close"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+          </div>
+
+          <div class="modal-body">
+            <div class="warning-box">
+              <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 3 2 21h20L12 3z"></path>
+                <path d="M12 9v5"></path>
+                <path d="M12 18h.01"></path>
+              </svg>
+
+              <div>
+                This action is permanent. Your account, complaints, related chat history,
+                ratings, notifications and account data will be deleted.
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="userDeletePassword">Current Password</label>
+              <input
+                type="password"
+                class="form-control"
+                id="userDeletePassword"
+                name="password"
+                placeholder="Enter your current password"
+                autocomplete="current-password"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="deleteConfirmText">Type DELETE to confirm</label>
+              <input
+                type="text"
+                class="form-control"
+                id="deleteConfirmText"
+                name="confirmation"
+                placeholder="Type DELETE"
+                autocomplete="off"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="modal-btn modal-btn-secondary" onclick="closeModal('deleteModal')">Cancel</button>
+            <button type="submit" class="modal-btn modal-btn-danger">Delete Account Permanently</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!--    =========================================
+         UI MESSAGE
+    =========================================    -->
+
+
+    <!--    =========================================
+         JAVASCRIPT
+    =========================================    -->
 
     <script>
-      ;(function () {
-        const modals = document.querySelectorAll('.payment-modal')
+      function openModal(modalId) {
+        const modal = document.getElementById(modalId)
       
-        function closeModal(modal) {
-          modal.classList.remove('open')
-          modal.setAttribute('aria-hidden', 'true')
-          document.body.style.overflow = ''
+        if (!modal) {
+          return
         }
       
-        document.querySelectorAll('[data-modal]').forEach(function (button) {
-          button.addEventListener('click', function () {
-            const modal = document.getElementById(button.dataset.modal)
-            if (!modal) return
-            modal.classList.add('open')
-            modal.setAttribute('aria-hidden', 'false')
-            document.body.style.overflow = 'hidden'
-          })
-        })
+        modal.classList.add('show')
       
-        document.querySelectorAll('[data-close-modal]').forEach(function (button) {
-          button.addEventListener('click', function () {
-            const modal = button.closest('.payment-modal')
-            if (modal) closeModal(modal)
-          })
-        })
+        document.body.style.overflow = 'hidden'
+      }
       
-        modals.forEach(function (modal) {
-          modal.addEventListener('click', function (event) {
-            if (event.target === modal) closeModal(modal)
-          })
-        })
+      function closeModal(modalId) {
+        const modal = document.getElementById(modalId)
       
-        document.addEventListener('keydown', function (event) {
-          if (event.key === 'Escape') {
-            modals.forEach(function (modal) {
-              if (modal.classList.contains('open')) closeModal(modal)
-            })
+        if (!modal) {
+          return
+        }
+      
+        modal.classList.remove('show')
+      
+        document.body.style.overflow = ''
+      }
+      
+      function showUiMessage(message) {
+        const messageBox = document.getElementById('uiMessage')
+      
+        messageBox.textContent = message
+      
+        messageBox.classList.add('show')
+      
+        setTimeout(function () {
+          messageBox.classList.remove('show')
+        }, 2500)
+      }
+      
+      function uiOnlyAction(modalId) {
+        closeModal(modalId)
+
+        showUiMessage('This option is not connected to the backend yet.')
+      }
+      
+      document.querySelectorAll('.settings-modal').forEach(function (modal) {
+        modal.addEventListener('click', function (event) {
+          if (event.target === modal) {
+            closeModal(modal.id)
           }
         })
+      })
       
-        const qrGalleryButton = document.getElementById('qrGalleryButton')
-        const linkedQrPanel = document.getElementById('linkedQrPanel')
-      
-        if (qrGalleryButton && linkedQrPanel) {
-          qrGalleryButton.addEventListener('click', function () {
-            linkedQrPanel.classList.toggle('open')
+      document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') {
+          document.querySelectorAll('.settings-modal.show').forEach(function (modal) {
+            closeModal(modal.id)
           })
         }
-      
-        document.querySelectorAll('[data-ui-submit]').forEach(function (button) {
-          button.addEventListener('click', function () {
-            alert('UI ready. This action will work after backend connection.')
-          })
-        })
-      })()
+      })
     </script>
-  </body>
+
+
+
+
+
+
+<script>
+(function(){
+  document.querySelectorAll('[data-user-theme]').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      const theme=btn.dataset.userTheme;
+      if(window.SmartComplaintTheme) window.SmartComplaintTheme.setUserTheme(theme);
+      closeModal('appearanceModal');
+    });
+  });
+})();
+</script>
+
+</body>
 </html>

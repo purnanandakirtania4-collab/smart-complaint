@@ -39,6 +39,7 @@ from .models import (
     DeviceToken,
     ChatMessage,
     SupportRequest,
+    PaymentTransaction,
 )
 
 from .firebase_push import send_push_to_user
@@ -641,6 +642,7 @@ def user_settings(request):
         'complaints/User_Folder/user_settings.html',
         {
             'user_profile': user_profile,
+            'user_is_premium': user_profile.is_premium,
         }
     )
 
@@ -3435,6 +3437,7 @@ def worker_settings(request):
             'worker': worker,
             'subscription': subscription,
             'payout_details': payout_details,
+            'worker_is_premium': subscription.is_premium_active,
         }
     )
 
@@ -4528,6 +4531,491 @@ def save_device_token(request):
             'role': role,
         }
     )
+
+
+# =========================================================
+# RAZORPAY TEST ORDER - BACKEND CONNECTIVITY TEST
+# =========================================================
+
+@login_required(login_url='login')
+@require_POST
+def create_test_payment_order(request):
+    """
+    Create a fixed ₹1 Razorpay Test Mode order.
+
+    This endpoint is intentionally limited to a fixed server-side amount.
+    It verifies that Django can securely talk to Razorpay without trusting
+    an amount supplied by the browser or Android WebView.
+    """
+
+    admin_redirect = _admin_account_redirect(request)
+    if admin_redirect:
+        return admin_redirect
+
+    razorpay_key_id = getattr(settings, 'RAZORPAY_KEY_ID', '')
+    razorpay_key_secret = getattr(settings, 'RAZORPAY_KEY_SECRET', '')
+
+    if not razorpay_key_id or not razorpay_key_secret:
+        return JsonResponse(
+            {
+                'success': False,
+                'message': 'Razorpay configuration is missing.',
+            },
+            status=503,
+        )
+
+    amount_rupees = 1
+    amount_paise = amount_rupees * 100
+
+    payment = PaymentTransaction.objects.create(
+        payer=request.user,
+        payment_for='other',
+        amount=amount_rupees,
+        currency='INR',
+        status='created',
+        description='Razorpay Test Mode connectivity order',
+    )
+
+    receipt = f'sc_test_{payment.id}'
+    payment.receipt = receipt
+    payment.save(update_fields=['receipt', 'updated_at'])
+
+    try:
+        client = razorpay.Client(
+            auth=(razorpay_key_id, razorpay_key_secret)
+        )
+
+        razorpay_order = client.order.create(
+            {
+                'amount': amount_paise,
+                'currency': 'INR',
+                'receipt': receipt,
+                'notes': {
+                    'payment_transaction_id': str(payment.id),
+                    'purpose': 'Smart Complaint test payment',
+                },
+            }
+        )
+
+        razorpay_order_id = razorpay_order.get('id', '')
+
+        if not razorpay_order_id:
+            payment.status = 'failed'
+            payment.failed_at = timezone.now()
+            payment.save(
+                update_fields=[
+                    'status',
+                    'failed_at',
+                    'updated_at',
+                ]
+            )
+
+            return JsonResponse(
+                {
+                    'success': False,
+                    'message': 'Razorpay did not return an order ID.',
+                },
+                status=502,
+            )
+
+        payment.razorpay_order_id = razorpay_order_id
+        payment.status = 'pending'
+        payment.save(
+            update_fields=[
+                'razorpay_order_id',
+                'status',
+                'updated_at',
+            ]
+        )
+
+        return JsonResponse(
+            {
+                'success': True,
+                'key_id': razorpay_key_id,
+                'order_id': razorpay_order_id,
+                'amount': amount_paise,
+                'currency': 'INR',
+                'transaction_id': payment.id,
+            }
+        )
+
+    except razorpay.errors.BadRequestError as error:
+        payment.status = 'failed'
+        payment.failed_at = timezone.now()
+        payment.save(
+            update_fields=[
+                'status',
+                'failed_at',
+                'updated_at',
+            ]
+        )
+        print('RAZORPAY TEST ORDER BAD REQUEST:', error)
+
+        return JsonResponse(
+            {
+                'success': False,
+                'message': 'Razorpay rejected the test order.',
+            },
+            status=400,
+        )
+
+    except razorpay.errors.ServerError as error:
+        payment.status = 'failed'
+        payment.failed_at = timezone.now()
+        payment.save(
+            update_fields=[
+                'status',
+                'failed_at',
+                'updated_at',
+            ]
+        )
+        print('RAZORPAY TEST ORDER SERVER ERROR:', error)
+
+        return JsonResponse(
+            {
+                'success': False,
+                'message': 'Razorpay is temporarily unavailable.',
+            },
+            status=502,
+        )
+
+    except Exception as error:
+        payment.status = 'failed'
+        payment.failed_at = timezone.now()
+        payment.save(
+            update_fields=[
+                'status',
+                'failed_at',
+                'updated_at',
+            ]
+        )
+        print('RAZORPAY TEST ORDER ERROR:', error)
+
+        return JsonResponse(
+            {
+                'success': False,
+                'message': 'Unable to create the Razorpay test order.',
+            },
+            status=500,
+        )
+
+
+# =========================================================
+# RAZORPAY PAYMENT VERIFICATION - SERVER SIDE
+# =========================================================
+
+@login_required(login_url='login')
+@require_POST
+def verify_test_payment(request):
+    """
+    Securely verify a Razorpay Checkout payment on the server.
+
+    A transaction is marked paid only when:
+    1. the transaction belongs to the logged-in user,
+    2. the submitted Razorpay order ID matches the stored order ID,
+    3. Razorpay's payment signature is valid,
+    4. the payment really exists at Razorpay,
+    5. the provider payment belongs to the same order,
+    6. amount and currency match the server-side transaction, and
+    7. Razorpay reports the payment as captured.
+    """
+
+    admin_redirect = _admin_account_redirect(request)
+    if admin_redirect:
+        return admin_redirect
+
+    razorpay_key_id = getattr(settings, 'RAZORPAY_KEY_ID', '')
+    razorpay_key_secret = getattr(settings, 'RAZORPAY_KEY_SECRET', '')
+
+    if not razorpay_key_id or not razorpay_key_secret:
+        return JsonResponse(
+            {
+                'success': False,
+                'message': 'Razorpay configuration is missing.',
+            },
+            status=503,
+        )
+
+    try:
+        payload = json.loads(request.body.decode('utf-8'))
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        return JsonResponse(
+            {
+                'success': False,
+                'message': 'Invalid payment verification data.',
+            },
+            status=400,
+        )
+
+    if not isinstance(payload, dict):
+        return JsonResponse(
+            {
+                'success': False,
+                'message': 'Invalid payment verification data.',
+            },
+            status=400,
+        )
+
+    transaction_id = payload.get('transaction_id')
+    razorpay_order_id = str(payload.get('razorpay_order_id', '')).strip()
+    razorpay_payment_id = str(payload.get('razorpay_payment_id', '')).strip()
+    razorpay_signature = str(payload.get('razorpay_signature', '')).strip()
+
+    if (
+        not transaction_id
+        or not razorpay_order_id
+        or not razorpay_payment_id
+        or not razorpay_signature
+    ):
+        return JsonResponse(
+            {
+                'success': False,
+                'message': 'Payment verification data is incomplete.',
+            },
+            status=400,
+        )
+
+    try:
+        transaction_id = int(transaction_id)
+    except (TypeError, ValueError):
+        return JsonResponse(
+            {
+                'success': False,
+                'message': 'Invalid transaction ID.',
+            },
+            status=400,
+        )
+
+    client = razorpay.Client(
+        auth=(razorpay_key_id, razorpay_key_secret)
+    )
+
+    try:
+        with transaction.atomic():
+            payment = (
+                PaymentTransaction.objects
+                .select_for_update()
+                .get(
+                    id=transaction_id,
+                    payer=request.user,
+                )
+            )
+
+            if payment.status == 'paid':
+                if (
+                    payment.razorpay_order_id == razorpay_order_id
+                    and payment.razorpay_payment_id == razorpay_payment_id
+                ):
+                    return JsonResponse(
+                        {
+                            'success': True,
+                            'message': 'Payment is already verified.',
+                            'transaction_id': payment.id,
+                            'status': payment.status,
+                        }
+                    )
+
+                return JsonResponse(
+                    {
+                        'success': False,
+                        'message': 'This transaction has already been paid.',
+                    },
+                    status=409,
+                )
+
+            if payment.status != 'pending':
+                return JsonResponse(
+                    {
+                        'success': False,
+                        'message': 'This transaction is not pending payment.',
+                    },
+                    status=409,
+                )
+
+            if payment.razorpay_order_id != razorpay_order_id:
+                return JsonResponse(
+                    {
+                        'success': False,
+                        'message': 'Razorpay order ID does not match this transaction.',
+                    },
+                    status=400,
+                )
+
+            client.utility.verify_payment_signature(
+                {
+                    'razorpay_order_id': razorpay_order_id,
+                    'razorpay_payment_id': razorpay_payment_id,
+                    'razorpay_signature': razorpay_signature,
+                }
+            )
+
+            provider_payment = client.payment.fetch(
+                razorpay_payment_id
+            )
+
+            provider_payment_id = str(
+                provider_payment.get('id', '')
+            ).strip()
+
+            provider_order_id = str(
+                provider_payment.get('order_id', '')
+            ).strip()
+
+            provider_currency = str(
+                provider_payment.get('currency', '')
+            ).strip().upper()
+
+            provider_status = str(
+                provider_payment.get('status', '')
+            ).strip().lower()
+
+            provider_captured = provider_payment.get(
+                'captured',
+                False,
+            )
+
+            try:
+                provider_amount = int(
+                    provider_payment.get('amount')
+                )
+            except (TypeError, ValueError):
+                return JsonResponse(
+                    {
+                        'success': False,
+                        'message': 'Razorpay returned an invalid payment amount.',
+                    },
+                    status=502,
+                )
+
+            expected_amount = int(
+                payment.amount * 100
+            )
+
+            expected_currency = str(
+                payment.currency
+            ).strip().upper()
+
+            if provider_payment_id != razorpay_payment_id:
+                return JsonResponse(
+                    {
+                        'success': False,
+                        'message': 'Razorpay payment ID verification failed.',
+                    },
+                    status=400,
+                )
+
+            if provider_order_id != payment.razorpay_order_id:
+                return JsonResponse(
+                    {
+                        'success': False,
+                        'message': 'Razorpay payment does not belong to this order.',
+                    },
+                    status=400,
+                )
+
+            if provider_amount != expected_amount:
+                return JsonResponse(
+                    {
+                        'success': False,
+                        'message': 'Razorpay payment amount does not match this transaction.',
+                    },
+                    status=400,
+                )
+
+            if provider_currency != expected_currency:
+                return JsonResponse(
+                    {
+                        'success': False,
+                        'message': 'Razorpay payment currency does not match this transaction.',
+                    },
+                    status=400,
+                )
+
+            if (
+                provider_status != 'captured'
+                or provider_captured is not True
+            ):
+                return JsonResponse(
+                    {
+                        'success': False,
+                        'message': 'Payment has not been captured by Razorpay.',
+                    },
+                    status=409,
+                )
+
+            payment.razorpay_payment_id = razorpay_payment_id
+            payment.status = 'paid'
+            payment.paid_at = timezone.now()
+            payment.failed_at = None
+            payment.save(
+                update_fields=[
+                    'razorpay_payment_id',
+                    'status',
+                    'paid_at',
+                    'failed_at',
+                    'updated_at',
+                ]
+            )
+
+            return JsonResponse(
+                {
+                    'success': True,
+                    'message': 'Payment verified successfully.',
+                    'transaction_id': payment.id,
+                    'status': payment.status,
+                }
+            )
+
+    except PaymentTransaction.DoesNotExist:
+        return JsonResponse(
+            {
+                'success': False,
+                'message': 'Payment transaction was not found.',
+            },
+            status=404,
+        )
+
+    except razorpay.errors.SignatureVerificationError:
+        return JsonResponse(
+            {
+                'success': False,
+                'message': 'Payment signature verification failed.',
+            },
+            status=400,
+        )
+
+    except razorpay.errors.BadRequestError as error:
+        print('RAZORPAY PAYMENT FETCH BAD REQUEST:', error)
+
+        return JsonResponse(
+            {
+                'success': False,
+                'message': 'Razorpay could not verify this payment.',
+            },
+            status=400,
+        )
+
+    except razorpay.errors.ServerError as error:
+        print('RAZORPAY PAYMENT FETCH SERVER ERROR:', error)
+
+        return JsonResponse(
+            {
+                'success': False,
+                'message': 'Razorpay is temporarily unavailable.',
+            },
+            status=502,
+        )
+
+    except Exception as error:
+        print('RAZORPAY PAYMENT VERIFICATION ERROR:', error)
+
+        return JsonResponse(
+            {
+                'success': False,
+                'message': 'Unable to verify the payment.',
+            },
+            status=500,
+        )
 
 
 # =========================================================

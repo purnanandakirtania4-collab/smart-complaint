@@ -339,6 +339,164 @@
           width: 100%;
         }
       }
+      
+      /* =====================================================
+               PROFESSIONAL UI POLISH
+               ===================================================== */
+      .ui-icon,
+      .progress-icon {
+        width: 20px;
+        height: 20px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        flex: 0 0 auto;
+      }
+      .status-wrap {
+        max-width: 1120px;
+        padding-top: 38px;
+      }
+      .status-header {
+        margin-bottom: 26px;
+      }
+      .status-header-icon {
+        width: 58px;
+        height: 58px;
+        border-radius: 18px;
+        background: linear-gradient(145deg, rgba(59, 130, 246, 0.24), rgba(14, 165, 233, 0.12));
+        border: 1px solid rgba(191, 219, 254, 0.28);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 16px 36px rgba(2, 6, 23, 0.18);
+      }
+      .status-header-icon .ui-icon {
+        width: 27px;
+        height: 27px;
+      }
+      .status-header h1 {
+        letter-spacing: -0.025em;
+      }
+      .search-card,
+      .details-card {
+        border-radius: 22px;
+        box-shadow: 0 24px 64px rgba(2, 6, 23, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      }
+      .search-card {
+        padding: 24px;
+      }
+      .search-label {
+        letter-spacing: 0.02em;
+      }
+      .input {
+        min-height: 48px;
+        border-radius: 13px;
+      }
+      .btn {
+        min-height: 46px;
+        border-radius: 13px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      }
+      .btn:hover {
+        transform: translateY(-1px);
+      }
+      .details-card {
+        padding: 26px;
+      }
+      .detail-box {
+        border-radius: 14px;
+        transition: transform 0.2s ease, border-color 0.2s ease;
+      }
+      .detail-box:hover {
+        transform: translateY(-1px);
+        border-color: rgba(147, 197, 253, 0.34);
+      }
+      .tracking {
+        letter-spacing: 0.035em;
+      }
+      .progress-track {
+        border-radius: 16px;
+      }
+      .progress-dot {
+        width: 36px;
+        height: 36px;
+      }
+      .progress-dot .progress-icon {
+        width: 18px;
+        height: 18px;
+      }
+      body.sc-theme-light .status-header h1,
+      body.sc-theme-light .status-header p,
+      body.sc-theme-light .search-label,
+      body.sc-theme-light .details-top h2,
+      body.sc-theme-light .detail-value,
+      body.sc-theme-light .progress-title {
+        color: #172554;
+      }
+      body.sc-theme-light .status-header p,
+      body.sc-theme-light .search-help,
+      body.sc-theme-light .detail-label {
+        color: #64748b;
+      }
+      body.sc-theme-light .search-card,
+      body.sc-theme-light .details-card {
+        background: rgba(255, 255, 255, 0.92);
+        border-color: #dbeafe;
+        box-shadow: 0 24px 60px rgba(15, 23, 42, 0.1);
+      }
+      body.sc-theme-light .input {
+        background: #fff;
+        color: #172554;
+        border-color: #cbd5e1;
+      }
+      body.sc-theme-light .description,
+      body.sc-theme-light .detail-box,
+      body.sc-theme-light .progress-track {
+        background: #f8fafc;
+        border-color: #e2e8f0;
+        color: #334155;
+      }
+      body.sc-theme-dark .search-card,
+      body.sc-theme-dark .details-card {
+        background: rgba(30, 41, 59, 0.92);
+        border-color: #334155;
+      }
+      body.sc-theme-dark .input {
+        background: #0f172a;
+        color: #fff;
+        border-color: #475569;
+      }
+      body.sc-theme-glass .search-card,
+      body.sc-theme-glass .details-card {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.14), rgba(59, 130, 246, 0.06));
+        border-color: rgba(191, 219, 254, 0.26);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+      }
+      @media (max-width: 650px) {
+        .status-wrap {
+          padding-top: 22px;
+        }
+        .status-header {
+          align-items: flex-start;
+          gap: 13px;
+        }
+        .status-header-icon {
+          width: 48px;
+          height: 48px;
+          border-radius: 15px;
+        }
+        .status-header-icon .ui-icon {
+          width: 23px;
+          height: 23px;
+        }
+        .status-header h1 {
+          font-size: 24px;
+        }
+        .search-card,
+        .details-card {
+          border-radius: 18px;
+        }
+      }
     </style>
   </head>
 
@@ -348,7 +506,12 @@
     <main class="page">
       <div class="status-wrap">
         <header class="status-header">
-          <div class="status-header-icon">🔎</div>
+          <div class="status-header-icon">
+            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="11" cy="11" r="7"></circle>
+              <path d="m20 20-3.5-3.5"></path>
+            </svg>
+          </div>
 
           <div>
             <h1>Check Complaint Status</h1>
@@ -365,7 +528,12 @@
             <div class="search-form">
               <input class="input" type="text" name="tracking_id" placeholder="Example: CMP-73208618" required />
 
-              <button type="submit" class="btn btn-primary">🔎 Track Status</button>
+              <button type="submit" class="btn btn-primary">
+                <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="11" cy="11" r="7"></circle>
+                  <path d="m20 20-3.5-3.5"></path>
+                </svg><span>Track Status</span>
+              </button>
             </div>
 
             <div class="search-help">Your Tracking ID is available in your complaint record.</div>
@@ -385,15 +553,21 @@
                         status-pill
                         {% if complaint.status == 'Pending' %}
                   
+                  
                             status-pending
+
 
                 {% elif complaint.status == 'In Progress' %}
                   
+                  
                             status-progress
+
 
                 {% else %}
                   
+                  
                             status-resolved
+
 
                 {% endif %}
                     ">
@@ -450,24 +624,34 @@
 
             <div class="progress-track">
               <div class="progress-step done">
-                <div class="progress-dot">✓</div>Submitted
+                <div class="progress-dot">
+                  <svg class="progress-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="m7 12 3 3 7-7"></path>
+                  </svg>
+                </div>Submitted
               </div>
 
               <div class="
                         progress-step
                         {% if complaint.status == 'In Progress' %}
                   
+                  
                             current
+
 
                 {% elif complaint.status == 'Resolved' %}
                   
+                  
                             done
+
 
                 {% endif %}
                     ">
                 <div class="progress-dot">
                   {% if complaint.status == 'Resolved' %}
-                    ✓
+                    <svg class="progress-icon" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="m7 12 3 3 7-7"></path>
+                    </svg>
                   {% else %}
                     2
                   {% endif %}
@@ -482,7 +666,9 @@
                     ">
                 <div class="progress-dot">
                   {% if complaint.status == 'Resolved' %}
-                    ✓
+                    <svg class="progress-icon" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="m7 12 3 3 7-7"></path>
+                    </svg>
                   {% else %}
                     3
                   {% endif %}
@@ -491,9 +677,19 @@
             </div>
 
             <div class="bottom-actions">
-              <a class="btn btn-dark" href="{% url 'home' %}">← Back to Dashboard</a>
+              <a class="btn btn-dark" href="{% url 'home' %}">
+                <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="m15 18-6-6 6-6"></path>
+                  <path d="M9 12h11"></path>
+                </svg><span>Back to Dashboard</span>
+              </a>
 
-              <a class="btn btn-primary" href="{% url 'my_complaints' %}">📋 My Complaints</a>
+              <a class="btn btn-primary" href="{% url 'my_complaints' %}">
+                <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="4" y="3" width="16" height="18" rx="2"></rect>
+                  <path d="M8 8h8M8 12h8M8 16h5"></path>
+                </svg><span>My Complaints</span>
+              </a>
             </div>
           </section>
         {% endif %}

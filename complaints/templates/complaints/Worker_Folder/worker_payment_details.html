@@ -63,8 +63,8 @@
       }
       
       /* =========================================
-                       HERO
-                    ========================================= */
+                             HERO
+                          ========================================= */
       
       .payment-hero {
         position: relative;
@@ -200,8 +200,8 @@
       }
       
       /* =========================================
-                       SUMMARY
-                    ========================================= */
+                             SUMMARY
+                          ========================================= */
       
       .summary-grid {
         display: grid;
@@ -306,8 +306,8 @@
       }
       
       /* =========================================
-                       TRANSACTION HISTORY
-                    ========================================= */
+                             TRANSACTION HISTORY
+                          ========================================= */
       
       .section-card {
         margin-top: 20px;
@@ -363,8 +363,8 @@
       }
       
       /* =========================================
-                       EMPTY STATE
-                    ========================================= */
+                             EMPTY STATE
+                          ========================================= */
       
       .empty-state {
         min-height: 330px;
@@ -416,8 +416,8 @@
       }
       
       /* =========================================
-                       FUTURE BACKEND TRANSACTIONS
-                    ========================================= */
+                             FUTURE BACKEND TRANSACTIONS
+                          ========================================= */
       
       .transaction-list {
         display: none;
@@ -426,8 +426,8 @@
       }
       
       /* =========================================
-                       SUPPORT
-                    ========================================= */
+                             SUPPORT
+                          ========================================= */
       
       .help-card {
         margin-top: 20px;
@@ -514,8 +514,8 @@
       }
       
       /* =========================================
-                       UI ONLY NOTE
-                    ========================================= */
+                             UI ONLY NOTE
+                          ========================================= */
       
       .ui-note {
         margin-top: 18px;
@@ -536,8 +536,8 @@
       }
       
       /* =========================================
-                       RESPONSIVE
-                    ========================================= */
+                             RESPONSIVE
+                          ========================================= */
       
       @media (max-width: 900px) {
         .summary-grid {
@@ -639,9 +639,9 @@
       }
       
       /* =========================================
-               MONEY MANAGEMENT UI
-               UI only - backend connection later
-               ========================================= */
+                     MONEY MANAGEMENT UI
+                     UI only - backend connection later
+                     ========================================= */
       .money-grid {
         display: grid;
         grid-template-columns: 1.1fr 0.9fr;
@@ -910,8 +910,8 @@
       }
       
       /* =========================================
-               QR + SCANNER COMBINED UI
-               ========================================= */
+                     QR + SCANNER COMBINED UI
+                     ========================================= */
       .qr-pay-card {
         margin-top: 20px;
         padding: 22px;
@@ -941,12 +941,48 @@
         position: relative;
         min-height: 280px;
         overflow: hidden;
-        display: flex;
-        align-items: center;
-        justify-content: center;
         border: 1px solid rgba(125, 190, 255, 0.25);
         border-radius: 18px;
         background: rgba(1, 14, 34, 0.62);
+      }
+      
+      .scanner-track {
+        position: absolute;
+        inset: 0;
+      }
+      
+      .scanner-view,
+      .qr-view {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 22px;
+        text-align: center;
+        transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.35s ease;
+      }
+      
+      .scanner-view {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      
+      .qr-view {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      
+      .scanner-frame.show-qr .scanner-view {
+        transform: translateX(-100%);
+        opacity: 0;
+        pointer-events: none;
+      }
+      
+      .scanner-frame.show-qr .qr-view {
+        transform: translateX(0);
+        opacity: 1;
       }
       
       .scanner-box {
@@ -969,13 +1005,82 @@
       }
       
       .scanner-label {
-        position: absolute;
-        left: 15px;
-        right: 15px;
-        bottom: 17px;
+        margin-top: 18px;
         color: var(--muted);
         font-size: 12px;
         text-align: center;
+      }
+      
+      .scanner-gallery {
+        margin-top: 14px;
+        display: none;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .scanner-frame.scanner-open .scanner-gallery {
+        display: flex;
+      }
+      
+      .gallery-button {
+        min-height: 34px;
+        padding: 7px 12px;
+        border: 1px solid rgba(125, 190, 255, 0.35);
+        border-radius: 12px;
+        background: rgba(22, 119, 255, 0.17);
+        color: #fff;
+        font-weight: 800;
+        cursor: pointer;
+      }
+      
+      .gallery-button:hover {
+        background: rgba(22, 119, 255, 0.27);
+      }
+      
+      .gallery-input {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        opacity: 0;
+        pointer-events: none;
+      }
+      
+      .gallery-selection {
+        display: none;
+        max-width: 420px;
+        margin-top: 9px;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.45;
+        overflow-wrap: anywhere;
+      }
+      
+      .gallery-selection.show {
+        display: block;
+      }
+      
+      .linked-qr-placeholder {
+        width: 175px;
+        height: 175px;
+        display: grid;
+        place-items: center;
+        border-radius: 18px;
+        background: #fff;
+        color: #0f172a;
+        font-size: 58px;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.22);
+      }
+      
+      .qr-view strong {
+        display: block;
+        margin-top: 14px;
+        margin-bottom: 6px;
+      }
+      
+      .qr-view small {
+        max-width: 520px;
+        color: var(--muted);
+        line-height: 1.5;
       }
       
       .scanner-actions {
@@ -994,47 +1099,13 @@
         color: #fff;
         font-weight: 800;
         cursor: pointer;
+        transition: background 0.2s ease, border-color 0.2s ease;
       }
       
-      .scanner-button:hover {
+      .scanner-button:hover,
+      .scanner-button.active {
         background: rgba(22, 119, 255, 0.27);
-      }
-      
-      .linked-qr-panel {
-        display: none;
-        margin-top: 14px;
-        padding: 18px;
-        border: 1px solid rgba(125, 190, 255, 0.25);
-        border-radius: 18px;
-        background: rgba(2, 24, 55, 0.35);
-        text-align: center;
-      }
-      
-      .linked-qr-panel.open {
-        display: block;
-      }
-      
-      .linked-qr-placeholder {
-        width: 142px;
-        height: 142px;
-        margin: 0 auto 12px;
-        display: grid;
-        place-items: center;
-        border-radius: 16px;
-        background: #fff;
-        color: #0f172a;
-        font-size: 54px;
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.22);
-      }
-      
-      .linked-qr-panel strong {
-        display: block;
-        margin-bottom: 6px;
-      }
-      
-      .linked-qr-panel small {
-        color: var(--muted);
-        line-height: 1.5;
+        border-color: #38bdf8;
       }
       
       .qr-safety {
@@ -1056,23 +1127,29 @@
         .scanner-frame {
           min-height: 250px;
         }
+      
+        .scanner-box,
+        .linked-qr-placeholder {
+          width: 155px;
+          height: 155px;
+        }
       }
     </style>
   </head>
 
   <body>
-    <!--  
+    <!--   
         WORKER PAYMENT DETAILS UI
 
         UI only for now.
         Real earnings, payouts and subscription data
         will be connected later.
-      -->
+       -->
 
     <main class="payment-page">
-      <!--   =====================================
+      <!--    =====================================
              HEADER
-        ======================================   -->
+        ======================================    -->
 
       <section class="payment-hero">
         <div class="hero-main">
@@ -1096,9 +1173,9 @@
         </div>
       </section>
 
-      <!--   =====================================
+      <!--    =====================================
              WORKER SUMMARY
-        ======================================   -->
+        ======================================    -->
 
       <section class="summary-grid">
         <!-- TOTAL EARNINGS -->
@@ -1150,9 +1227,9 @@
         </article>
       </section>
 
-      <!--  =====================================
+      <!--   =====================================
            MONEY MANAGEMENT - UI ONLY
-           =====================================  -->
+           =====================================   -->
       <section class="money-grid">
         <article class="money-card">
           <div class="money-card-title">
@@ -1208,10 +1285,10 @@
         </div>
       </section>
 
-      <!--  =====================================
+      <!--   =====================================
            QR + SCANNER - UI ONLY
-           Bank/QR relationship comes from saved bank account
-           =====================================  -->
+           Scanner and linked QR share the same display area
+           =====================================   -->
       <section class="qr-pay-card">
         <div class="qr-pay-title">
           <span>📷</span>
@@ -1220,29 +1297,39 @@
 
         <div class="qr-pay-subtitle">Scan a payment QR, or view the QR already linked with your saved bank/payment account.</div>
 
-        <div class="scanner-frame">
-          <div class="scanner-box"></div>
-          <div class="scanner-label">Camera scanner preview will appear here after integration.</div>
+        <div class="scanner-frame" id="scannerFrame">
+          <div class="scanner-track">
+            <div class="scanner-view">
+              <div class="scanner-box"></div>
+              <div class="scanner-label">Camera scanner preview will appear here after integration.</div>
+
+              <div class="scanner-gallery">
+                <button type="button" class="gallery-button" id="galleryButton">🖼️ Choose QR from Gallery</button>
+                <input type="file" id="galleryInput" class="gallery-input" accept="image/*" aria-label="Choose QR image from gallery" />
+              </div>
+              <div class="gallery-selection" id="gallerySelection" aria-live="polite"></div>
+            </div>
+
+            <div class="qr-view">
+              <div class="linked-qr-placeholder">▦</div>
+              <strong>Bank-linked QR</strong>
+              <small>After backend connection, the QR associated with the bank/payment account already added in Bank Accounts will appear here.</small>
+            </div>
+          </div>
         </div>
 
         <div class="scanner-actions">
-          <button type="button" class="scanner-button" data-ui-submit>📷 Open Scanner</button>
+          <button type="button" class="scanner-button" id="showScannerButton">📷 Scanner</button>
 
-          <button type="button" class="scanner-button" id="qrGalleryButton">▦ QR + Gallery</button>
-        </div>
-
-        <div class="linked-qr-panel" id="linkedQrPanel">
-          <div class="linked-qr-placeholder">▦</div>
-          <strong>Bank-linked QR</strong>
-          <small>After backend connection, the QR associated with the bank/payment account already added in Bank Accounts will appear here. No separate bank selection is required. Gallery QR scanning will also be available from this area.</small>
+          <button type="button" class="scanner-button" id="showQrButton">▦ Show QR</button>
         </div>
 
         <div class="qr-safety">🔐 Before payment confirmation, recipient name/payment identity and amount should be shown. Scanning a QR must never trigger an automatic payment.</div>
       </section>
 
-      <!--   =====================================
+      <!--    =====================================
              TRANSACTION HISTORY
-        ======================================   -->
+        ======================================    -->
 
       <section class="section-card">
         <div class="section-header">
@@ -1265,17 +1352,17 @@
           <p>Your earnings, payouts and subscription payment history will appear here.</p>
         </div>
 
-        <!--  
+        <!--   
                 Real backend transactions
                 will be inserted here later.
-              -->
+               -->
 
         <div class="transaction-list"></div>
       </section>
 
-      <!--   =====================================
+      <!--    =====================================
              HELP
-        ======================================   -->
+        ======================================    -->
 
       <section class="help-card">
         <div class="help-left">
@@ -1294,9 +1381,9 @@
       <div class="ui-note">Payment backend is not connected to this page yet. Real earnings, payouts and subscription transactions will be connected later.</div>
     </main>
 
-    <!--  =====================================
+    <!--   =====================================
          PAYMENT ACTION MODALS - UI ONLY
-         =====================================  -->
+         =====================================   -->
     <div class="payment-modal" id="bankModal" aria-hidden="true">
       <div class="modal-card">
         <div class="modal-head">
@@ -1453,14 +1540,73 @@
             })
           }
         })
+        const galleryButton = document.getElementById('galleryButton')
+        const galleryInput = document.getElementById('galleryInput')
+        const gallerySelection = document.getElementById('gallerySelection')
       
-        const qrGalleryButton = document.getElementById('qrGalleryButton')
-        const linkedQrPanel = document.getElementById('linkedQrPanel')
-      
-        if (qrGalleryButton && linkedQrPanel) {
-          qrGalleryButton.addEventListener('click', function () {
-            linkedQrPanel.classList.toggle('open')
+        if (galleryButton && galleryInput) {
+          galleryButton.addEventListener('click', function () {
+            galleryInput.click()
           })
+      
+          galleryInput.addEventListener('change', function () {
+            const file = galleryInput.files && galleryInput.files[0]
+      
+            if (!file) return
+      
+            if (!file.type || !file.type.startsWith('image/')) {
+              alert('Please choose a valid QR image.')
+              galleryInput.value = ''
+              return
+            }
+      
+            if (gallerySelection) {
+              gallerySelection.textContent = 'Selected: ' + file.name
+              gallerySelection.classList.add('show')
+            }
+          })
+        }
+      
+        const scannerFrame = document.getElementById('scannerFrame')
+        const showScannerButton = document.getElementById('showScannerButton')
+        const showQrButton = document.getElementById('showQrButton')
+      
+        function setScannerMode() {
+          if (!scannerFrame) return
+      
+          scannerFrame.classList.remove('show-qr')
+          scannerFrame.classList.add('scanner-open')
+      
+          if (showScannerButton) {
+            showScannerButton.classList.add('active')
+          }
+      
+          if (showQrButton) {
+            showQrButton.classList.remove('active')
+          }
+        }
+      
+        function setQrMode() {
+          if (!scannerFrame) return
+      
+          scannerFrame.classList.remove('scanner-open')
+          scannerFrame.classList.add('show-qr')
+      
+          if (showScannerButton) {
+            showScannerButton.classList.remove('active')
+          }
+      
+          if (showQrButton) {
+            showQrButton.classList.add('active')
+          }
+        }
+      
+        if (showScannerButton) {
+          showScannerButton.addEventListener('click', setScannerMode)
+        }
+      
+        if (showQrButton) {
+          showQrButton.addEventListener('click', setQrMode)
         }
       
         document.querySelectorAll('[data-ui-submit]').forEach(function (button) {

@@ -700,6 +700,253 @@
           height: 280px;
         }
       }
+      
+      /* =====================================================
+               PROFESSIONAL UI POLISH
+               ===================================================== */
+      .icon-text {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+      }
+      .icon-text .ui-icon {
+        flex: 0 0 auto;
+      }
+      .assignment-card-title .ui-icon,
+      .btn .ui-icon,
+      .tip-check .ui-icon,
+      .benefit .ui-icon,
+      .side-card h3 .ui-icon {
+        width: 19px;
+        height: 19px;
+      }
+      .search-icon .ui-icon {
+        width: 19px;
+        height: 19px;
+        display: block;
+      }
+      .avatar .ui-icon {
+        width: 24px;
+        height: 24px;
+      }
+      .photo-symbol .ui-icon {
+        width: 30px;
+        height: 30px;
+      }
+      .tip-check .ui-icon {
+        width: 14px;
+        height: 14px;
+        stroke-width: 2.6;
+      }
+      
+      .sc-submit-page {
+        max-width: 1240px;
+      }
+      .submit-heading h1 {
+        letter-spacing: -0.025em;
+      }
+      .submit-heading-icon {
+        box-shadow: 0 16px 34px rgba(2, 6, 23, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      }
+      .city-banner,
+      .stepper,
+      .form-panel,
+      .side-card,
+      .benefit {
+        box-shadow: 0 20px 52px rgba(2, 6, 23, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.07);
+      }
+      .stepper {
+        overflow: hidden;
+      }
+      .form-panel,
+      .side-card {
+        border-radius: 20px;
+      }
+      .form-section + .form-section {
+        padding-top: 25px;
+        border-top: 1px solid rgba(191, 219, 254, 0.14);
+      }
+      .assignment-card,
+      .priority-card,
+      .worker,
+      .photo-box,
+      .location-info {
+        transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+      }
+      .assignment-choice:hover .assignment-card,
+      .priority-option:hover .priority-card,
+      .worker:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 14px 30px rgba(2, 6, 23, 0.12);
+      }
+      .input,
+      .textarea {
+        min-height: 48px;
+      }
+      .textarea {
+        min-height: 130px;
+      }
+      .btn {
+        min-height: 46px;
+        border-radius: 12px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+      }
+      .btn:hover {
+        transform: translateY(-1px);
+      }
+      .btn:disabled {
+        opacity: 0.68;
+        cursor: wait;
+        transform: none;
+      }
+      .photo-box {
+        padding: 24px;
+      }
+      #map {
+        box-shadow: 0 16px 36px rgba(2, 6, 23, 0.16);
+      }
+      .side-card h3 {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+      }
+      .benefit strong {
+        min-height: 24px;
+      }
+      .benefit {
+        min-height: 118px;
+      }
+      .worker.selected {
+        box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.1), 0 14px 30px rgba(2, 6, 23, 0.12);
+      }
+      
+      body.sc-theme-light .submit-heading h1,
+      body.sc-theme-light .submit-heading p {
+        color: #172554;
+      }
+      body.sc-theme-light .submit-heading p {
+        color: #64748b;
+      }
+      body.sc-theme-light .city-banner {
+        background: linear-gradient(135deg, #ecfdf5, #eff6ff);
+        border-color: #a7f3d0;
+        color: #14532d;
+      }
+      body.sc-theme-light .city-banner small {
+        color: #475569;
+      }
+      body.sc-theme-light .stepper,
+      body.sc-theme-light .form-panel,
+      body.sc-theme-light .side-card,
+      body.sc-theme-light .benefit {
+        background: rgba(255, 255, 255, 0.94);
+        border-color: #dbeafe;
+        color: #172554;
+        box-shadow: 0 20px 50px rgba(15, 23, 42, 0.09);
+      }
+      body.sc-theme-light .section-heading h2,
+      body.sc-theme-light .label,
+      body.sc-theme-light .assignment-card-title,
+      body.sc-theme-light .priority-card,
+      body.sc-theme-light .worker-name,
+      body.sc-theme-light .side-card h3,
+      body.sc-theme-light .benefit {
+        color: #172554;
+      }
+      body.sc-theme-light .section-heading p,
+      body.sc-theme-light .assignment-card small,
+      body.sc-theme-light .priority-card small,
+      body.sc-theme-light .worker-exp,
+      body.sc-theme-light .tip,
+      body.sc-theme-light .benefit small {
+        color: #64748b;
+      }
+      body.sc-theme-light .input,
+      body.sc-theme-light .textarea {
+        background: #fff;
+        color: #172554;
+        border-color: #cbd5e1;
+      }
+      body.sc-theme-light .input::placeholder,
+      body.sc-theme-light .textarea::placeholder {
+        color: #94a3b8;
+      }
+      body.sc-theme-light .assignment-card,
+      body.sc-theme-light .priority-card,
+      body.sc-theme-light .worker,
+      body.sc-theme-light .location-info,
+      body.sc-theme-light .benefit {
+        background: #f8fafc;
+        border-color: #e2e8f0;
+      }
+      body.sc-theme-light .photo-box {
+        background: #f8fafc;
+      }
+      body.sc-theme-light .photo-input {
+        color: #475569;
+      }
+      
+      body.sc-theme-dark .stepper,
+      body.sc-theme-dark .form-panel,
+      body.sc-theme-dark .side-card,
+      body.sc-theme-dark .benefit {
+        background: rgba(30, 41, 59, 0.94);
+        border-color: #334155;
+      }
+      
+      body.sc-theme-glass .stepper,
+      body.sc-theme-glass .form-panel,
+      body.sc-theme-glass .side-card,
+      body.sc-theme-glass .benefit {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.14), rgba(59, 130, 246, 0.06));
+        border-color: rgba(191, 219, 254, 0.25);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+      }
+      
+      @media (max-width: 700px) {
+        .submit-heading {
+          align-items: flex-start;
+        }
+        .submit-heading-icon {
+          width: 50px;
+          height: 50px;
+          border-radius: 15px;
+          flex: 0 0 50px;
+        }
+        .submit-heading-icon svg {
+          width: 27px;
+          height: 27px;
+        }
+        .submit-heading h1 {
+          font-size: 24px;
+        }
+        .submit-heading p {
+          font-size: 13px;
+        }
+        .step-number {
+          width: 34px;
+          height: 34px;
+        }
+        .step:not(:last-child)::after {
+          top: 16px;
+        }
+        .form-panel,
+        .side-card {
+          border-radius: 17px;
+        }
+        .section-heading {
+          align-items: flex-start;
+        }
+        .section-icon {
+          width: 39px;
+          height: 39px;
+          flex: 0 0 39px;
+        }
+        .section-heading h2 {
+          font-size: 18px;
+        }
+      }
     </style>
   </head>
 
@@ -724,7 +971,12 @@
           </div>
 
           <div class="city-banner">
-            <strong>🌿 A Cleaner, Safer, Smarter City</strong>
+            <strong class="icon-text">
+              <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M20 4c-7.5.4-12.4 3.1-14.6 8.1-1.2 2.8-.8 5.5 1.1 7.4 1.9-1.9 4.2-3.5 7-4.9" />
+                <path d="M5 20c2.8-5.8 7.1-9.6 13-11.5" />
+              </svg><span>A Cleaner, Safer, Smarter City</span>
+            </strong>
             <small>Your small report can make a big difference.</small>
           </div>
         </header>
@@ -757,7 +1009,12 @@
 
               <section class="form-section">
                 <div class="section-heading">
-                  <div class="section-icon">📝</div>
+                  <div class="section-icon">
+                    <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M12 20h9" />
+                      <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z" />
+                    </svg>
+                  </div>
                   <div>
                     <h2>Complaint Details</h2>
                     <p>Tell us about the issue you are facing.</p>
@@ -826,7 +1083,13 @@
 
               <section class="form-section">
                 <div class="section-heading">
-                  <div class="section-icon">👷</div>
+                  <div class="section-icon">
+                    <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                      <circle cx="12" cy="8" r="4" />
+                      <path d="M4 21a8 8 0 0 1 16 0" />
+                      <path d="M8 5V3h8v2" />
+                    </svg>
+                  </div>
                   <div>
                     <h2>Worker Assignment</h2>
                     <p>Use Smart Auto Assign or manually choose an available worker.</p>
@@ -839,7 +1102,9 @@
 
                     <div class="assignment-card">
                       <div class="assignment-card-title">
-                        ⚡ Smart Auto Assign
+                        <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                          <path d="m13 2-8 12h7l-1 8 8-12h-7Z" />
+                        </svg><span>Smart Auto Assign</span>
                         <span class="smart-badge">Recommended</span>
                       </div>
 
@@ -851,7 +1116,12 @@
                     <input type="radio" name="assignment_mode" value="manual" id="manualAssignment" />
 
                     <div class="assignment-card">
-                      <div class="assignment-card-title">👤 Choose Worker Myself</div>
+                      <div class="assignment-card-title">
+                        <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                          <circle cx="12" cy="8" r="4" />
+                          <path d="M4 21a8 8 0 0 1 16 0" />
+                        </svg><span>Choose Worker Myself</span>
+                      </div>
 
                       <small>Open the available worker list and select a worker yourself.</small>
                     </div>
@@ -864,7 +1134,12 @@
                   <label class="label">Search Available Worker</label>
 
                   <div class="search">
-                    <span class="search-icon">⌕</span>
+                    <span class="search-icon">
+                      <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="11" cy="11" r="7" />
+                        <path d="m20 20-3.5-3.5" />
+                      </svg>
+                    </span>
                     <input class="input" id="workerSearch" placeholder="Search by name, username or Worker ID..." autocomplete="off" />
                   </div>
 
@@ -877,7 +1152,11 @@
                           {% if worker.photo %}
                             <img src="{{ worker.photo.url }}" alt="{{ worker.name }}" style="width:100%;height:100%;object-fit:cover;" />
                           {% else %}
-                            👷
+                            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                              <circle cx="12" cy="8" r="4" />
+                              <path d="M4 21a8 8 0 0 1 16 0" />
+                              <path d="M8 5V3h8v2" />
+                            </svg>
                           {% endif %}
                         </div>
 
@@ -901,7 +1180,12 @@
 
               <section class="form-section">
                 <div class="section-heading">
-                  <div class="section-icon">📍</div>
+                  <div class="section-icon">
+                    <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z" />
+                      <circle cx="12" cy="10" r="2.5" />
+                    </svg>
+                  </div>
                   <div>
                     <h2>Complaint Location</h2>
                     <p>Use your current location or select the exact place on the map.</p>
@@ -909,7 +1193,12 @@
                 </div>
 
                 <div class="location-buttons">
-                  <button type="button" class="btn btn-primary" id="currentLocationBtn">📍 Use My Current Location</button>
+                  <button type="button" class="btn btn-primary" id="currentLocationBtn">
+                    <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z" />
+                      <circle cx="12" cy="10" r="2.5" />
+                    </svg><span class="btn-label">Use My Current Location</span>
+                  </button>
                 </div>
 
                 <div id="map"></div>
@@ -928,7 +1217,12 @@
 
               <section class="form-section">
                 <div class="section-heading">
-                  <div class="section-icon">📷</div>
+                  <div class="section-icon">
+                    <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M4 7h3l2-3h6l2 3h3a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2Z" />
+                      <circle cx="12" cy="13" r="4" />
+                    </svg>
+                  </div>
                   <div>
                     <h2>Complaint Photo</h2>
                     <p>Take a clear photo or choose an image showing the problem.</p>
@@ -936,7 +1230,12 @@
                 </div>
 
                 <div class="photo-box">
-                  <div class="photo-symbol">📷</div>
+                  <div class="photo-symbol">
+                    <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M4 7h3l2-3h6l2 3h3a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2Z" />
+                      <circle cx="12" cy="13" r="4" />
+                    </svg>
+                  </div>
 
                   <strong style="color:#fff;">Add Problem Photo</strong>
 
@@ -952,54 +1251,100 @@
               </section>
 
               <div class="submit-actions">
-                <a class="btn btn-dark" href="{% url 'home' %}">← Cancel</a>
+                <a class="btn btn-dark" href="{% url 'home' %}">
+                  <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="m15 18-6-6 6-6" />
+                    <path d="M9 12h11" />
+                  </svg><span>Cancel</span>
+                </a>
 
-                <button type="submit" class="btn btn-primary">Continue to Payment →</button>
+                <button type="submit" class="btn btn-primary">
+                  <span>Continue to Payment</span><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="m9 18 6-6-6-6" />
+                    <path d="M4 12h11" />
+                  </svg>
+                </button>
               </div>
             </form>
           </section>
 
           <aside class="side-stack">
             <section class="side-card">
-              <h3>💡 Quick Tips</h3>
+              <h3 class="icon-text">
+                <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M9 18h6" />
+                  <path d="M10 22h4" />
+                  <path d="M8.5 15.5A7 7 0 1 1 15.5 15.5c-.9.7-1.5 1.5-1.5 2.5h-4c0-1-.6-1.8-1.5-2.5Z" />
+                </svg><span>Quick Tips</span>
+              </h3>
 
               <div class="tip-list">
                 <div class="tip">
-                  <span class="tip-check">✓</span>
+                  <span class="tip-check">
+                    <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="m5 12 4 4L19 6" />
+                    </svg>
+                  </span>
                   Use a clear and short complaint title.
                 </div>
 
                 <div class="tip">
-                  <span class="tip-check">✓</span>
+                  <span class="tip-check">
+                    <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="m5 12 4 4L19 6" />
+                    </svg>
+                  </span>
                   Provide the exact complaint location.
                 </div>
 
                 <div class="tip">
-                  <span class="tip-check">✓</span>
+                  <span class="tip-check">
+                    <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="m5 12 4 4L19 6" />
+                    </svg>
+                  </span>
                   Add a clear and relevant problem photo.
                 </div>
 
                 <div class="tip">
-                  <span class="tip-check">✓</span>
+                  <span class="tip-check">
+                    <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="m5 12 4 4L19 6" />
+                    </svg>
+                  </span>
                   Explain the issue properly in the description.
                 </div>
 
                 <div class="tip">
-                  <span class="tip-check">✓</span>
+                  <span class="tip-check">
+                    <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="m5 12 4 4L19 6" />
+                    </svg>
+                  </span>
                   Choose Emergency only for urgent problems.
                 </div>
               </div>
             </section>
 
             <section class="side-card">
-              <h3>🔎 Track Your Complaint</h3>
+              <h3 class="icon-text">
+                <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="11" cy="11" r="7" />
+                  <path d="m20 20-3.5-3.5" />
+                </svg><span>Track Your Complaint</span>
+              </h3>
               <p style="color:#bfdbfe;line-height:1.6;font-size:13px;">After submitting, use your Tracking ID to check the latest status.</p>
 
               <a href="{% url 'check_status' %}" class="btn btn-dark" style="width:100%;margin-top:8px;">Check Complaint Status</a>
             </section>
 
             <section class="side-card">
-              <h3>🌿 Report Today for a Better Tomorrow</h3>
+              <h3 class="icon-text">
+                <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M20 4c-7.5.4-12.4 3.1-14.6 8.1-1.2 2.8-.8 5.5 1.1 7.4 1.9-1.9 4.2-3.5 7-4.9" />
+                  <path d="M5 20c2.8-5.8 7.1-9.6 13-11.5" />
+                </svg><span>Report Today for a Better Tomorrow</span>
+              </h3>
               <p style="color:#bfdbfe;line-height:1.6;font-size:13px;">Your report helps keep the community cleaner, safer and better.</p>
             </section>
           </aside>
@@ -1007,17 +1352,35 @@
 
         <section class="benefits">
           <div class="benefit">
-            <strong>🛡️ Quick Response</strong>
+            <strong class="icon-text">
+              <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 3 4 6v5c0 5 3.4 8.4 8 10 4.6-1.6 8-5 8-10V6Z" />
+                <path d="m9 12 2 2 4-4" />
+              </svg><span>Quick Response</span>
+            </strong>
             <small>Your complaint reaches an available worker quickly.</small>
           </div>
 
           <div class="benefit">
-            <strong>📊 Track Progress</strong>
+            <strong class="icon-text">
+              <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 20V10" />
+                <path d="M10 20V4" />
+                <path d="M16 20v-7" />
+                <path d="M22 20H2" />
+              </svg><span>Track Progress</span>
+            </strong>
             <small>Follow complaint status and important updates.</small>
           </div>
 
           <div class="benefit">
-            <strong>🌱 Cleaner Community</strong>
+            <strong class="icon-text">
+              <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 22V10" />
+                <path d="M12 14c-5 0-8-3-8-8 5 0 8 3 8 8Z" />
+                <path d="M12 11c0-4 3-7 8-7 0 5-3 8-8 8" />
+              </svg><span>Cleaner Community</span>
+            </strong>
             <small>Together we can build a cleaner and safer community.</small>
           </div>
         </section>
@@ -1027,6 +1390,15 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script>
+      function setLocationButtonState(label, state) {
+        const button = document.getElementById('currentLocationBtn')
+        const icons = {
+          pin: `<svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>`,
+          check: `<svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>`
+        }
+        button.innerHTML = (state === 'selected' ? icons.check : icons.pin) + '<span class="btn-label">' + label + '</span>'
+      }
+      
       const smartAssignment = document.getElementById('smartAssignment')
       const manualAssignment = document.getElementById('manualAssignment')
       const smartInfo = document.getElementById('smartInfo')
@@ -1166,7 +1538,7 @@
       
         const button = document.getElementById('currentLocationBtn')
       
-        button.textContent = '✓ Current Location Selected'
+        setLocationButtonState('Current Location Selected', 'selected')
         button.disabled = false
       }
       
@@ -1179,7 +1551,7 @@
       
         if (!navigator.geolocation) {
           alert('Location is not supported in this browser.')
-          button.textContent = '📍 Use My Current Location'
+          setLocationButtonState('Use My Current Location', 'default')
           button.disabled = false
           return
         }
@@ -1188,7 +1560,7 @@
           function (position) {
             setLocation(position.coords.latitude, position.coords.longitude)
       
-            button.textContent = '✓ Current Location Selected'
+            setLocationButtonState('Current Location Selected', 'selected')
       
             button.disabled = false
           },
@@ -1196,7 +1568,7 @@
           function () {
             alert('Unable to get location. Please allow location permission or select location manually on the map.')
       
-            button.textContent = '📍 Use My Current Location'
+            setLocationButtonState('Use My Current Location', 'default')
       
             button.disabled = false
           },
@@ -1212,14 +1584,14 @@
       document.getElementById('currentLocationBtn').addEventListener('click', function () {
         const button = this
       
-        button.textContent = 'Finding Location...'
+        setLocationButtonState('Finding Location...', 'default')
         button.disabled = true
       
         if (typeof Android !== 'undefined' && typeof Android.getCurrentLocation === 'function') {
           try {
             Android.getCurrentLocation()
           } catch (error) {
-            button.textContent = '📍 Use My Current Location'
+            setLocationButtonState('Use My Current Location', 'default')
       
             button.disabled = false
       
