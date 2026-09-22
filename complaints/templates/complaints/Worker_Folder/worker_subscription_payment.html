@@ -122,7 +122,7 @@
           <div class="wp-reference">
             {% if plan.reference_price %}
               <s>₹{{ plan.reference_price }}</s>
-              <span class="wp-save">Save ₹{{ plan.saving }} vs ₹149 × {{ plan.interval_months }}</span>
+              <span class="wp-save">Save ₹{{ plan.saving }}</span>
             {% else %}
               Then ₹{{ plan.renewal_price }} per month
             {% endif %}
@@ -218,7 +218,7 @@
           Credits reset by 30-day cycle instead of being issued all at once. This keeps AI usage controlled across longer subscriptions. Cached duplicate results can still be reused without a new credit charge when eligible.
         </div>
         <div class="wp-note">
-          <strong>Current vs future features:</strong> Summary, Checklist and Reply Draft are current features. Any item marked planned is only a future direction and is not part of the guaranteed service today.
+          <strong>Current and planned features:</strong> Summary, Checklist and Reply Draft are current features. Any item marked planned is only a future direction and is not part of the guaranteed service today.
         </div>
       </section>
     </div>
