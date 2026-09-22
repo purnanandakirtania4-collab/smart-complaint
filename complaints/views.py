@@ -6158,7 +6158,7 @@ def terms_conditions(request):
             timezone.now()
         )
 
-        subscription.terms_version = '1.0'
+        subscription.terms_version = '2.0'
 
         if subscription.status == 'inactive':
 
@@ -6186,9 +6186,99 @@ def terms_conditions(request):
 # WORKER SUBSCRIPTION HELPERS
 # =========================================================
 
+WORKER_PRO_PLAN_DEFINITIONS = {
+    'monthly': {
+        'code': 'monthly',
+        'name': 'Worker Pro Monthly',
+        'short_name': 'Monthly',
+        'upfront_price': 49,
+        'renewal_price': 149,
+        'reference_price': None,
+        'saving': None,
+        'interval_months': 1,
+        'billing_label': 'month',
+        'renewal_copy': '₹149 every month after the introductory first month',
+        'ai_credits': 150,
+        'env_key': 'RAZORPAY_WORKER_PLAN_ID',
+        'total_count': 12,
+    },
+    'four_month': {
+        'code': 'four_month',
+        'name': 'Worker Pro 4 Months',
+        'short_name': '4 Months',
+        'upfront_price': 589,
+        'renewal_price': 589,
+        'reference_price': 596,
+        'saving': 7,
+        'interval_months': 4,
+        'billing_label': '4 months',
+        'renewal_copy': '₹589 every 4 months',
+        'ai_credits': 155,
+        'env_key': 'RAZORPAY_WORKER_PLAN_4M_ID',
+        'total_count': 6,
+    },
+    'yearly': {
+        'code': 'yearly',
+        'name': 'Worker Pro Yearly',
+        'short_name': '1 Year',
+        'upfront_price': 1769,
+        'renewal_price': 1769,
+        'reference_price': 1788,
+        'saving': 19,
+        'interval_months': 12,
+        'billing_label': 'year',
+        'renewal_copy': '₹1769 every 12 months',
+        'ai_credits': 160,
+        'env_key': 'RAZORPAY_WORKER_PLAN_YEARLY_ID',
+        'total_count': 5,
+    },
+}
+
+
+def _setting_or_env(name):
+    return (
+        getattr(settings, name, '')
+        or os.environ.get(name, '')
+    ).strip()
+
+
+def _worker_subscription_config():
+    plans = {}
+
+    for code, definition in WORKER_PRO_PLAN_DEFINITIONS.items():
+        plan = dict(definition)
+        plan['plan_id'] = _setting_or_env(
+            definition['env_key']
+        )
+        plan['configured'] = bool(plan['plan_id'])
+        plans[code] = plan
+
+    return {
+        'key_id': _setting_or_env('RAZORPAY_KEY_ID'),
+        'key_secret': _setting_or_env('RAZORPAY_KEY_SECRET'),
+        'webhook_secret': _setting_or_env('RAZORPAY_WEBHOOK_SECRET'),
+        'plans': plans,
+    }
+
+
+def _add_calendar_months(dt, months):
+    local_dt = timezone.localtime(dt)
+    month_index = (local_dt.month - 1) + int(months)
+    year = local_dt.year + (month_index // 12)
+    month = (month_index % 12) + 1
+    last_day = calendar.monthrange(year, month)[1]
+    day = min(local_dt.day, last_day)
+
+    return local_dt.replace(
+        year=year,
+        month=month,
+        day=day,
+    )
+
+
 def _razorpay_timestamp_to_datetime(value):
     """Convert a Razorpay Unix timestamp to a timezone-aware datetime."""
-    if value in (None, ""):
+    if value in (None, ''):
         return None
 
     try:
@@ -6198,6 +6288,19 @@ def _razorpay_timestamp_to_datetime(value):
         )
     except (TypeError, ValueError, OSError, OverflowError):
         return None
+
+
+def _plan_code_from_gateway_plan_id(plan_id):
+    if not plan_id:
+        return None
+
+    config = _worker_subscription_config()
+
+    for code, plan in config['plans'].items():
+        if plan['plan_id'] and plan['plan_id'] == plan_id:
+            return code
+
+    return None
 
 
 def _sync_worker_subscription_from_razorpay(
@@ -6213,115 +6316,64 @@ def _sync_worker_subscription_from_razorpay(
     """
 
     razorpay_status = str(
-        razorpay_subscription.get(
-            'status',
-            ''
-        )
+        razorpay_subscription.get('status', '')
     ).strip().lower()
 
-    subscription.last_gateway_status = (
-        razorpay_status
-    )
-    subscription.last_synced_at = (
-        timezone.now()
-    )
+    subscription.last_gateway_status = razorpay_status
+    subscription.last_synced_at = timezone.now()
 
-    customer_id = (
-        razorpay_subscription.get(
-            'customer_id'
-        )
-        or ''
-    )
-
-    plan_id = (
-        razorpay_subscription.get(
-            'plan_id'
-        )
-        or ''
-    )
+    customer_id = razorpay_subscription.get('customer_id') or ''
+    plan_id = razorpay_subscription.get('plan_id') or ''
 
     if customer_id:
-        subscription.razorpay_customer_id = (
-            customer_id
-        )
+        subscription.razorpay_customer_id = customer_id
 
     if plan_id:
-        subscription.razorpay_plan_id = (
-            plan_id
-        )
+        subscription.razorpay_plan_id = plan_id
+        detected_plan_code = _plan_code_from_gateway_plan_id(plan_id)
+        if detected_plan_code:
+            subscription.plan_code = detected_plan_code
 
     now = timezone.now()
 
-    current_start = (
-        _razorpay_timestamp_to_datetime(
-            razorpay_subscription.get(
-                'current_start'
-            )
-        )
+    current_start = _razorpay_timestamp_to_datetime(
+        razorpay_subscription.get('current_start')
     )
-
-    current_end = (
-        _razorpay_timestamp_to_datetime(
-            razorpay_subscription.get(
-                'current_end'
-            )
-        )
+    current_end = _razorpay_timestamp_to_datetime(
+        razorpay_subscription.get('current_end')
     )
-
-    charge_at = (
-        _razorpay_timestamp_to_datetime(
-            razorpay_subscription.get(
-                'charge_at'
-            )
-        )
+    charge_at = _razorpay_timestamp_to_datetime(
+        razorpay_subscription.get('charge_at')
     )
 
     if current_start:
-        subscription.current_period_start = (
-            current_start
-        )
+        subscription.current_period_start = current_start
 
     if current_end:
-        subscription.current_period_end = (
-            current_end
-        )
+        subscription.current_period_end = current_end
 
     if charge_at:
-        subscription.next_billing_at = (
-            charge_at
-        )
+        subscription.next_billing_at = charge_at
 
-    if razorpay_status in {
-        'authenticated',
-        'active',
-    }:
+    if razorpay_status in {'authenticated', 'active'}:
         subscription.status = 'active'
 
         if not subscription.started_at:
             subscription.started_at = now
 
         if not subscription.current_period_start:
-            subscription.current_period_start = (
-                subscription.started_at
-            )
+            subscription.current_period_start = subscription.started_at
 
         if (
             not subscription.current_period_end
             and subscription.next_billing_at
         ):
-            subscription.current_period_end = (
-                subscription.next_billing_at
-            )
+            subscription.current_period_end = subscription.next_billing_at
 
         if not subscription.cancel_at_period_end:
             subscription.cancelled_at = None
 
-    elif razorpay_status in {
-        'created',
-        'pending',
-        'halted',
-        'paused',
-    }:
+    elif razorpay_status in {'created', 'pending', 'halted', 'paused'}:
         subscription.status = 'pending'
 
     elif razorpay_status == 'cancelled':
@@ -6330,7 +6382,6 @@ def _sync_worker_subscription_from_razorpay(
             and subscription.current_period_end
             and subscription.current_period_end > now
         ):
-            # Future renewal is off, but the worker keeps already-paid access.
             subscription.status = 'active'
             subscription.next_billing_at = None
         else:
@@ -6339,16 +6390,10 @@ def _sync_worker_subscription_from_razorpay(
         if not subscription.cancelled_at:
             subscription.cancelled_at = now
 
-    elif razorpay_status in {
-        'completed',
-        'expired',
-    }:
+    elif razorpay_status in {'completed', 'expired'}:
         subscription.status = 'expired'
         subscription.next_billing_at = None
 
-    # Once a scheduled cancellation period has ended,
-    # local access must stop even if this request occurs before
-    # a later webhook reaches us.
     if (
         subscription.cancel_at_period_end
         and subscription.current_period_end
@@ -6360,58 +6405,7 @@ def _sync_worker_subscription_from_razorpay(
     subscription.save()
 
 
-def _worker_subscription_config():
-    return {
-        'key_id': (
-            getattr(
-                settings,
-                'RAZORPAY_KEY_ID',
-                '',
-            )
-            or os.environ.get(
-                'RAZORPAY_KEY_ID',
-                '',
-            )
-        ).strip(),
-        'key_secret': (
-            getattr(
-                settings,
-                'RAZORPAY_KEY_SECRET',
-                '',
-            )
-            or os.environ.get(
-                'RAZORPAY_KEY_SECRET',
-                '',
-            )
-        ).strip(),
-        'plan_id': (
-            getattr(
-                settings,
-                'RAZORPAY_WORKER_PLAN_ID',
-                '',
-            )
-            or os.environ.get(
-                'RAZORPAY_WORKER_PLAN_ID',
-                '',
-            )
-        ).strip(),
-        'webhook_secret': (
-            getattr(
-                settings,
-                'RAZORPAY_WEBHOOK_SECRET',
-                '',
-            )
-            or os.environ.get(
-                'RAZORPAY_WEBHOOK_SECRET',
-                '',
-            )
-        ).strip(),
-    }
-
-
-def _fetch_and_sync_worker_subscription(
-    subscription,
-):
+def _fetch_and_sync_worker_subscription(subscription):
     config = _worker_subscription_config()
 
     if (
@@ -6422,16 +6416,11 @@ def _fetch_and_sync_worker_subscription(
         return None
 
     client = razorpay.Client(
-        auth=(
-            config['key_id'],
-            config['key_secret'],
-        )
+        auth=(config['key_id'], config['key_secret'])
     )
 
-    gateway_subscription = (
-        client.subscription.fetch(
-            subscription.razorpay_subscription_id
-        )
+    gateway_subscription = client.subscription.fetch(
+        subscription.razorpay_subscription_id
     )
 
     _sync_worker_subscription_from_razorpay(
@@ -6442,42 +6431,32 @@ def _fetch_and_sync_worker_subscription(
     return gateway_subscription
 
 
+def _worker_plan_template_rows(config):
+    rows = []
+    for code in ('monthly', 'four_month', 'yearly'):
+        rows.append(dict(config['plans'][code]))
+    return rows
+
+
 # =========================================================
-# WORKER SUBSCRIPTION PAYMENT
-# ₹49 NOW + ₹149/MONTH FROM NEXT MONTH
+# WORKER SUBSCRIPTION PAYMENT - THREE AUTOPAY PLANS
 # =========================================================
 
 @login_required(login_url='worker_login')
 def worker_subscription_payment(request):
 
     try:
-        worker = (
-            request.user.worker_profile
-        )
-
+        worker = request.user.worker_profile
     except WorkerProfile.DoesNotExist:
-        messages.error(
-            request,
-            'Worker access required.'
-        )
-        return redirect(
-            'worker_login'
-        )
+        messages.error(request, 'Worker access required.')
+        return redirect('worker_login')
 
     if not worker.is_approved:
-        messages.error(
-            request,
-            'Your worker account is not approved.'
-        )
-        return redirect(
-            'worker_login'
-        )
+        messages.error(request, 'Your worker account is not approved.')
+        return redirect('worker_login')
 
-    subscription, created = (
-        WorkerSubscription.objects
-        .get_or_create(
-            worker=worker
-        )
+    subscription, created = WorkerSubscription.objects.get_or_create(
+        worker=worker
     )
 
     if not subscription.terms_accepted:
@@ -6485,15 +6464,9 @@ def worker_subscription_payment(request):
             request,
             'Please accept the Terms & Conditions first.'
         )
-        return redirect(
-            'terms_conditions'
-        )
+        return redirect('terms_conditions')
 
-    config = (
-        _worker_subscription_config()
-    )
-
-    gateway_subscription = None
+    config = _worker_subscription_config()
     gateway_sync_error = ''
 
     if (
@@ -6502,17 +6475,9 @@ def worker_subscription_payment(request):
         and config['key_secret']
     ):
         try:
-            gateway_subscription = (
-                _fetch_and_sync_worker_subscription(
-                    subscription
-                )
-            )
-
+            _fetch_and_sync_worker_subscription(subscription)
         except Exception as error:
-            print(
-                'RAZORPAY SUBSCRIPTION SYNC ERROR:',
-                error,
-            )
+            print('RAZORPAY SUBSCRIPTION SYNC ERROR:', error)
             gateway_sync_error = (
                 'Live subscription status could not be refreshed right now.'
             )
@@ -6524,165 +6489,159 @@ def worker_subscription_payment(request):
                 request,
                 'Worker Pro is already active for this account.'
             )
-            return redirect(
-                'worker_subscription_payment'
+            return redirect('worker_subscription_payment')
+
+        if subscription.terms_version != '2.0':
+            messages.info(
+                request,
+                'Please review the updated multi-plan subscription terms.'
             )
+            return redirect('terms_conditions')
+
+        selected_code = (
+            request.POST.get('plan_code', '')
+            .strip()
+            .lower()
+        )
+
+        selected_plan = config['plans'].get(selected_code)
+
+        if not selected_plan:
+            messages.error(request, 'Please select a valid Worker Pro plan.')
+            return redirect('worker_subscription_payment')
 
         if (
             not config['key_id']
             or not config['key_secret']
-            or not config['plan_id']
+            or not selected_plan['plan_id']
         ):
             messages.error(
                 request,
-                'Worker Pro payment configuration is incomplete.'
+                f"{selected_plan['name']} payment configuration is incomplete."
             )
-            return redirect(
-                'worker_subscription_payment'
-            )
+            return redirect('worker_subscription_payment')
 
         try:
             client = razorpay.Client(
-                auth=(
-                    config['key_id'],
-                    config['key_secret'],
-                )
+                auth=(config['key_id'], config['key_secret'])
             )
 
-            # Reuse a still-open Razorpay subscription instead of creating
-            # duplicates when a worker taps the payment button again.
             if subscription.razorpay_subscription_id:
                 try:
-                    existing = (
-                        client.subscription.fetch(
-                            subscription.razorpay_subscription_id
-                        )
+                    existing = client.subscription.fetch(
+                        subscription.razorpay_subscription_id
                     )
-
                     _sync_worker_subscription_from_razorpay(
                         subscription,
                         existing,
                     )
 
                     existing_status = str(
-                        existing.get(
-                            'status',
-                            ''
-                        )
+                        existing.get('status', '')
                     ).lower()
+                    existing_plan_id = str(
+                        existing.get('plan_id', '')
+                    ).strip()
+                    short_url = existing.get('short_url') or ''
 
-                    short_url = (
-                        existing.get(
-                            'short_url'
-                        )
-                        or ''
+                    if existing_status in {'authenticated', 'active'}:
+                        messages.success(request, 'Worker Pro is active.')
+                        return redirect('worker_subscription_payment')
+
+                    same_plan = (
+                        existing_plan_id == selected_plan['plan_id']
                     )
 
-                    if existing_status in {
-                        'authenticated',
-                        'active',
-                    }:
-                        messages.success(
-                            request,
-                            'Worker Pro is active.'
-                        )
-                        return redirect(
-                            'worker_subscription_payment'
-                        )
-
                     if (
-                        existing_status
-                        in {
-                            'created',
-                            'pending',
-                            'halted',
-                        }
+                        existing_status in {'created', 'pending', 'halted'}
+                        and same_plan
                         and short_url
                     ):
-                        return redirect(
-                            short_url
+                        return redirect(short_url)
+
+                    if (
+                        existing_status in {'created', 'pending', 'halted'}
+                        and not same_plan
+                    ):
+                        # No paid entitlement exists yet. Cancel the abandoned
+                        # pending link before creating the newly selected plan.
+                        client.subscription.cancel(
+                            subscription.razorpay_subscription_id
+                        )
+                        subscription.razorpay_subscription_id = ''
+                        subscription.razorpay_plan_id = ''
+                        subscription.last_gateway_status = 'cancelled'
+                        subscription.save(
+                            update_fields=[
+                                'razorpay_subscription_id',
+                                'razorpay_plan_id',
+                                'last_gateway_status',
+                                'updated_at',
+                            ]
                         )
 
                 except Exception as error:
-                    print(
-                        'RAZORPAY EXISTING SUBSCRIPTION ERROR:',
-                        error,
+                    print('RAZORPAY EXISTING SUBSCRIPTION ERROR:', error)
+                    messages.error(
+                        request,
+                        (
+                            'Your existing Razorpay subscription could not be '
+                            'verified right now. No new subscription was created.'
+                        )
                     )
+                    return redirect('worker_subscription_payment')
 
             now = timezone.now()
-
-            first_regular_billing_date = (
-                add_one_month(
-                    now
-                )
+            first_regular_billing_date = _add_calendar_months(
+                now,
+                selected_plan['interval_months'],
             )
 
-            start_at_timestamp = int(
-                first_regular_billing_date.timestamp()
-            )
-
-            # Existing business model:
-            # ₹49 upfront introductory first period.
-            # ₹149/month recurring plan begins one month later.
-            gateway_subscription = (
-                client.subscription.create(
-                    {
-                        'plan_id':
-                            config['plan_id'],
-                        'total_count':
-                            12,
-                        'quantity':
-                            1,
-                        'customer_notify':
-                            True,
-                        'start_at':
-                            start_at_timestamp,
-                        'addons': [
-                            {
-                                'item': {
-                                    'name':
-                                        'Worker Pro introductory first month',
-                                    'amount':
-                                        4900,
-                                    'currency':
-                                        'INR',
-                                }
+            gateway_subscription = client.subscription.create(
+                {
+                    'plan_id': selected_plan['plan_id'],
+                    'total_count': selected_plan['total_count'],
+                    'quantity': 1,
+                    'customer_notify': True,
+                    'start_at': int(first_regular_billing_date.timestamp()),
+                    'addons': [
+                        {
+                            'item': {
+                                'name': (
+                                    f"{selected_plan['name']} first paid period"
+                                ),
+                                'amount': selected_plan['upfront_price'] * 100,
+                                'currency': 'INR',
                             }
-                        ],
-                        'notes': {
-                            'worker_id':
-                                str(
-                                    worker.id
-                                ),
-                            'worker_name':
-                                worker.name,
-                            'django_user_id':
-                                str(
-                                    request.user.id
-                                ),
-                            'subscription_type':
-                                'worker_pro_monthly',
-                            'intro_price_inr':
-                                '49',
-                            'regular_price_inr':
-                                '149',
-                        },
-                    }
-                )
+                        }
+                    ],
+                    'notes': {
+                        'worker_id': str(worker.id),
+                        'worker_name': worker.name,
+                        'django_user_id': str(request.user.id),
+                        'subscription_type': 'worker_pro',
+                        'plan_code': selected_code,
+                        'upfront_price_inr': str(
+                            selected_plan['upfront_price']
+                        ),
+                        'renewal_price_inr': str(
+                            selected_plan['renewal_price']
+                        ),
+                        'billing_interval_months': str(
+                            selected_plan['interval_months']
+                        ),
+                        'ai_credits_per_30_days': str(
+                            selected_plan['ai_credits']
+                        ),
+                    },
+                }
             )
 
             subscription_id = str(
-                gateway_subscription.get(
-                    'id',
-                    ''
-                )
+                gateway_subscription.get('id', '')
             ).strip()
-
             short_url = str(
-                gateway_subscription.get(
-                    'short_url',
-                    ''
-                )
+                gateway_subscription.get('short_url', '')
             ).strip()
 
             if not subscription_id:
@@ -6690,43 +6649,28 @@ def worker_subscription_payment(request):
                     request,
                     'Razorpay did not return a subscription ID.'
                 )
-                return redirect(
-                    'worker_subscription_payment'
-                )
+                return redirect('worker_subscription_payment')
 
-            subscription.razorpay_subscription_id = (
-                subscription_id
-            )
-            subscription.razorpay_plan_id = (
-                config['plan_id']
-            )
-            subscription.first_month_price = 49
-            subscription.monthly_price = 149
+            subscription.plan_code = selected_code
+            subscription.razorpay_subscription_id = subscription_id
+            subscription.razorpay_plan_id = selected_plan['plan_id']
+            subscription.first_month_price = selected_plan['upfront_price']
+            subscription.monthly_price = selected_plan['renewal_price']
             subscription.status = 'pending'
             subscription.started_at = None
             subscription.current_period_start = None
             subscription.current_period_end = None
-            subscription.next_billing_at = (
-                first_regular_billing_date
-            )
+            subscription.next_billing_at = first_regular_billing_date
             subscription.cancelled_at = None
             subscription.cancel_at_period_end = False
             subscription.last_gateway_status = str(
-                gateway_subscription.get(
-                    'status',
-                    'created',
-                )
+                gateway_subscription.get('status', 'created')
             ).lower()
-            subscription.last_synced_at = (
-                timezone.now()
-            )
-
+            subscription.last_synced_at = timezone.now()
             subscription.save()
 
             if short_url:
-                return redirect(
-                    short_url
-                )
+                return redirect(short_url)
 
             messages.error(
                 request,
@@ -6735,16 +6679,10 @@ def worker_subscription_payment(request):
                     'a payment link. Refresh status before trying again.'
                 )
             )
-
-            return redirect(
-                'worker_subscription_payment'
-            )
+            return redirect('worker_subscription_payment')
 
         except razorpay.errors.BadRequestError as error:
-            print(
-                'RAZORPAY BAD REQUEST ERROR:',
-                error,
-            )
+            print('RAZORPAY BAD REQUEST ERROR:', error)
             messages.error(
                 request,
                 (
@@ -6752,61 +6690,39 @@ def worker_subscription_payment(request):
                     'No Worker Pro access was activated.'
                 )
             )
-
         except razorpay.errors.ServerError as error:
-            print(
-                'RAZORPAY SERVER ERROR:',
-                error,
-            )
+            print('RAZORPAY SERVER ERROR:', error)
             messages.error(
                 request,
-                (
-                    'Razorpay is temporarily unavailable. '
-                    'Please try again later.'
-                )
+                'Razorpay is temporarily unavailable. Please try again later.'
             )
-
         except Exception as error:
-            print(
-                'RAZORPAY GENERAL ERROR:',
-                error,
-            )
+            print('RAZORPAY GENERAL ERROR:', error)
             messages.error(
                 request,
-                (
-                    'Unable to start Worker Pro payment. '
-                    'No access was activated.'
-                )
+                'Unable to start Worker Pro payment. No access was activated.'
             )
 
-        return redirect(
-            'worker_subscription_payment'
-        )
+        return redirect('worker_subscription_payment')
+
+    current_plan = config['plans'].get(
+        subscription.plan_code,
+        config['plans']['monthly'],
+    )
 
     return render(
         request,
         'complaints/Worker_Folder/worker_subscription_payment.html',
         {
-            'worker':
-                worker,
-            'subscription':
-                subscription,
-            'first_month_price':
-                49,
-            'monthly_price':
-                149,
-            'gateway_sync_error':
-                gateway_sync_error,
-            'worker_pro_configured':
-                bool(
-                    config['key_id']
-                    and config['key_secret']
-                    and config['plan_id']
-                ),
-            'webhook_configured':
-                bool(
-                    config['webhook_secret']
-                ),
+            'worker': worker,
+            'subscription': subscription,
+            'worker_pro_plans': _worker_plan_template_rows(config),
+            'current_plan': current_plan,
+            'gateway_sync_error': gateway_sync_error,
+            'worker_pro_gateway_configured': bool(
+                config['key_id'] and config['key_secret']
+            ),
+            'webhook_configured': bool(config['webhook_secret']),
         }
     )
 
@@ -6814,35 +6730,18 @@ def worker_subscription_payment(request):
 @login_required(login_url='worker_login')
 @require_POST
 def worker_subscription_sync(request):
-
     try:
-        worker = (
-            request.user.worker_profile
-        )
-
+        worker = request.user.worker_profile
     except WorkerProfile.DoesNotExist:
-        messages.error(
-            request,
-            'Worker access required.'
-        )
-        return redirect(
-            'worker_login'
-        )
+        messages.error(request, 'Worker access required.')
+        return redirect('worker_login')
 
     if not worker.is_approved:
-        messages.error(
-            request,
-            'Approved worker access is required.'
-        )
-        return redirect(
-            'worker_login'
-        )
+        messages.error(request, 'Approved worker access is required.')
+        return redirect('worker_login')
 
-    subscription, created = (
-        WorkerSubscription.objects
-        .get_or_create(
-            worker=worker
-        )
+    subscription, created = WorkerSubscription.objects.get_or_create(
+        worker=worker
     )
 
     if not subscription.razorpay_subscription_id:
@@ -6850,72 +6749,41 @@ def worker_subscription_sync(request):
             request,
             'No Razorpay Worker Pro subscription exists yet.'
         )
-        return redirect(
-            'worker_subscription_payment'
-        )
+        return redirect('worker_subscription_payment')
 
     try:
-        _fetch_and_sync_worker_subscription(
-            subscription
-        )
-
+        _fetch_and_sync_worker_subscription(subscription)
         messages.success(
             request,
             'Worker Pro status refreshed securely from Razorpay.'
         )
-
     except Exception as error:
-        print(
-            'WORKER SUBSCRIPTION MANUAL SYNC ERROR:',
-            error,
-        )
+        print('WORKER SUBSCRIPTION MANUAL SYNC ERROR:', error)
         messages.error(
             request,
             'Could not refresh the Razorpay subscription right now.'
         )
 
-    return redirect(
-        'worker_subscription_payment'
-    )
+    return redirect('worker_subscription_payment')
 
 
 @login_required(login_url='worker_login')
 @require_POST
 def worker_subscription_cancel_renewal(request):
-    """
-    Turn off future recurring renewal at the end of the current paid cycle.
-
-    Access remains usable through current_period_end.
-    """
+    """Turn off future recurring renewal while preserving paid access."""
 
     try:
-        worker = (
-            request.user.worker_profile
-        )
-
+        worker = request.user.worker_profile
     except WorkerProfile.DoesNotExist:
-        messages.error(
-            request,
-            'Worker access required.'
-        )
-        return redirect(
-            'worker_login'
-        )
+        messages.error(request, 'Worker access required.')
+        return redirect('worker_login')
 
     if not worker.is_approved:
-        messages.error(
-            request,
-            'Approved worker access is required.'
-        )
-        return redirect(
-            'worker_login'
-        )
+        messages.error(request, 'Approved worker access is required.')
+        return redirect('worker_login')
 
-    subscription, created = (
-        WorkerSubscription.objects
-        .get_or_create(
-            worker=worker
-        )
+    subscription, created = WorkerSubscription.objects.get_or_create(
+        worker=worker
     )
 
     if not subscription.razorpay_subscription_id:
@@ -6923,92 +6791,39 @@ def worker_subscription_cancel_renewal(request):
             request,
             'No Razorpay Worker Pro subscription is available to cancel.'
         )
-        return redirect(
-            'worker_subscription_payment'
-        )
+        return redirect('worker_subscription_payment')
 
     if subscription.cancel_at_period_end:
-        messages.info(
-            request,
-            'Automatic renewal is already turned off.'
-        )
-        return redirect(
-            'worker_subscription_payment'
-        )
+        messages.info(request, 'Automatic renewal is already turned off.')
+        return redirect('worker_subscription_payment')
 
-    confirm = (
-        request.POST.get(
-            'confirm_cancel',
-            ''
-        )
-        .strip()
-        .lower()
-    )
-
+    confirm = request.POST.get('confirm_cancel', '').strip().lower()
     if confirm != 'yes':
-        messages.error(
-            request,
-            'Cancellation confirmation was not received.'
-        )
-        return redirect(
-            'worker_subscription_payment'
-        )
+        messages.error(request, 'Cancellation confirmation was not received.')
+        return redirect('worker_subscription_payment')
 
-    config = (
-        _worker_subscription_config()
-    )
-
-    if (
-        not config['key_id']
-        or not config['key_secret']
-    ):
-        messages.error(
-            request,
-            'Razorpay configuration is incomplete.'
-        )
-        return redirect(
-            'worker_subscription_payment'
-        )
+    config = _worker_subscription_config()
+    if not config['key_id'] or not config['key_secret']:
+        messages.error(request, 'Razorpay configuration is incomplete.')
+        return redirect('worker_subscription_payment')
 
     try:
         client = razorpay.Client(
-            auth=(
-                config['key_id'],
-                config['key_secret'],
-            )
+            auth=(config['key_id'], config['key_secret'])
         )
-
-        # Official Razorpay Python SDK supports
-        # cancel_at_cycle_end=True.
-        gateway_subscription = (
-            client.subscription.cancel(
-                subscription.razorpay_subscription_id,
-                {
-                    'cancel_at_cycle_end':
-                        True,
-                },
-            )
+        gateway_subscription = client.subscription.cancel(
+            subscription.razorpay_subscription_id,
+            {'cancel_at_cycle_end': True},
         )
 
         subscription.cancel_at_period_end = True
-        subscription.cancelled_at = (
-            timezone.now()
-        )
+        subscription.cancelled_at = timezone.now()
 
-        # Preserve current paid access even if the gateway already reports
-        # the subscription as cancelled after scheduling cycle-end cancellation.
-        gateway_current_end = (
-            _razorpay_timestamp_to_datetime(
-                gateway_subscription.get(
-                    'current_end'
-                )
-            )
+        gateway_current_end = _razorpay_timestamp_to_datetime(
+            gateway_subscription.get('current_end')
         )
-
         if gateway_current_end:
-            subscription.current_period_end = (
-                gateway_current_end
-            )
+            subscription.current_period_end = gateway_current_end
 
         subscription.next_billing_at = None
         subscription.last_gateway_status = str(
@@ -7017,9 +6832,7 @@ def worker_subscription_cancel_renewal(request):
                 subscription.last_gateway_status,
             )
         ).lower()
-        subscription.last_synced_at = (
-            timezone.now()
-        )
+        subscription.last_synced_at = timezone.now()
 
         if (
             subscription.current_period_end
@@ -7034,17 +6847,14 @@ def worker_subscription_cancel_renewal(request):
         messages.success(
             request,
             (
-                'Automatic renewal is turned off. '
-                'Your already-paid Worker Pro access remains available '
-                'until the current period ends.'
+                'Automatic renewal is turned off. Your already-paid '
+                'Worker Pro access remains available until the current '
+                'billing period ends.'
             )
         )
 
     except razorpay.errors.BadRequestError as error:
-        print(
-            'RAZORPAY CANCEL BAD REQUEST:',
-            error,
-        )
+        print('RAZORPAY CANCEL BAD REQUEST:', error)
         messages.error(
             request,
             (
@@ -7052,12 +6862,8 @@ def worker_subscription_cancel_renewal(request):
                 'Your subscription was not changed.'
             )
         )
-
     except Exception as error:
-        print(
-            'RAZORPAY CANCEL ERROR:',
-            error,
-        )
+        print('RAZORPAY CANCEL ERROR:', error)
         messages.error(
             request,
             (
@@ -7066,9 +6872,7 @@ def worker_subscription_cancel_renewal(request):
             )
         )
 
-    return redirect(
-        'worker_subscription_payment'
-    )
+    return redirect('worker_subscription_payment')
 
 
 # =========================================================

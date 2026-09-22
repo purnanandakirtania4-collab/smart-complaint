@@ -3,389 +3,70 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Worker Pro | Smart Complaint</title>
-
+  <title>Worker Pro Plans | Smart Complaint</title>
   {% include 'complaints/base_style.html' %}
 
   <style>
     * { box-sizing: border-box; }
+    .wp-page { width:min(1080px,calc(100% - 26px)); margin:0 auto; padding:86px 0 48px; }
+    .wp-icon { width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+    .wp-back { display:inline-flex; align-items:center; gap:7px; margin-bottom:14px; color:#bfdbfe; text-decoration:none; font-size:11px; font-weight:900; }
+    .wp-alert { margin-bottom:12px; padding:11px 12px; border:1px solid rgba(248,113,113,.20); border-radius:11px; background:rgba(239,68,68,.08); color:#fecaca; font-size:10px; line-height:1.55; }
+    .wp-hero { padding:25px; border:1px solid rgba(129,140,248,.25); border-radius:22px; background:radial-gradient(circle at 88% 12%,rgba(99,102,241,.20),transparent 30%),rgba(15,45,82,.78); color:#fff; box-shadow:0 22px 58px rgba(2,6,23,.22); }
+    .wp-eyebrow { display:inline-flex; align-items:center; gap:7px; padding:6px 9px; border:1px solid rgba(199,210,254,.18); border-radius:999px; background:rgba(99,102,241,.10); color:#c7d2fe; font-size:9px; font-weight:950; letter-spacing:.05em; text-transform:uppercase; }
+    .wp-title { margin:13px 0 0; font-size:clamp(27px,5vw,42px); line-height:1.06; }
+    .wp-sub { max-width:760px; margin:11px 0 0; color:#cbd5e1; font-size:11px; line-height:1.7; }
+    .wp-trust { display:flex; align-items:flex-start; gap:9px; margin-top:15px; padding:11px 12px; border:1px solid rgba(125,211,252,.16); border-radius:11px; background:rgba(14,165,233,.06); color:#bfdbfe; font-size:9px; line-height:1.55; }
+    .wp-status-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:1px; margin-top:16px; border:1px solid rgba(255,255,255,.08); border-radius:14px; overflow:hidden; background:rgba(255,255,255,.05); }
+    .wp-stat { padding:13px 10px; background:rgba(2,6,23,.16); text-align:center; }
+    .wp-stat strong { display:block; color:#fff; font-size:12px; }
+    .wp-stat span { display:block; margin-top:4px; color:#94a3b8; font-size:8px; font-weight:800; }
 
-    .wp-page {
-      width: min(960px, calc(100% - 28px));
-      margin: 0 auto;
-      padding: 86px 0 46px;
-    }
+    .wp-section-title { margin:22px 0 10px; color:#fff; font-size:16px; }
+    .wp-plans { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:13px; }
+    .wp-plan { position:relative; display:flex; flex-direction:column; min-height:390px; padding:18px; border:1px solid rgba(148,163,184,.20); border-radius:18px; background:rgba(15,45,82,.70); color:#fff; overflow:hidden; }
+    .wp-plan.is-current { border-color:rgba(129,140,248,.72); box-shadow:0 0 0 1px rgba(129,140,248,.18),0 18px 45px rgba(2,6,23,.20); }
+    .wp-plan-badge { width:fit-content; padding:5px 8px; border:1px solid rgba(165,180,252,.20); border-radius:999px; background:rgba(99,102,241,.10); color:#c7d2fe; font-size:8px; font-weight:900; }
+    .wp-plan h2 { margin:11px 0 0; font-size:18px; }
+    .wp-price { margin-top:13px; font-size:31px; font-weight:950; line-height:1; }
+    .wp-price small { color:#cbd5e1; font-size:10px; font-weight:800; }
+    .wp-reference { min-height:18px; margin-top:7px; color:#94a3b8; font-size:9px; }
+    .wp-reference s { margin-right:5px; }
+    .wp-save { color:#86efac; font-weight:900; }
+    .wp-renew { margin-top:9px; padding:9px 10px; border:1px solid rgba(125,211,252,.13); border-radius:10px; background:rgba(14,165,233,.05); color:#bfdbfe; font-size:9px; line-height:1.5; }
+    .wp-credit { margin-top:11px; color:#fff; font-size:11px; font-weight:900; }
+    .wp-features { display:grid; gap:8px; margin:12px 0 0; padding:0; list-style:none; }
+    .wp-features li { display:flex; align-items:flex-start; gap:7px; color:#cbd5e1; font-size:9px; line-height:1.45; }
+    .wp-features .wp-icon { width:14px; height:14px; flex:0 0 auto; color:#a5b4fc; }
+    .wp-future { margin-top:11px; padding-top:10px; border-top:1px solid rgba(255,255,255,.07); color:#94a3b8; font-size:8px; line-height:1.5; }
+    .wp-plan form { margin-top:auto; }
+    .wp-btn { width:100%; min-height:42px; margin-top:15px; display:inline-flex; align-items:center; justify-content:center; gap:7px; border:0; border-radius:10px; background:#fff; color:#312e81; cursor:pointer; font:inherit; font-size:10px; font-weight:950; }
+    .wp-btn:disabled { opacity:.48; cursor:not-allowed; }
+    .wp-current-label { width:100%; min-height:42px; margin-top:15px; display:flex; align-items:center; justify-content:center; border:1px solid rgba(134,239,172,.22); border-radius:10px; background:rgba(34,197,94,.08); color:#86efac; font-size:10px; font-weight:950; }
 
-    .wp-back {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      margin-bottom: 14px;
-      color: #bfdbfe;
-      text-decoration: none;
-      font-size: 11px;
-      font-weight: 900;
-    }
+    .wp-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:15px; }
+    .wp-panel { padding:18px; border:1px solid rgba(148,163,184,.20); border-radius:17px; background:rgba(15,45,82,.66); color:#fff; }
+    .wp-panel h2 { margin:0; font-size:14px; }
+    .wp-manage { display:grid; gap:0; margin-top:11px; }
+    .wp-row { display:flex; justify-content:space-between; gap:12px; padding:10px 0; border-bottom:1px solid rgba(255,255,255,.07); font-size:9px; }
+    .wp-row:last-child { border-bottom:0; }
+    .wp-row span { color:#94a3b8; }
+    .wp-row strong { color:#fff; text-align:right; }
+    .wp-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+    .wp-secondary { min-height:37px; display:inline-flex; align-items:center; justify-content:center; gap:7px; padding:0 11px; border:1px solid rgba(165,180,252,.22); border-radius:9px; background:rgba(99,102,241,.10); color:#e0e7ff; cursor:pointer; font:inherit; font-size:9px; font-weight:900; }
+    .wp-renewal-tools { margin-top:11px; border-top:1px solid rgba(255,255,255,.06); padding-top:8px; }
+    .wp-renewal-tools summary { width:fit-content; color:#94a3b8; cursor:pointer; font-size:8px; font-weight:800; list-style:none; }
+    .wp-renewal-tools summary::-webkit-details-marker { display:none; }
+    .wp-renewal-tools summary::after { content:"  ›"; color:#64748b; }
+    .wp-renewal-box { margin-top:8px; padding:10px; border:1px solid rgba(148,163,184,.14); border-radius:9px; background:rgba(2,6,23,.13); }
+    .wp-renewal-copy { margin:0; color:#94a3b8; font-size:8px; line-height:1.55; }
+    .wp-renewal-off { min-height:30px; margin-top:8px; display:inline-flex; align-items:center; gap:6px; padding:0 9px; border:1px solid rgba(148,163,184,.18); border-radius:8px; background:rgba(148,163,184,.06); color:#cbd5e1; cursor:pointer; font:inherit; font-size:8px; font-weight:800; }
+    .wp-note { margin-top:14px; padding:13px; border:1px solid rgba(148,163,184,.18); border-radius:13px; background:rgba(15,45,82,.52); color:#cbd5e1; font-size:9px; line-height:1.6; }
+    .wp-note strong { color:#fff; }
+    .wp-ok { color:#86efac !important; }
 
-    .wp-icon {
-      width: 19px;
-      height: 19px;
-      fill: none;
-      stroke: currentColor;
-      stroke-width: 2;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
-
-    .wp-card {
-      border: 1px solid rgba(129,140,248,.25);
-      border-radius: 22px;
-      background:
-        radial-gradient(circle at 85% 15%, rgba(99,102,241,.20), transparent 28%),
-        rgba(15,45,82,.78);
-      color: #fff;
-      box-shadow: 0 22px 58px rgba(2,6,23,.22);
-      overflow: hidden;
-    }
-
-    .wp-main {
-      display: grid;
-      grid-template-columns: minmax(0,1fr) 310px;
-      gap: 22px;
-      padding: 27px;
-    }
-
-    .wp-eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      padding: 6px 9px;
-      border: 1px solid rgba(199,210,254,.18);
-      border-radius: 999px;
-      background: rgba(99,102,241,.10);
-      color: #c7d2fe;
-      font-size: 9px;
-      font-weight: 950;
-      letter-spacing: .05em;
-      text-transform: uppercase;
-    }
-
-    .wp-title {
-      margin: 13px 0 0;
-      font-size: clamp(28px, 5vw, 43px);
-      line-height: 1.05;
-    }
-
-    .wp-sub {
-      max-width: 610px;
-      margin: 12px 0 0;
-      color: #cbd5e1;
-      font-size: 12px;
-      line-height: 1.7;
-    }
-
-    .wp-trust {
-      display: flex;
-      align-items: flex-start;
-      gap: 9px;
-      margin-top: 16px;
-      padding: 11px 12px;
-      border: 1px solid rgba(125,211,252,.16);
-      border-radius: 11px;
-      background: rgba(14,165,233,.06);
-      color: #bfdbfe;
-      font-size: 10px;
-      line-height: 1.55;
-    }
-
-    .wp-price {
-      padding: 20px;
-      border: 1px solid rgba(255,255,255,.13);
-      border-radius: 17px;
-      background: rgba(2,6,23,.23);
-    }
-
-    .wp-today {
-      font-size: 33px;
-      font-weight: 950;
-    }
-
-    .wp-today small {
-      color: #c7d2fe;
-      font-size: 11px;
-    }
-
-    .wp-next {
-      margin-top: 8px;
-      color: #cbd5e1;
-      font-size: 10px;
-      line-height: 1.5;
-    }
-
-    .wp-btn {
-      width: 100%;
-      min-height: 44px;
-      margin-top: 15px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      border: 0;
-      border-radius: 11px;
-      background: #fff;
-      color: #312e81;
-      cursor: pointer;
-      font: inherit;
-      font-size: 11px;
-      font-weight: 950;
-    }
-
-    .wp-btn:disabled {
-      opacity: .55;
-      cursor: not-allowed;
-    }
-
-    .wp-status-grid {
-      display: grid;
-      grid-template-columns: repeat(4,minmax(0,1fr));
-      gap: 1px;
-      border-top: 1px solid rgba(255,255,255,.09);
-      background: rgba(255,255,255,.05);
-    }
-
-    .wp-stat {
-      padding: 14px 10px;
-      background: rgba(2,6,23,.15);
-      text-align: center;
-    }
-
-    .wp-stat strong {
-      display: block;
-      color: #fff;
-      font-size: 13px;
-    }
-
-    .wp-stat span {
-      display: block;
-      margin-top: 4px;
-      color: #94a3b8;
-      font-size: 8px;
-      font-weight: 800;
-    }
-
-    .wp-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-      margin-top: 15px;
-    }
-
-    .wp-panel {
-      padding: 19px;
-      border: 1px solid rgba(148,163,184,.20);
-      border-radius: 17px;
-      background: rgba(15,45,82,.66);
-      color: #fff;
-    }
-
-    .wp-panel h2 {
-      margin: 0;
-      font-size: 15px;
-    }
-
-    .wp-list {
-      display: grid;
-      gap: 10px;
-      margin-top: 14px;
-    }
-
-    .wp-feature {
-      display: grid;
-      grid-template-columns: 34px minmax(0,1fr);
-      gap: 9px;
-      align-items: center;
-    }
-
-    .wp-feature-icon {
-      width: 34px;
-      height: 34px;
-      display: grid;
-      place-items: center;
-      border: 1px solid rgba(129,140,248,.20);
-      border-radius: 10px;
-      background: rgba(99,102,241,.09);
-      color: #c7d2fe;
-    }
-
-    .wp-feature-icon .wp-icon {
-      width: 17px;
-      height: 17px;
-    }
-
-    .wp-feature strong {
-      display: block;
-      font-size: 10px;
-    }
-
-    .wp-feature span {
-      display: block;
-      margin-top: 2px;
-      color: #94a3b8;
-      font-size: 9px;
-      line-height: 1.45;
-    }
-
-    .wp-manage {
-      display: grid;
-      gap: 10px;
-      margin-top: 14px;
-    }
-
-    .wp-manage-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 10px 0;
-      border-bottom: 1px solid rgba(255,255,255,.07);
-      font-size: 10px;
-    }
-
-    .wp-manage-row:last-child { border-bottom: 0; }
-
-    .wp-manage-row span { color: #94a3b8; }
-    .wp-manage-row strong { color: #fff; text-align: right; }
-
-    .wp-secondary {
-      min-height: 39px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 7px;
-      padding: 0 12px;
-      border: 1px solid rgba(165,180,252,.22);
-      border-radius: 10px;
-      background: rgba(99,102,241,.10);
-      color: #e0e7ff;
-      cursor: pointer;
-      font: inherit;
-      font-size: 9px;
-      font-weight: 900;
-    }
-
-    .wp-actions {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 8px;
-      margin-top: 13px;
-    }
-
-    .wp-renewal-tools {
-      margin-top: 12px;
-      border-top: 1px solid rgba(255,255,255,.06);
-      padding-top: 9px;
-    }
-
-    .wp-renewal-tools summary {
-      width: fit-content;
-      color: #94a3b8;
-      cursor: pointer;
-      font-size: 8px;
-      font-weight: 800;
-      line-height: 1.4;
-      list-style: none;
-      user-select: none;
-    }
-
-    .wp-renewal-tools summary::-webkit-details-marker {
-      display: none;
-    }
-
-    .wp-renewal-tools summary::after {
-      content: "  ›";
-      color: #64748b;
-    }
-
-    .wp-renewal-tools[open] summary::after {
-      content: "  ⌄";
-    }
-
-    .wp-renewal-box {
-      margin-top: 9px;
-      padding: 10px;
-      border: 1px solid rgba(148,163,184,.14);
-      border-radius: 10px;
-      background: rgba(2,6,23,.13);
-    }
-
-    .wp-renewal-copy {
-      margin: 0;
-      color: #94a3b8;
-      font-size: 8px;
-      line-height: 1.55;
-    }
-
-    .wp-renewal-off {
-      min-height: 30px;
-      margin-top: 8px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 0 9px;
-      border: 1px solid rgba(148,163,184,.18);
-      border-radius: 8px;
-      background: rgba(148,163,184,.06);
-      color: #cbd5e1;
-      cursor: pointer;
-      font: inherit;
-      font-size: 8px;
-      font-weight: 800;
-    }
-
-    .wp-renewal-off .wp-icon {
-      width: 14px;
-      height: 14px;
-    }
-
-    .wp-note {
-      margin-top: 15px;
-      padding: 14px;
-      border: 1px solid rgba(148,163,184,.18);
-      border-radius: 14px;
-      background: rgba(15,45,82,.52);
-      color: #cbd5e1;
-      font-size: 9px;
-      line-height: 1.65;
-    }
-
-    .wp-note strong { color: #fff; }
-
-    .wp-alert {
-      margin-bottom: 12px;
-      padding: 11px 12px;
-      border: 1px solid rgba(248,113,113,.20);
-      border-radius: 11px;
-      background: rgba(239,68,68,.08);
-      color: #fecaca;
-      font-size: 10px;
-      line-height: 1.5;
-    }
-
-    .wp-ok {
-      color: #86efac !important;
-    }
-
-    @media (max-width:760px) {
-      .wp-main,
-      .wp-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .wp-status-grid {
-        grid-template-columns: repeat(2,minmax(0,1fr));
-      }
-    }
+    @media(max-width:860px){ .wp-plans{grid-template-columns:1fr;} .wp-plan{min-height:0;} }
+    @media(max-width:760px){ .wp-grid{grid-template-columns:1fr;} .wp-status-grid{grid-template-columns:repeat(2,minmax(0,1fr));} }
   </style>
 </head>
 <body>
@@ -393,220 +74,112 @@
 
   <main class="wp-page">
     <a class="wp-back" href="{% url 'worker_dashboard' %}">
-      <svg class="wp-icon" viewBox="0 0 24 24" aria-hidden="true">
-        <path d="m15 18-6-6 6-6"></path>
-      </svg>
+      <svg class="wp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg>
       Worker Dashboard
     </a>
 
-    {% if messages %}
-      {% for message in messages %}
-        <div class="wp-alert">{{ message }}</div>
-      {% endfor %}
-    {% endif %}
+    {% if messages %}{% for message in messages %}<div class="wp-alert">{{ message }}</div>{% endfor %}{% endif %}
+    {% if gateway_sync_error %}<div class="wp-alert">{{ gateway_sync_error }}</div>{% endif %}
 
-    {% if gateway_sync_error %}
-      <div class="wp-alert">{{ gateway_sync_error }}</div>
-    {% endif %}
+    <section class="wp-hero">
+      <div class="wp-eyebrow">
+        <svg class="wp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 20 8l-8 13L4 8Z"></path><path d="M4 8h16"></path></svg>
+        Worker Pro
+      </div>
+      <h1 class="wp-title">Choose the billing cycle that fits your work.</h1>
+      <p class="wp-sub">
+        All three plans use Razorpay AutoPay. Monthly starts at ₹49 for the introductory first month,
+        then renews at ₹149/month. The 4-month and yearly plans renew at the same displayed plan price.
+        AI remains optional and never changes complaint status or verifies completion automatically.
+      </p>
+      <div class="wp-trust">
+        <svg class="wp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 20 6v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6Z"></path><path d="m8.5 12 2.2 2.2L15.8 9"></path></svg>
+        <div>Prices, renewal frequency and AI credit allowance are shown before payment. Future renewal can be managed separately without removing already-paid access.</div>
+      </div>
 
-    <section class="wp-card">
-      <div class="wp-main">
-        <div>
-          <div class="wp-eyebrow">
-            <svg class="wp-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12 3 20 8l-8 13L4 8Z"></path>
-              <path d="M4 8h16"></path>
-            </svg>
-            Worker Pro
-          </div>
-
-          <h1 class="wp-title">Professional tools with clear recurring billing.</h1>
-
-          <p class="wp-sub">
-            Worker Pro includes 150 AI credits per active billing period and
-            worker premium tools. AI suggestions remain optional and never
-            change complaint status or verify completion automatically.
-          </p>
-
-          <div class="wp-trust">
-            <svg class="wp-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12 3 20 6v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6Z"></path>
-              <path d="m8.5 12 2.2 2.2L15.8 9"></path>
-            </svg>
-            <div>
-              First introductory period: ₹49. Regular recurring price:
-              ₹149 per month from the next billing period. Future renewal
-              can be turned off from this page.
-            </div>
-          </div>
+      {% if subscription.is_premium_active %}
+        <div class="wp-status-grid">
+          <div class="wp-stat"><strong>{{ subscription.plan_label }}</strong><span>Current Plan</span></div>
+          <div class="wp-stat"><strong>{{ subscription.ai_credits_per_cycle }}</strong><span>AI Credits / 30 Days</span></div>
+          <div class="wp-stat"><strong>{% if subscription.current_period_end %}{{ subscription.current_period_end|date:"d M Y" }}{% else %}—{% endif %}</strong><span>Current Access Until</span></div>
+          <div class="wp-stat"><strong>{% if subscription.cancel_at_period_end %}Off{% else %}On{% endif %}</strong><span>Automatic Renewal</span></div>
         </div>
+      {% endif %}
+    </section>
 
-        <div class="wp-price">
+    <h2 class="wp-section-title">Worker Pro plans</h2>
+    <section class="wp-plans">
+      {% for plan in worker_pro_plans %}
+        <article class="wp-plan {% if subscription.is_premium_active and subscription.plan_code == plan.code %}is-current{% endif %}">
+          <div class="wp-plan-badge">
+            {% if plan.code == 'monthly' %}Flexible start{% elif plan.code == 'four_month' %}Longer plan{% else %}Longest plan{% endif %}
+          </div>
+          <h2>{{ plan.name }}</h2>
+          <div class="wp-price">
+            ₹{{ plan.upfront_price }}
+            <small>{% if plan.code == 'monthly' %}first month{% elif plan.code == 'four_month' %}/ 4 months{% else %}/ 12 months{% endif %}</small>
+          </div>
+          <div class="wp-reference">
+            {% if plan.reference_price %}
+              <s>₹{{ plan.reference_price }}</s>
+              <span class="wp-save">Save ₹{{ plan.saving }} vs ₹149 × {{ plan.interval_months }}</span>
+            {% else %}
+              Then ₹{{ plan.renewal_price }} per month
+            {% endif %}
+          </div>
+          <div class="wp-renew">AutoPay renewal: {{ plan.renewal_copy }}.</div>
+          <div class="wp-credit">{{ plan.ai_credits }} AI credits every 30 days</div>
+          <ul class="wp-features">
+            <li><svg class="wp-icon" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg>AI Complaint Summary</li>
+            <li><svg class="wp-icon" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg>AI Work Checklist</li>
+            <li><svg class="wp-icon" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg>AI Reply Draft</li>
+            {% if plan.code == 'four_month' %}
+              <li><svg class="wp-icon" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg>5 extra AI credits per 30-day cycle</li>
+            {% elif plan.code == 'yearly' %}
+              <li><svg class="wp-icon" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg>10 extra AI credits per 30-day cycle</li>
+            {% endif %}
+          </ul>
+          <div class="wp-future">
+            {% if plan.code == 'monthly' %}
+              Future: eligible for standard Worker Pro improvements as they are released.
+            {% elif plan.code == 'four_month' %}
+              Planned: selected longer-plan benefits and early access may be added when released.
+            {% else %}
+              Planned: selected yearly benefits, early access and a yearly Pro badge may be added when released.
+            {% endif %}
+            Planned items are not guaranteed current features.
+          </div>
+
           {% if subscription.is_premium_active %}
-            <div class="wp-today">
-              Active
-              <small>Worker Pro</small>
-            </div>
-
-            <div class="wp-next">
-              {% if subscription.cancel_at_period_end %}
-                Automatic renewal is off. Access continues until the current period ends.
-              {% elif subscription.next_billing_at %}
-                Next scheduled billing: {{ subscription.next_billing_at|date:"d M Y" }}.
-              {% else %}
-                Subscription is active. Refresh status for the latest billing date.
-              {% endif %}
-            </div>
-
+            {% if subscription.plan_code == plan.code %}
+              <div class="wp-current-label">Current active plan</div>
+            {% else %}
+              <button class="wp-btn" type="button" disabled>Available after current plan</button>
+            {% endif %}
           {% else %}
-            <div class="wp-today">
-              ₹49 <small>introductory first period</small>
-            </div>
-
-            <div class="wp-next">
-              Then ₹149/month through Razorpay recurring billing after authorisation.
-            </div>
-
             <form method="post">
               {% csrf_token %}
-              <button
-                class="wp-btn"
-                type="submit"
-                {% if not worker_pro_configured %}disabled{% endif %}
-              >
-                <svg class="wp-icon" viewBox="0 0 24 24" aria-hidden="true">
-                  <rect x="3" y="6" width="18" height="12" rx="2"></rect>
-                  <path d="M3 10h18"></path>
-                </svg>
-                Continue to Secure Razorpay
+              <input type="hidden" name="plan_code" value="{{ plan.code }}">
+              <button class="wp-btn" type="submit" {% if not worker_pro_gateway_configured or not plan.configured %}disabled{% endif %}>
+                <svg class="wp-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2"></rect><path d="M3 10h18"></path></svg>
+                {% if plan.configured %}Continue to Razorpay{% else %}Plan setup pending{% endif %}
               </button>
             </form>
           {% endif %}
-        </div>
-      </div>
-
-      <div class="wp-status-grid">
-        <div class="wp-stat">
-          <strong>{{ subscription.status|title }}</strong>
-          <span>Local Entitlement</span>
-        </div>
-
-        <div class="wp-stat">
-          <strong>{{ subscription.last_gateway_status|default:"Not synced"|title }}</strong>
-          <span>Razorpay Status</span>
-        </div>
-
-        <div class="wp-stat">
-          <strong>
-            {% if subscription.current_period_end %}
-              {{ subscription.current_period_end|date:"d M Y" }}
-            {% else %}
-              —
-            {% endif %}
-          </strong>
-          <span>Current Access Until</span>
-        </div>
-
-        <div class="wp-stat">
-          <strong>
-            {% if subscription.cancel_at_period_end %}
-              Off
-            {% else %}
-              On
-            {% endif %}
-          </strong>
-          <span>Automatic Renewal</span>
-        </div>
-      </div>
+        </article>
+      {% endfor %}
     </section>
 
     <div class="wp-grid">
       <section class="wp-panel">
-        <h2>Worker Pro includes</h2>
-
-        <div class="wp-list">
-          <div class="wp-feature">
-            <div class="wp-feature-icon">
-              <svg class="wp-icon" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M12 3 13.5 7.5 18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5Z"></path>
-              </svg>
-            </div>
-            <div>
-              <strong>150 AI credits per active period</strong>
-              <span>Complaint summaries, work checklists and reply drafts use controlled credits.</span>
-            </div>
-          </div>
-
-          <div class="wp-feature">
-            <div class="wp-feature-icon">
-              <svg class="wp-icon" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M4 5h16M4 10h16M4 15h10M4 20h7"></path>
-              </svg>
-            </div>
-            <div>
-              <strong>AI Complaint Summary</strong>
-              <span>Short worker-oriented overview without exposing unnecessary private data.</span>
-            </div>
-          </div>
-
-          <div class="wp-feature">
-            <div class="wp-feature-icon">
-              <svg class="wp-icon" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="m4 6 2 2 4-4M12 6h8M4 13l2 2 4-4M12 13h8"></path>
-              </svg>
-            </div>
-            <div>
-              <strong>Work Checklist</strong>
-              <span>Practical preparation steps with safety-first language.</span>
-            </div>
-          </div>
-
-          <div class="wp-feature">
-            <div class="wp-feature-icon">
-              <svg class="wp-icon" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M4 4h16v12H8l-4 4Z"></path>
-                <path d="M8 8h8M8 12h5"></path>
-              </svg>
-            </div>
-            <div>
-              <strong>Reply Draft</strong>
-              <span>Creates a draft only. The worker reviews and chooses whether to send it.</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="wp-panel">
-        <h2>Subscription management</h2>
-
+        <h2>Current subscription</h2>
         <div class="wp-manage">
-          <div class="wp-manage-row">
-            <span>Introductory price</span>
-            <strong>₹{{ first_month_price }}</strong>
-          </div>
-
-          <div class="wp-manage-row">
-            <span>Regular monthly price</span>
-            <strong>₹{{ monthly_price }}</strong>
-          </div>
-
-          <div class="wp-manage-row">
-            <span>Razorpay subscription</span>
-            <strong>
-              {% if subscription.razorpay_subscription_id %}
-                Connected
-              {% else %}
-                Not created
-              {% endif %}
-            </strong>
-          </div>
-
-          <div class="wp-manage-row">
-            <span>Webhook</span>
-            <strong class="{% if webhook_configured %}wp-ok{% endif %}">
-              {% if webhook_configured %}Configured{% else %}Needs setup{% endif %}
-            </strong>
-          </div>
+          <div class="wp-row"><span>Local entitlement</span><strong>{{ subscription.status|title }}</strong></div>
+          <div class="wp-row"><span>Razorpay status</span><strong>{{ subscription.last_gateway_status|default:"Not synced"|title }}</strong></div>
+          <div class="wp-row"><span>Selected plan</span><strong>{{ subscription.plan_label }}</strong></div>
+          <div class="wp-row"><span>Renewal price</span><strong>₹{{ subscription.renewal_price }} / {{ subscription.billing_period_label }}</strong></div>
+          <div class="wp-row"><span>Razorpay subscription</span><strong>{% if subscription.razorpay_subscription_id %}Connected{% else %}Not created{% endif %}</strong></div>
+          <div class="wp-row"><span>Webhook</span><strong class="{% if webhook_configured %}wp-ok{% endif %}">{% if webhook_configured %}Configured{% else %}Needs setup{% endif %}</strong></div>
         </div>
 
         <div class="wp-actions">
@@ -614,65 +187,48 @@
             <form method="post" action="{% url 'worker_subscription_sync' %}">
               {% csrf_token %}
               <button class="wp-secondary" type="submit">
-                <svg class="wp-icon" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M20 6v5h-5"></path>
-                  <path d="M4 18v-5h5"></path>
-                  <path d="M6.5 8a7 7 0 0 1 11.7-2L20 8"></path>
-                  <path d="M17.5 16a7 7 0 0 1-11.7 2L4 16"></path>
-                </svg>
+                <svg class="wp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6v5h-5"></path><path d="M4 18v-5h5"></path><path d="M6.5 8a7 7 0 0 1 11.7-2L20 8"></path><path d="M17.5 16a7 7 0 0 1-11.7 2L4 16"></path></svg>
                 Refresh Razorpay Status
               </button>
             </form>
           {% endif %}
-
         </div>
 
         {% if subscription.is_premium_active and subscription.razorpay_subscription_id and not subscription.cancel_at_period_end %}
           <details class="wp-renewal-tools">
             <summary>Manage renewal</summary>
-
             <div class="wp-renewal-box">
-              <p class="wp-renewal-copy">
-                You can stop future automatic renewal at any time. Your current
-                paid Worker Pro access will continue until the active period ends.
-              </p>
-
-              <form
-                method="post"
-                action="{% url 'worker_subscription_cancel_renewal' %}"
-                onsubmit="return confirm('Turn off future Worker Pro renewal? Current paid access will remain until the period ends.');"
-              >
+              <p class="wp-renewal-copy">Turning off renewal stops the next automatic charge. Current paid access continues until the active billing period ends.</p>
+              <form method="post" action="{% url 'worker_subscription_cancel_renewal' %}" onsubmit="return confirm('Turn off future Worker Pro renewal? Current paid access will remain until the billing period ends.');">
                 {% csrf_token %}
                 <input type="hidden" name="confirm_cancel" value="yes">
-
-                <button class="wp-renewal-off" type="submit">
-                  <svg class="wp-icon" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M6 6l12 12M18 6 6 18"></path>
-                  </svg>
-                  Turn Off Future Renewal
-                </button>
+                <button class="wp-renewal-off" type="submit">Turn Off Future Renewal</button>
               </form>
             </div>
           </details>
         {% endif %}
       </section>
+
+      <section class="wp-panel">
+        <h2>How AI credits work</h2>
+        <div class="wp-note">
+          <strong>Monthly:</strong> 150 credits per 30-day AI cycle.<br>
+          <strong>4 Months:</strong> 155 credits per 30-day AI cycle.<br>
+          <strong>Yearly:</strong> 160 credits per 30-day AI cycle.<br><br>
+          Credits reset by 30-day cycle instead of being issued all at once. This keeps AI usage controlled across longer subscriptions. Cached duplicate results can still be reused without a new credit charge when eligible.
+        </div>
+        <div class="wp-note">
+          <strong>Current vs future features:</strong> Summary, Checklist and Reply Draft are current features. Any item marked planned is only a future direction and is not part of the guaranteed service today.
+        </div>
+      </section>
     </div>
 
-    {% if not worker_pro_configured %}
-      <div class="wp-note">
-        <strong>Payment configuration incomplete:</strong>
-        RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET and RAZORPAY_WORKER_PLAN_ID
-        must be configured on the server before workers can start Worker Pro.
-      </div>
+    {% if not worker_pro_gateway_configured %}
+      <div class="wp-note"><strong>Payment configuration incomplete:</strong> RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET must be configured on the server.</div>
     {% endif %}
 
     <div class="wp-note">
-      <strong>Transparent billing:</strong>
-      Razorpay handles recurring authorisation and billing. Worker Pro access
-      is based on verified Razorpay subscription status. Failed payment or
-      incomplete authorisation does not activate Worker Pro. Turning off
-      future renewal does not remove already-paid access before the current
-      period ends.
+      <strong>Plan IDs:</strong> Monthly uses RAZORPAY_WORKER_PLAN_ID. 4 Months uses RAZORPAY_WORKER_PLAN_4M_ID. Yearly uses RAZORPAY_WORKER_PLAN_YEARLY_ID. A plan button remains disabled until its matching Razorpay Plan ID is configured.
     </div>
   </main>
 </body>

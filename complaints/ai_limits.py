@@ -218,6 +218,29 @@ def _month_start():
     )
 
 
+def _worker_ai_cycle_start(subscription):
+    """Return the start of the worker's current rolling 30-day AI cycle."""
+    now = timezone.now()
+
+    anchor = (
+        subscription.started_at
+        or subscription.current_period_start
+        or subscription.created_at
+        or now
+    )
+
+    # Razorpay can report a future current_start while a mandate is only
+    # authenticated. Never allow a future anchor to reset usage incorrectly.
+    if anchor > now:
+        anchor = subscription.started_at or subscription.created_at or now
+
+    elapsed = max((now - anchor).total_seconds(), 0)
+    cycle_seconds = 30 * 24 * 60 * 60
+    completed_cycles = int(elapsed // cycle_seconds)
+
+    return anchor + timedelta(days=30 * completed_cycles)
+
+
 # =========================================================
 # PLAN
 # =========================================================
@@ -250,21 +273,28 @@ def get_ai_plan(user):
             and subscription.is_premium_active
         ):
             key = "worker_pro"
-            period_start = (
-                subscription.current_period_start
-                or _month_start()
+            period_start = _worker_ai_cycle_start(
+                subscription
             )
             premium_until = (
                 subscription.current_period_end
             )
+
+            plan = {
+                **PLAN_RULES[key],
+                "credit_limit": subscription.ai_credits_per_cycle,
+                "label": subscription.plan_label,
+                "period": "monthly",
+            }
         else:
             key = "worker_free"
             period_start = None
             premium_until = None
+            plan = PLAN_RULES[key]
 
         return {
             "key": key,
-            **PLAN_RULES[key],
+            **plan,
             "period_start": period_start,
             "premium_until": premium_until,
         }

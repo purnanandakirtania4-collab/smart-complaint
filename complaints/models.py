@@ -516,12 +516,30 @@ class WorkerSubscription(models.Model):
         ("expired", "Expired"),
     ]
 
+    PLAN_CHOICES = [
+        ("monthly", "Worker Pro Monthly"),
+        ("four_month", "Worker Pro 4 Months"),
+        ("yearly", "Worker Pro Yearly"),
+    ]
+
     worker = models.OneToOneField(
         WorkerProfile,
         on_delete=models.CASCADE,
         related_name="subscription",
     )
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="inactive")
+
+    # Plan code is the durable entitlement identifier. Existing workers are
+    # migrated to the current monthly Worker Pro plan by default.
+    plan_code = models.CharField(
+        max_length=20,
+        choices=PLAN_CHOICES,
+        default="monthly",
+    )
+
+    # Kept for backward compatibility with the existing admin/UI code.
+    # For longer plans these fields store the first/upfront price and the
+    # recurring renewal price, even though the old field names say monthly.
     first_month_price = models.PositiveIntegerField(default=49)
     monthly_price = models.PositiveIntegerField(default=149)
     razorpay_customer_id = models.CharField(max_length=100, blank=True, default="")
@@ -553,6 +571,55 @@ class WorkerSubscription(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    @property
+    def plan_label(self):
+        labels = {
+            "monthly": "Worker Pro Monthly",
+            "four_month": "Worker Pro 4 Months",
+            "yearly": "Worker Pro Yearly",
+        }
+        return labels.get(self.plan_code, labels["monthly"])
+
+    @property
+    def billing_interval_months(self):
+        return {
+            "monthly": 1,
+            "four_month": 4,
+            "yearly": 12,
+        }.get(self.plan_code, 1)
+
+    @property
+    def renewal_price(self):
+        return {
+            "monthly": 149,
+            "four_month": 589,
+            "yearly": 1769,
+        }.get(self.plan_code, 149)
+
+    @property
+    def upfront_price(self):
+        return {
+            "monthly": 49,
+            "four_month": 589,
+            "yearly": 1769,
+        }.get(self.plan_code, 49)
+
+    @property
+    def ai_credits_per_cycle(self):
+        return {
+            "monthly": 150,
+            "four_month": 155,
+            "yearly": 160,
+        }.get(self.plan_code, 150)
+
+    @property
+    def billing_period_label(self):
+        return {
+            "monthly": "month",
+            "four_month": "4 months",
+            "yearly": "year",
+        }.get(self.plan_code, "month")
 
     @property
     def is_premium_active(self):
