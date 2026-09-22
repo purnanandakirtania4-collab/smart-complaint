@@ -7,7 +7,7 @@
 
     <meta
         name="viewport"
-        content="width=device-width, initial-scale=1"
+        content="width=device-width, initial-scale=1, viewport-fit=cover"
     >
 
     <title>
@@ -2747,6 +2747,326 @@ body.worker-theme-light .worker-local-test-btn {
 }
 </style>
 
+<style>
+  /* Keep the worker identity card comfortably below the fixed navbar. */
+  .worker-page .page {
+    padding-top: 58px !important;
+  }
+
+  .worker-page .dashboard-summary {
+    margin-top: 10px !important;
+  }
+
+  @media (max-width: 600px) {
+    .worker-page .page {
+      padding-top: 46px !important;
+    }
+
+    .worker-page .dashboard-summary {
+      margin-top: 8px !important;
+    }
+  }
+</style>
+
+
+<style>
+  /* =========================================================
+     ONE JOB AT A TIME + WAITING HANDOVER
+     ========================================================= */
+
+  .worker-job-rule {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 0 0 16px;
+    padding: 12px 14px;
+    border: 1px solid rgba(125, 211, 252, .20);
+    border-radius: 13px;
+    background: rgba(14, 165, 233, .08);
+    color: #dbeafe;
+    font-size: 11px;
+    line-height: 1.55;
+  }
+
+  .worker-job-rule .ui-icon {
+    width: 18px;
+    height: 18px;
+    flex: 0 0 18px;
+    color: #7dd3fc;
+  }
+
+  .worker-queue-panel {
+    margin: 0 0 20px;
+    overflow: hidden;
+    border: 1px solid rgba(245, 158, 11, .24);
+    border-radius: 18px;
+    background:
+      linear-gradient(
+        135deg,
+        rgba(120, 53, 15, .30),
+        rgba(8, 47, 73, .78)
+      );
+    color: #ffffff;
+    box-shadow: 0 16px 38px rgba(2, 6, 23, .18);
+  }
+
+  .worker-queue-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 15px;
+    border-bottom: 1px solid rgba(255,255,255,.09);
+  }
+
+  .worker-queue-title {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    min-width: 0;
+  }
+
+  .worker-queue-title .ui-icon {
+    width: 19px;
+    height: 19px;
+    color: #fde68a;
+  }
+
+  .worker-queue-title strong {
+    display: block;
+    font-size: 14px;
+  }
+
+  .worker-queue-title small {
+    display: block;
+    margin-top: 3px;
+    color: #cbd5e1;
+    font-size: 9px;
+  }
+
+  .worker-queue-count {
+    flex: 0 0 auto;
+    min-width: 31px;
+    height: 31px;
+    display: grid;
+    place-items: center;
+    padding: 0 8px;
+    border: 1px solid rgba(253, 230, 138, .24);
+    border-radius: 999px;
+    background: rgba(245, 158, 11, .14);
+    color: #fde68a;
+    font-size: 11px;
+    font-weight: 950;
+  }
+
+  .worker-queue-body {
+    padding: 14px 15px 15px;
+  }
+
+  .worker-waiting-summary {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .worker-waiting-subject {
+    margin: 0;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 900;
+    overflow-wrap: anywhere;
+  }
+
+  .worker-waiting-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 10px;
+    margin-top: 5px;
+    color: #cbd5e1;
+    font-size: 9px;
+  }
+
+  .worker-waiting-badge {
+    padding: 5px 8px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.08);
+    color: #e2e8f0;
+    font-size: 9px;
+    font-weight: 900;
+    white-space: nowrap;
+  }
+
+  .worker-handover-form {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .worker-handover-select,
+  .worker-handover-reason {
+    width: 100%;
+    min-width: 0;
+    min-height: 40px;
+    padding: 8px 10px;
+    border: 1px solid rgba(191, 219, 254, .22);
+    border-radius: 10px;
+    outline: none;
+    background: rgba(255,255,255,.09);
+    color: #ffffff;
+    font: inherit;
+    font-size: 10px;
+  }
+
+  .worker-handover-select option {
+    background: #0f2f49;
+    color: #ffffff;
+  }
+
+  .worker-handover-reason::placeholder {
+    color: rgba(219,234,254,.55);
+  }
+
+  .worker-handover-btn {
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 8px 12px;
+    border: 0;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: #ffffff;
+    cursor: pointer;
+    font: inherit;
+    font-size: 10px;
+    font-weight: 900;
+    white-space: nowrap;
+  }
+
+  .worker-handover-btn .ui-icon {
+    width: 15px;
+    height: 15px;
+  }
+
+  .worker-queue-note {
+    margin-top: 9px;
+    color: #cbd5e1;
+    font-size: 9px;
+    line-height: 1.5;
+  }
+
+  .worker-feedback-prompt {
+    margin-top: 18px;
+    padding: 15px;
+    border: 1px solid rgba(167, 243, 208, .22);
+    border-radius: 15px;
+    background: rgba(16, 185, 129, .08);
+    color: #ffffff;
+  }
+
+  .worker-feedback-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    margin-bottom: 10px;
+  }
+
+  .worker-feedback-head .ui-icon {
+    width: 19px;
+    height: 19px;
+    color: #86efac;
+  }
+
+  .worker-feedback-head strong {
+    display: block;
+    font-size: 13px;
+  }
+
+  .worker-feedback-head small {
+    display: block;
+    margin-top: 3px;
+    color: #cbd5e1;
+    font-size: 9px;
+  }
+
+  .worker-feedback-prompt .stars {
+    margin-bottom: 8px;
+  }
+
+  .worker-feedback-prompt .problem-box {
+    min-height: 72px;
+  }
+
+  body.worker-theme-light .worker-job-rule {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+    color: #334155;
+  }
+
+  body.worker-theme-light .worker-queue-panel {
+    background: #ffffff;
+    border-color: #fed7aa;
+    color: #172554;
+  }
+
+  body.worker-theme-light .worker-waiting-subject,
+  body.worker-theme-light .worker-feedback-prompt {
+    color: #172554;
+  }
+
+  body.worker-theme-light .worker-waiting-meta,
+  body.worker-theme-light .worker-queue-note,
+  body.worker-theme-light .worker-feedback-head small {
+    color: #64748b;
+  }
+
+  body.worker-theme-light .worker-handover-select,
+  body.worker-theme-light .worker-handover-reason {
+    background: #ffffff;
+    border-color: #cbd5e1;
+    color: #172554;
+  }
+
+  body.worker-theme-light .worker-handover-select option {
+    background: #ffffff;
+    color: #172554;
+  }
+
+  body.worker-theme-light .worker-feedback-prompt {
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+  }
+
+  @media (max-width: 760px) {
+    .worker-handover-form {
+      grid-template-columns: 1fr;
+    }
+
+    .worker-handover-btn {
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .worker-queue-head,
+    .worker-queue-body {
+      padding-left: 12px;
+      padding-right: 12px;
+    }
+
+    .worker-waiting-summary {
+      grid-template-columns: 1fr;
+    }
+
+    .worker-waiting-badge {
+      justify-self: start;
+    }
+  }
+</style>
+
 </head>
 
 
@@ -2921,11 +3241,43 @@ body.worker-theme-light .worker-local-test-btn {
 
 
         <section class="worker-dashboard-design-stats">
-            <div class="worker-dashboard-stat"><span>Assigned Complaints</span><b>{{ complaints|length }}</b><small>Current list</small></div>
-            <div class="worker-dashboard-stat"><span>In Progress</span><b>—</b><small>Live count next</small></div>
-            <div class="worker-dashboard-stat"><span>Resolved</span><b>—</b><small>Live count next</small></div>
-            <div class="worker-dashboard-stat"><span>Total Completed</span><b>—</b><small>Live count next</small></div>
+            <div class="worker-dashboard-stat">
+                <span>Current Job</span>
+                <b>{% if current_complaint %}1{% else %}0{% endif %}</b>
+                <small>One full complaint at a time</small>
+            </div>
+
+            <div class="worker-dashboard-stat">
+                <span>Waiting Queue</span>
+                <b>{{ queued_count }}</b>
+                <small>Waiting behind current job</small>
+            </div>
+
+            <div class="worker-dashboard-stat">
+                <span>Resolved</span>
+                <b>{{ resolved_count }}</b>
+                <small>Completed complaints</small>
+            </div>
+
+            <div class="worker-dashboard-stat">
+                <span>Total Assigned</span>
+                <b>{{ total_assigned_count }}</b>
+                <small>Current + history</small>
+            </div>
         </section>
+
+        <div class="worker-job-rule">
+            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M9 5h6"></path>
+                <path d="M9 3h6a2 2 0 0 1 2 2v1h2a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h2V5a2 2 0 0 1 2-2Z"></path>
+            </svg>
+
+            <span>
+                Only one complaint is opened for work at a time. After it is
+                resolved, the next waiting complaint automatically becomes the
+                current job.
+            </span>
+        </div>
 
 
         {% if local_worker_pro_test_allowed %}
@@ -2998,7 +3350,137 @@ body.worker-theme-light .worker-local-test-btn {
 
 
         <!-- =================================================
-             ASSIGNED COMPLAINTS
+             WAITING QUEUE / HANDOVER
+        ================================================== -->
+
+        {% if waiting_complaint %}
+            <section class="worker-queue-panel">
+                <div class="worker-queue-head">
+                    <div class="worker-queue-title">
+                        <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <circle cx="12" cy="12" r="9"></circle>
+                            <path d="M12 7v5l3 2"></path>
+                        </svg>
+
+                        <div>
+                            <strong>Next Complaint Waiting</strong>
+                            <small>
+                                Keep it in your queue or hand it over to a free approved worker.
+                            </small>
+                        </div>
+                    </div>
+
+                    <span class="worker-queue-count">
+                        {{ queued_count }}
+                    </span>
+                </div>
+
+                <div class="worker-queue-body">
+                    <div class="worker-waiting-summary">
+                        <div>
+                            <p class="worker-waiting-subject">
+                                {{ waiting_complaint.subject }}
+                            </p>
+
+                            <div class="worker-waiting-meta">
+                                <span>{{ waiting_complaint.tracking_id }}</span>
+                                <span>{{ waiting_complaint.priority }}</span>
+                                <span>{{ waiting_complaint.status }}</span>
+                            </div>
+                        </div>
+
+                        <span class="worker-waiting-badge">
+                            Waiting
+                        </span>
+                    </div>
+
+                    {% if waiting_complaint.status == 'Pending' %}
+                        {% if handover_workers %}
+                            <form
+                                method="post"
+                                class="worker-handover-form"
+                                data-handover-form
+                            >
+                                {% csrf_token %}
+
+                                <input
+                                    type="hidden"
+                                    name="action"
+                                    value="handover_complaint"
+                                >
+
+                                <input
+                                    type="hidden"
+                                    name="complaint_id"
+                                    value="{{ waiting_complaint.id }}"
+                                >
+
+                                <select
+                                    class="worker-handover-select"
+                                    name="target_worker_id"
+                                    required
+                                    aria-label="Select worker for handover"
+                                >
+                                    <option value="">
+                                        Select free worker
+                                    </option>
+
+                                    {% for available_worker in handover_workers %}
+                                        <option value="{{ available_worker.id }}">
+                                            {{ available_worker.name }}
+                                            · {{ available_worker.worker_id }}
+                                            · {{ available_worker.skill_category }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+
+                                <input
+                                    class="worker-handover-reason"
+                                    type="text"
+                                    name="handover_reason"
+                                    maxlength="200"
+                                    placeholder="Handover note (optional)"
+                                >
+
+                                <button
+                                    type="submit"
+                                    class="worker-handover-btn"
+                                >
+                                    <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                        <path d="M4 7h13"></path>
+                                        <path d="m14 4 3 3-3 3"></path>
+                                        <path d="M20 17H7"></path>
+                                        <path d="m10 14-3 3 3 3"></path>
+                                    </svg>
+
+                                    Handover
+                                </button>
+                            </form>
+
+                            <div class="worker-queue-note">
+                                Handover is allowed only while this waiting complaint
+                                is still Pending. The citizen and receiving worker are
+                                notified after a successful handover.
+                            </div>
+                        {% else %}
+                            <div class="worker-queue-note">
+                                No free approved worker is available for handover right now.
+                                This complaint will stay safely in your waiting queue.
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="worker-queue-note">
+                            This waiting item is already In Progress and cannot be
+                            handed over automatically. Finish the current job first.
+                        </div>
+                    {% endif %}
+                </div>
+            </section>
+        {% endif %}
+
+
+        <!-- =================================================
+             CURRENT COMPLAINT
         ================================================== -->
 
         <h2 class="section-title">
@@ -3015,7 +3497,7 @@ body.worker-theme-light .worker-local-test-btn {
                 ></path>
             </svg>
 
-            Assigned Complaints
+            Current Complaint
 
         </h2>
 
@@ -4315,12 +4797,13 @@ body.worker-theme-light .worker-local-test-btn {
 
 
                 <h2 style="margin:10px 0">
-                    No Complaints Assigned
+                    No Active Complaint
                 </h2>
 
 
                 <p class="muted">
-                    New complaints assigned to you will appear here.
+                    You have no Pending or In Progress complaint right now.
+                    The next assigned complaint will appear here automatically.
                 </p>
 
 
@@ -4330,7 +4813,132 @@ body.worker-theme-light .worker-local-test-btn {
         {% endfor %}
 
 
+        {% if recent_resolved_unrated %}
+            <section class="worker-feedback-prompt">
+                <div class="worker-feedback-head">
+                    <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3l-5.6 2.9 1.1-6.2L3 9.6l6.2-.9L12 3Z"></path>
+                    </svg>
+
+                    <div>
+                        <strong>Complete Previous Feedback</strong>
+                        <small>
+                            {{ recent_resolved_unrated.tracking_id }} was resolved.
+                            Rate the citizen before this reminder disappears.
+                        </small>
+                    </div>
+                </div>
+
+                <form
+                    method="post"
+                    action="{% url 'rate_user' recent_resolved_unrated.id %}"
+                >
+                    {% csrf_token %}
+
+                    <div class="stars">
+                        <input
+                            type="radio"
+                            id="recent-star-5-{{ recent_resolved_unrated.id }}"
+                            name="stars"
+                            value="5"
+                            required
+                        >
+                        <label for="recent-star-5-{{ recent_resolved_unrated.id }}">
+                            <span class="rating-star is-filled" aria-hidden="true"></span>
+                        </label>
+
+                        <input
+                            type="radio"
+                            id="recent-star-4-{{ recent_resolved_unrated.id }}"
+                            name="stars"
+                            value="4"
+                        >
+                        <label for="recent-star-4-{{ recent_resolved_unrated.id }}">
+                            <span class="rating-star is-filled" aria-hidden="true"></span>
+                        </label>
+
+                        <input
+                            type="radio"
+                            id="recent-star-3-{{ recent_resolved_unrated.id }}"
+                            name="stars"
+                            value="3"
+                        >
+                        <label for="recent-star-3-{{ recent_resolved_unrated.id }}">
+                            <span class="rating-star is-filled" aria-hidden="true"></span>
+                        </label>
+
+                        <input
+                            type="radio"
+                            id="recent-star-2-{{ recent_resolved_unrated.id }}"
+                            name="stars"
+                            value="2"
+                        >
+                        <label for="recent-star-2-{{ recent_resolved_unrated.id }}">
+                            <span class="rating-star is-filled" aria-hidden="true"></span>
+                        </label>
+
+                        <input
+                            type="radio"
+                            id="recent-star-1-{{ recent_resolved_unrated.id }}"
+                            name="stars"
+                            value="1"
+                        >
+                        <label for="recent-star-1-{{ recent_resolved_unrated.id }}">
+                            <span class="rating-star is-filled" aria-hidden="true"></span>
+                        </label>
+                    </div>
+
+                    <textarea
+                        class="problem-box"
+                        name="problem"
+                        maxlength="1000"
+                        placeholder="Optional feedback about the citizen..."
+                    ></textarea>
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary rating-submit"
+                    >
+                        <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="m5 12 4 4L19 6"></path>
+                        </svg>
+                        Submit Feedback
+                    </button>
+                </form>
+            </section>
+        {% endif %}
+
+
     </main>
+
+
+<script>
+(function () {
+    "use strict";
+
+    document.querySelectorAll("[data-handover-form]").forEach(function (form) {
+        form.addEventListener("submit", function (event) {
+            const select = form.querySelector('select[name="target_worker_id"]');
+
+            if (!select || !select.value) {
+                event.preventDefault();
+                return;
+            }
+
+            const workerName = select.options[select.selectedIndex].textContent.trim();
+            const approved = window.confirm(
+                "Hand over this waiting complaint to " +
+                workerName +
+                "? The citizen and receiving worker will be notified."
+            );
+
+            if (!approved) {
+                event.preventDefault();
+            }
+        });
+    });
+})();
+</script>
 
 
 <script>

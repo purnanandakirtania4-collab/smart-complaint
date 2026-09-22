@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>My Profile | Smart Complaint</title>
 
     {% include 'complaints/base_style.html' %}
@@ -630,17 +630,17 @@
 
                 <div class="avatar-editor">
                     <div class="avatar" id="profileAvatar">
-                        {% if user_profile.photo %}<img src="{{ user_profile.photo.url }}" alt="Profile Photo">
+                        {% if user_profile.photo %}<img src="{{ user_profile.photo.url }}?v={{ user_profile.updated_at|date:'U' }}" alt="Profile Photo">
                         {% else %}<svg class="ui-icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"></circle><path d="M4.5 21a7.5 7.5 0 0 1 15 0"></path></svg>{% endif %}
                     </div>
                     <button class="avatar-camera" type="button" id="photoMenuButton" aria-label="Change profile photo"><svg class="ui-icon" viewBox="0 0 24 24"><path d="M4 7h3l2-3h6l2 3h3a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z"></path><circle cx="12" cy="13" r="4"></circle></svg></button>
                 </div>
                 <div class="photo-menu" id="photoMenu">
                     <div class="photo-menu-title">Change Profile Photo</div>
-                    <button type="button" class="photo-menu-item" data-a="camera">📷 Take Photo</button>
-                    <button type="button" class="photo-menu-item" data-a="gallery">🖼️ Choose from Gallery</button>
-                    <button type="button" class="photo-menu-item" data-a="avatar">🙂 Choose Free Avatar</button>
-                    <button type="button" class="photo-menu-item" data-a="premium">👑 Premium Avatars <span class="premium-mark">PRO</span></button>
+                    <button type="button" class="photo-menu-item" data-a="camera"> Take Photo</button>
+                    <button type="button" class="photo-menu-item" data-a="gallery"> Choose from Gallery</button>
+                    <button type="button" class="photo-menu-item" data-a="avatar"> Choose Free Avatar</button>
+                    <button type="button" class="photo-menu-item" data-a="premium"> Premium Avatars <span class="premium-mark">PRO</span></button>
                 </div>
                 <div class="photo-preview-note" id="photoPreviewNote"></div>
 
@@ -666,7 +666,7 @@
                             {% if user_rating_count == 1 %}Rating{% else %}Ratings{% endif %}
                         </div>
                     {% else %}
-                        <div class="rating-stars">☆</div>
+                        <div class="rating-stars"></div>
                         <div class="rating-number">No Rating Yet</div>
                         <div class="rating-count">
                             Rating will appear after a worker rates you.
@@ -1040,173 +1040,173 @@
 <div class="avatar-modal-backdrop" id="premiumAvatarModal" aria-hidden="true">
     <div class="avatar-modal" role="dialog" aria-modal="true" aria-labelledby="premiumAvatarTitle">
         <div class="avatar-modal-head">
-            <h3 id="premiumAvatarTitle" class="premium-avatar-title">👑 Choose <span class="gold">Premium Avatar</span></h3>
+            <h3 id="premiumAvatarTitle" class="premium-avatar-title"> Choose <span class="gold">Premium Avatar</span></h3>
             <button type="button" class="avatar-modal-close" id="premiumAvatarClose" aria-label="Close">×</button>
         </div>
         <div class="avatar-grid">
             <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_01" aria-label="Premium avatar 1">
-                <span class="premium-crown">👑</span>
+                <span class="premium-crown"></span>
                 <img src="{% static 'complaints/avatars/premium/premium_avatar_01.png' %}" alt="Premium avatar 1">
             </button>
             <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_02" aria-label="Premium avatar 2">
-                <span class="premium-crown">👑</span>
+                <span class="premium-crown"></span>
                 <img src="{% static 'complaints/avatars/premium/premium_avatar_02.png' %}" alt="Premium avatar 2">
             </button>
             <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_03" aria-label="Premium avatar 3">
-                <span class="premium-crown">👑</span>
+                <span class="premium-crown"></span>
                 <img src="{% static 'complaints/avatars/premium/premium_avatar_03.png' %}" alt="Premium avatar 3">
             </button>
             <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_04" aria-label="Premium avatar 4">
-                <span class="premium-crown">👑</span>
+                <span class="premium-crown"></span>
                 <img src="{% static 'complaints/avatars/premium/premium_avatar_04.png' %}" alt="Premium avatar 4">
             </button>
             <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_05" aria-label="Premium avatar 5">
-                <span class="premium-crown">👑</span>
+                <span class="premium-crown"></span>
                 <img src="{% static 'complaints/avatars/premium/premium_avatar_05.png' %}" alt="Premium avatar 5">
             </button>
             <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_06" aria-label="Premium avatar 6">
-                <span class="premium-crown">👑</span>
+                <span class="premium-crown"></span>
                 <img src="{% static 'complaints/avatars/premium/premium_avatar_06.png' %}" alt="Premium avatar 6">
             </button>
             <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_07" aria-label="Premium avatar 7">
-                <span class="premium-crown">👑</span>
+                <span class="premium-crown"></span>
                 <img src="{% static 'complaints/avatars/premium/premium_avatar_07.png' %}" alt="Premium avatar 7">
             </button>
             <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_08" aria-label="Premium avatar 8">
-                <span class="premium-crown">👑</span>
+                <span class="premium-crown"></span>
                 <img src="{% static 'complaints/avatars/premium/premium_avatar_08.png' %}" alt="Premium avatar 8">
             </button>
             <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_09" aria-label="Premium avatar 9">
-                <span class="premium-crown">👑</span>
+                <span class="premium-crown"></span>
                 <img src="{% static 'complaints/avatars/premium/premium_avatar_09.png' %}" alt="Premium avatar 9">
             </button>
             <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_10" aria-label="Premium avatar 10">
-                <span class="premium-crown">👑</span>
+                <span class="premium-crown"></span>
                 <img src="{% static 'complaints/avatars/premium/premium_avatar_10.png' %}" alt="Premium avatar 10">
             </button>
             <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_11" aria-label="Premium avatar 11">
-                <span class="premium-crown">👑</span>
+                <span class="premium-crown"></span>
                 <img src="{% static 'complaints/avatars/premium/premium_avatar_11.png' %}" alt="Premium avatar 11">
             </button>
             <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_12" aria-label="Premium avatar 12">
-                <span class="premium-crown">👑</span>
+                <span class="premium-crown"></span>
                 <img src="{% static 'complaints/avatars/premium/premium_avatar_12.png' %}" alt="Premium avatar 12">
             </button>
             <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_13" aria-label="Premium avatar 13">
-                <span class="premium-crown">👑</span>
+                <span class="premium-crown"></span>
                 <img src="{% static 'complaints/avatars/premium/premium_avatar_13.png' %}" alt="Premium avatar 13">
             </button>
             <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_14" aria-label="Premium avatar 14">
-                <span class="premium-crown">👑</span>
+                <span class="premium-crown"></span>
                 <img src="{% static 'complaints/avatars/premium/premium_avatar_14.png' %}" alt="Premium avatar 14">
             </button>
             <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_15" aria-label="Premium avatar 15">
-                <span class="premium-crown">👑</span>
+                <span class="premium-crown"></span>
                 <img src="{% static 'complaints/avatars/premium/premium_avatar_15.png' %}" alt="Premium avatar 15">
             </button>
             <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_16" aria-label="Premium avatar 16">
-                <span class="premium-crown">👑</span>
+                <span class="premium-crown"></span>
                 <img src="{% static 'complaints/avatars/premium/premium_avatar_16.png' %}" alt="Premium avatar 16">
             </button>
             <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_17" aria-label="Premium avatar 17">
-                <span class="premium-crown">👑</span>
+                <span class="premium-crown"></span>
                 <img src="{% static 'complaints/avatars/premium/premium_avatar_17.png' %}" alt="Premium avatar 17">
             </button>
             <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_18" aria-label="Premium avatar 18">
-                <span class="premium-crown">👑</span>
+                <span class="premium-crown"></span>
                 <img src="{% static 'complaints/avatars/premium/premium_avatar_18.png' %}" alt="Premium avatar 18">
             </button>
             <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_19" aria-label="Premium avatar 19">
-                <span class="premium-crown">👑</span>
+                <span class="premium-crown"></span>
                 <img src="{% static 'complaints/avatars/premium/premium_avatar_19.png' %}" alt="Premium avatar 19">
             </button>
             <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_20" aria-label="Premium avatar 20">
-                <span class="premium-crown">👑</span>
+                <span class="premium-crown"></span>
                 <img src="{% static 'complaints/avatars/premium/premium_avatar_20.png' %}" alt="Premium avatar 20">
             </button>
             <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_21" aria-label="Premium avatar 21">
-                <span class="premium-crown">👑</span>
+                <span class="premium-crown"></span>
                 <img src="{% static 'complaints/avatars/premium/premium_avatar_21.png' %}" alt="Premium avatar 21">
             </button>
             <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_22" aria-label="Premium avatar 22">
-                <span class="premium-crown">👑</span>
+                <span class="premium-crown"></span>
                 <img src="{% static 'complaints/avatars/premium/premium_avatar_22.png' %}" alt="Premium avatar 22">
             </button>
             <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_23" aria-label="Premium avatar 23">
-                <span class="premium-crown">👑</span>
+                <span class="premium-crown"></span>
                 <img src="{% static 'complaints/avatars/premium/premium_avatar_23.png' %}" alt="Premium avatar 23">
             </button>
             <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_24" aria-label="Premium avatar 24">
-                <span class="premium-crown">👑</span>
+                <span class="premium-crown"></span>
                 <img src="{% static 'complaints/avatars/premium/premium_avatar_24.png' %}" alt="Premium avatar 24">
             </button>
             <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_25" aria-label="Premium avatar 25">
-                <span class="premium-crown">👑</span>
+                <span class="premium-crown"></span>
                 <img src="{% static 'complaints/avatars/premium/premium_avatar_25.png' %}" alt="Premium avatar 25">
             </button>
             <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_26" aria-label="Premium avatar 26">
-                <span class="premium-crown">👑</span>
+                <span class="premium-crown"></span>
                 <img src="{% static 'complaints/avatars/premium/premium_avatar_26.png' %}" alt="Premium avatar 26">
             </button>
             <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_27" aria-label="Premium avatar 27">
-                <span class="premium-crown">👑</span>
+                <span class="premium-crown"></span>
                 <img src="{% static 'complaints/avatars/premium/premium_avatar_27.png' %}" alt="Premium avatar 27">
             </button>
             <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_28" aria-label="Premium avatar 28">
-                <span class="premium-crown">👑</span>
+                <span class="premium-crown"></span>
                 <img src="{% static 'complaints/avatars/premium/premium_avatar_28.png' %}" alt="Premium avatar 28">
             </button>
             <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_29" aria-label="Premium avatar 29">
-                <span class="premium-crown">👑</span>
+                <span class="premium-crown"></span>
                 <img src="{% static 'complaints/avatars/premium/premium_avatar_29.png' %}" alt="Premium avatar 29">
             </button>
             <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_30" aria-label="Premium avatar 30">
-                <span class="premium-crown">👑</span>
+                <span class="premium-crown"></span>
                 <img src="{% static 'complaints/avatars/premium/premium_avatar_30.png' %}" alt="Premium avatar 30">
             </button>
             <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_31" aria-label="Premium avatar 31">
-                <span class="premium-crown">👑</span>
+                <span class="premium-crown"></span>
                 <img src="{% static 'complaints/avatars/premium/premium_avatar_31.png' %}" alt="Premium avatar 31">
             </button>
             <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_32" aria-label="Premium avatar 32">
-                <span class="premium-crown">👑</span>
+                <span class="premium-crown"></span>
                 <img src="{% static 'complaints/avatars/premium/premium_avatar_32.png' %}" alt="Premium avatar 32">
             </button>
             <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_33" aria-label="Premium avatar 33">
-                <span class="premium-crown">👑</span>
+                <span class="premium-crown"></span>
                 <img src="{% static 'complaints/avatars/premium/premium_avatar_33.png' %}" alt="Premium avatar 33">
             </button>
             <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_34" aria-label="Premium avatar 34">
-                <span class="premium-crown">👑</span>
+                <span class="premium-crown"></span>
                 <img src="{% static 'complaints/avatars/premium/premium_avatar_34.png' %}" alt="Premium avatar 34">
             </button>
             <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_35" aria-label="Premium avatar 35">
-                <span class="premium-crown">👑</span>
+                <span class="premium-crown"></span>
                 <img src="{% static 'complaints/avatars/premium/premium_avatar_35.png' %}" alt="Premium avatar 35">
             </button>
             <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_36" aria-label="Premium avatar 36">
-                <span class="premium-crown">👑</span>
+                <span class="premium-crown"></span>
                 <img src="{% static 'complaints/avatars/premium/premium_avatar_36.png' %}" alt="Premium avatar 36">
             </button>
             <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_37" aria-label="Premium avatar 37">
-                <span class="premium-crown">👑</span>
+                <span class="premium-crown"></span>
                 <img src="{% static 'complaints/avatars/premium/premium_avatar_37.png' %}" alt="Premium avatar 37">
             </button>
             <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_38" aria-label="Premium avatar 38">
-                <span class="premium-crown">👑</span>
+                <span class="premium-crown"></span>
                 <img src="{% static 'complaints/avatars/premium/premium_avatar_38.png' %}" alt="Premium avatar 38">
             </button>
             <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_39" aria-label="Premium avatar 39">
-                <span class="premium-crown">👑</span>
+                <span class="premium-crown"></span>
                 <img src="{% static 'complaints/avatars/premium/premium_avatar_39.png' %}" alt="Premium avatar 39">
             </button>
             <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_40" aria-label="Premium avatar 40">
-                <span class="premium-crown">👑</span>
+                <span class="premium-crown"></span>
                 <img src="{% static 'complaints/avatars/premium/premium_avatar_40.png' %}" alt="Premium avatar 40">
             </button>
         </div>
         <div class="premium-upgrade-box">
-            👑 Premium collection preview. Premium avatar selection will unlock with the Premium membership system.
+             Premium collection preview. Premium avatar selection will unlock with the Premium membership system.
         </div>
     </div>
 </div>
@@ -1342,7 +1342,7 @@
 
         premiumModal.querySelectorAll('.premium-avatar-choice').forEach(function(choice){
             choice.addEventListener('click', function(){
-                showNote('👑 This avatar is Premium. Premium membership unlock will be connected in the Premium phase.');
+                showNote(' This avatar is Premium. Premium membership unlock will be connected in the Premium phase.');
             });
         });
     }

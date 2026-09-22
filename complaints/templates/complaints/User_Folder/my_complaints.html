@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
 
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 
     <title>My Complaints | Smart Complaint</title>
 
@@ -1402,33 +1402,33 @@
 
                   <div class="submitted-stars">
                     {% if complaint.user_rating.stars >= 1 %}
-                      ★
+                      
                     {% else %}
-                      ☆
+                      
                     {% endif %}
 
                     {% if complaint.user_rating.stars >= 2 %}
-                      ★
+                      
                     {% else %}
-                      ☆
+                      
                     {% endif %}
 
                     {% if complaint.user_rating.stars >= 3 %}
-                      ★
+                      
                     {% else %}
-                      ☆
+                      
                     {% endif %}
 
                     {% if complaint.user_rating.stars >= 4 %}
-                      ★
+                      
                     {% else %}
-                      ☆
+                      
                     {% endif %}
 
                     {% if complaint.user_rating.stars >= 5 %}
-                      ★
+                      
                     {% else %}
-                      ☆
+                      
                     {% endif %}
                   </div>
 
@@ -1465,23 +1465,23 @@
                     <div class="stars">
                       <input type="radio" id="worker-star-5-{{ complaint.id }}" name="stars" value="5" required />
 
-                      <label for="worker-star-5-{{ complaint.id }}">★</label>
+                      <label for="worker-star-5-{{ complaint.id }}"></label>
 
                       <input type="radio" id="worker-star-4-{{ complaint.id }}" name="stars" value="4" />
 
-                      <label for="worker-star-4-{{ complaint.id }}">★</label>
+                      <label for="worker-star-4-{{ complaint.id }}"></label>
 
                       <input type="radio" id="worker-star-3-{{ complaint.id }}" name="stars" value="3" />
 
-                      <label for="worker-star-3-{{ complaint.id }}">★</label>
+                      <label for="worker-star-3-{{ complaint.id }}"></label>
 
                       <input type="radio" id="worker-star-2-{{ complaint.id }}" name="stars" value="2" />
 
-                      <label for="worker-star-2-{{ complaint.id }}">★</label>
+                      <label for="worker-star-2-{{ complaint.id }}"></label>
 
                       <input type="radio" id="worker-star-1-{{ complaint.id }}" name="stars" value="1" />
 
-                      <label for="worker-star-1-{{ complaint.id }}">★</label>
+                      <label for="worker-star-1-{{ complaint.id }}"></label>
                     </div>
 
                     <label class="problem-label">

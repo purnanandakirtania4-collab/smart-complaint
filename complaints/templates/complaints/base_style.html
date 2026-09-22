@@ -951,6 +951,73 @@
       }
     }
 
+
+    /* =====================================================
+       LIVE / ANIMATED APP BACKGROUND
+       Lightweight CSS only - no canvas, no video, no JS loop
+    ===================================================== */
+
+    html,
+    body {
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+
+    body {
+        background-size: 220% 220% !important;
+        background-position: 0% 45%;
+        animation: scLiveBackground 18s ease-in-out infinite alternate;
+        will-change: background-position;
+    }
+
+    @keyframes scLiveBackground {
+        0% { background-position: 0% 35%; }
+        35% { background-position: 55% 65%; }
+        70% { background-position: 100% 35%; }
+        100% { background-position: 38% 78%; }
+    }
+
+    body.sc-theme-light,
+    body.worker-theme-light,
+    body.sc-theme-dark,
+    body.worker-theme-dark,
+    body.dark-mode,
+    body.worker-dark-mode,
+    body.sc-theme-glass,
+    body.worker-theme-glass,
+    body.sc-theme-royal,
+    body.sc-theme-royalblue,
+    body.sc-theme-emerald,
+    body.sc-theme-rose,
+    body.sc-theme-sunset,
+    body.sc-theme-cyber,
+    body.sc-theme-gold,
+    body.sc-theme-slate,
+    body.worker-theme-royal,
+    body.worker-theme-royalblue,
+    body.worker-theme-emerald,
+    body.worker-theme-rose,
+    body.worker-theme-sunset,
+    body.worker-theme-cyber,
+    body.worker-theme-gold,
+    body.worker-theme-slate {
+        background-size: 220% 220% !important;
+    }
+
+    @media (max-width: 700px) {
+        body {
+            background-attachment: scroll !important;
+            animation-duration: 22s;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        body {
+            animation: none !important;
+            background-position: 50% 50% !important;
+        }
+    }
+
 </style>
 
 

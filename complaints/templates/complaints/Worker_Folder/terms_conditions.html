@@ -1,269 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Worker Pro Terms | Smart Complaint</title>
-    {% include 'complaints/base_style.html' %}
-    <style>
-      * {
-        box-sizing: border-box;
-      }
-      .terms-page {
-        width: min(880px, calc(100% - 26px));
-        margin: 0 auto;
-        padding: 86px 0 48px;
-      }
-      .terms-card {
-        padding: 25px;
-        border: 1px solid rgba(148, 163, 184, 0.2);
-        border-radius: 20px;
-        background: rgba(15, 45, 82, 0.74);
-        color: #fff;
-        box-shadow: 0 20px 55px rgba(2, 6, 23, 0.22);
-      }
-      .terms-icon {
-        width: 44px;
-        height: 44px;
-        display: grid;
-        place-items: center;
-        border: 1px solid rgba(165, 180, 252, 0.2);
-        border-radius: 12px;
-        background: rgba(99, 102, 241, 0.1);
-        color: #c7d2fe;
-      }
-      .terms-icon svg {
-        width: 23px;
-        height: 23px;
-        fill: none;
-        stroke: currentColor;
-        stroke-width: 2;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-      }
-      .terms-card h1 {
-        margin: 13px 0 5px;
-        font-size: 25px;
-      }
-      .lead {
-        margin: 0;
-        color: #cbd5e1;
-        font-size: 10px;
-        line-height: 1.65;
-      }
-      .worker-box {
-        margin-top: 15px;
-        padding: 11px;
-        border: 1px solid rgba(125, 211, 252, 0.15);
-        border-radius: 10px;
-        background: rgba(14, 165, 233, 0.05);
-        color: #bfdbfe;
-        font-size: 9px;
-        line-height: 1.7;
-      }
-      .plan-table {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 9px;
-        margin-top: 16px;
-      }
-      .plan {
-        padding: 13px;
-        border: 1px solid rgba(148, 163, 184, 0.16);
-        border-radius: 12px;
-        background: rgba(2, 6, 23, 0.16);
-      }
-      .plan strong {
-        display: block;
-        font-size: 11px;
-      }
-      .plan b {
-        display: block;
-        margin-top: 7px;
-        font-size: 20px;
-      }
-      .plan span {
-        display: block;
-        margin-top: 5px;
-        color: #94a3b8;
-        font-size: 8px;
-        line-height: 1.5;
-      }
-      .terms-list {
-        display: grid;
-        gap: 10px;
-        margin-top: 18px;
-      }
-      .term {
-        padding: 0 0 10px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-      }
-      .term:last-child {
-        border-bottom: 0;
-      }
-      .term h3 {
-        margin: 0 0 4px;
-        font-size: 11px;
-      }
-      .term p {
-        margin: 0;
-        color: #cbd5e1;
-        font-size: 9px;
-        line-height: 1.65;
-      }
-      .important {
-        margin-top: 16px;
-        padding: 12px;
-        border: 1px solid rgba(251, 191, 36, 0.18);
-        border-radius: 11px;
-        background: rgba(245, 158, 11, 0.06);
-        color: #fde68a;
-        font-size: 9px;
-        line-height: 1.65;
-      }
-      .agree {
-        margin-top: 16px;
-        padding: 12px;
-        border: 1px solid rgba(148, 163, 184, 0.15);
-        border-radius: 11px;
-        background: rgba(2, 6, 23, 0.14);
-      }
-      .agree label {
-        display: flex;
-        gap: 9px;
-        align-items: flex-start;
-        color: #e2e8f0;
-        font-size: 9px;
-        line-height: 1.55;
-      }
-      .agree input {
-        margin-top: 2px;
-      }
-      .actions {
-        display: flex;
-        gap: 9px;
-        flex-wrap: wrap;
-        margin-top: 14px;
-      }
-      .btn {
-        min-height: 39px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0 14px;
-        border-radius: 9px;
-        text-decoration: none;
-        font: inherit;
-        font-size: 9px;
-        font-weight: 900;
-      }
-      .back {
-        border: 1px solid rgba(148, 163, 184, 0.18);
-        background: rgba(148, 163, 184, 0.07);
-        color: #cbd5e1;
-      }
-      .continue {
-        border: 0;
-        background: #fff;
-        color: #312e81;
-        cursor: pointer;
-      }
-      .continue:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-      }
-      @media (max-width: 680px) {
-        .plan-table {
-          grid-template-columns: 1fr;
-        }
-        .terms-card {
-          padding: 18px;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    {% include 'complaints/Worker_Folder/worker_navbar.html' %}
-    <main class="terms-page">
-      <section class="terms-card">
-        <div class="terms-icon">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M6 3h9l3 3v15H6z"></path>
-            <path d="M14 3v4h4"></path>
-            <path d="M9 11h6M9 15h6"></path>
-          </svg>
-        </div>
-        <h1>Worker Pro Subscription Terms</h1>
-        <p class="lead">Review the current plan prices, AutoPay schedule and AI credit rules before continuing.</p>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Worker Pro Terms | Smart Complaint</title>
+  {% include 'complaints/base_style.html' %}
+  <style>
+    *{box-sizing:border-box}.terms-page{width:min(880px,calc(100% - 26px));margin:0 auto;padding:86px 0 48px}.terms-card{padding:25px;border:1px solid rgba(148,163,184,.20);border-radius:20px;background:rgba(15,45,82,.74);color:#fff;box-shadow:0 20px 55px rgba(2,6,23,.22)}.terms-icon{width:44px;height:44px;display:grid;place-items:center;border:1px solid rgba(165,180,252,.20);border-radius:12px;background:rgba(99,102,241,.10);color:#c7d2fe}.terms-icon svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.terms-card h1{margin:13px 0 5px;font-size:25px}.lead{margin:0;color:#cbd5e1;font-size:10px;line-height:1.65}.worker-box{margin-top:15px;padding:11px;border:1px solid rgba(125,211,252,.15);border-radius:10px;background:rgba(14,165,233,.05);color:#bfdbfe;font-size:9px;line-height:1.7}.plan-table{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:16px}.plan{padding:13px;border:1px solid rgba(148,163,184,.16);border-radius:12px;background:rgba(2,6,23,.16)}.plan strong{display:block;font-size:11px}.plan b{display:block;margin-top:7px;font-size:20px}.plan span{display:block;margin-top:5px;color:#94a3b8;font-size:8px;line-height:1.5}.terms-list{display:grid;gap:10px;margin-top:18px}.term{padding:0 0 10px;border-bottom:1px solid rgba(255,255,255,.07)}.term:last-child{border-bottom:0}.term h3{margin:0 0 4px;font-size:11px}.term p{margin:0;color:#cbd5e1;font-size:9px;line-height:1.65}.important{margin-top:16px;padding:12px;border:1px solid rgba(251,191,36,.18);border-radius:11px;background:rgba(245,158,11,.06);color:#fde68a;font-size:9px;line-height:1.65}.agree{margin-top:16px;padding:12px;border:1px solid rgba(148,163,184,.15);border-radius:11px;background:rgba(2,6,23,.14)}.agree label{display:flex;gap:9px;align-items:flex-start;color:#e2e8f0;font-size:9px;line-height:1.55}.agree input{margin-top:2px}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.btn{min-height:39px;display:inline-flex;align-items:center;justify-content:center;padding:0 14px;border-radius:9px;text-decoration:none;font:inherit;font-size:9px;font-weight:900}.back{border:1px solid rgba(148,163,184,.18);background:rgba(148,163,184,.07);color:#cbd5e1}.continue{border:0;background:#fff;color:#312e81;cursor:pointer}.continue:disabled{opacity:.5;cursor:not-allowed}@media(max-width:680px){.plan-table{grid-template-columns:1fr}.terms-card{padding:18px}}
+  </style>
+</head>
+<body>
+  {% include 'complaints/Worker_Folder/worker_navbar.html' %}
+  <main class="terms-page">
+    <section class="terms-card">
+      <div class="terms-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l3 3v15H6z"></path><path d="M14 3v4h4"></path><path d="M9 11h6M9 15h6"></path></svg></div>
+      <h1>Worker Pro Subscription Terms</h1>
+      <p class="lead">Review the current plan prices, AutoPay schedule and AI credit rules before continuing.</p>
 
-        <div class="worker-box">
-          <strong>Worker:</strong> {{ worker.name }} &nbsp; <strong>Worker ID:</strong> {{ worker.worker_id }}
-        </div>
+      <div class="worker-box"><strong>Worker:</strong> {{ worker.name }} &nbsp; <strong>Worker ID:</strong> {{ worker.worker_id }}</div>
 
-        <div class="plan-table">
-          <div class="plan">
-            <strong>Monthly</strong><b>₹49 first month</b><span>Then ₹149 every month through AutoPay. 150 AI credits per 30-day cycle.</span>
-          </div>
-          <div class="plan">
-            <strong>4 Months</strong><b>₹589</b><span>₹589 every 4 months through AutoPay. Equivalent ₹149 × 4 is ₹596, so the displayed plan saves ₹7. 155 AI credits per 30-day cycle.</span>
-          </div>
-          <div class="plan">
-            <strong>Yearly</strong><b>₹1769</b><span>₹1769 every 12 months through AutoPay. Equivalent ₹149 × 12 is ₹1788, so the displayed plan saves ₹19. 160 AI credits per 30-day cycle.</span>
-          </div>
-        </div>
+      <div class="plan-table">
+        <div class="plan"><strong>Monthly</strong><b>₹49 first month</b><span>Then ₹149 every month through AutoPay. 150 AI credits per 30-day cycle.</span></div>
+        <div class="plan"><strong>4 Months</strong><b>₹589</b><span>₹589 every 4 months through AutoPay. Equivalent ₹149 × 4 is ₹596, so the displayed plan saves ₹7. 155 AI credits per 30-day cycle.</span></div>
+        <div class="plan"><strong>Yearly</strong><b>₹1769</b><span>₹1769 every 12 months through AutoPay. Equivalent ₹149 × 12 is ₹1788, so the displayed plan saves ₹19. 160 AI credits per 30-day cycle.</span></div>
+      </div>
 
-        <div class="terms-list">
-          <div class="term">
-            <h3>1. Activation</h3><p>Worker Pro becomes active only after successful Razorpay authorisation/payment and server-side verification. An incomplete or failed payment does not activate paid access.</p>
-          </div>
-          <div class="term">
-            <h3>2. AutoPay</h3><p>Every Worker Pro plan is recurring. Monthly renews at ₹149 after its ₹49 introductory first month. The 4-month plan renews at ₹589 every 4 months. The yearly plan renews at ₹1769 every 12 months.</p>
-          </div>
-          <div class="term">
-            <h3>3. AI credits</h3><p>AI credits are controlled in rolling 30-day cycles: 150 for Monthly, 155 for 4 Months and 160 for Yearly. Unused credits do not accumulate into a larger future allowance.</p>
-          </div>
-          <div class="term">
-            <h3>4. Current features</h3><p>Current Worker Pro AI tools include Complaint Summary, Work Checklist and Reply Draft. AI output is optional and never automatically changes complaint status, verifies work, or sends a reply on the worker's behalf.</p>
-          </div>
-          <div class="term">
-            <h3>5. Future features</h3><p>Any feature described as planned, future or early access is not guaranteed to be available today. Smart Complaint may add, change or discontinue future benefits while keeping current paid terms clear.</p>
-          </div>
-          <div class="term">
-            <h3>6. Failed recurring payment</h3><p>If a renewal fails because of insufficient balance, bank or UPI restrictions, expired authorisation or another payment issue, paid access may stop according to the verified subscription state.</p>
-          </div>
-          <div class="term">
-            <h3>7. Renewal management</h3><p>The worker may turn off future renewal using Smart Complaint where available or through the applicable payment provider. When cycle-end cancellation is successfully scheduled, already-paid access continues until the current paid period ends.</p>
-          </div>
-          <div class="term">
-            <h3>8. Refunds and provider rules</h3><p>Processed payments may be non-refundable except where Smart Complaint approves a refund or applicable law requires one. Razorpay, the worker's bank and UPI/card provider may apply their own payment and mandate rules.</p>
-          </div>
-        </div>
+      <div class="terms-list">
+        <div class="term"><h3>1. Activation</h3><p>Worker Pro becomes active only after successful Razorpay authorisation/payment and server-side verification. An incomplete or failed payment does not activate paid access.</p></div>
+        <div class="term"><h3>2. AutoPay</h3><p>Every Worker Pro plan is recurring. Monthly renews at ₹149 after its ₹49 introductory first month. The 4-month plan renews at ₹589 every 4 months. The yearly plan renews at ₹1769 every 12 months.</p></div>
+        <div class="term"><h3>3. AI credits</h3><p>AI credits are controlled in rolling 30-day cycles: 150 for Monthly, 155 for 4 Months and 160 for Yearly. Unused credits do not accumulate into a larger future allowance.</p></div>
+        <div class="term"><h3>4. Current features</h3><p>Current Worker Pro AI tools include Complaint Summary, Work Checklist and Reply Draft. AI output is optional and never automatically changes complaint status, verifies work, or sends a reply on the worker's behalf.</p></div>
+        <div class="term"><h3>5. Future features</h3><p>Any feature described as planned, future or early access is not guaranteed to be available today. Smart Complaint may add, change or discontinue future benefits while keeping current paid terms clear.</p></div>
+        <div class="term"><h3>6. Failed recurring payment</h3><p>If a renewal fails because of insufficient balance, bank or UPI restrictions, expired authorisation or another payment issue, paid access may stop according to the verified subscription state.</p></div>
+        <div class="term"><h3>7. Renewal management</h3><p>The worker may turn off future renewal using Smart Complaint where available or through the applicable payment provider. When cycle-end cancellation is successfully scheduled, already-paid access continues until the current paid period ends.</p></div>
+        <div class="term"><h3>8. Refunds and provider rules</h3><p>Processed payments may be non-refundable except where Smart Complaint approves a refund or applicable law requires one. Razorpay, the worker's bank and UPI/card provider may apply their own payment and mandate rules.</p></div>
+      </div>
 
-        <div class="important">
-          <strong>Important:</strong> By continuing, you are authorising a recurring plan. Check the plan price and renewal frequency on the Razorpay screen before approving the mandate.
-        </div>
+      <div class="important"><strong>Important:</strong> By continuing, you are authorising a recurring plan. Check the plan price and renewal frequency on the Razorpay screen before approving the mandate.</div>
 
-        <form method="post">
-          {% csrf_token %}
-          <div class="agree">
-            <label><input id="agreeTerms" type="checkbox" name="agree_terms" value="yes" /> <span>I have read the Worker Pro pricing, recurring AutoPay schedule, AI credit rules and cancellation information.</span></label>
-          </div>
-          <div class="actions">
-            <a class="btn back" href="{% url 'worker_settings' %}">Back</a><button id="continueBtn" class="btn continue" type="submit" disabled>Continue to plan selection</button>
-          </div>
-        </form>
-      </section>
-    </main>
-    <script>
-      ;(function () {
-        var c = document.getElementById('agreeTerms')
-        var b = document.getElementById('continueBtn')
-        if (c && b) {
-          c.addEventListener('change', function () {
-            b.disabled = !c.checked
-          })
-        }
-      })()
-    </script>
-  </body>
+      <form method="post">
+        {% csrf_token %}
+        <div class="agree"><label><input id="agreeTerms" type="checkbox" name="agree_terms" value="yes"> <span>I have read the Worker Pro pricing, recurring AutoPay schedule, AI credit rules and cancellation information.</span></label></div>
+        <div class="actions"><a class="btn back" href="{% url 'worker_settings' %}">Back</a><button id="continueBtn" class="btn continue" type="submit" disabled>Continue to plan selection</button></div>
+      </form>
+    </section>
+  </main>
+  <script>
+    (function(){var c=document.getElementById('agreeTerms');var b=document.getElementById('continueBtn');if(c&&b){c.addEventListener('change',function(){b.disabled=!c.checked;});}})();
+  </script>
+</body>
 </html>

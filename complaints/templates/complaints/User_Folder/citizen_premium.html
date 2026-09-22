@@ -1,782 +1,835 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Citizen Premium | Smart Complaint</title>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Citizen Premium | Smart Complaint</title>
 
-    {% include 'complaints/base_style.html' %}
+  {% include 'complaints/base_style.html' %}
 
-    <style>
-      * {
-        box-sizing: border-box;
-      }
-      
-      .cp-page {
-        width: min(980px, calc(100% - 28px));
-        margin: 0 auto;
-        padding: 88px 0 44px;
-      }
-      
-      .cp-back {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 14px;
-        color: #bfdbfe;
-        font-size: 12px;
-        font-weight: 900;
-        text-decoration: none;
-      }
-      
-      .cp-icon {
-        width: 20px;
-        height: 20px;
-        fill: none;
-        stroke: currentColor;
-        stroke-width: 2;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-        flex: 0 0 auto;
-      }
-      
-      .cp-hero {
-        overflow: hidden;
-        border: 1px solid rgba(129, 140, 248, 0.28);
-        border-radius: 24px;
-        background: radial-gradient(circle at 82% 18%, rgba(129, 140, 248, 0.26), transparent 29%), linear-gradient(135deg, rgba(30, 64, 175, 0.96), rgba(76, 29, 149, 0.94));
-        color: #fff;
-        box-shadow: 0 24px 62px rgba(2, 6, 23, 0.25);
-      }
-      
-      .cp-hero-main {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) 290px;
-        gap: 24px;
-        align-items: center;
-        padding: 30px;
-      }
-      
-      .cp-eyebrow {
-        display: inline-flex;
-        align-items: center;
-        gap: 7px;
-        padding: 6px 9px;
-        border: 1px solid rgba(255, 255, 255, 0.16);
-        border-radius: 999px;
-        background: rgba(255, 255, 255, 0.08);
-        color: #e0e7ff;
-        font-size: 10px;
-        font-weight: 900;
-        letter-spacing: 0.05em;
-        text-transform: uppercase;
-      }
-      
-      .cp-title {
-        margin: 15px 0 0;
-        color: #fff;
-        font-size: clamp(30px, 5vw, 46px);
-        line-height: 1.05;
-      }
-      
-      .cp-subtitle {
-        max-width: 620px;
-        margin: 13px 0 0;
-        color: #dbeafe;
-        font-size: 14px;
-        line-height: 1.7;
-      }
-      
-      .cp-trust {
-        display: flex;
-        align-items: flex-start;
-        gap: 9px;
-        margin-top: 17px;
-        padding: 12px 13px;
-        border: 1px solid rgba(191, 219, 254, 0.18);
-        border-radius: 12px;
-        background: rgba(15, 23, 42, 0.2);
-        color: #dbeafe;
-        font-size: 11px;
-        line-height: 1.55;
-      }
-      
-      .cp-price-box {
-        padding: 22px;
-        border: 1px solid rgba(255, 255, 255, 0.16);
-        border-radius: 18px;
-        background: rgba(15, 23, 42, 0.27);
-        backdrop-filter: blur(16px);
-      }
-      
-      .cp-price {
-        color: #fff;
-        font-size: 38px;
-        font-weight: 950;
-        letter-spacing: -0.04em;
-      }
-      
-      .cp-price small {
-        font-size: 13px;
-        font-weight: 800;
-        color: #c7d2fe;
-        letter-spacing: normal;
-      }
-      
-      .cp-price-note {
-        margin-top: 6px;
-        color: #c7d2fe;
-        font-size: 10px;
-        line-height: 1.5;
-      }
-      
-      .cp-buy-btn {
-        width: 100%;
-        min-height: 46px;
-        margin-top: 16px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        border: 0;
-        border-radius: 12px;
-        background: #fff;
-        color: #312e81;
-        cursor: pointer;
-        font: inherit;
-        font-size: 12px;
-        font-weight: 950;
-        box-shadow: 0 12px 30px rgba(15, 23, 42, 0.2);
-      }
-      
-      .cp-buy-btn:disabled {
-        opacity: 0.58;
-        cursor: not-allowed;
-      }
-      
-      .cp-status-note {
-        min-height: 18px;
-        margin-top: 9px;
-        color: #c7d2fe;
-        font-size: 10px;
-        line-height: 1.5;
-      }
-      
-      .cp-status-note.error {
-        color: #fecaca;
-      }
-      .cp-status-note.success {
-        color: #bbf7d0;
-      }
-      
-      .cp-active-strip {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 1px;
-        border-top: 1px solid rgba(255, 255, 255, 0.12);
-        background: rgba(255, 255, 255, 0.06);
-      }
-      
-      .cp-active-stat {
-        padding: 15px 12px;
-        background: rgba(15, 23, 42, 0.18);
-        text-align: center;
-      }
-      
-      .cp-active-stat strong {
-        display: block;
-        color: #fff;
-        font-size: 17px;
-      }
-      
-      .cp-active-stat span {
-        display: block;
-        margin-top: 4px;
-        color: #c7d2fe;
-        font-size: 9px;
-        font-weight: 800;
-      }
-      
+  <style>
+    * { box-sizing: border-box; }
+
+    .cp-page {
+      width: min(980px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 88px 0 44px;
+    }
+
+    .cp-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+      color: #bfdbfe;
+      font-size: 12px;
+      font-weight: 900;
+      text-decoration: none;
+    }
+
+    .cp-icon {
+      width: 20px;
+      height: 20px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex: 0 0 auto;
+    }
+
+    .cp-hero {
+      overflow: hidden;
+      border: 1px solid rgba(129,140,248,.28);
+      border-radius: 24px;
+      background:
+        radial-gradient(circle at 82% 18%, rgba(129,140,248,.26), transparent 29%),
+        linear-gradient(135deg, rgba(30,64,175,.96), rgba(76,29,149,.94));
+      color: #fff;
+      box-shadow: 0 24px 62px rgba(2,6,23,.25);
+    }
+
+    .cp-hero-main {
+      display: grid;
+      grid-template-columns: minmax(0,1fr) 290px;
+      gap: 24px;
+      align-items: center;
+      padding: 30px;
+    }
+
+    .cp-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 9px;
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 999px;
+      background: rgba(255,255,255,.08);
+      color: #e0e7ff;
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+
+    .cp-title {
+      margin: 15px 0 0;
+      color: #fff;
+      font-size: clamp(30px, 5vw, 46px);
+      line-height: 1.05;
+    }
+
+    .cp-subtitle {
+      max-width: 620px;
+      margin: 13px 0 0;
+      color: #dbeafe;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .cp-trust {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      margin-top: 17px;
+      padding: 12px 13px;
+      border: 1px solid rgba(191,219,254,.18);
+      border-radius: 12px;
+      background: rgba(15,23,42,.20);
+      color: #dbeafe;
+      font-size: 11px;
+      line-height: 1.55;
+    }
+
+    .cp-price-box {
+      padding: 22px;
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 18px;
+      background: rgba(15,23,42,.27);
+      backdrop-filter: blur(16px);
+    }
+
+    .cp-price {
+      color: #fff;
+      font-size: 38px;
+      font-weight: 950;
+      letter-spacing: -.04em;
+    }
+
+    .cp-price small {
+      font-size: 13px;
+      font-weight: 800;
+      color: #c7d2fe;
+      letter-spacing: normal;
+    }
+
+    .cp-price-note {
+      margin-top: 6px;
+      color: #c7d2fe;
+      font-size: 10px;
+      line-height: 1.5;
+    }
+
+    .cp-buy-btn {
+      width: 100%;
+      min-height: 46px;
+      margin-top: 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 0;
+      border-radius: 12px;
+      background: #fff;
+      color: #312e81;
+      cursor: pointer;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 950;
+      box-shadow: 0 12px 30px rgba(15,23,42,.20);
+    }
+
+    .cp-buy-btn:disabled {
+      opacity: .58;
+      cursor: not-allowed;
+    }
+
+    .cp-status-note {
+      min-height: 18px;
+      margin-top: 9px;
+      color: #c7d2fe;
+      font-size: 10px;
+      line-height: 1.5;
+    }
+
+    .cp-status-note.error { color: #fecaca; }
+    .cp-status-note.success { color: #bbf7d0; }
+
+    .cp-active-strip {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 1px;
+      border-top: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+    }
+
+    .cp-active-stat {
+      padding: 15px 12px;
+      background: rgba(15,23,42,.18);
+      text-align: center;
+    }
+
+    .cp-active-stat strong {
+      display: block;
+      color: #fff;
+      font-size: 17px;
+    }
+
+    .cp-active-stat span {
+      display: block;
+      margin-top: 4px;
+      color: #c7d2fe;
+      font-size: 9px;
+      font-weight: 800;
+    }
+
+    .cp-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 17px;
+    }
+
+    .cp-card {
+      padding: 20px;
+      border: 1px solid rgba(148,163,184,.22);
+      border-radius: 18px;
+      background: rgba(15,45,82,.68);
+      color: #fff;
+      box-shadow: 0 16px 38px rgba(2,6,23,.16);
+    }
+
+    .cp-card h2 {
+      margin: 0;
+      color: #fff;
+      font-size: 17px;
+    }
+
+    .cp-feature-list {
+      display: grid;
+      gap: 11px;
+      margin-top: 15px;
+    }
+
+    .cp-feature {
+      display: grid;
+      grid-template-columns: 36px minmax(0,1fr);
+      gap: 10px;
+      align-items: center;
+    }
+
+    .cp-feature-icon {
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(129,140,248,.22);
+      border-radius: 10px;
+      background: rgba(99,102,241,.11);
+      color: #c7d2fe;
+    }
+
+    .cp-feature-icon .cp-icon {
+      width: 18px;
+      height: 18px;
+    }
+
+    .cp-feature strong {
+      display: block;
+      color: #fff;
+      font-size: 11px;
+    }
+
+    .cp-feature span {
+      display: block;
+      margin-top: 3px;
+      color: #94a3b8;
+      font-size: 9px;
+      line-height: 1.45;
+    }
+
+    .cp-compare {
+      display: grid;
+      gap: 9px;
+      margin-top: 15px;
+    }
+
+    .cp-compare-row {
+      display: grid;
+      grid-template-columns: minmax(0,1fr) 90px 100px;
+      gap: 8px;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,.07);
+      color: #cbd5e1;
+      font-size: 10px;
+    }
+
+    .cp-compare-row:last-child { border-bottom: 0; }
+
+    .cp-compare-row strong {
+      color: #fff;
+      font-size: 10px;
+    }
+
+    .cp-check {
+      color: #86efac;
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .cp-muted {
+      color: #64748b;
+      text-align: center;
+    }
+
+    .cp-policy {
+      margin-top: 17px;
+      padding: 16px;
+      border: 1px solid rgba(148,163,184,.20);
+      border-radius: 16px;
+      background: rgba(15,45,82,.55);
+      color: #cbd5e1;
+      font-size: 10px;
+      line-height: 1.65;
+    }
+
+    .cp-policy strong { color: #fff; }
+
+    @media (max-width: 760px) {
+      .cp-hero-main,
       .cp-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 16px;
-        margin-top: 17px;
+        grid-template-columns: 1fr;
       }
-      
-      .cp-card {
-        padding: 20px;
-        border: 1px solid rgba(148, 163, 184, 0.22);
-        border-radius: 18px;
-        background: rgba(15, 45, 82, 0.68);
-        color: #fff;
-        box-shadow: 0 16px 38px rgba(2, 6, 23, 0.16);
+
+      .cp-active-strip {
+        grid-template-columns: 1fr;
       }
-      
-      .cp-card h2 {
-        margin: 0;
-        color: #fff;
-        font-size: 17px;
+
+      .cp-price-box {
+        max-width: 420px;
       }
-      
-      .cp-feature-list {
-        display: grid;
-        gap: 11px;
-        margin-top: 15px;
-      }
-      
-      .cp-feature {
-        display: grid;
-        grid-template-columns: 36px minmax(0, 1fr);
-        gap: 10px;
-        align-items: center;
-      }
-      
-      .cp-feature-icon {
-        width: 36px;
-        height: 36px;
-        display: grid;
-        place-items: center;
-        border: 1px solid rgba(129, 140, 248, 0.22);
-        border-radius: 10px;
-        background: rgba(99, 102, 241, 0.11);
-        color: #c7d2fe;
-      }
-      
-      .cp-feature-icon .cp-icon {
-        width: 18px;
-        height: 18px;
-      }
-      
-      .cp-feature strong {
-        display: block;
-        color: #fff;
-        font-size: 11px;
-      }
-      
-      .cp-feature span {
-        display: block;
-        margin-top: 3px;
-        color: #94a3b8;
-        font-size: 9px;
-        line-height: 1.45;
-      }
-      
-      .cp-compare {
-        display: grid;
-        gap: 9px;
-        margin-top: 15px;
-      }
-      
+    }
+
+    @media (max-width: 520px) {
+      .cp-page { padding-top: 76px; }
+      .cp-hero-main { padding: 22px 18px; }
       .cp-compare-row {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) 90px 100px;
-        gap: 8px;
-        align-items: center;
-        padding: 10px 0;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-        color: #cbd5e1;
-        font-size: 10px;
+        grid-template-columns: minmax(0,1fr) 64px 74px;
       }
-      
-      .cp-compare-row:last-child {
-        border-bottom: 0;
-      }
-      
-      .cp-compare-row strong {
-        color: #fff;
-        font-size: 10px;
-      }
-      
-      .cp-check {
-        color: #86efac;
-        font-weight: 900;
-        text-align: center;
-      }
-      
-      .cp-muted {
-        color: #64748b;
-        text-align: center;
-      }
-      
-      .cp-policy {
-        margin-top: 17px;
-        padding: 16px;
-        border: 1px solid rgba(148, 163, 184, 0.2);
-        border-radius: 16px;
-        background: rgba(15, 45, 82, 0.55);
-        color: #cbd5e1;
-        font-size: 10px;
-        line-height: 1.65;
-      }
-      
-      .cp-policy strong {
-        color: #fff;
-      }
-      
-      @media (max-width: 760px) {
-        .cp-hero-main,
-        .cp-grid {
-          grid-template-columns: 1fr;
-        }
-      
-        .cp-active-strip {
-          grid-template-columns: 1fr;
-        }
-      
-        .cp-price-box {
-          max-width: 420px;
-        }
-      }
-      
-      @media (max-width: 520px) {
-        .cp-page {
-          padding-top: 76px;
-        }
-        .cp-hero-main {
-          padding: 22px 18px;
-        }
-        .cp-compare-row {
-          grid-template-columns: minmax(0, 1fr) 64px 74px;
-        }
-      }
-      
-      .cp-local-test {
-        margin-top: 12px;
-        padding: 12px;
-        border: 1px dashed rgba(191, 219, 254, 0.34);
-        border-radius: 12px;
-        background: rgba(15, 23, 42, 0.28);
-      }
-      
-      .cp-local-test-title {
-        display: flex;
-        align-items: center;
-        gap: 7px;
-        color: #fff;
-        font-size: 10px;
-        font-weight: 950;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-      }
-      
-      .cp-local-test-title .cp-icon {
-        width: 15px;
-        height: 15px;
-      }
-      
-      .cp-local-test p {
-        margin: 6px 0 0;
-        color: #c7d2fe;
-        font-size: 9px;
-        line-height: 1.5;
-      }
-      
+    }
+
+    .cp-local-test {
+      margin-top: 12px;
+      padding: 12px;
+      border: 1px dashed rgba(191,219,254,.34);
+      border-radius: 12px;
+      background: rgba(15,23,42,.28);
+    }
+
+    .cp-local-test-title {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    .cp-local-test-title .cp-icon {
+      width: 15px;
+      height: 15px;
+    }
+
+    .cp-local-test p {
+      margin: 6px 0 0;
+      color: #c7d2fe;
+      font-size: 9px;
+      line-height: 1.5;
+    }
+
+    .cp-local-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .cp-local-btn {
+      min-height: 38px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      border: 1px solid rgba(255,255,255,.20);
+      border-radius: 10px;
+      background: rgba(255,255,255,.10);
+      color: #fff;
+      cursor: pointer;
+      font: inherit;
+      font-size: 9px;
+      font-weight: 900;
+    }
+
+    .cp-local-btn.reset {
+      background: rgba(15,23,42,.22);
+      color: #dbeafe;
+    }
+
+    .cp-local-btn .cp-icon {
+      width: 15px;
+      height: 15px;
+    }
+
+    @media (max-width: 420px) {
       .cp-local-actions {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
-        margin-top: 10px;
+        grid-template-columns: 1fr;
       }
-      
-      .cp-local-btn {
-        min-height: 38px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 7px;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: 10px;
-        background: rgba(255, 255, 255, 0.1);
-        color: #fff;
-        cursor: pointer;
-        font: inherit;
-        font-size: 9px;
-        font-weight: 900;
-      }
-      
-      .cp-local-btn.reset {
-        background: rgba(15, 23, 42, 0.22);
-        color: #dbeafe;
-      }
-      
-      .cp-local-btn .cp-icon {
-        width: 15px;
-        height: 15px;
-      }
-      
-      @media (max-width: 420px) {
-        .cp-local-actions {
-          grid-template-columns: 1fr;
-        }
-      }
-    </style>
-  </head>
+    }
 
-  <body>
-    {% include 'complaints/User_Folder/navbar.html' %}
+  </style>
+</head>
 
-    <main class="cp-page">
-      <a class="cp-back" href="{% url 'user_settings' %}">
-        <svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="m15 18-6-6 6-6"></path>
-        </svg>User Settings
-      </a>
+<body>
+  {% include 'complaints/User_Folder/navbar.html' %}
 
-      <section class="cp-hero">
-        <div class="cp-hero-main">
-          <div>
-            <div class="cp-eyebrow">
-              <svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M12 3 20 8l-8 13L4 8Z"></path>
-                <path d="M4 8h16"></path>
-              </svg>Citizen Premium
-            </div>
+  <main class="cp-page">
+    <a class="cp-back" href="{% url 'user_settings' %}">
+      <svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="m15 18-6-6 6-6"></path>
+      </svg>
+      User Settings
+    </a>
 
-            <h1 class="cp-title">Useful AI, controlled cost, clear value.</h1>
-
-            <p class="cp-subtitle">Citizen Premium adds a larger AI allowance and Premium themes. Core complaint submission, complaint tracking and essential app services remain available without Premium.</p>
-
-            <div class="cp-trust">
-              <svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M12 3 20 6v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6Z"></path>
-                <path d="m8.5 12 2.2 2.2L15.8 9"></path>
-              </svg>
-
-              <div>This is a prepaid 30-day pass. There is no automatic monthly debit. Renew only when you choose to.</div>
-            </div>
+    <section class="cp-hero">
+      <div class="cp-hero-main">
+        <div>
+          <div class="cp-eyebrow">
+            <svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 3 20 8l-8 13L4 8Z"></path>
+              <path d="M4 8h16"></path>
+            </svg>
+            Citizen Premium
           </div>
 
-          <div class="cp-price-box">
-            <div class="cp-price">
-              ₹79 <small>/ 30 days</small>
+          <h1 class="cp-title">Useful AI, controlled cost, clear value.</h1>
+
+          <p class="cp-subtitle">
+            Citizen Premium adds a larger AI allowance and Premium themes.
+            Core complaint submission, complaint tracking and essential app
+            services remain available without Premium.
+          </p>
+
+          <div class="cp-trust">
+            <svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 3 20 6v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6Z"></path>
+              <path d="m8.5 12 2.2 2.2L15.8 9"></path>
+            </svg>
+
+            <div>
+              This is a prepaid 30-day pass. There is no automatic monthly debit.
+              Renew only when you choose to.
             </div>
-
-            <div class="cp-price-note">Each verified purchase starts a fresh 60-credit AI cycle and adds 30 days of Premium access.</div>
-
-            <button class="cp-buy-btn" id="premiumBuyBtn" type="button">
-              <svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true">
-                <rect x="3" y="6" width="18" height="12" rx="2"></rect>
-                <path d="M3 10h18"></path>
-              </svg>
-
-              {% if premium_active %}
-                Renew Citizen Premium
-              {% else %}
-                Buy Citizen Premium
-              {% endif %}
-            </button>
-
-            <div class="cp-status-note" id="premiumStatus">Secure payment is verified by the Django backend before Premium is activated.</div>
-
-            {% if local_premium_test_allowed %}
-              <div class="cp-local-test">
-                <div class="cp-local-test-title">
-                  <svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M9 3h6"></path>
-                    <path d="M10 3v5l-5 9a2 2 0 0 0 1.7 3h10.6A2 2 0 0 0 19 17l-5-9V3"></path>
-                    <path d="M8 14h8"></path>
-                  </svg>Local development test
-                </div>
-
-                <p>This control exists only on localhost when DEBUG and LOCAL_PREMIUM_TEST_ENABLED are enabled. It does not create a Razorpay payment.</p>
-
-                <div class="cp-local-actions">
-                  <form method="post" action="{% url 'activate_local_test_premium' %}">
-                    {% csrf_token %}
-                    <button class="cp-local-btn" type="submit">
-                      <svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M12 3 20 8l-8 13L4 8Z"></path>
-                        <path d="M4 8h16"></path>
-                      </svg>Activate Test Premium
-                    </button>
-                  </form>
-
-                  <form method="post" action="{% url 'reset_local_test_premium' %}">
-                    {% csrf_token %}
-                    <button class="cp-local-btn reset" type="submit">
-                      <svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M4 12a8 8 0 1 0 2.3-5.7L4 8"></path>
-                        <path d="M4 4v4h4"></path>
-                      </svg>Reset to Free
-                    </button>
-                  </form>
-                </div>
-              </div>
-            {% endif %}
           </div>
         </div>
 
-        {% if premium_active %}
-          <div class="cp-active-strip">
-            <div class="cp-active-stat">
-              <strong>Active</strong>
-              <span>Current Plan</span>
-            </div>
+        <div class="cp-price-box">
+          <div class="cp-price">
+            ₹79 <small>/ 30 days</small>
+          </div>
 
-            <div class="cp-active-stat">
-              <strong>{{ membership.current_period_end|date:'d M Y' }}</strong>
-              <span>Premium Access Until</span>
-            </div>
+          <div class="cp-price-note">
+            Each verified purchase starts a fresh 60-credit AI cycle and
+            adds 30 days of Premium access.
+          </div>
 
-            <div class="cp-active-stat">
-              <strong>{{ ai_status.credits_remaining }} / {{ ai_status.credit_limit }}</strong>
-              <span>AI Credits Remaining</span>
+          <button class="cp-buy-btn" id="premiumBuyBtn" type="button">
+            <svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="3" y="6" width="18" height="12" rx="2"></rect>
+              <path d="M3 10h18"></path>
+            </svg>
+
+            {% if premium_active %}
+              Renew Citizen Premium
+            {% else %}
+              Buy Citizen Premium
+            {% endif %}
+          </button>
+
+          <div class="cp-status-note" id="premiumStatus">
+            Secure payment is verified by the Django backend before Premium is activated.
+          </div>
+
+          {% if local_premium_test_allowed %}
+            <div class="cp-local-test">
+              <div class="cp-local-test-title">
+                <svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M9 3h6"></path>
+                  <path d="M10 3v5l-5 9a2 2 0 0 0 1.7 3h10.6A2 2 0 0 0 19 17l-5-9V3"></path>
+                  <path d="M8 14h8"></path>
+                </svg>
+                Local development test
+              </div>
+
+              <p>
+                This control exists only on localhost when DEBUG and
+                LOCAL_PREMIUM_TEST_ENABLED are enabled. It does not create
+                a Razorpay payment.
+              </p>
+
+              <div class="cp-local-actions">
+                <form method="post" action="{% url 'activate_local_test_premium' %}">
+                  {% csrf_token %}
+                  <button class="cp-local-btn" type="submit">
+                    <svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M12 3 20 8l-8 13L4 8Z"></path>
+                      <path d="M4 8h16"></path>
+                    </svg>
+                    Activate Test Premium
+                  </button>
+                </form>
+
+                <form method="post" action="{% url 'reset_local_test_premium' %}">
+                  {% csrf_token %}
+                  <button class="cp-local-btn reset" type="submit">
+                    <svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M4 12a8 8 0 1 0 2.3-5.7L4 8"></path>
+                      <path d="M4 4v4h4"></path>
+                    </svg>
+                    Reset to Free
+                  </button>
+                </form>
+              </div>
+            </div>
+          {% endif %}
+
+        </div>
+      </div>
+
+      {% if premium_active %}
+        <div class="cp-active-strip">
+          <div class="cp-active-stat">
+            <strong>Active</strong>
+            <span>Current Plan</span>
+          </div>
+
+          <div class="cp-active-stat">
+            <strong>{{ membership.current_period_end|date:"d M Y" }}</strong>
+            <span>Premium Access Until</span>
+          </div>
+
+          <div class="cp-active-stat">
+            <strong>{{ ai_status.credits_remaining }} / {{ ai_status.credit_limit }}</strong>
+            <span>AI Credits Remaining</span>
+          </div>
+        </div>
+      {% endif %}
+    </section>
+
+    <div class="cp-grid">
+      <section class="cp-card">
+        <h2>What Premium includes</h2>
+
+        <div class="cp-feature-list">
+          <div class="cp-feature">
+            <div class="cp-feature-icon">
+              <svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 3 13.5 7.5 18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5Z"></path>
+              </svg>
+            </div>
+            <div>
+              <strong>60 AI credits per paid cycle</strong>
+              <span>AI Complaint Assist and future eligible AI tools use the same controlled allowance.</span>
             </div>
           </div>
-        {% endif %}
+
+          <div class="cp-feature">
+            <div class="cp-feature-icon">
+              <svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 19h16"></path>
+                <path d="M6 16 10 7l4 5 4-8"></path>
+              </svg>
+            </div>
+            <div>
+              <strong>Premium themes</strong>
+              <span>Royal Purple, Royal Blue, Emerald and Rose themes unlock while Premium is active.</span>
+            </div>
+          </div>
+
+          <div class="cp-feature">
+            <div class="cp-feature-icon">
+              <svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 4h16v12H8l-4 4Z"></path>
+                <path d="M8 8h8M8 12h5"></path>
+              </svg>
+            </div>
+            <div>
+              <strong>AI complaint assistance</strong>
+              <span>Get category, priority and short-summary suggestions while keeping final control yourself.</span>
+            </div>
+          </div>
+
+          <div class="cp-feature">
+            <div class="cp-feature-icon">
+              <svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 3 20 6v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6Z"></path>
+              </svg>
+            </div>
+            <div>
+              <strong>No essential complaint paywall</strong>
+              <span>Normal complaint submission and tracking are not removed when Premium expires.</span>
+            </div>
+          </div>
+        </div>
       </section>
 
-      <div class="cp-grid">
-        <section class="cp-card">
-          <h2>What Premium includes</h2>
+      <section class="cp-card">
+        <h2>Free vs Premium</h2>
 
-          <div class="cp-feature-list">
-            <div class="cp-feature">
-              <div class="cp-feature-icon">
-                <svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M12 3 13.5 7.5 18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5Z"></path>
-                </svg>
-              </div>
-              <div>
-                <strong>60 AI credits per paid cycle</strong>
-                <span>AI Complaint Assist and future eligible AI tools use the same controlled allowance.</span>
-              </div>
-            </div>
-
-            <div class="cp-feature">
-              <div class="cp-feature-icon">
-                <svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M4 19h16"></path>
-                  <path d="M6 16 10 7l4 5 4-8"></path>
-                </svg>
-              </div>
-              <div>
-                <strong>Premium themes</strong>
-                <span>Royal Purple, Royal Blue, Emerald and Rose themes unlock while Premium is active.</span>
-              </div>
-            </div>
-
-            <div class="cp-feature">
-              <div class="cp-feature-icon">
-                <svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M4 4h16v12H8l-4 4Z"></path>
-                  <path d="M8 8h8M8 12h5"></path>
-                </svg>
-              </div>
-              <div>
-                <strong>AI complaint assistance</strong>
-                <span>Get category, priority and short-summary suggestions while keeping final control yourself.</span>
-              </div>
-            </div>
-
-            <div class="cp-feature">
-              <div class="cp-feature-icon">
-                <svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M12 3 20 6v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6Z"></path>
-                </svg>
-              </div>
-              <div>
-                <strong>No essential complaint paywall</strong>
-                <span>Normal complaint submission and tracking are not removed when Premium expires.</span>
-              </div>
-            </div>
+        <div class="cp-compare">
+          <div class="cp-compare-row">
+            <strong>Feature</strong>
+            <strong style="text-align:center;">Free</strong>
+            <strong style="text-align:center;">Premium</strong>
           </div>
-        </section>
 
-        <section class="cp-card">
-          <h2>Free vs Premium</h2>
-
-          <div class="cp-compare">
-            <div class="cp-compare-row">
-              <strong>Feature</strong>
-              <strong style="text-align:center;">Free</strong>
-              <strong style="text-align:center;">Premium</strong>
-            </div>
-
-            <div class="cp-compare-row">
-              <span>Normal complaints</span>
-              <span class="cp-check">Included</span>
-              <span class="cp-check">Included</span>
-            </div>
-
-            <div class="cp-compare-row">
-              <span>AI allowance</span>
-              <span class="cp-check">3 trial</span>
-              <span class="cp-check">60 / cycle</span>
-            </div>
-
-            <div class="cp-compare-row">
-              <span>Free themes</span>
-              <span class="cp-check">Included</span>
-              <span class="cp-check">Included</span>
-            </div>
-
-            <div class="cp-compare-row">
-              <span>Premium themes</span>
-              <span class="cp-muted">Locked</span>
-              <span class="cp-check">Included</span>
-            </div>
-
-            <div class="cp-compare-row">
-              <span>Automatic renewal</span>
-              <span class="cp-muted">No</span>
-              <span class="cp-muted">No</span>
-            </div>
+          <div class="cp-compare-row">
+            <span>Normal complaints</span>
+            <span class="cp-check">Included</span>
+            <span class="cp-check">Included</span>
           </div>
-        </section>
-      </div>
 
-      <div class="cp-policy">
-        <strong>Transparent billing:</strong>
-        ₹79 buys 30 days of Citizen Premium. Payment must be captured and verified server-side before access is activated. Buying again while Premium is active adds another 30 days and starts a fresh 60-credit AI allowance. This page does not create a recurring mandate or automatic debit.
-      </div>
+          <div class="cp-compare-row">
+            <span>AI allowance</span>
+            <span class="cp-check">3 trial</span>
+            <span class="cp-check">60 / cycle</span>
+          </div>
 
-      <form id="premiumCsrfForm" style="display:none;">
-        {% csrf_token %}
-      </form>
-    </main>
+          <div class="cp-compare-row">
+            <span>Free themes</span>
+            <span class="cp-check">Included</span>
+            <span class="cp-check">Included</span>
+          </div>
 
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+          <div class="cp-compare-row">
+            <span>Premium themes</span>
+            <span class="cp-muted">Locked</span>
+            <span class="cp-check">Included</span>
+          </div>
 
-    <script>
-      ;(function () {
-        'use strict'
-      
-        const buyButton = document.getElementById('premiumBuyBtn')
-        const statusBox = document.getElementById('premiumStatus')
-        const csrfInput = document.querySelector('#premiumCsrfForm input[name="csrfmiddlewaretoken"]')
-      
-        const createOrderUrl = "{% url 'create_citizen_premium_order' %}"
-        const verifyUrl = "{% url 'verify_citizen_premium_payment' %}"
-      
-        let busy = false
-      
-        function setStatus(message, state) {
-          statusBox.textContent = message || ''
-          statusBox.classList.remove('error', 'success')
-      
-          if (state) {
-            statusBox.classList.add(state)
-          }
+          <div class="cp-compare-row">
+            <span>Automatic renewal</span>
+            <span class="cp-muted">No</span>
+            <span class="cp-muted">No</span>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="cp-policy">
+      <strong>Transparent billing:</strong>
+      ₹79 buys 30 days of Citizen Premium. Payment must be captured and
+      verified server-side before access is activated. Buying again while
+      Premium is active adds another 30 days and starts a fresh 60-credit
+      AI allowance. This page does not create a recurring mandate or
+      automatic debit.
+    </div>
+
+    <form id="premiumCsrfForm" style="display:none;">
+      {% csrf_token %}
+    </form>
+  </main>
+
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const buyButton = document.getElementById("premiumBuyBtn");
+      const statusBox = document.getElementById("premiumStatus");
+      const csrfInput = document.querySelector(
+        '#premiumCsrfForm input[name="csrfmiddlewaretoken"]'
+      );
+
+      const createOrderUrl = "{% url 'create_citizen_premium_order' %}";
+      const verifyUrl = "{% url 'verify_citizen_premium_payment' %}";
+
+      let busy = false;
+
+      function setStatus(message, state) {
+        statusBox.textContent = message || "";
+        statusBox.classList.remove("error", "success");
+
+        if (state) {
+          statusBox.classList.add(state);
         }
-      
-        function setBusy(value) {
-          busy = value
-          buyButton.disabled = value
+      }
+
+      function setBusy(value) {
+        busy = value;
+        buyButton.disabled = value;
+      }
+
+      async function createOrder() {
+        const response = await fetch(createOrderUrl, {
+          method: "POST",
+          headers: {
+            "X-CSRFToken": csrfInput ? csrfInput.value : "",
+            "X-Requested-With": "XMLHttpRequest"
+          },
+          credentials: "same-origin"
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+          throw new Error(
+            data.message || "Unable to create the payment order."
+          );
         }
-      
-        async function createOrder() {
-          const response = await fetch(createOrderUrl, {
-            method: 'POST',
-            headers: {
-              'X-CSRFToken': csrfInput ? csrfInput.value : '',
-              'X-Requested-With': 'XMLHttpRequest'
-            },
-            credentials: 'same-origin'
+
+        return data;
+      }
+
+      async function verifyPayment(orderData, response) {
+        const verifyResponse = await fetch(verifyUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrfInput ? csrfInput.value : "",
+            "X-Requested-With": "XMLHttpRequest"
+          },
+          credentials: "same-origin",
+          body: JSON.stringify({
+            transaction_id: orderData.transaction_id,
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_signature: response.razorpay_signature
           })
-      
-          const data = await response.json()
-      
-          if (!response.ok || !data.success) {
-            throw new Error(data.message || 'Unable to create the payment order.')
-          }
-      
-          return data
+        });
+
+        const data = await verifyResponse.json();
+
+        if (!verifyResponse.ok || !data.success) {
+          throw new Error(
+            data.message || "Payment verification failed."
+          );
         }
-      
-        async function verifyPayment(orderData, response) {
-          const verifyResponse = await fetch(verifyUrl, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-CSRFToken': csrfInput ? csrfInput.value : '',
-              'X-Requested-With': 'XMLHttpRequest'
-            },
-            credentials: 'same-origin',
-            body: JSON.stringify({
-              transaction_id: orderData.transaction_id,
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature
-            })
-          })
-      
-          const data = await verifyResponse.json()
-      
-          if (!verifyResponse.ok || !data.success) {
-            throw new Error(data.message || 'Payment verification failed.')
+
+        return data;
+      }
+
+      async function beginPayment() {
+        if (busy) return;
+
+        setBusy(true);
+        setStatus("Creating secure payment order…", "");
+
+        try {
+          if (typeof Razorpay === "undefined") {
+            throw new Error(
+              "Razorpay Checkout could not load. Please check your connection."
+            );
           }
-      
-          return data
-        }
-      
-        async function beginPayment() {
-          if (busy) return
-      
-          setBusy(true)
-          setStatus('Creating secure payment order…', '')
-      
-          try {
-            if (typeof Razorpay === 'undefined') {
-              throw new Error('Razorpay Checkout could not load. Please check your connection.')
-            }
-      
-            const orderData = await createOrder()
-      
-            const checkout = new Razorpay({
-              key: orderData.key_id,
-              amount: orderData.amount,
-              currency: orderData.currency,
-              name: 'Smart Complaint',
-              description: orderData.description,
-              order_id: orderData.order_id,
-      
-              handler: async function (response) {
-                try {
-                  setStatus('Payment received. Verifying securely on the server…', '')
-      
-                  await verifyPayment(orderData, response)
-      
-                  setStatus('Citizen Premium activated successfully.', 'success')
-      
-                  window.setTimeout(function () {
-                    window.location.reload()
-                  }, 700)
-                } catch (error) {
-                  setStatus(error.message || 'Payment was received but verification could not complete.', 'error')
-                  setBusy(false)
-                }
-              },
-      
-              modal: {
-                ondismiss: function () {
-                  setStatus('Payment was not completed. No Premium access was activated.', '')
-                  setBusy(false)
-                }
-              },
-      
-              theme: {
-                color: '#4f46e5'
+
+          const orderData = await createOrder();
+
+          const checkout = new Razorpay({
+            key: orderData.key_id,
+            amount: orderData.amount,
+            currency: orderData.currency,
+            name: "Smart Complaint",
+            description: orderData.description,
+            order_id: orderData.order_id,
+
+            handler: async function (response) {
+              try {
+                setStatus(
+                  "Payment received. Verifying securely on the server…",
+                  ""
+                );
+
+                await verifyPayment(
+                  orderData,
+                  response
+                );
+
+                setStatus(
+                  "Citizen Premium activated successfully.",
+                  "success"
+                );
+
+                window.setTimeout(function () {
+                  window.location.reload();
+                }, 700);
+
+              } catch (error) {
+                setStatus(
+                  error.message ||
+                    "Payment was received but verification could not complete.",
+                  "error"
+                );
+                setBusy(false);
               }
-            })
-      
-            checkout.on('payment.failed', function (response) {
-              const message = response && response.error && response.error.description ? response.error.description : 'Payment failed. Please try again.'
-      
-              setStatus(message, 'error')
-              setBusy(false)
-            })
-      
-            checkout.open()
-          } catch (error) {
-            setStatus(error.message || 'Unable to start the payment.', 'error')
-            setBusy(false)
-          }
+            },
+
+            modal: {
+              ondismiss: function () {
+                setStatus(
+                  "Payment was not completed. No Premium access was activated.",
+                  ""
+                );
+                setBusy(false);
+              }
+            },
+
+            theme: {
+              color: "#4f46e5"
+            }
+          });
+
+          checkout.on("payment.failed", function (response) {
+            const message =
+              response &&
+              response.error &&
+              response.error.description
+                ? response.error.description
+                : "Payment failed. Please try again.";
+
+            setStatus(message, "error");
+            setBusy(false);
+          });
+
+          checkout.open();
+
+        } catch (error) {
+          setStatus(
+            error.message ||
+              "Unable to start the payment.",
+            "error"
+          );
+          setBusy(false);
         }
-      
-        buyButton.addEventListener('click', beginPayment)
-      })()
-    </script>
-  </body>
+      }
+
+      buyButton.addEventListener(
+        "click",
+        beginPayment
+      );
+    })();
+  </script>
+</body>
 </html>

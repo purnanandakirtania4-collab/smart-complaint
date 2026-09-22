@@ -1,98 +1,103 @@
-SMART COMPLAINT - WORKER PRO RECURRING TRUST UPDATE
-==================================================
+SMART COMPLAINT - FULL UI POLISH + SESSION ROLE + PROFILE PHOTO PERSISTENCE FIX
+=============================================================================
 
-WHAT THIS UPDATE DOES
----------------------
-- Reuses the existing WorkerSubscription model.
-- Keeps ₹49 introductory first period.
-- Keeps ₹149/month recurring Worker Pro plan.
-- Prevents duplicate Razorpay subscription creation where possible.
-- Adds manual "Refresh Razorpay Status".
-- Adds "Turn Off Future Renewal".
-- Keeps already-paid access until current_period_end after renewal is disabled.
-- Shows transparent plan/status information to workers.
-- Does not activate Worker Pro when payment/authorisation fails.
-- Webhook continues to verify Razorpay signature before syncing.
+WHAT THIS PACKAGE FIXES
+-----------------------
+1. All 43 Django HTML templates are included as full replacement files.
+2. Shared mobile-first polish is applied through complaints/base_style.html.
+3. Secondary pages automatically receive a professional SVG Back button at
+   the bottom-left when that page does not already have a back control.
+4. No project UI emoji characters remain in the supplied HTML templates.
+5. Worker Dashboard identity/name card is moved slightly lower below the fixed
+   Worker navbar, especially on mobile.
+6. Safe-area handling is added for Android status/navigation bars.
+7. Mixed user/worker session bug is fixed:
+   - one WebView cookie jar can only have one active Django login at a time;
+   - whichever account was logged in last remains the authenticated account;
+   - if that account is a worker, opening the app root now redirects to the
+     Worker Dashboard instead of rendering citizen UI with the worker name.
+8. Login pages are marked never-cache + ensure_csrf_cookie to reduce stale
+   CSRF-token 403 errors after deploy/reopen.
+9. Android WebView now loads fresh pages instead of stale cached HTML and
+   flushes cookies after page load.
+10. User profile photo URL receives a cache-busting version value.
+11. Production media can be served from a persistent Railway Volume.
+12. MariaDB Strict Mode is enabled in Django DB OPTIONS.
+13. Railway defaults DEBUG to False when Railway environment variables are
+    present, while local development defaults to True.
 
-FILES
------
-complaints/models.py
-complaints/views.py
-complaints/urls.py
-complaints/templates/complaints/Worker_Folder/worker_subscription_payment.html
-complaints/migrations/0030_worker_subscription_trust_fields.py
+IMPORTANT ACCOUNT NOTE
+----------------------
+A single Android WebView uses one cookie/session store. It cannot keep a citizen
+account and a worker account simultaneously authenticated in the same WebView.
+To switch accounts, log out of the current account and log into the other one.
+This update makes the active account route to the correct side consistently.
 
-MIGRATION REQUIRED
-------------------
-python manage.py check
-python manage.py migrate
-python manage.py runserver
+DJANGO FILES TO REPLACE
+-----------------------
+Replace the complete folder:
+    complaints/templates/complaints/
 
-EXPECTED:
-Applying complaints.0030_worker_subscription_trust_fields... OK
+Also replace:
+    complaints/views.py
+    complaint_system/settings.py
+    complaint_system/urls.py
 
-RAZORPAY PLAN
--------------
-Create ONE monthly Razorpay Subscription Plan for the REGULAR price:
+No migration is required for this package.
 
-Plan name:
-Smart Complaint Worker Pro Monthly
+ANDROID FILES TO REPLACE
+------------------------
+Copy from this package's android/ folder into your Android Studio project:
 
-Period:
-monthly
+    app/src/main/java/com/smartcomplaint/app/MainActivity.kt
+    app/src/main/res/layout/activity_main.xml
+    app/src/main/res/values/themes.xml
+    app/src/main/res/values-night/themes.xml
 
-Interval:
-1
+RAILWAY PROFILE PHOTO PERSISTENCE
+---------------------------------
+User-uploaded photos must NOT depend on Railway's temporary filesystem.
+Create/mount a Railway Volume at:
 
-Amount:
-₹149
+    /app/media
 
-Then copy its plan ID (starts with plan_) into:
+Then add/update Railway Variables:
 
-RAZORPAY_WORKER_PLAN_ID=plan_xxxxxxxxx
+    MEDIA_ROOT=/app/media
+    SERVE_MEDIA_WITH_DJANGO=True
+    DEBUG=False
 
-The Django code creates a ₹49 upfront introductory add-on and schedules
-the ₹149 plan to begin about one month later.
+Without a persistent Volume, uploaded profile photos may disappear after a
+Railway restart/redeploy even if the Django code is correct.
 
-SERVER VARIABLES
-----------------
-RAZORPAY_KEY_ID
-RAZORPAY_KEY_SECRET
-RAZORPAY_WORKER_PLAN_ID
-RAZORPAY_WEBHOOK_SECRET
+AFTER COPYING FILES
+-------------------
+Run:
 
-Do not put secrets in templates or JavaScript.
+    python manage.py check
+    python manage.py migrate
 
-WEBHOOK
--------
-Production URL:
+Expected migration result for this update:
+    No migrations to apply.
 
-https://YOUR-DOMAIN/worker-subscription/webhook/
+Then test locally/mobile:
 
-Configure a strong webhook secret in Razorpay and put the same value in:
-RAZORPAY_WEBHOOK_SECRET
+A. Citizen login -> Profile -> upload DP -> close app -> reopen -> DP remains.
+B. Login as Worker -> close app -> reopen -> Worker Dashboard opens, not citizen Home.
+C. Logout Worker -> login Citizen -> close/reopen -> Citizen Home opens.
+D. Open secondary pages -> bottom-left SVG Back button appears where needed.
+E. Worker Dashboard -> navbar and worker identity/name card no longer overlap phone status bar.
+F. User login after deploy -> no stale CSRF 403 from cached login HTML.
 
-Useful subscription events include state/payment changes such as:
-subscription.activated
-subscription.charged
-subscription.pending
-subscription.halted
-subscription.cancelled
-subscription.completed
+GIT
+---
+After python manage.py check succeeds:
 
-The endpoint verifies X-Razorpay-Signature and then fetches the current
-subscription directly from Razorpay before updating local entitlement.
+    git add .
+    git commit -m "Polish mobile UI and fix role session and profile media"
+    git push origin main
 
-CANCELLATION
-------------
-The worker can choose "Turn Off Future Renewal".
-The app asks Razorpay to cancel at the end of the current billing cycle.
-Already-paid Worker Pro access remains until current_period_end.
-
-IMPORTANT
----------
-Keep LOCAL_WORKER_PRO_TEST_ENABLED=True only on local development.
-Do NOT add it to Railway.
-
-Before live launch, test the full recurring flow with Razorpay TEST keys,
-a TEST plan ID and a TEST webhook secret.
+SECURITY
+--------
+Do not add .env, Razorpay secrets, Gemini keys, Firebase private keys, or webhook
+secrets to GitHub. Keep them in environment variables only.

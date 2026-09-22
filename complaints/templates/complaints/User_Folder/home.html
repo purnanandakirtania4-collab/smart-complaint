@@ -2,237 +2,461 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>User Dashboard | Smart Complaint</title>
+
     {% include 'complaints/base_style.html' %}
+
     <style>
+      /* =====================================================
+             PAGE
+          ===================================================== */
       .ud-page {
-        width: min(1180px, calc(100% - 32px));
+        width: min(1180px, calc(100% - 28px));
         margin: 0 auto;
-        padding: 88px 0 34px;
+        padding: 70px 0 34px;
       }
+      
       .ud-shell {
         display: grid;
         gap: 18px;
       }
-      .ud-hero {
+      
+      .ud-icon {
+        width: 22px;
+        height: 22px;
+        display: block;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.9;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        flex: 0 0 auto;
+      }
+      
+      .ud-icon-lg {
+        width: 28px;
+        height: 28px;
+      }
+      
+      /* =====================================================
+             PROFILE HERO
+          ===================================================== */
+      .ud-profile-hero {
         position: relative;
         overflow: hidden;
         display: grid;
-        grid-template-columns: 1fr 280px;
-        gap: 24px;
+        grid-template-columns: minmax(0, 1fr) auto;
         align-items: center;
-        padding: 30px;
+        gap: 24px;
+        padding: 24px 28px;
         border: 1px solid rgba(96, 165, 250, 0.3);
         border-radius: 22px;
-        background: linear-gradient(135deg, rgba(15, 42, 91, 0.96), rgba(30, 64, 175, 0.82), rgba(91, 33, 182, 0.76));
-        box-shadow: 0 24px 65px rgba(2, 6, 23, 0.3);
-        color: #fff;
+        background: linear-gradient(135deg, rgba(15, 42, 91, 0.98), rgba(30, 64, 175, 0.86), rgba(91, 33, 182, 0.8));
+        box-shadow: 0 24px 65px rgba(2, 6, 23, 0.28);
+        color: #ffffff;
       }
-      .ud-hero:after {
+      
+      .ud-profile-hero::before {
         content: '';
         position: absolute;
         width: 260px;
         height: 260px;
+        right: -90px;
+        top: -120px;
         border-radius: 50%;
-        right: -70px;
-        top: -100px;
-        background: rgba(139, 92, 246, 0.25);
-        filter: blur(2px);
+        background: rgba(139, 92, 246, 0.22);
+        pointer-events: none;
       }
-      .ud-kicker {
-        font-size: 16px;
-        font-weight: 800;
-        margin-bottom: 8px;
-      }
-      .ud-hero h1 {
-        margin: 0;
-        font-size: 34px;
-        line-height: 1.12;
-        color: #fff;
-      }
-      .ud-hero p {
-        max-width: 650px;
-        margin: 12px 0 0;
-        color: #dbeafe;
-        line-height: 1.65;
-      }
-      .ud-hero-art {
+      
+      .ud-profile-main {
         position: relative;
-        z-index: 2;
-        min-height: 150px;
+        z-index: 1;
         display: flex;
         align-items: center;
-        justify-content: center;
+        gap: 20px;
+        min-width: 0;
       }
-      .ud-illustration {
-        width: 150px;
-        height: 150px;
-        border-radius: 50%;
+      
+      .ud-profile-avatar-wrap {
+        width: 108px;
+        flex: 0 0 108px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 9px;
+      }
+      
+      .ud-profile-avatar {
+        width: 96px;
+        height: 96px;
         display: grid;
         place-items: center;
-        background: linear-gradient(145deg, #60a5fa, #8b5cf6);
-        border: 8px solid rgba(255, 255, 255, 0.12);
-        box-shadow: 0 20px 45px rgba(2, 6, 23, 0.28);
-        font-size: 70px;
+        overflow: hidden;
+        border-radius: 50%;
+        border: 4px solid rgba(255, 255, 255, 0.9);
+        background: rgba(255, 255, 255, 0.13);
+        color: #dbeafe;
+        box-shadow: 0 14px 34px rgba(2, 6, 23, 0.28);
       }
-      .ud-quote {
-        position: absolute;
-        left: 0;
-        top: 8px;
-        max-width: 128px;
-        padding: 11px 12px;
-        border-radius: 12px;
-        background: rgba(15, 23, 42, 0.48);
-        border: 1px solid rgba(255, 255, 255, 0.16);
+      
+      .ud-profile-avatar img {
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: cover;
+      }
+      
+      .ud-profile-avatar .ud-icon {
+        width: 44px;
+        height: 44px;
+        stroke-width: 1.6;
+      }
+      
+      .ud-avatar-meta {
+        width: 100%;
+        display: grid;
+        gap: 5px;
+        text-align: center;
+      }
+      
+      .ud-avatar-meta span {
+        overflow: hidden;
+        padding: 5px 7px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 9px;
+        background: rgba(15, 23, 42, 0.24);
+        color: #dbeafe;
+        font-size: 10px;
+        font-weight: 800;
+        line-height: 1.25;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      
+      .ud-profile-copy {
+        min-width: 0;
+      }
+      
+      .ud-profile-label {
+        margin-bottom: 6px;
+        color: #bfdbfe;
+        font-size: 11px;
+        font-weight: 900;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+      
+      .ud-profile-name {
+        margin: 0;
+        color: #ffffff;
+        font-size: clamp(27px, 4vw, 38px);
+        line-height: 1.12;
+        overflow-wrap: anywhere;
+      }
+      
+      .ud-profile-summary {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 9px;
+        margin-top: 13px;
+      }
+      
+      .ud-profile-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        min-height: 34px;
+        padding: 7px 10px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.09);
+        color: #e0e7ff;
         font-size: 12px;
         font-weight: 800;
-        line-height: 1.45;
       }
+      
+      .ud-profile-chip .ud-icon {
+        width: 16px;
+        height: 16px;
+      }
+      
+      .ud-profile-side {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        justify-items: end;
+        gap: 12px;
+      }
+      
+      .ud-profile-mark {
+        width: 86px;
+        height: 86px;
+        display: grid;
+        place-items: center;
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        background: rgba(255, 255, 255, 0.1);
+        color: #dbeafe;
+      }
+      
+      .ud-profile-mark .ud-icon {
+        width: 44px;
+        height: 44px;
+        stroke-width: 1.55;
+      }
+      
+      .ud-profile-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 38px;
+        padding: 8px 12px;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        border-radius: 11px;
+        background: rgba(255, 255, 255, 0.1);
+        color: #ffffff;
+        font-size: 12px;
+        font-weight: 900;
+        text-decoration: none;
+        transition: 0.2s ease;
+      }
+      
+      .ud-profile-link:hover {
+        transform: translateY(-1px);
+        background: rgba(255, 255, 255, 0.16);
+      }
+      
+      .ud-profile-link .ud-icon {
+        width: 17px;
+        height: 17px;
+      }
+      
+      /* =====================================================
+             QUICK ACTIONS
+          ===================================================== */
       .ud-actions {
         display: grid;
         grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: 14px;
       }
+      
       .ud-action {
         min-height: 132px;
         padding: 20px;
-        border-radius: 18px;
         border: 1px solid rgba(148, 163, 184, 0.25);
+        border-radius: 18px;
         display: flex;
         flex-direction: column;
-        justify-content: center;
         align-items: center;
-        text-align: center;
+        justify-content: center;
         gap: 9px;
-        color: #fff;
+        color: #ffffff;
+        text-align: center;
+        text-decoration: none;
         box-shadow: 0 16px 38px rgba(2, 6, 23, 0.18);
-        transition: 0.22s ease;
+        transition: transform 0.22s ease, box-shadow 0.22s ease;
         backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
       }
+      
       .ud-action:hover {
-        transform: translateY(-4px);
+        transform: translateY(-3px);
         box-shadow: 0 20px 45px rgba(2, 6, 23, 0.25);
       }
+      
       .ud-action-icon {
-        width: 48px;
-        height: 48px;
-        border-radius: 13px;
+        width: 50px;
+        height: 50px;
         display: grid;
         place-items: center;
-        font-size: 25px;
-        background: rgba(255, 255, 255, 0.13);
-        border: 1px solid rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.12);
+        color: #ffffff;
       }
+      
       .ud-action strong {
         font-size: 15px;
       }
+      
       .ud-action small {
-        color: rgba(255, 255, 255, 0.72);
+        color: rgba(255, 255, 255, 0.74);
         line-height: 1.4;
       }
+      
       .ud-blue {
-        background: linear-gradient(145deg, rgba(8, 70, 160, 0.92), rgba(30, 64, 175, 0.7));
+        background: linear-gradient(145deg, rgba(8, 70, 160, 0.94), rgba(30, 64, 175, 0.72));
       }
+      
       .ud-teal {
-        background: linear-gradient(145deg, rgba(6, 95, 103, 0.92), rgba(13, 148, 136, 0.62));
+        background: linear-gradient(145deg, rgba(6, 95, 103, 0.94), rgba(13, 148, 136, 0.64));
       }
+      
       .ud-orange {
-        background: linear-gradient(145deg, rgba(124, 45, 18, 0.88), rgba(234, 88, 12, 0.55));
+        background: linear-gradient(145deg, rgba(124, 45, 18, 0.9), rgba(234, 88, 12, 0.58));
       }
+      
       .ud-purple {
-        background: linear-gradient(145deg, rgba(76, 29, 149, 0.9), rgba(124, 58, 237, 0.58));
+        background: linear-gradient(145deg, rgba(76, 29, 149, 0.92), rgba(124, 58, 237, 0.6));
       }
+      
+      /* =====================================================
+             PANELS
+          ===================================================== */
       .ud-grid {
         display: grid;
         grid-template-columns: 1.35fr 0.85fr;
         gap: 18px;
       }
+      
       .ud-panel {
         padding: 22px;
-        border-radius: 20px;
         border: 1px solid rgba(148, 163, 184, 0.22);
+        border-radius: 20px;
         background: rgba(15, 45, 82, 0.64);
+        color: #ffffff;
         box-shadow: 0 18px 46px rgba(2, 6, 23, 0.2);
         backdrop-filter: blur(18px);
-        color: #fff;
+        -webkit-backdrop-filter: blur(18px);
       }
+      
       .ud-panel-head {
         display: flex;
-        justify-content: space-between;
         align-items: center;
+        justify-content: space-between;
         gap: 12px;
         margin-bottom: 16px;
       }
+      
+      .ud-panel-title {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        min-width: 0;
+      }
+      
+      .ud-panel-title .ud-icon {
+        color: #93c5fd;
+      }
+      
       .ud-panel h2 {
         margin: 0;
-        color: #fff;
+        color: #ffffff;
         font-size: 19px;
       }
+      
       .ud-view {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
         color: #93c5fd;
         font-size: 13px;
         font-weight: 800;
+        text-decoration: none;
+        white-space: nowrap;
       }
+      
+      .ud-view .ud-icon {
+        width: 15px;
+        height: 15px;
+      }
+      
       .ud-activity {
         display: grid;
         grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: 10px;
       }
+      
       .ud-stat {
+        min-width: 0;
         padding: 15px;
+        border: 1px solid rgba(255, 255, 255, 0.09);
         border-radius: 15px;
         background: rgba(255, 255, 255, 0.07);
-        border: 1px solid rgba(255, 255, 255, 0.09);
       }
-      .ud-stat span {
-        display: block;
+      
+      .ud-stat-label {
+        display: flex;
+        align-items: center;
+        gap: 7px;
         color: #cbd5e1;
         font-size: 11px;
       }
+      
+      .ud-stat-label .ud-icon {
+        width: 15px;
+        height: 15px;
+        color: #93c5fd;
+      }
+      
       .ud-stat b {
         display: block;
         margin-top: 8px;
+        color: #ffffff;
         font-size: 26px;
-        color: #fff;
       }
+      
       .ud-stat-note {
-        font-size: 12px;
-        color: #94a3b8 !important;
-        line-height: 1.45;
+        display: block;
+        margin-top: 4px;
+        color: #94a3b8;
+        font-size: 11px;
+        line-height: 1.42;
       }
+      
+      /* =====================================================
+             RECENT + TIPS
+          ===================================================== */
       .ud-recent {
         display: grid;
         gap: 10px;
       }
+      
       .ud-row {
         display: flex;
         align-items: center;
         gap: 12px;
         padding: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.07);
         border-radius: 14px;
         background: rgba(255, 255, 255, 0.06);
-        border: 1px solid rgba(255, 255, 255, 0.07);
       }
+      
       .ud-row-icon {
-        width: 38px;
-        height: 38px;
-        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        flex: 0 0 40px;
         display: grid;
         place-items: center;
-        background: rgba(37, 99, 235, 0.32);
+        border-radius: 12px;
+        background: rgba(37, 99, 235, 0.28);
+        color: #bfdbfe;
       }
+      
+      .ud-row-icon .ud-icon {
+        width: 20px;
+        height: 20px;
+      }
+      
       .ud-row-main {
         flex: 1;
         min-width: 0;
       }
+      
       .ud-row-main b {
         display: block;
+        color: #ffffff;
         font-size: 13px;
       }
+      
       .ud-row-main small {
+        display: block;
+        margin-top: 3px;
         color: #94a3b8;
+        line-height: 1.4;
       }
+      
       .ud-pill {
         padding: 6px 9px;
         border-radius: 999px;
@@ -240,312 +464,118 @@
         color: #bfdbfe;
         font-size: 11px;
         font-weight: 800;
+        white-space: nowrap;
       }
+      
       .ud-tips {
         display: grid;
         gap: 12px;
       }
+      
       .ud-tip {
         display: flex;
-        gap: 10px;
         align-items: center;
+        gap: 10px;
         color: #dbeafe;
         font-size: 13px;
       }
+      
       .ud-check {
-        color: #34d399;
-        font-weight: 900;
+        width: 30px;
+        height: 30px;
+        flex: 0 0 30px;
+        display: grid;
+        place-items: center;
+        border-radius: 9px;
+        background: rgba(16, 185, 129, 0.13);
+        color: #6ee7b7;
       }
+      
+      .ud-check .ud-icon {
+        width: 17px;
+        height: 17px;
+      }
+      
+      /* =====================================================
+             BANNER
+          ===================================================== */
       .ud-banner {
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 18px;
         padding: 22px 26px;
-        border-radius: 19px;
         border: 1px solid rgba(52, 211, 153, 0.25);
+        border-radius: 19px;
         background: linear-gradient(100deg, rgba(5, 92, 92, 0.72), rgba(14, 116, 144, 0.64), rgba(37, 99, 235, 0.56));
-        color: #fff;
+        color: #ffffff;
       }
+      
+      .ud-banner-copy {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        min-width: 0;
+      }
+      
+      .ud-banner-icon {
+        width: 46px;
+        height: 46px;
+        flex: 0 0 46px;
+        display: grid;
+        place-items: center;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.1);
+        color: #dbeafe;
+      }
+      
       .ud-banner h3 {
         margin: 0 0 5px;
-        color: #fff;
+        color: #ffffff;
       }
+      
       .ud-banner p {
         margin: 0;
         color: #dbeafe;
         font-size: 13px;
+        line-height: 1.5;
       }
-      .ud-banner-art {
-        font-size: 42px;
-      }
+      
+      /* =====================================================
+             LIGHT THEME
+          ===================================================== */
       body.sc-theme-light .ud-panel {
-        background: #fff;
+        background: #ffffff;
         color: #172554;
         border-color: #dbeafe;
       }
+      
       body.sc-theme-light .ud-panel h2,
       body.sc-theme-light .ud-stat b,
       body.sc-theme-light .ud-row-main b {
         color: #172554;
       }
+      
       body.sc-theme-light .ud-stat,
       body.sc-theme-light .ud-row {
         background: #f8fafc;
         border-color: #e2e8f0;
       }
+      
+      body.sc-theme-light .ud-stat-label,
       body.sc-theme-light .ud-tip {
         color: #334155;
       }
-      @media (max-width: 850px) {
-        .ud-hero {
-          grid-template-columns: 1fr;
-        }
-        .ud-hero-art {
-          display: none;
-        }
-        .ud-actions {
-          grid-template-columns: repeat(2, 1fr);
-        }
-        .ud-grid {
-          grid-template-columns: 1fr;
-        }
-        .ud-activity {
-          grid-template-columns: repeat(2, 1fr);
-        }
+      
+      body.sc-theme-light .ud-stat-note,
+      body.sc-theme-light .ud-row-main small {
+        color: #64748b;
       }
-      @media (max-width: 520px) {
-        .ud-page {
-          width: min(100% - 20px, 1180px);
-          padding-top: 78px;
-        }
-        .ud-hero {
-          padding: 22px;
-        }
-        .ud-hero h1 {
-          font-size: 28px;
-        }
-        .ud-actions {
-          grid-template-columns: 1fr 1fr;
-        }
-        .ud-action {
-          min-height: 120px;
-          padding: 14px;
-        }
-        .ud-action small {
-          display: none;
-        }
-        .ud-activity {
-          grid-template-columns: 1fr 1fr;
-        }
-        .ud-banner {
-          padding: 18px;
-        }
-        .ud-banner-art {
-          display: none;
-        }
-      }
-
+      
       /* =====================================================
-         COMMUNITY LEAGUE - HOME TOP
-      ===================================================== */
-      .home-league-card {
-        position: relative;
-        overflow: hidden;
-        padding: 22px;
-        border: 1px solid rgba(129, 140, 248, 0.30);
-        border-radius: 22px;
-        background:
-          linear-gradient(
-            135deg,
-            rgba(37, 99, 235, 0.94),
-            rgba(91, 33, 182, 0.90)
-          );
-        color: #ffffff;
-        box-shadow: 0 18px 44px rgba(30, 41, 59, 0.24);
-      }
-
-      .home-league-card::after {
-        content: "";
-        position: absolute;
-        width: 190px;
-        height: 190px;
-        right: -72px;
-        top: -92px;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.09);
-        pointer-events: none;
-      }
-
-      .home-league-top {
-        position: relative;
-        z-index: 1;
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 16px;
-      }
-
-      .home-league-kicker {
-        color: #dbeafe;
-        font-size: 12px;
-        font-weight: 900;
-        letter-spacing: 0.09em;
-        text-transform: uppercase;
-      }
-
-      .home-league-card h2 {
-        margin: 5px 0 6px;
-        color: #ffffff;
-        font-size: 26px;
-        font-weight: 900;
-      }
-
-      .home-league-sub {
-        margin: 0;
-        color: #e0e7ff;
-        font-size: 13px;
-        line-height: 1.55;
-      }
-
-      .home-league-rank {
-        min-width: 60px;
-        height: 60px;
-        display: grid;
-        place-items: center;
-        border-radius: 18px;
-        background: linear-gradient(135deg, #fbbf24, #f59e0b);
-        color: #172554;
-        font-size: 18px;
-        font-weight: 1000;
-        box-shadow: 0 10px 25px rgba(15, 23, 42, 0.24);
-      }
-
-      .home-league-level {
-        position: relative;
-        z-index: 1;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        margin-top: 16px;
-        padding: 12px 14px;
-        border: 1px solid rgba(255, 255, 255, 0.14);
-        border-radius: 14px;
-        background: rgba(255, 255, 255, 0.10);
-      }
-
-      .home-league-level strong {
-        color: #ffffff;
-        font-size: 15px;
-      }
-
-      .home-league-level span {
-        color: #fde68a;
-        font-size: 13px;
-        font-weight: 900;
-        white-space: nowrap;
-      }
-
-      .home-league-stats {
-        position: relative;
-        z-index: 1;
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 10px;
-        margin-top: 10px;
-      }
-
-      .home-league-stat {
-        padding: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.13);
-        border-radius: 14px;
-        background: rgba(255, 255, 255, 0.08);
-      }
-
-      .home-league-stat span {
-        display: block;
-        color: #dbeafe;
-        font-size: 11px;
-        font-weight: 800;
-      }
-
-      .home-league-stat b {
-        display: block;
-        margin-top: 5px;
-        color: #ffffff;
-        font-size: 17px;
-      }
-
-      .home-league-progress {
-        position: relative;
-        z-index: 1;
-        height: 8px;
-        margin-top: 14px;
-        overflow: hidden;
-        border-radius: 999px;
-        background: rgba(255, 255, 255, 0.18);
-      }
-
-      .home-league-progress span {
-        display: block;
-        width: var(--progress, 0%);
-        height: 100%;
-        border-radius: inherit;
-        background: linear-gradient(90deg, #fbbf24, #fb7185);
-      }
-
-      .home-league-actions {
-        position: relative;
-        z-index: 1;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 9px;
-        margin-top: 15px;
-      }
-
-      .home-league-actions a {
-        display: inline-flex;
-        flex: 1 1 120px;
-        align-items: center;
-        justify-content: center;
-        padding: 10px 13px;
-        border: 1px solid rgba(255, 255, 255, 0.16);
-        border-radius: 11px;
-        background: rgba(255, 255, 255, 0.13);
-        color: #ffffff;
-        font-size: 12px;
-        font-weight: 900;
-        text-decoration: none;
-        transition: 0.2s ease;
-      }
-
-      .home-league-actions a:hover {
-        transform: translateY(-1px);
-        background: rgba(255, 255, 255, 0.20);
-      }
-
-      @media (max-width: 650px) {
-        .home-league-card {
-          padding: 18px;
-        }
-
-        .home-league-card h2 {
-          font-size: 23px;
-        }
-
-        .home-league-stats {
-          grid-template-columns: 1fr 1fr;
-        }
-
-        .home-league-stat:last-child {
-          grid-column: 1 / -1;
-        }
-      }
-
-      /* =====================================================
-         PUBLIC LEADERBOARD - SLIDING RIGHT DRAWER
-      ===================================================== */
+             PUBLIC LEADERBOARD DRAWER
+          ===================================================== */
       .league-drawer {
         position: fixed;
         top: 50%;
@@ -556,11 +586,11 @@
         transform: translate(100%, -50%);
         transition: transform 0.32s ease;
       }
-
+      
       .league-drawer.is-open {
         transform: translate(0, -50%);
       }
-
+      
       .league-drawer-handle {
         position: absolute;
         left: -46px;
@@ -570,25 +600,31 @@
         transform: translateY(-50%);
         display: grid;
         place-items: center;
-        border: 1px solid rgba(147, 197, 253, 0.30);
+        border: 1px solid rgba(147, 197, 253, 0.3);
         border-right: 0;
         border-radius: 16px 0 0 16px;
         background: linear-gradient(180deg, #2563eb, #6d28d9);
         color: #ffffff;
         box-shadow: -8px 8px 24px rgba(2, 6, 23, 0.24);
         cursor: pointer;
-        font: inherit;
-        font-size: 28px;
-        font-weight: 900;
-        line-height: 1;
         -webkit-tap-highlight-color: transparent;
       }
-
+      
+      .league-drawer-handle .ud-icon {
+        width: 27px;
+        height: 27px;
+        transition: transform 0.25s ease;
+      }
+      
+      .league-drawer.is-open .league-drawer-handle .ud-icon {
+        transform: rotate(180deg);
+      }
+      
       .league-drawer-handle:focus-visible {
         outline: 3px solid rgba(96, 165, 250, 0.45);
         outline-offset: 3px;
       }
-
+      
       .league-drawer-shell {
         display: flex;
         max-height: min(78vh, 720px);
@@ -603,19 +639,14 @@
         backdrop-filter: blur(22px);
         -webkit-backdrop-filter: blur(22px);
       }
-
+      
       .league-drawer-head {
         flex: 0 0 auto;
         padding: 18px 18px 14px;
         border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-        background:
-          linear-gradient(
-            135deg,
-            rgba(37, 99, 235, 0.22),
-            rgba(124, 58, 237, 0.20)
-          );
+        background: linear-gradient(135deg, rgba(37, 99, 235, 0.22), rgba(124, 58, 237, 0.2));
       }
-
+      
       .league-drawer-kicker {
         color: #a5b4fc;
         font-size: 10px;
@@ -623,7 +654,7 @@
         letter-spacing: 0.09em;
         text-transform: uppercase;
       }
-
+      
       .league-drawer-title-row {
         display: flex;
         align-items: center;
@@ -631,14 +662,14 @@
         gap: 12px;
         margin-top: 4px;
       }
-
+      
       .league-drawer-title {
         margin: 0;
         color: #ffffff;
         font-size: 20px;
         font-weight: 950;
       }
-
+      
       .league-drawer-monthly {
         padding: 5px 8px;
         border-radius: 999px;
@@ -648,7 +679,7 @@
         font-weight: 950;
         text-transform: uppercase;
       }
-
+      
       .league-drawer-tabs {
         flex: 0 0 auto;
         display: grid;
@@ -657,7 +688,7 @@
         padding: 10px;
         border-bottom: 1px solid rgba(255, 255, 255, 0.07);
       }
-
+      
       .league-drawer-tab {
         min-height: 40px;
         border: 0;
@@ -670,32 +701,32 @@
         font-weight: 900;
         transition: 0.2s ease;
       }
-
+      
       .league-drawer-tab.is-active {
         background: linear-gradient(135deg, #2563eb, #7c3aed);
         color: #ffffff;
-        box-shadow: 0 8px 20px rgba(37, 99, 235, 0.20);
+        box-shadow: 0 8px 20px rgba(37, 99, 235, 0.2);
       }
-
+      
       .league-drawer-scroll {
         min-height: 0;
         overflow-y: auto;
         overscroll-behavior: contain;
         scrollbar-width: thin;
       }
-
+      
       .league-drawer-panel {
         display: none;
       }
-
+      
       .league-drawer-panel.is-active {
         display: block;
       }
-
+      
       .league-drawer-list {
         display: grid;
       }
-
+      
       .league-drawer-row {
         display: grid;
         grid-template-columns: 44px minmax(0, 1fr) auto;
@@ -705,20 +736,15 @@
         padding: 11px 13px;
         border-bottom: 1px solid rgba(255, 255, 255, 0.07);
       }
-
+      
       .league-drawer-row:last-child {
         border-bottom: 0;
       }
-
+      
       .league-drawer-row.is-you {
-        background:
-          linear-gradient(
-            90deg,
-            rgba(16, 185, 129, 0.18),
-            rgba(16, 185, 129, 0.04)
-          );
+        background: linear-gradient(90deg, rgba(16, 185, 129, 0.18), rgba(16, 185, 129, 0.04));
       }
-
+      
       .league-drawer-rank {
         width: 38px;
         height: 38px;
@@ -730,33 +756,33 @@
         font-size: 11px;
         font-weight: 950;
       }
-
+      
       .league-drawer-row:nth-child(1) .league-drawer-rank {
         background: linear-gradient(135deg, #facc15, #f59e0b);
         color: #422006;
       }
-
+      
       .league-drawer-row:nth-child(2) .league-drawer-rank {
         background: linear-gradient(135deg, #e2e8f0, #94a3b8);
         color: #0f172a;
       }
-
+      
       .league-drawer-row:nth-child(3) .league-drawer-rank {
         background: linear-gradient(135deg, #fdba74, #c2410c);
         color: #431407;
       }
-
+      
       .league-drawer-main {
         min-width: 0;
       }
-
+      
       .league-drawer-name-line {
         display: flex;
         align-items: center;
         gap: 6px;
         min-width: 0;
       }
-
+      
       .league-drawer-name {
         overflow: hidden;
         color: #ffffff;
@@ -765,7 +791,7 @@
         text-overflow: ellipsis;
         white-space: nowrap;
       }
-
+      
       .league-drawer-you {
         flex-shrink: 0;
         padding: 2px 5px;
@@ -776,7 +802,7 @@
         font-weight: 950;
         text-transform: uppercase;
       }
-
+      
       .league-drawer-meta {
         overflow: hidden;
         margin-top: 4px;
@@ -786,252 +812,617 @@
         text-overflow: ellipsis;
         white-space: nowrap;
       }
-
+      
       .league-drawer-level {
         color: #c4b5fd;
         font-weight: 900;
       }
-
+      
       .league-drawer-score {
         color: #fde047;
         font-size: 12px;
         font-weight: 950;
         white-space: nowrap;
       }
-
+      
       .league-drawer-empty {
         padding: 26px 16px;
         color: #94a3b8;
         font-size: 11px;
         text-align: center;
       }
-
+      
       body.sc-theme-light .league-drawer-shell {
         background: rgba(255, 255, 255, 0.98);
         border-color: #dbeafe;
         color: #172554;
       }
-
+      
       body.sc-theme-light .league-drawer-title,
       body.sc-theme-light .league-drawer-name {
         color: #172554;
       }
-
+      
       body.sc-theme-light .league-drawer-meta {
         color: #64748b;
       }
-
+      
       body.sc-theme-light .league-drawer-tabs,
       body.sc-theme-light .league-drawer-row,
       body.sc-theme-light .league-drawer-head {
         border-color: #e2e8f0;
       }
-
+      
       body.sc-theme-light .league-drawer-tab {
         background: #f1f5f9;
         color: #475569;
       }
-
-      @media (max-width: 650px) {
+      
+      /* =====================================================
+             RESPONSIVE
+          ===================================================== */
+      @media (max-width: 850px) {
+        .ud-profile-hero {
+          grid-template-columns: 1fr;
+        }
+      
+        .ud-profile-side {
+          position: absolute;
+          top: 18px;
+          right: 18px;
+        }
+      
+        .ud-profile-mark {
+          width: 58px;
+          height: 58px;
+          border-radius: 17px;
+        }
+      
+        .ud-profile-mark .ud-icon {
+          width: 29px;
+          height: 29px;
+        }
+      
+        .ud-profile-link {
+          display: none;
+        }
+      
+        .ud-actions {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      
+        .ud-grid {
+          grid-template-columns: 1fr;
+        }
+      
+        .ud-activity {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+      
+      @media (max-width: 600px) {
+        .ud-page {
+          width: min(100% - 18px, 1180px);
+          padding-top: 62px;
+          padding-bottom: 26px;
+        }
+      
+        .ud-shell {
+          gap: 14px;
+        }
+      
+        .ud-profile-hero {
+          padding: 20px 16px;
+          border-radius: 18px;
+        }
+      
+        .ud-profile-main {
+          flex-direction: column;
+          align-items: center;
+          gap: 13px;
+          text-align: center;
+        }
+      
+        .ud-profile-avatar-wrap {
+          width: 118px;
+          flex-basis: auto;
+        }
+      
+        .ud-profile-avatar {
+          width: 92px;
+          height: 92px;
+        }
+      
+        .ud-profile-copy {
+          width: 100%;
+        }
+      
+        .ud-profile-label {
+          display: none;
+        }
+      
+        .ud-profile-name {
+          padding: 0 48px;
+          font-size: 27px;
+        }
+      
+        .ud-profile-summary {
+          justify-content: center;
+          margin-top: 10px;
+        }
+      
+        .ud-profile-side {
+          top: 14px;
+          right: 14px;
+        }
+      
+        .ud-profile-mark {
+          width: 46px;
+          height: 46px;
+          border-radius: 14px;
+        }
+      
+        .ud-profile-mark .ud-icon {
+          width: 24px;
+          height: 24px;
+        }
+      
+        .ud-actions {
+          grid-template-columns: 1fr 1fr;
+          gap: 10px;
+        }
+      
+        .ud-action {
+          min-height: 118px;
+          padding: 13px 10px;
+          border-radius: 15px;
+        }
+      
+        .ud-action-icon {
+          width: 45px;
+          height: 45px;
+        }
+      
+        .ud-action strong {
+          font-size: 13px;
+        }
+      
+        .ud-action small {
+          display: none;
+        }
+      
+        .ud-panel {
+          padding: 16px;
+          border-radius: 17px;
+        }
+      
+        .ud-panel-head {
+          align-items: flex-start;
+        }
+      
+        .ud-activity {
+          grid-template-columns: 1fr 1fr;
+          gap: 8px;
+        }
+      
+        .ud-stat {
+          padding: 12px;
+        }
+      
+        .ud-stat b {
+          font-size: 23px;
+        }
+      
+        .ud-row {
+          align-items: flex-start;
+        }
+      
+        .ud-pill {
+          display: none;
+        }
+      
+        .ud-banner {
+          padding: 17px;
+        }
+      
+        .ud-banner-icon {
+          width: 40px;
+          height: 40px;
+          flex-basis: 40px;
+        }
+      
         .league-drawer {
           width: calc(100vw - 56px);
           max-height: 82vh;
         }
-
+      
         .league-drawer-shell {
           max-height: 82vh;
           border-radius: 18px 0 0 18px;
         }
-
+      
         .league-drawer-handle {
           left: -42px;
           width: 42px;
           height: 76px;
         }
-
+      
         .league-drawer-row {
           grid-template-columns: 42px minmax(0, 1fr);
         }
-
+      
         .league-drawer-score {
           grid-column: 2;
           margin-top: -5px;
         }
       }
-
-
+      
+      @media (max-width: 390px) {
+        .ud-profile-name {
+          padding: 0 38px;
+          font-size: 24px;
+        }
+      
+        .ud-profile-chip {
+          font-size: 10px;
+        }
+      
+        .ud-action strong {
+          font-size: 12px;
+        }
+      
+        .ud-panel h2 {
+          font-size: 17px;
+        }
+      }
     </style>
   </head>
+
   <body>
     {% include 'complaints/User_Folder/navbar.html' %}
+
     <main class="ud-page">
       <div class="ud-shell">
-
-        <!-- =================================================
-             COMMUNITY LEAGUE
-        ================================================== -->
-        <section class="home-league-card">
-          <div class="home-league-top">
-            <div>
-              <div class="home-league-kicker">Community Competition</div>
-              <h2>Community League</h2>
-              <p class="home-league-sub">
-                Responsible Citizens. Stronger Communities. Complaint submission gives 0 XP; your rank rewards verified participation, useful feedback and positive worker feedback.
-              </p>
-            </div>
-
-            <div class="home-league-rank">
-              #{{ league.rank }}
-            </div>
-          </div>
-
-          <div class="home-league-level">
-            <strong>{{ league.level.name }} Citizen</strong>
-            <span>{{ league.xp }} XP</span>
-          </div>
-
-          <div class="home-league-stats">
-            <div class="home-league-stat">
-              <span>Feedback Given</span>
-              <b>{{ league.ratings }}</b>
-            </div>
-
-            <div class="home-league-stat">
-              <span>Positive Worker Feedback</span>
-              <b>{{ league.positive_worker_ratings }}</b>
-            </div>
-
-            <div class="home-league-stat">
-              <span>Next Level</span>
-              <b>
-                {% if league.level.next_xp %}
-                  {{ league.level.xp_left }} XP
+        <!--  =================================================
+           USER PROFILE - MOVED TO TOP
+      ==================================================  -->
+        <section class="ud-profile-hero" aria-label="User profile summary">
+          <div class="ud-profile-main">
+            <div class="ud-profile-avatar-wrap">
+              <div class="ud-profile-avatar">
+                {% if request.user.user_profile.photo %}
+                  <img src="{{ request.user.user_profile.photo.url }}?v={{ request.user.user_profile.updated_at|date:'YmdHis' }}" alt="{{ request.user.first_name|default:request.user.username }} profile photo" />
                 {% else %}
-                  Max
+                  <svg class="ud-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="8" r="4"></circle>
+                    <path d="M4.5 21a7.5 7.5 0 0 1 15 0"></path>
+                  </svg>
                 {% endif %}
-              </b>
+              </div>
+
+              <div class="ud-avatar-meta">
+                <span>ID: {{ request.user.id }}</span>
+                <span>
+                  Gender:{% if request.user.user_profile.gender %}
+                    {{ request.user.user_profile.gender }}
+                  {% else %}
+                    Not set
+                  {% endif %}
+                </span>
+              </div>
+            </div>
+
+            <div class="ud-profile-copy">
+              <div class="ud-profile-label">Citizen Profile</div>
+              <h1 class="ud-profile-name">{{ request.user.get_full_name|default:request.user.username }}</h1>
+
+              <div class="ud-profile-summary">
+                <span class="ud-profile-chip">
+                  <svg class="ud-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M20 21a8 8 0 0 0-16 0"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>Citizen
+                </span>
+
+                {% if request.user.email %}
+                  <span class="ud-profile-chip">
+                    <svg class="ud-icon" viewBox="0 0 24 24" aria-hidden="true">
+                      <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+                      <path d="m3 7 9 6 9-6"></path>
+                    </svg>
+                    {{ request.user.email }}
+                  </span>
+                {% endif %}
+              </div>
             </div>
           </div>
 
-          <div
-            class="home-league-progress"
-            style="--progress: {{ league.level.progress }}%;"
-          >
-            <span></span>
-          </div>
-
-          <div class="home-league-actions">
-            <a href="{% url 'public_leaderboard' %}">Leaderboard</a>
-            <a href="{% url 'user_achievements' %}">Achievements</a>
-            <a href="{% url 'user_rewards' %}">Rewards</a>
-          </div>
-        </section>
-
-        <section class="ud-hero">
-          <div>
-            <div class="ud-kicker">Welcome Back,</div>
-            <h1>{{ request.user.first_name|default:request.user.username }}</h1>
-            <p>Have an issue? We’re here to help. Submit, track, and resolve your complaints easily from one clean dashboard.</p>
-          </div>
-          <div class="ud-hero-art">
-            <div class="ud-quote">
-              A Cleaner<br />Safer Community<br />Together!
+          <div class="ud-profile-side">
+            <div class="ud-profile-mark" aria-hidden="true">
+              <svg class="ud-icon" viewBox="0 0 24 24">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                <path d="m9 12 2 2 4-4"></path>
+              </svg>
             </div>
-            <div class="ud-illustration">👨</div>
+
+            <a class="ud-profile-link" href="{% url 'profile' %}">
+              <svg class="ud-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 20h9"></path>
+                <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
+              </svg>Edit Profile
+            </a>
           </div>
         </section>
 
-        <section class="ud-actions">
-          <a class="ud-action ud-blue" href="{% url 'submit_complaint' %}"><span class="ud-action-icon">✎</span><strong>Submit Complaint</strong><small>Create a new complaint</small></a>
-          <a class="ud-action ud-teal" href="{% url 'check_status' %}"><span class="ud-action-icon">⌕</span><strong>Check Status</strong><small>Track with your ID</small></a>
-          <a class="ud-action ud-orange" href="{% url 'worker_details' %}"><span class="ud-action-icon">👥</span><strong>Find Worker</strong><small>Browse approved workers</small></a>
-          <a class="ud-action ud-purple" href="{% url 'my_complaints' %}"><span class="ud-action-icon">☷</span><strong>My Complaints</strong><small>View complaint history</small></a>
+        <!--  =================================================
+           QUICK ACTIONS - ALL ICONS RESTORED
+      ==================================================  -->
+        <section class="ud-actions" aria-label="Quick actions">
+          <a class="ud-action ud-blue" href="{% url 'submit_complaint' %}">
+            <span class="ud-action-icon" aria-hidden="true">
+              <svg class="ud-icon ud-icon-lg" viewBox="0 0 24 24">
+                <path d="M12 5v14"></path>
+                <path d="M5 12h14"></path>
+                <rect x="3" y="3" width="18" height="18" rx="4"></rect>
+              </svg>
+            </span>
+            <strong>Submit Complaint</strong>
+            <small>Create a new complaint</small>
+          </a>
+
+          <a class="ud-action ud-teal" href="{% url 'check_status' %}">
+            <span class="ud-action-icon" aria-hidden="true">
+              <svg class="ud-icon ud-icon-lg" viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="7"></circle>
+                <path d="m20 20-4-4"></path>
+                <path d="M8.5 11h5"></path>
+                <path d="M11 8.5v5"></path>
+              </svg>
+            </span>
+            <strong>Check Status</strong>
+            <small>Track with your ID</small>
+          </a>
+
+          <a class="ud-action ud-orange" href="{% url 'worker_details' %}">
+            <span class="ud-action-icon" aria-hidden="true">
+              <svg class="ud-icon ud-icon-lg" viewBox="0 0 24 24">
+                <circle cx="9" cy="8" r="4"></circle>
+                <path d="M2.5 21a6.5 6.5 0 0 1 13 0"></path>
+                <path d="M17 7h4"></path>
+                <path d="M19 5v4"></path>
+              </svg>
+            </span>
+            <strong>Find Worker</strong>
+            <small>Browse approved workers</small>
+          </a>
+
+          <a class="ud-action ud-purple" href="{% url 'my_complaints' %}">
+            <span class="ud-action-icon" aria-hidden="true">
+              <svg class="ud-icon ud-icon-lg" viewBox="0 0 24 24">
+                <path d="M9 5h6"></path>
+                <path d="M9 9h6"></path>
+                <path d="M9 13h4"></path>
+                <rect x="5" y="3" width="14" height="18" rx="2"></rect>
+              </svg>
+            </span>
+            <strong>My Complaints</strong>
+            <small>View complaint history</small>
+          </a>
         </section>
 
+        <!--  =================================================
+           ACTIVITY
+      ==================================================  -->
         <section class="ud-panel">
           <div class="ud-panel-head">
-            <h2>Your Activity</h2><a class="ud-view" href="{% url 'my_complaints' %}">View All →</a>
+            <div class="ud-panel-title">
+              <svg class="ud-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 19V9"></path>
+                <path d="M10 19V5"></path>
+                <path d="M16 19v-7"></path>
+                <path d="M22 19V3"></path>
+              </svg>
+              <h2>Your Activity</h2>
+            </div>
+
+            <a class="ud-view" href="{% url 'my_complaints' %}">
+              View All<svg class="ud-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M5 12h14"></path>
+                <path d="m13 6 6 6-6 6"></path>
+              </svg>
+            </a>
           </div>
+
           <div class="ud-activity">
             <div class="ud-stat">
-              <span>Total Complaints</span><b>{{ activity.total }}</b><span class="ud-stat-note">All submitted complaints</span>
+              <span class="ud-stat-label">
+                <svg class="ud-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="4" y="3" width="16" height="18" rx="2"></rect>
+                  <path d="M8 7h8"></path>
+                </svg>Total Complaints
+              </span>
+              <b>{{ activity.total }}</b>
+              <span class="ud-stat-note">All submitted complaints</span>
             </div>
+
             <div class="ud-stat">
-              <span>In Progress</span><b>{{ activity.in_progress }}</b><span class="ud-stat-note">Currently being worked on</span>
+              <span class="ud-stat-label">
+                <svg class="ud-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="12" cy="12" r="9"></circle>
+                  <path d="M12 7v5l3 2"></path>
+                </svg>In Progress
+              </span>
+              <b>{{ activity.in_progress }}</b>
+              <span class="ud-stat-note">Currently being worked on</span>
             </div>
+
             <div class="ud-stat">
-              <span>Resolved</span><b>{{ activity.resolved }}</b><span class="ud-stat-note">Successfully completed</span>
+              <span class="ud-stat-label">
+                <svg class="ud-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="12" cy="12" r="9"></circle>
+                  <path d="m8 12 2.5 2.5L16 9"></path>
+                </svg>Resolved
+              </span>
+              <b>{{ activity.resolved }}</b>
+              <span class="ud-stat-note">Successfully completed</span>
             </div>
+
             <div class="ud-stat">
-              <span>Pending</span><b>{{ activity.pending }}</b><span class="ud-stat-note">Waiting for progress</span>
+              <span class="ud-stat-label">
+                <svg class="ud-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="12" cy="12" r="9"></circle>
+                  <path d="M12 8v5"></path>
+                  <path d="M12 16h.01"></path>
+                </svg>Pending
+              </span>
+              <b>{{ activity.pending }}</b>
+              <span class="ud-stat-note">Waiting for progress</span>
             </div>
           </div>
         </section>
 
+        <!--  =================================================
+           RECENT + TIPS
+      ==================================================  -->
         <div class="ud-grid">
           <section class="ud-panel">
             <div class="ud-panel-head">
-              <h2>Recent Complaints</h2><a class="ud-view" href="{% url 'my_complaints' %}">View All →</a>
+              <div class="ud-panel-title">
+                <svg class="ud-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M3 12a9 9 0 1 0 3-6.7"></path>
+                  <path d="M3 4v6h6"></path>
+                  <path d="M12 7v5l3 2"></path>
+                </svg>
+                <h2>Recent Complaints</h2>
+              </div>
+
+              <a class="ud-view" href="{% url 'my_complaints' %}">
+                View All<svg class="ud-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M5 12h14"></path>
+                  <path d="m13 6 6 6-6 6"></path>
+                </svg>
+              </a>
             </div>
+
             <div class="ud-recent">
               <div class="ud-row">
-                <span class="ud-row-icon"></span><div class="ud-row-main">
-                  <b>Your latest complaints will appear here</b><small>Connection will be added in the next step</small>
-                </div><span class="ud-pill">Ready</span>
+                <span class="ud-row-icon" aria-hidden="true">
+                  <svg class="ud-icon" viewBox="0 0 24 24">
+                    <rect x="4" y="3" width="16" height="18" rx="2"></rect>
+                    <path d="M8 8h8"></path>
+                    <path d="M8 12h6"></path>
+                  </svg>
+                </span>
+
+                <div class="ud-row-main">
+                  <b>Your latest complaints will appear here</b>
+                  <small>Open My Complaints to view your complaint history.</small>
+                </div>
+
+                <span class="ud-pill">Ready</span>
               </div>
+
               <div class="ud-row">
-                <span class="ud-row-icon"></span><div class="ud-row-main">
-                  <b>Track every complaint easily</b><small>Use Check Status anytime</small>
-                </div><span class="ud-pill">Track</span>
+                <span class="ud-row-icon" aria-hidden="true">
+                  <svg class="ud-icon" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="9"></circle>
+                    <path d="m9 12 2 2 4-4"></path>
+                  </svg>
+                </span>
+
+                <div class="ud-row-main">
+                  <b>Track every complaint easily</b>
+                  <small>Use Check Status anytime with your tracking ID.</small>
+                </div>
+
+                <span class="ud-pill">Track</span>
               </div>
             </div>
           </section>
+
           <section class="ud-panel">
             <div class="ud-panel-head">
-              <h2>Quick Tips</h2>
+              <div class="ud-panel-title">
+                <svg class="ud-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M9 18h6"></path>
+                  <path d="M10 22h4"></path>
+                  <path d="M8.5 14.5A7 7 0 1 1 15.5 14.5C14.6 15.2 14 16 14 17h-4c0-1-.6-1.8-1.5-2.5Z"></path>
+                </svg>
+                <h2>Quick Tips</h2>
+              </div>
             </div>
+
             <div class="ud-tips">
               <div class="ud-tip">
-                <span class="ud-check">✓</span>Add clear photos
+                <span class="ud-check" aria-hidden="true">
+                  <svg class="ud-icon" viewBox="0 0 24 24">
+                    <path d="m5 12 4 4L19 6"></path>
+                  </svg>
+                </span>
+                Add clear photos
               </div>
+
               <div class="ud-tip">
-                <span class="ud-check">✓</span>Share exact location
+                <span class="ud-check" aria-hidden="true">
+                  <svg class="ud-icon" viewBox="0 0 24 24">
+                    <path d="m5 12 4 4L19 6"></path>
+                  </svg>
+                </span>
+                Share exact location
               </div>
+
               <div class="ud-tip">
-                <span class="ud-check">✓</span>Choose correct category
+                <span class="ud-check" aria-hidden="true">
+                  <svg class="ud-icon" viewBox="0 0 24 24">
+                    <path d="m5 12 4 4L19 6"></path>
+                  </svg>
+                </span>
+                Choose the correct category
               </div>
+
               <div class="ud-tip">
-                <span class="ud-check">✓</span>Track your complaint regularly
+                <span class="ud-check" aria-hidden="true">
+                  <svg class="ud-icon" viewBox="0 0 24 24">
+                    <path d="m5 12 4 4L19 6"></path>
+                  </svg>
+                </span>
+                Track your complaint regularly
               </div>
             </div>
           </section>
         </div>
 
+        <!--  =================================================
+           BOTTOM BANNER
+      ==================================================  -->
         <section class="ud-banner">
-          <div>
-            <h3>Together for a Better Tomorrow</h3><p>Your voice makes a cleaner, safer and smarter community.</p>
+          <div class="ud-banner-copy">
+            <span class="ud-banner-icon" aria-hidden="true">
+              <svg class="ud-icon ud-icon-lg" viewBox="0 0 24 24">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                <path d="m9 12 2 2 4-4"></path>
+              </svg>
+            </span>
+
+            <div>
+              <h3>Together for a Better Tomorrow</h3>
+              <p>Your voice makes a cleaner, safer and smarter community.</p>
+            </div>
           </div>
-          <div class="ud-banner-art"></div>
         </section>
+      </div>
+    </main>
 
-          </div>
-
-
-    <!-- =====================================================
-         PUBLIC LEADERBOARD - SLIDING RIGHT DRAWER
-    ====================================================== -->
-    <aside
-      class="league-drawer"
-      data-league-drawer="home"
-      aria-label="Public Leaderboard"
-    >
-      <button
-        type="button"
-        class="league-drawer-handle"
-        data-league-drawer-toggle="home"
-        aria-label="Open public leaderboard"
-        aria-expanded="false"
-      >&lt;</button>
+    <!--  =====================================================
+       PUBLIC LEADERBOARD - SLIDING RIGHT DRAWER
+       TOP COMMUNITY LEAGUE CARD REMOVED
+  ======================================================  -->
+    <aside class="league-drawer" data-league-drawer="home" aria-label="Public Leaderboard">
+      <button type="button" class="league-drawer-handle" data-league-drawer-toggle="home" aria-label="Open public leaderboard" aria-expanded="false">
+        <svg class="ud-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m15 18-6-6 6-6"></path>
+        </svg>
+      </button>
 
       <div class="league-drawer-shell">
         <div class="league-drawer-head">
@@ -1043,72 +1434,39 @@
           </div>
         </div>
 
-        <div
-          class="league-drawer-tabs"
-          role="tablist"
-          aria-label="Leaderboard category"
-        >
-          <button
-            type="button"
-            class="league-drawer-tab"
-            data-league-tab="home-workers"
-            aria-selected="false"
-          >
-            Workers
-          </button>
+        <div class="league-drawer-tabs" role="tablist" aria-label="Leaderboard category">
+          <button type="button" class="league-drawer-tab" data-league-tab="home-workers" aria-selected="false">Workers</button>
 
-          <button
-            type="button"
-            class="league-drawer-tab is-active"
-            data-league-tab="home-users"
-            aria-selected="true"
-          >
-            Community
-          </button>
+          <button type="button" class="league-drawer-tab is-active" data-league-tab="home-users" aria-selected="true">Community</button>
         </div>
 
         <div class="league-drawer-scroll">
-          <div
-            class="league-drawer-panel"
-            data-league-panel="home-workers"
-          >
+          <div class="league-drawer-panel" data-league-panel="home-workers">
             <div class="league-drawer-list">
               {% for row in public_worker_rows %}
-                <div class="league-drawer-row ">
+                <div class="league-drawer-row">
                   <div class="league-drawer-rank">#{{ row.rank }}</div>
 
                   <div class="league-drawer-main">
                     <div class="league-drawer-name-line">
                       <span class="league-drawer-name">{{ row.name }}</span>
-                      
                     </div>
 
                     <div class="league-drawer-meta">
-                      <span class="league-drawer-level">
-                        {{ row.level.name }} Worker
-                      </span>
-                      · {{ row.resolved }} resolved
-                      · {{ row.verified }} verified
-                      · {{ row.rating_avg }} rating
+                      <span class="league-drawer-level">{{ row.level.name }} Worker</span>
+                      · {{ row.resolved }} resolved · {{ row.verified }} verified · {{ row.rating_avg }} rating
                     </div>
                   </div>
 
-                  <div class="league-drawer-score">
-                    {{ row.xp }} XP
-                  </div>
+                  <div class="league-drawer-score">{{ row.xp }} XP</div>
                 </div>
               {% empty %}
-                <div class="league-drawer-empty">
-                  No worker ranking available yet.
-                </div>
+                <div class="league-drawer-empty">No worker ranking available yet.</div>
               {% endfor %}
             </div>
           </div>
 
-          <div
-            class="league-drawer-panel is-active"
-            data-league-panel="home-users"
-          >
+          <div class="league-drawer-panel is-active" data-league-panel="home-users">
             <div class="league-drawer-list">
               {% for row in public_user_rows %}
                 <div class="league-drawer-row {% if row.user.id == request.user.id %}is-you{% endif %}">
@@ -1117,31 +1475,22 @@
                   <div class="league-drawer-main">
                     <div class="league-drawer-name-line">
                       <span class="league-drawer-name">{{ row.name }}</span>
-                      
-                        {% if row.user.id == request.user.id %}
-                          <span class="league-drawer-you">You</span>
-                        {% endif %}
-        
+
+                      {% if row.user.id == request.user.id %}
+                        <span class="league-drawer-you">You</span>
+                      {% endif %}
                     </div>
 
                     <div class="league-drawer-meta">
-                      <span class="league-drawer-level">
-                        {{ row.level.name }} Citizen
-                      </span>
-                      · {{ row.ratings }} feedback
-                      · {{ row.positive_worker_ratings }} positive worker ratings
-                      · {{ row.verified }} verified
+                      <span class="league-drawer-level">{{ row.level.name }} Citizen</span>
+                      · {{ row.ratings }} feedback · {{ row.positive_worker_ratings }} positive worker ratings · {{ row.verified }} verified
                     </div>
                   </div>
 
-                  <div class="league-drawer-score">
-                    {{ row.xp }} XP
-                  </div>
+                  <div class="league-drawer-score">{{ row.xp }} XP</div>
                 </div>
               {% empty %}
-                <div class="league-drawer-empty">
-                  No community ranking available yet.
-                </div>
+                <div class="league-drawer-empty">No community ranking available yet.</div>
               {% endfor %}
             </div>
           </div>
@@ -1149,72 +1498,53 @@
       </div>
     </aside>
 
-
-      </div>
-    </main>
-
     <script>
-      (function () {
-        "use strict";
-
-        const drawer = document.querySelector(
-          '[data-league-drawer="home"]'
-        );
-        const toggle = document.querySelector(
-          '[data-league-drawer-toggle="home"]'
-        );
-        const tabs = document.querySelectorAll(
-          '[data-league-tab^="home-"]'
-        );
-        const panels = document.querySelectorAll(
-          '[data-league-panel^="home-"]'
-        );
-
-        if (!drawer || !toggle) return;
-
-        function setDrawer(open) {
-          drawer.classList.toggle("is-open", open);
-          toggle.setAttribute("aria-expanded", open ? "true" : "false");
-          toggle.setAttribute(
-            "aria-label",
-            open ? "Close public leaderboard" : "Open public leaderboard"
-          );
-          toggle.textContent = open ? ">" : "<";
+      ;(function () {
+        'use strict'
+      
+        const drawer = document.querySelector('[data-league-drawer="home"]')
+        const toggle = document.querySelector('[data-league-drawer-toggle="home"]')
+        const tabs = document.querySelectorAll('[data-league-tab^="home-"]')
+        const panels = document.querySelectorAll('[data-league-panel^="home-"]')
+      
+        if (!drawer || !toggle) {
+          return
         }
-
+      
+        function setDrawer(open) {
+          drawer.classList.toggle('is-open', open)
+          toggle.setAttribute('aria-expanded', open ? 'true' : 'false')
+          toggle.setAttribute('aria-label', open ? 'Close public leaderboard' : 'Open public leaderboard')
+        }
+      
         function activateTab(name) {
           tabs.forEach(function (tab) {
-            const active = tab.dataset.leagueTab === name;
-            tab.classList.toggle("is-active", active);
-            tab.setAttribute("aria-selected", active ? "true" : "false");
-          });
-
+            const active = tab.dataset.leagueTab === name
+            tab.classList.toggle('is-active', active)
+            tab.setAttribute('aria-selected', active ? 'true' : 'false')
+          })
+      
           panels.forEach(function (panel) {
-            panel.classList.toggle(
-              "is-active",
-              panel.dataset.leaguePanel === name
-            );
-          });
+            panel.classList.toggle('is-active', panel.dataset.leaguePanel === name)
+          })
         }
-
-        toggle.addEventListener("click", function () {
-          setDrawer(!drawer.classList.contains("is-open"));
-        });
-
+      
+        toggle.addEventListener('click', function () {
+          setDrawer(!drawer.classList.contains('is-open'))
+        })
+      
         tabs.forEach(function (tab) {
-          tab.addEventListener("click", function () {
-            activateTab(tab.dataset.leagueTab);
-          });
-        });
-
-        document.addEventListener("keydown", function (event) {
-          if (event.key === "Escape") {
-            setDrawer(false);
+          tab.addEventListener('click', function () {
+            activateTab(tab.dataset.leagueTab)
+          })
+        })
+      
+        document.addEventListener('keydown', function (event) {
+          if (event.key === 'Escape') {
+            setDrawer(false)
           }
-        });
-      })();
+        })
+      })()
     </script>
-
-
   </body>
 </html>

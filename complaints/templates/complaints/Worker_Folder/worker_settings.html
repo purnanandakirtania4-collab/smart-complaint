@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
 
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 
     <title>Worker Settings | Smart Complaint</title>
 
@@ -1432,7 +1432,7 @@
                 required
               />
 
-              <div class="availability-box">🟢 Available</div>
+              <div class="availability-box"> Available</div>
             </label>
 
             <label class="availability-choice">
@@ -1443,7 +1443,7 @@
                 {% if worker.availability_status == 'busy' %}checked{% endif %}
               />
 
-              <div class="availability-box">🟠 Busy</div>
+              <div class="availability-box"> Busy</div>
             </label>
 
             <label class="availability-choice">
@@ -1454,7 +1454,7 @@
                 {% if worker.availability_status == 'offline' %}checked{% endif %}
               />
 
-              <div class="availability-box">🔴 Offline</div>
+              <div class="availability-box"> Offline</div>
             </label>
           </div>
 

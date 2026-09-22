@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>{{ worker.name }} | Worker Profile</title>
 
     {% include "complaints/base_style.html" %}
@@ -1083,7 +1083,309 @@
                 grid-template-columns: repeat(5, 1fr);
             }
         }
-    </style>
+    
+        /* =====================================================
+           PROFESSIONAL SVG ICONS
+        ===================================================== */
+
+        .wp-ui-icon {
+            width: 18px;
+            height: 18px;
+            display: inline-block;
+            flex: 0 0 auto;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .wp-card-title .wp-ui-icon {
+            width: 19px;
+            height: 19px;
+            color: var(--wp-blue);
+        }
+
+        .wp-btn .wp-ui-icon,
+        .wp-small-btn .wp-ui-icon,
+        .wp-follow-btn .wp-ui-icon {
+            width: 15px;
+            height: 15px;
+        }
+
+        .wp-meta-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            min-width: 0;
+        }
+
+        .wp-meta-item .wp-ui-icon {
+            width: 14px;
+            height: 14px;
+            color: var(--wp-blue);
+        }
+
+        .wp-verified .wp-ui-icon {
+            width: 15px;
+            height: 15px;
+            stroke-width: 2.8;
+        }
+
+        /* =====================================================
+           BRONZE / SILVER / GOLD / PLATINUM / DIAMOND MEDALS
+           The class is generated from worker_league.level.name,
+           so the icon styling changes automatically on level-up.
+        ===================================================== */
+
+        .wp-level-medal {
+            position: relative;
+            width: 92px;
+            height: 92px;
+            display: grid;
+            place-items: center;
+            margin: 0 auto 9px;
+            border: 5px solid var(--level-ring, #ddd6fe);
+            border-radius: 50%;
+            background:
+                radial-gradient(
+                    circle at 34% 28%,
+                    rgba(255, 255, 255, .75),
+                    transparent 22%
+                ),
+                linear-gradient(
+                    145deg,
+                    var(--level-light, #f5f3ff),
+                    var(--level-main, #a78bfa) 58%,
+                    var(--level-dark, #6d28d9)
+                );
+            color: var(--level-ink, #ffffff);
+            box-shadow:
+                0 12px 28px var(--level-shadow, rgba(109, 40, 217, .26)),
+                inset 0 0 0 2px rgba(255, 255, 255, .18);
+            isolation: isolate;
+        }
+
+        .wp-level-medal::after {
+            content: "";
+            position: absolute;
+            inset: 8px;
+            z-index: -1;
+            border: 1px solid rgba(255, 255, 255, .36);
+            border-radius: 50%;
+        }
+
+        .wp-level-icon {
+            width: 48px;
+            height: 48px;
+            fill: rgba(255, 255, 255, .14);
+            stroke: currentColor;
+            stroke-width: 1.9;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            filter: drop-shadow(0 3px 4px rgba(2, 6, 23, .20));
+        }
+
+        .wp-level-mini-star {
+            fill: currentColor;
+            stroke: none;
+        }
+
+        .wp-level-bronze {
+            --level-ring: #e4b27c;
+            --level-light: #e6b47e;
+            --level-main: #ad6b3c;
+            --level-dark: #6f3d1c;
+            --level-ink: #fff7ed;
+            --level-shadow: rgba(169, 101, 50, .30);
+        }
+
+        .wp-level-silver {
+            --level-ring: #e2e8f0;
+            --level-light: #f8fafc;
+            --level-main: #a8b2c1;
+            --level-dark: #64748b;
+            --level-ink: #1e293b;
+            --level-shadow: rgba(100, 116, 139, .26);
+        }
+
+        .wp-level-gold {
+            --level-ring: #fde68a;
+            --level-light: #fef3c7;
+            --level-main: #fbbf24;
+            --level-dark: #d97706;
+            --level-ink: #713f12;
+            --level-shadow: rgba(245, 158, 11, .30);
+        }
+
+        .wp-level-platinum {
+            --level-ring: #cffafe;
+            --level-light: #ecfeff;
+            --level-main: #a5f3fc;
+            --level-dark: #0891b2;
+            --level-ink: #164e63;
+            --level-shadow: rgba(8, 145, 178, .27);
+        }
+
+        .wp-level-diamond {
+            --level-ring: #dbeafe;
+            --level-light: #eff6ff;
+            --level-main: #93c5fd;
+            --level-dark: #4f46e5;
+            --level-ink: #172554;
+            --level-shadow: rgba(79, 70, 229, .30);
+        }
+
+        .wp-achievement-icon .wp-ui-icon {
+            width: 25px;
+            height: 25px;
+            stroke-width: 2.2;
+        }
+
+        .wp-activity-icon .wp-ui-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        .wp-stars {
+            display: inline-flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 4px;
+        }
+
+        .wp-stars .wp-ui-icon {
+            width: 14px;
+            height: 14px;
+            fill: currentColor;
+            stroke-width: 1.7;
+        }
+
+        /* =====================================================
+           FULL-WIDTH QUICK ACTIONS
+        ===================================================== */
+
+        .wp-quick-actions-wide {
+            width: 100%;
+            margin-top: 16px;
+        }
+
+        .wp-quick-actions-wide .wp-card-body {
+            padding-top: 7px;
+        }
+
+        .wp-quick-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 9px;
+        }
+
+        .wp-quick {
+            min-width: 0;
+            min-height: 68px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            padding: 9px 7px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            background: #f8fafc;
+            color: #334155;
+            font-size: 10px;
+            line-height: 1.25;
+            font-weight: 900;
+            text-align: center;
+            text-decoration: none;
+            transition:
+                transform .18s ease,
+                border-color .18s ease,
+                box-shadow .18s ease,
+                background .18s ease;
+        }
+
+        .wp-quick:hover {
+            transform: translateY(-2px);
+            border-color: #93c5fd;
+            background: #eff6ff;
+            box-shadow: 0 10px 24px rgba(37, 99, 235, .12);
+        }
+
+        .wp-quick .wp-ui-icon {
+            width: 21px;
+            height: 21px;
+            color: var(--wp-blue);
+        }
+
+        body.worker-theme-dark .wp-quick {
+            background: #1e293b;
+            border-color: #334155;
+            color: #f8fafc;
+        }
+
+        body.worker-theme-glass .wp-quick {
+            background: rgba(255, 255, 255, .07);
+            border-color: rgba(191, 219, 254, .16);
+            color: #ffffff;
+        }
+
+        body.worker-theme-dark .wp-card-title .wp-ui-icon,
+        body.worker-theme-glass .wp-card-title .wp-ui-icon,
+        body.worker-theme-dark .wp-meta-item .wp-ui-icon,
+        body.worker-theme-glass .wp-meta-item .wp-ui-icon {
+            color: #93c5fd;
+        }
+
+        @media (max-width: 620px) {
+            .wp-quick-actions-wide {
+                margin-top: 13px;
+            }
+
+            .wp-quick-actions-wide .wp-card-head {
+                padding-bottom: 7px;
+            }
+
+            .wp-quick-actions-wide .wp-card-body {
+                padding: 7px 9px 11px;
+            }
+
+            .wp-quick-grid {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 6px;
+            }
+
+            .wp-quick {
+                min-height: 66px;
+                padding: 7px 4px;
+                border-radius: 10px;
+                font-size: 8.5px;
+            }
+
+            .wp-quick .wp-ui-icon {
+                width: 19px;
+                height: 19px;
+            }
+        }
+
+        @media (max-width: 390px) {
+            .wp-quick-grid {
+                gap: 4px;
+            }
+
+            .wp-quick {
+                min-height: 62px;
+                padding: 6px 3px;
+                font-size: 8px;
+            }
+
+            .wp-quick .wp-ui-icon {
+                width: 18px;
+                height: 18px;
+            }
+        }
+
+</style>
 </head>
 
 <body{% if is_owner %} class="worker-page"{% endif %}>
@@ -1142,7 +1444,11 @@
                         <h1 class="wp-name">{{ worker.name }}</h1>
 
                         {% if worker.is_approved %}
-                            <span class="wp-verified" title="Verified Worker">✓</span>
+                            <span class="wp-verified" title="Verified Worker" aria-label="Verified Worker">
+                                <svg class="wp-ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="m5 12 4 4L19 6"></path>
+                                </svg>
+                            </span>
                         {% endif %}
                     </div>
 
@@ -1153,25 +1459,35 @@
 
                     <div class="wp-meta">
                         {% if worker.city or worker.area %}
-                            <span>
-                                📍
-                                {% if worker.area %}{{ worker.area }}{% endif %}
-                                {% if worker.area and worker.city %}, {% endif %}
-                                {% if worker.city %}{{ worker.city }}{% endif %}
+                            <span class="wp-meta-item">
+                                <svg class="wp-ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"></path>
+                                    <circle cx="12" cy="10" r="2.5"></circle>
+                                </svg>
+                                <span>
+                                    {% if worker.area %}{{ worker.area }}{% endif %}
+                                    {% if worker.area and worker.city %}, {% endif %}
+                                    {% if worker.city %}{{ worker.city }}{% endif %}
+                                </span>
                             </span>
                         {% endif %}
 
-                        <span>
-                            📅 Joined {{ worker.created_at|date:"M Y" }}
+                        <span class="wp-meta-item">
+                            <svg class="wp-ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+                                <path d="M16 3v4M8 3v4M3 10h18"></path>
+                            </svg>
+                            <span>Joined {{ worker.created_at|date:"M Y" }}</span>
                         </span>
 
-                        <span>
-                            🪪 {{ worker.worker_id }}
+                        <span class="wp-meta-item">
+                            <svg class="wp-ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <rect x="4" y="5" width="16" height="14" rx="2"></rect>
+                                <circle cx="9" cy="11" r="2"></circle>
+                                <path d="M7 16c.6-1.4 1.5-2 2-2s1.4.6 2 2M13 10h4M13 14h4"></path>
+                            </svg>
+                            <span>{{ worker.worker_id }}</span>
                         </span>
-                    </div>
-
-                    <div class="wp-tagline">
-                        Helping resolve community issues with verified completion and accountable service.
                     </div>
                 </div>
 
@@ -1182,7 +1498,11 @@
                             type="button"
                             id="openEditProfile"
                         >
-                            Edit Profile
+                            <svg class="wp-ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M12 20h9"></path>
+                                <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"></path>
+                            </svg>
+                            <span>Edit Profile</span>
                         </button>
                     </div>
                 {% else %}
@@ -1214,9 +1534,9 @@
                                     type="submit"
                                 >
                                     {% if is_profile_liked %}
-                                        ♥ Liked
+                                         Liked
                                     {% else %}
-                                        ♡ Like Profile
+                                         Like Profile
                                     {% endif %}
                                 </button>
                             </form>
@@ -1279,7 +1599,8 @@
                 <section class="wp-card">
                     <div class="wp-card-head">
                         <h2 class="wp-card-title">
-                            👤 About Me
+                            <svg class="wp-ui-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg>
+                            <span>About Me</span>
                         </h2>
 
                         {% if is_owner %}
@@ -1335,7 +1656,8 @@
                 <section class="wp-card">
                     <div class="wp-card-head">
                         <h2 class="wp-card-title">
-                            🏆 Achievements
+                            <svg class="wp-ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8v5a4 4 0 0 1-8 0V4Z"></path><path d="M8 6H4v1a4 4 0 0 0 4 4M16 6h4v1a4 4 0 0 1-4 4M12 13v4M8 21h8M9 17h6"></path></svg>
+                            <span>Achievements</span>
                         </h2>
 
                         {% if is_owner %}
@@ -1353,8 +1675,12 @@
                             <div class="wp-achievements">
                                 {% for item in unlocked_achievements %}
                                     <div class="wp-achievement">
-                                        <div class="wp-achievement-icon">
-                                            {{ item.icon }}
+                                        <div class="wp-achievement-icon" aria-hidden="true">
+                                            <svg class="wp-ui-icon" viewBox="0 0 24 24">
+                                                <path d="M8 4h8v5a4 4 0 0 1-8 0V4Z"></path>
+                                                <path d="M8 6H4v1a4 4 0 0 0 4 4M16 6h4v1a4 4 0 0 1-4 4"></path>
+                                                <path d="M12 13v4M8 21h8M9 17h6"></path>
+                                            </svg>
                                         </div>
 
                                         <strong>{{ item.title }}</strong>
@@ -1372,7 +1698,8 @@
                 <section class="wp-card">
                     <div class="wp-card-head">
                         <h2 class="wp-card-title">
-                            🕘 Recent Activity
+                            <svg class="wp-ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l2-5 4 10 2-5h6"></path></svg>
+                            <span>Recent Activity</span>
                         </h2>
                     </div>
 
@@ -1381,13 +1708,22 @@
                             <div class="wp-activity-list">
                                 {% for item in recent_activity %}
                                     <div class="wp-activity">
-                                        <div class="wp-activity-icon">
+                                        <div class="wp-activity-icon" aria-hidden="true">
                                             {% if item.icon == "check" %}
-                                                ✓
+                                                <svg class="wp-ui-icon" viewBox="0 0 24 24">
+                                                    <circle cx="12" cy="12" r="9"></circle>
+                                                    <path d="m8 12 2.5 2.5L16.5 9"></path>
+                                                </svg>
                                             {% elif item.icon == "clock" %}
-                                                ◷
+                                                <svg class="wp-ui-icon" viewBox="0 0 24 24">
+                                                    <circle cx="12" cy="12" r="9"></circle>
+                                                    <path d="M12 7v5l3 2"></path>
+                                                </svg>
                                             {% else %}
-                                                ▣
+                                                <svg class="wp-ui-icon" viewBox="0 0 24 24">
+                                                    <rect x="4" y="5" width="16" height="14" rx="2"></rect>
+                                                    <path d="M8 9h8M8 13h5"></path>
+                                                </svg>
                                             {% endif %}
                                         </div>
 
@@ -1422,15 +1758,34 @@
                 <section class="wp-card">
                     <div class="wp-card-head">
                         <h2 class="wp-card-title">
-                            🏆 Worker Level & XP
+                            <svg class="wp-ui-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="5"></circle><path d="m9 13-2 8 5-3 5 3-2-8"></path></svg>
+                            <span>Worker Level & XP</span>
                         </h2>
                     </div>
 
                     <div class="wp-card-body">
                         <div class="wp-level-layout">
                             <div>
-                                <div class="wp-level-medal">
-                                    {{ worker_league.level.name|first }}
+                                <div
+                                    class="wp-level-medal wp-level-{{ worker_league.level.name|lower }}"
+                                    title="{{ worker_league.level.name }} Worker"
+                                    aria-label="{{ worker_league.level.name }} Worker level"
+                                >
+                                    {% if worker_league.level.name|lower == "diamond" %}
+                                        <svg class="wp-level-icon" viewBox="0 0 64 64" aria-hidden="true">
+                                            <path d="M12 22 22 10h20l10 12-20 31Z"></path>
+                                            <path d="M12 22h40M22 10l10 12 10-12M20 22l12 31 12-31"></path>
+                                        </svg>
+                                    {% else %}
+                                        <svg class="wp-level-icon" viewBox="0 0 64 64" aria-hidden="true">
+                                            <path d="M22 8h20l-4 18H26Z"></path>
+                                            <circle cx="32" cy="37" r="16"></circle>
+                                            <path
+                                                class="wp-level-mini-star"
+                                                d="m32 27 3.2 6.5 7.2 1-5.2 5.1 1.2 7.2L32 43.4l-6.4 3.4 1.2-7.2-5.2-5.1 7.2-1Z"
+                                            ></path>
+                                        </svg>
+                                    {% endif %}
                                 </div>
 
                                 <div class="wp-level-name">
@@ -1475,7 +1830,8 @@
                 <section class="wp-card">
                     <div class="wp-card-head">
                         <h2 class="wp-card-title">
-                            📊 Performance Stats
+                            <svg class="wp-ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path></svg>
+                            <span>Performance Stats</span>
                         </h2>
                     </div>
 
@@ -1523,7 +1879,8 @@
                 <section class="wp-card">
                     <div class="wp-card-head">
                         <h2 class="wp-card-title">
-                            ⭐ Recent Reviews
+                            <svg class="wp-ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3 6.4 20.2 7.5 14 3 9.6l6.2-.9Z"></path></svg>
+                            <span>Recent Reviews</span>
                         </h2>
                     </div>
 
@@ -1552,7 +1909,10 @@
 
                                         <div>
                                             <div class="wp-stars">
-                                                ★ {{ review.stars|floatformat:1 }}
+                                                <svg class="wp-ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                                    <path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3 6.4 20.2 7.5 14 3 9.6l6.2-.9Z"></path>
+                                                </svg>
+                                                <span>{{ review.stars|floatformat:1 }}</span>
                                             </div>
 
                                             <div class="wp-review-meta">
@@ -1577,7 +1937,8 @@
                 <section class="wp-card">
                     <div class="wp-card-head">
                         <h2 class="wp-card-title">
-                            👥 Social Stats
+                            <svg class="wp-ui-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"></circle><circle cx="17" cy="9" r="2"></circle><path d="M3 20a6 6 0 0 1 12 0M14 20a4 4 0 0 1 7 0"></path></svg>
+                            <span>Social Stats</span>
                         </h2>
                     </div>
 
@@ -1605,8 +1966,9 @@
                     <section class="wp-card">
                         <div class="wp-card-head">
                             <h2 class="wp-card-title">
-                                👥 People You May Know
-                            </h2>
+                            <svg class="wp-ui-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="8" r="3"></circle><circle cx="16" cy="8" r="3"></circle><path d="M2 20a6 6 0 0 1 12 0M10 20a6 6 0 0 1 12 0"></path></svg>
+                            <span>People You May Know</span>
+                        </h2>
                         </div>
 
                         <div class="wp-card-body">
@@ -1677,7 +2039,8 @@
                 <section class="wp-card">
                     <div class="wp-card-head">
                         <h2 class="wp-card-title">
-                            🪪 Worker Information
+                            <svg class="wp-ui-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"></rect><circle cx="9" cy="10" r="2"></circle><path d="M7 16c.5-1.4 1.3-2 2-2s1.5.6 2 2M14 9h3M14 13h3M14 17h3"></path></svg>
+                            <span>Worker Information</span>
                         </h2>
                     </div>
 
@@ -1729,7 +2092,7 @@
                                 <span>Verification</span>
                                 <strong>
                                     {% if worker.is_approved %}
-                                        ✓ Verified Worker
+                                         Verified Worker
                                     {% else %}
                                         {{ worker.verification_status }}
                                     {% endif %}
@@ -1739,37 +2102,60 @@
                     </div>
                 </section>
 
-                {% if is_owner %}
-                    <section class="wp-card">
-                        <div class="wp-card-head">
-                            <h2 class="wp-card-title">
-                                ⚡ Quick Actions
-                            </h2>
-                        </div>
-
-                        <div class="wp-card-body">
-                            <div class="wp-quick-grid">
-                                <a class="wp-quick" href="{% url 'worker_dashboard' %}">
-                                    View My Jobs
-                                </a>
-
-                                <a class="wp-quick" href="{% url 'public_leaderboard' %}">
-                                    Leaderboard
-                                </a>
-
-                                <a class="wp-quick" href="{% url 'worker_rewards' %}">
-                                    My Rewards
-                                </a>
-
-                                <a class="wp-quick" href="{% url 'worker_settings' %}">
-                                    Settings
-                                </a>
-                            </div>
-                        </div>
-                    </section>
-                {% endif %}
+                
             </div>
         </div>
+
+        {% if is_owner %}
+            <section class="wp-card wp-quick-actions-wide">
+                <div class="wp-card-head">
+                    <h2 class="wp-card-title">
+                        <svg class="wp-ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="m13 2-8 12h7l-1 8 8-12h-7Z"></path>
+                        </svg>
+                        <span>Quick Actions</span>
+                    </h2>
+                </div>
+
+                <div class="wp-card-body">
+                    <div class="wp-quick-grid">
+                        <a class="wp-quick" href="{% url 'worker_dashboard' %}">
+                            <svg class="wp-ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <rect x="3" y="4" width="18" height="16" rx="2"></rect>
+                                <path d="M7 8h10M7 12h6M7 16h8"></path>
+                            </svg>
+                            <span>View My Jobs</span>
+                        </a>
+
+                        <a class="wp-quick" href="{% url 'public_leaderboard' %}">
+                            <svg class="wp-ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M8 4h8v5a4 4 0 0 1-8 0V4Z"></path>
+                                <path d="M8 6H4v1a4 4 0 0 0 4 4M16 6h4v1a4 4 0 0 1-4 4"></path>
+                                <path d="M12 13v4M8 21h8M9 17h6"></path>
+                            </svg>
+                            <span>Leaderboard</span>
+                        </a>
+
+                        <a class="wp-quick" href="{% url 'worker_rewards' %}">
+                            <svg class="wp-ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <rect x="3" y="8" width="18" height="13" rx="2"></rect>
+                                <path d="M12 8v13M3 12h18M7.5 8C5 8 4 6.6 4 5.3 4 4 5 3 6.3 3 8.5 3 10 5.4 12 8M16.5 8C19 8 20 6.6 20 5.3 20 4 19 3 17.7 3 15.5 3 14 5.4 12 8"></path>
+                            </svg>
+                            <span>My Rewards</span>
+                        </a>
+
+                        <a class="wp-quick" href="{% url 'worker_settings' %}">
+                            <svg class="wp-ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <circle cx="12" cy="12" r="3"></circle>
+                                <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.6v-.2h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1Z"></path>
+                            </svg>
+                            <span>Settings</span>
+                        </a>
+                    </div>
+                </div>
+            </section>
+        {% endif %}
+
     </main>
 
     <!-- =====================================================
@@ -1792,7 +2178,9 @@
                         id="closeEditProfile"
                         aria-label="Close"
                     >
-                        ×
+                        <svg class="wp-ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M6 6l12 12M18 6 6 18"></path>
+                        </svg>
                     </button>
                 </div>
 

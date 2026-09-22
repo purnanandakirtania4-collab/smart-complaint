@@ -27,7 +27,8 @@ from django.db.models import Avg, Count, Case, When, Value, IntegerField, Q
 from django.utils import timezone
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_POST
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
+from django.views.decorators.cache import never_cache
 
 from .models import (
     Complaint,
@@ -97,6 +98,32 @@ def _admin_account_redirect(request):
         return redirect('/admin/')
 
     return None
+
+
+def _worker_account_redirect_from_user_ui(request):
+    """
+    Keep an authenticated worker out of citizen-only pages.
+
+    A Django/WebView cookie jar can hold only one authenticated account at a
+    time. If a worker was the last account used on the phone, opening the app
+    again must land on the Worker Dashboard instead of rendering citizen UI
+    with the worker's name.
+    """
+    if not request.user.is_authenticated:
+        return None
+
+    if WorkerProfile.objects.filter(user_id=request.user.id).exists():
+        return redirect('worker_dashboard')
+
+    return None
+
+
+def _citizen_area_guard(request):
+    admin_redirect = _admin_account_redirect(request)
+    if admin_redirect:
+        return admin_redirect
+
+    return _worker_account_redirect_from_user_ui(request)
 
 
 
@@ -191,9 +218,9 @@ def _apply_free_profile_avatar(instance, field_name, avatar_id, filename_prefix)
 @login_required(login_url='login')
 def home(request):
 
-    admin_redirect = _admin_account_redirect(request)
-    if admin_redirect:
-        return admin_redirect
+    role_redirect = _citizen_area_guard(request)
+    if role_redirect:
+        return role_redirect
 
     # Monthly public leaderboard data is also shown as a
     # compact right-side panel on the User Home page.
@@ -240,6 +267,8 @@ def home(request):
 # USER LOGIN
 # =========================================================
 
+@never_cache
+@ensure_csrf_cookie
 def user_login(request):
 
     admin_redirect = _admin_account_redirect(request)
@@ -320,6 +349,7 @@ def user_login(request):
                 request,
                 user
             )
+            request.session['smart_complaint_role'] = 'citizen'
 
             return redirect(
                 'home'
@@ -991,6 +1021,10 @@ def toggle_user_follow(request, username):
 @login_required(login_url='login')
 def user_followers(request):
 
+    role_redirect = _citizen_area_guard(request)
+    if role_redirect:
+        return role_redirect
+
     admin_redirect = _admin_account_redirect(request)
     if admin_redirect:
         return admin_redirect
@@ -1073,6 +1107,10 @@ def user_followers(request):
 @login_required(login_url='login')
 def user_following(request):
 
+    role_redirect = _citizen_area_guard(request)
+    if role_redirect:
+        return role_redirect
+
     admin_redirect = _admin_account_redirect(request)
     if admin_redirect:
         return admin_redirect
@@ -1143,6 +1181,10 @@ def user_following(request):
 
 @login_required(login_url='login')
 def people_you_may_know(request):
+
+    role_redirect = _citizen_area_guard(request)
+    if role_redirect:
+        return role_redirect
 
     admin_redirect = _admin_account_redirect(request)
     if admin_redirect:
@@ -1488,6 +1530,10 @@ def _activate_citizen_premium(
 
 @login_required(login_url="login")
 def citizen_premium(request):
+
+    role_redirect = _citizen_area_guard(request)
+    if role_redirect:
+        return role_redirect
 
     admin_redirect = _admin_account_redirect(
         request
@@ -2394,6 +2440,10 @@ def reset_local_test_premium(request):
 @login_required(login_url='login')
 def user_settings(request):
 
+    role_redirect = _citizen_area_guard(request)
+    if role_redirect:
+        return role_redirect
+
     admin_redirect = _admin_account_redirect(request)
     if admin_redirect:
         return admin_redirect
@@ -2920,6 +2970,10 @@ def notify_worker_about_assignment(
 @login_required(login_url='login')
 def submit_complaint(request):
 
+    role_redirect = _citizen_area_guard(request)
+    if role_redirect:
+        return role_redirect
+
     admin_redirect = _admin_account_redirect(request)
     if admin_redirect:
         return admin_redirect
@@ -3163,6 +3217,10 @@ def submit_complaint(request):
 @login_required(login_url='login')
 def success(request):
 
+    role_redirect = _citizen_area_guard(request)
+    if role_redirect:
+        return role_redirect
+
     admin_redirect = _admin_account_redirect(request)
     if admin_redirect:
         return admin_redirect
@@ -3178,6 +3236,10 @@ def success(request):
 # =========================================================
 
 def check_status(request):
+
+    role_redirect = _citizen_area_guard(request)
+    if role_redirect:
+        return role_redirect
 
     admin_redirect = _admin_account_redirect(request)
     if admin_redirect:
@@ -3233,6 +3295,10 @@ def check_status(request):
 
 @login_required(login_url='login')
 def my_complaints(request):
+
+    role_redirect = _citizen_area_guard(request)
+    if role_redirect:
+        return role_redirect
 
     admin_redirect = _admin_account_redirect(request)
     if admin_redirect:
@@ -3440,6 +3506,10 @@ def rate_worker(request, complaint_id):
 
 @login_required(login_url='login')
 def notifications(request):
+
+    role_redirect = _citizen_area_guard(request)
+    if role_redirect:
+        return role_redirect
 
     admin_redirect = _admin_account_redirect(request)
     if admin_redirect:
@@ -4444,6 +4514,8 @@ def worker_register(request):
 # WORKER LOGIN
 # =========================================================
 
+@never_cache
+@ensure_csrf_cookie
 def worker_login(request):
 
     admin_redirect = _admin_account_redirect(request)
@@ -4578,6 +4650,7 @@ def worker_login(request):
             request,
             user
         )
+        request.session['smart_complaint_role'] = 'worker'
 
         return redirect(
             'worker_dashboard'
@@ -4818,6 +4891,61 @@ def worker_dashboard(request):
             'worker_login'
         )
 
+    # =====================================================
+    # ONE-COMPLAINT WORKFLOW
+    # =====================================================
+    # A worker sees and works on one full complaint at a time.
+    # 1. Keep an already In Progress complaint as the current job.
+    # 2. Otherwise promote the most important Pending complaint.
+    # 3. Remaining active complaints stay in the waiting queue.
+
+    def get_current_worker_job():
+        in_progress_job = (
+            Complaint.objects
+            .filter(
+                assigned_worker=worker,
+                status='In Progress',
+            )
+            .select_related(
+                'user',
+                'user__user_profile',
+            )
+            .order_by(
+                'created_at',
+                'id',
+            )
+            .first()
+        )
+
+        if in_progress_job:
+            return in_progress_job
+
+        return (
+            Complaint.objects
+            .filter(
+                assigned_worker=worker,
+                status='Pending',
+            )
+            .select_related(
+                'user',
+                'user__user_profile',
+            )
+            .annotate(
+                priority_rank=Case(
+                    When(priority='Emergency', then=Value(0)),
+                    When(priority='High', then=Value(1)),
+                    default=Value(2),
+                    output_field=IntegerField(),
+                )
+            )
+            .order_by(
+                'priority_rank',
+                'created_at',
+                'id',
+            )
+            .first()
+        )
+
     if request.method == 'POST':
 
         action = request.POST.get(
@@ -4841,6 +4969,253 @@ def worker_dashboard(request):
                 'worker_dashboard'
             )
 
+        # =====================================================
+        # HANDOVER A WAITING COMPLAINT
+        # =====================================================
+        # Only a Pending complaint that is waiting behind the current
+        # job can be handed over. In-progress work is never silently moved.
+
+        if action == 'handover_complaint':
+
+            target_worker_id = request.POST.get(
+                'target_worker_id',
+                ''
+            ).strip()
+
+            handover_reason = request.POST.get(
+                'handover_reason',
+                ''
+            ).strip()
+
+            if len(handover_reason) > 200:
+                handover_reason = handover_reason[:200]
+
+            if not target_worker_id:
+
+                messages.error(
+                    request,
+                    'Please select a worker for handover.'
+                )
+
+                return redirect(
+                    'worker_dashboard'
+                )
+
+            try:
+                with transaction.atomic():
+
+                    complaint = (
+                        Complaint.objects
+                        .select_for_update()
+                        .select_related(
+                            'user',
+                            'assigned_worker',
+                        )
+                        .get(
+                            id=complaint_id,
+                            assigned_worker=worker,
+                        )
+                    )
+
+                    current_job = get_current_worker_job()
+
+                    if (
+                        current_job
+                        and complaint.id == current_job.id
+                    ):
+
+                        messages.error(
+                            request,
+                            (
+                                'The current complaint cannot be handed over from '
+                                'the waiting queue. Finish it first or keep working on it.'
+                            )
+                        )
+
+                        return redirect(
+                            'worker_dashboard'
+                        )
+
+                    if complaint.status != 'Pending':
+
+                        messages.error(
+                            request,
+                            'Only a waiting Pending complaint can be handed over.'
+                        )
+
+                        return redirect(
+                            'worker_dashboard'
+                        )
+
+                    target_worker = (
+                        WorkerProfile.objects
+                        .select_for_update()
+                        .get(
+                            id=target_worker_id,
+                            is_approved=True,
+                            verification_status='Approved',
+                            availability_status='available',
+                        )
+                    )
+
+                    if target_worker.id == worker.id:
+
+                        messages.error(
+                            request,
+                            'Please choose a different worker.'
+                        )
+
+                        return redirect(
+                            'worker_dashboard'
+                        )
+
+                    target_has_active_job = (
+                        Complaint.objects
+                        .filter(
+                            assigned_worker=target_worker,
+                            status__in=[
+                                'Pending',
+                                'In Progress',
+                            ],
+                        )
+                        .exists()
+                    )
+
+                    if target_has_active_job:
+
+                        messages.error(
+                            request,
+                            (
+                                f'{target_worker.name} already has an active complaint. '
+                                'Choose another available worker.'
+                            )
+                        )
+
+                        return redirect(
+                            'worker_dashboard'
+                        )
+
+                    source_worker_name = worker.name
+                    target_worker_name = target_worker.name
+
+                    complaint.assigned_worker = target_worker
+                    complaint.completion_otp = ''
+                    complaint.otp_created_at = None
+                    complaint.otp_verified = False
+
+                    complaint.save(
+                        update_fields=[
+                            'assigned_worker',
+                            'completion_otp',
+                            'otp_created_at',
+                            'otp_verified',
+                            'updated_at',
+                        ]
+                    )
+
+                    target_message = (
+                        f'Complaint {complaint.tracking_id} was handed over to you '
+                        f'by {source_worker_name}. Priority: {complaint.priority}.'
+                    )
+
+                    if handover_reason:
+                        target_message += (
+                            f' Reason: {handover_reason}'
+                        )
+
+                    Notification.objects.create(
+                        recipient=target_worker.user,
+                        complaint=complaint,
+                        notification_type='assignment',
+                        title='Complaint Handover',
+                        message=target_message,
+                    )
+
+                    user_message = (
+                        f'Your complaint {complaint.tracking_id} was handed over '
+                        f'from {source_worker_name} to {target_worker_name}. '
+                        'The complaint remains Pending and no completion was recorded.'
+                    )
+
+                    if handover_reason:
+                        user_message += (
+                            f' Handover note: {handover_reason}'
+                        )
+
+                    Notification.objects.create(
+                        recipient=complaint.user,
+                        complaint=complaint,
+                        notification_type='status_update',
+                        title='Assigned Worker Changed',
+                        message=user_message,
+                    )
+
+                try:
+                    send_push_to_user(
+                        target_worker.user,
+                        'Complaint Handover',
+                        target_message,
+                        data={
+                            'type': 'assignment',
+                            'complaint_id': str(complaint.id),
+                            'tracking_id': complaint.tracking_id,
+                        },
+                    )
+                except Exception as error:
+                    print(
+                        'Handover worker push failed:',
+                        error,
+                    )
+
+                try:
+                    send_push_to_user(
+                        complaint.user,
+                        'Assigned Worker Changed',
+                        user_message,
+                        data={
+                            'type': 'status_update',
+                            'complaint_id': str(complaint.id),
+                            'tracking_id': complaint.tracking_id,
+                        },
+                    )
+                except Exception as error:
+                    print(
+                        'Handover user push failed:',
+                        error,
+                    )
+
+                messages.success(
+                    request,
+                    (
+                        f'Complaint {complaint.tracking_id} handed over to '
+                        f'{target_worker_name} successfully.'
+                    )
+                )
+
+                return redirect(
+                    'worker_dashboard'
+                )
+
+            except (
+                Complaint.DoesNotExist,
+                WorkerProfile.DoesNotExist,
+                ValueError,
+                TypeError,
+            ):
+
+                messages.error(
+                    request,
+                    'The complaint or selected worker is no longer available.'
+                )
+
+                return redirect(
+                    'worker_dashboard'
+                )
+
+        # =====================================================
+        # ALL NORMAL WORK ACTIONS MUST TARGET CURRENT JOB
+        # =====================================================
+
         try:
             complaint = Complaint.objects.get(
                 id=complaint_id,
@@ -4856,6 +5231,25 @@ def worker_dashboard(request):
             messages.error(
                 request,
                 'You cannot update this complaint.'
+            )
+
+            return redirect(
+                'worker_dashboard'
+            )
+
+        current_job = get_current_worker_job()
+
+        if (
+            not current_job
+            or complaint.id != current_job.id
+        ):
+
+            messages.error(
+                request,
+                (
+                    'Please finish the current complaint first. '
+                    'Waiting complaints cannot be worked on out of order.'
+                )
             )
 
             return redirect(
@@ -5102,7 +5496,7 @@ def worker_dashboard(request):
                 (
                     f'OTP verified successfully. '
                     f'Complaint {complaint.tracking_id} '
-                    f'is now Resolved.'
+                    f'is now Resolved. The next waiting complaint is now available.'
                 )
             )
 
@@ -5292,28 +5686,148 @@ def worker_dashboard(request):
             'worker_dashboard'
         )
 
-    complaints = list(
+    # =====================================================
+    # DASHBOARD DATA
+    # =====================================================
+
+    assigned_complaints = (
         Complaint.objects
         .filter(
             assigned_worker=worker
         )
-        .select_related(
-            'user',
-            'user__user_profile'
+    )
+
+    total_assigned_count = assigned_complaints.count()
+
+    active_count = (
+        assigned_complaints
+        .filter(
+            status__in=[
+                'Pending',
+                'In Progress',
+            ]
         )
-        .annotate(
-            priority_rank=Case(
-                When(priority='Emergency', then=Value(0)),
-                When(priority='High', then=Value(1)),
-                default=Value(2),
-                output_field=IntegerField(),
+        .count()
+    )
+
+    in_progress_count = (
+        assigned_complaints
+        .filter(
+            status='In Progress'
+        )
+        .count()
+    )
+
+    resolved_count = (
+        assigned_complaints
+        .filter(
+            status='Resolved'
+        )
+        .count()
+    )
+
+    current_complaint = get_current_worker_job()
+
+    complaints = (
+        [current_complaint]
+        if current_complaint
+        else []
+    )
+
+    queued_count = max(
+        active_count - (1 if current_complaint else 0),
+        0,
+    )
+
+    waiting_complaint = None
+
+    if current_complaint:
+
+        waiting_complaint = (
+            Complaint.objects
+            .filter(
+                assigned_worker=worker,
+                status__in=[
+                    'Pending',
+                    'In Progress',
+                ],
+            )
+            .exclude(
+                id=current_complaint.id
+            )
+            .select_related(
+                'user',
+                'user__user_profile',
+            )
+            .annotate(
+                waiting_status_rank=Case(
+                    When(status='Pending', then=Value(0)),
+                    default=Value(1),
+                    output_field=IntegerField(),
+                ),
+                priority_rank=Case(
+                    When(priority='Emergency', then=Value(0)),
+                    When(priority='High', then=Value(1)),
+                    default=Value(2),
+                    output_field=IntegerField(),
+                ),
+            )
+            .order_by(
+                'waiting_status_rank',
+                'priority_rank',
+                'created_at',
+                'id',
+            )
+            .first()
+        )
+
+    # Only show workers who are approved, marked available, and currently
+    # have no Pending/In Progress complaint. Same-skill workers are listed first.
+    handover_workers = []
+
+    if (
+        waiting_complaint
+        and waiting_complaint.status == 'Pending'
+    ):
+
+        handover_workers = list(
+            WorkerProfile.objects
+            .filter(
+                is_approved=True,
+                verification_status='Approved',
+                availability_status='available',
+            )
+            .exclude(
+                id=worker.id
+            )
+            .annotate(
+                active_job_count=Count(
+                    'assigned_complaints',
+                    filter=Q(
+                        assigned_complaints__status__in=[
+                            'Pending',
+                            'In Progress',
+                        ]
+                    ),
+                ),
+                skill_match_rank=Case(
+                    When(
+                        skill_category=worker.skill_category,
+                        then=Value(0),
+                    ),
+                    default=Value(1),
+                    output_field=IntegerField(),
+                ),
+            )
+            .filter(
+                active_job_count=0
+            )
+            .order_by(
+                'skill_match_rank',
+                'name',
+                'id',
             )
         )
-        .order_by(
-            'priority_rank',
-            '-created_at'
-        )
-    )
 
     complaint_ids = [
         complaint.id
@@ -5360,6 +5874,27 @@ def worker_dashboard(request):
                 now <= otp_expiry_time
             )
 
+    # A resolved complaint disappears from the active work card immediately,
+    # so keep a small feedback prompt for the most recent unresolved rating.
+    recent_resolved_unrated = (
+        Complaint.objects
+        .filter(
+            assigned_worker=worker,
+            status='Resolved',
+        )
+        .exclude(
+            ratings__rating_type='worker_to_user'
+        )
+        .select_related(
+            'user',
+        )
+        .order_by(
+            '-updated_at',
+            '-id',
+        )
+        .first()
+    )
+
     worker_subscription, created = (
         WorkerSubscription.objects
         .get_or_create(
@@ -5373,6 +5908,15 @@ def worker_dashboard(request):
         {
             'worker': worker,
             'complaints': complaints,
+            'current_complaint': current_complaint,
+            'waiting_complaint': waiting_complaint,
+            'queued_count': queued_count,
+            'active_count': active_count,
+            'in_progress_count': in_progress_count,
+            'resolved_count': resolved_count,
+            'total_assigned_count': total_assigned_count,
+            'handover_workers': handover_workers,
+            'recent_resolved_unrated': recent_resolved_unrated,
             'league': _worker_league_snapshot(worker),
             'public_worker_rows': _worker_rows(monthly=True),
             'public_user_rows': _user_rows(monthly=True),
@@ -7703,6 +8247,10 @@ def verify_test_payment(request):
 
 @login_required(login_url='login')
 def user_payment_details(request):
+
+    role_redirect = _citizen_area_guard(request)
+    if role_redirect:
+        return role_redirect
     """Render the user payment details UI. Backend payment data will be connected later."""
     return render(
         request,
@@ -8772,55 +9320,55 @@ def _user_achievement_cards(row):
         {
             "title": "First Verified Resolution",
             "detail": "Complete your first OTP-verified resolution",
-            "icon": "✓",
+            "icon": "V",
             "unlocked": row["verified"] >= 1,
         },
         {
             "title": "Helpful Citizen",
             "detail": "Give useful feedback on 5 completed services",
-            "icon": "★",
+            "icon": "5",
             "unlocked": row["ratings"] >= 5,
         },
         {
             "title": "Trusted Citizen",
             "detail": "Receive 5 positive ratings from workers",
-            "icon": "♥",
+            "icon": "H",
             "unlocked": row["positive_worker_ratings"] >= 5,
         },
         {
             "title": "Detailed Reporter",
             "detail": "Create 5 quality reports with photo, location and useful details",
-            "icon": "▣",
+            "icon": "S",
             "unlocked": row["detailed"] >= 5,
         },
         {
             "title": "Responsible Regular",
             "detail": "Complete 3 balanced responsible-participation months",
-            "icon": "◆",
+            "icon": "D",
             "unlocked": row["responsible_months"] >= 3,
         },
         {
             "title": "Community Role Model",
             "detail": "Complete 6 balanced responsible-participation months",
-            "icon": "✦",
+            "icon": "Q",
             "unlocked": row["responsible_months"] >= 6,
         },
         {
             "title": "Community Champion",
             "detail": "Reach Gold Citizen league",
-            "icon": "♛",
+            "icon": "C",
             "unlocked": row["xp"] >= 1000,
         },
         {
             "title": "City Care Leader",
             "detail": "Reach Platinum Citizen league",
-            "icon": "◇",
+            "icon": "P",
             "unlocked": row["xp"] >= 2000,
         },
         {
             "title": "Top Supporter",
             "detail": "Reach Diamond Citizen league",
-            "icon": "♢",
+            "icon": "T",
             "unlocked": row["xp"] >= 3500,
         },
     ]
@@ -8831,12 +9379,12 @@ def _worker_achievement_cards(row):
         {"title": "First 10 Jobs", "detail": "Complete 10 resolved jobs", "icon": "10", "unlocked": row["resolved"] >= 10},
         {"title": "50 Jobs", "detail": "Complete 50 resolved jobs", "icon": "50", "unlocked": row["resolved"] >= 50},
         {"title": "100 Jobs", "detail": "Complete 100 resolved jobs", "icon": "100", "unlocked": row["resolved"] >= 100},
-        {"title": "5-Star Pro", "detail": "Receive 10 five-star ratings", "icon": "★", "unlocked": row["five_star"] >= 10},
-        {"title": "Verified Finisher", "detail": "Complete 25 OTP-verified jobs", "icon": "✓", "unlocked": row["verified"] >= 25},
+        {"title": "5-Star Pro", "detail": "Receive 10 five-star ratings", "icon": "5", "unlocked": row["five_star"] >= 10},
+        {"title": "Verified Finisher", "detail": "Complete 25 OTP-verified jobs", "icon": "V", "unlocked": row["verified"] >= 25},
         {"title": "Gold Worker", "detail": "Reach Gold league", "icon": "G", "unlocked": row["xp"] >= 1000},
         {"title": "Platinum Worker", "detail": "Reach Platinum league", "icon": "P", "unlocked": row["xp"] >= 2000},
-        {"title": "City Champion", "detail": "Reach Diamond league", "icon": "♛", "unlocked": row["xp"] >= 3500},
-        {"title": "Quality Expert", "detail": "Maintain 4.8+ rating with 20 ratings", "icon": "✦", "unlocked": row["rating_count"] >= 20 and row["rating_avg"] >= 4.8},
+        {"title": "City Champion", "detail": "Reach Diamond league", "icon": "C", "unlocked": row["xp"] >= 3500},
+        {"title": "Quality Expert", "detail": "Maintain 4.8+ rating with 20 ratings", "icon": "Q", "unlocked": row["rating_count"] >= 20 and row["rating_avg"] >= 4.8},
     ]
 
 
@@ -8886,6 +9434,10 @@ def public_leaderboard(request):
 
 
 def user_leaderboard(request):
+
+    role_redirect = _citizen_area_guard(request)
+    if role_redirect:
+        return role_redirect
     """Backward-compatible route for the old user leaderboard URL."""
     return redirect("public_leaderboard")
 
@@ -8898,6 +9450,10 @@ def worker_leaderboard(request):
 
 @login_required(login_url="login")
 def user_achievements(request):
+
+    role_redirect = _citizen_area_guard(request)
+    if role_redirect:
+        return role_redirect
     admin_redirect = _admin_account_redirect(request)
     if admin_redirect:
         return admin_redirect
@@ -8922,6 +9478,10 @@ def user_achievements(request):
 
 @login_required(login_url="login")
 def user_rewards(request):
+
+    role_redirect = _citizen_area_guard(request)
+    if role_redirect:
+        return role_redirect
     admin_redirect = _admin_account_redirect(request)
     if admin_redirect:
         return admin_redirect

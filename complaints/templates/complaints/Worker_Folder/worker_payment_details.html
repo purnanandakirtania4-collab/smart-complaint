@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 
     <title>Worker Payment Details - Smart Complaint</title>
 
@@ -727,10 +727,7 @@
         border-color: rgba(125, 190, 255, 0.5);
       }
       
-      .money-action span:first-child {
-        font-size: 21px;
-      }
-      
+
       .bank-list {
         display: grid;
         gap: 12px;
@@ -1134,8 +1131,455 @@
           height: 155px;
         }
       }
-    </style>
-  </head>
+    
+      /* =========================================
+         PROFESSIONAL SVG ICON SYSTEM
+         ========================================= */
+
+      .ui-icon {
+        width: 20px;
+        height: 20px;
+        display: inline-block;
+        flex: 0 0 auto;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        vertical-align: middle;
+      }
+
+      .hero-icon .ui-icon {
+        width: 35px;
+        height: 35px;
+      }
+
+      .secure-icon .ui-icon {
+        width: 23px;
+        height: 23px;
+      }
+
+      .summary-icon .ui-icon {
+        width: 24px;
+        height: 24px;
+      }
+
+      .summary-card.green .summary-icon {
+        color: #86efac;
+      }
+
+      .summary-card.blue .summary-icon {
+        color: #7dd3fc;
+      }
+
+      .summary-card.purple .summary-icon {
+        color: #d8b4fe;
+      }
+
+      .summary-card.orange .summary-icon {
+        color: #fdba74;
+      }
+
+      .money-card-title .ui-icon,
+      .qr-pay-title .ui-icon,
+      .section-title .ui-icon {
+        width: 21px;
+        height: 21px;
+        color: #7dd3fc;
+      }
+
+      .feature-item > .ui-icon {
+        width: 25px;
+        height: 25px;
+        color: #7dd3fc;
+      }
+
+      .money-action .ui-icon {
+        width: 22px;
+        height: 22px;
+        color: #bfdbfe;
+      }
+
+      .bank-add-button,
+      .gallery-button,
+      .scanner-button,
+      .support-button,
+      .filter-button,
+      .modal-submit,
+      .modal-head h2 {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .bank-add-button .ui-icon,
+      .gallery-button .ui-icon,
+      .scanner-button .ui-icon,
+      .support-button .ui-icon,
+      .filter-button .ui-icon,
+      .modal-submit .ui-icon,
+      .modal-head h2 .ui-icon {
+        width: 17px;
+        height: 17px;
+      }
+
+      .modal-close {
+        display: grid;
+        place-items: center;
+        font-size: 0;
+      }
+
+      .modal-close .ui-icon {
+        width: 18px;
+        height: 18px;
+      }
+
+      .empty-icon,
+      .help-icon,
+      .linked-qr-placeholder {
+        color: #7dd3fc;
+      }
+
+      .empty-icon .ui-icon {
+        width: 39px;
+        height: 39px;
+      }
+
+      .help-icon .ui-icon {
+        width: 26px;
+        height: 26px;
+      }
+
+      .linked-qr-placeholder .ui-icon {
+        width: 92px;
+        height: 92px;
+        color: #0f172a;
+      }
+
+      .qr-safety {
+        display: flex;
+        align-items: flex-start;
+        gap: 9px;
+      }
+
+      .qr-safety .ui-icon {
+        width: 18px;
+        height: 18px;
+        flex: 0 0 18px;
+        margin-top: 1px;
+      }
+
+      @media (max-width: 650px) {
+        .hero-icon .ui-icon {
+          width: 29px;
+          height: 29px;
+        }
+
+        .summary-icon .ui-icon {
+          width: 21px;
+          height: 21px;
+        }
+
+        .money-action .ui-icon {
+          width: 19px;
+          height: 19px;
+        }
+      }
+
+
+      /* =========================================
+         WORKER PRO SUBSCRIPTION STATUS
+         ========================================= */
+
+      .subscription-panel {
+        margin-top: 20px;
+        overflow: hidden;
+        border: 1px solid rgba(249, 115, 22, 0.30);
+        border-radius: 22px;
+        background:
+          radial-gradient(circle at top right, rgba(249, 115, 22, 0.13), transparent 34%),
+          linear-gradient(145deg, rgba(12, 45, 83, 0.94), rgba(7, 32, 62, 0.90));
+        box-shadow: var(--shadow);
+      }
+
+      .subscription-panel-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 14px;
+        padding: 19px 20px 15px;
+        border-bottom: 1px solid rgba(125, 190, 255, 0.16);
+      }
+
+      .subscription-panel-title {
+        min-width: 0;
+        display: flex;
+        align-items: flex-start;
+        gap: 11px;
+      }
+
+      .subscription-panel-icon {
+        width: 42px;
+        height: 42px;
+        flex: 0 0 42px;
+        display: grid;
+        place-items: center;
+        border-radius: 13px;
+        background: rgba(249, 115, 22, 0.16);
+        color: #fdba74;
+      }
+
+      .subscription-panel-icon .ui-icon {
+        width: 22px;
+        height: 22px;
+      }
+
+      .subscription-panel-title h2 {
+        margin: 0;
+        color: #ffffff;
+        font-size: 18px;
+        font-weight: 900;
+      }
+
+      .subscription-panel-title p {
+        margin: 4px 0 0;
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 1.5;
+      }
+
+      .subscription-status {
+        flex: 0 0 auto;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        min-height: 29px;
+        padding: 5px 10px;
+        border: 1px solid rgba(148, 163, 184, 0.26);
+        border-radius: 999px;
+        background: rgba(148, 163, 184, 0.11);
+        color: #dbeafe;
+        font-size: 10px;
+        font-weight: 900;
+        white-space: nowrap;
+      }
+
+      .subscription-status .ui-icon {
+        width: 13px;
+        height: 13px;
+      }
+
+      .subscription-status.active {
+        border-color: rgba(74, 222, 128, 0.30);
+        background: rgba(34, 197, 94, 0.13);
+        color: #bbf7d0;
+      }
+
+      .subscription-status.pending {
+        border-color: rgba(250, 204, 21, 0.28);
+        background: rgba(245, 158, 11, 0.12);
+        color: #fde68a;
+      }
+
+      .subscription-status.inactive,
+      .subscription-status.cancelled,
+      .subscription-status.expired {
+        border-color: rgba(248, 113, 113, 0.24);
+        background: rgba(220, 38, 38, 0.10);
+        color: #fecaca;
+      }
+
+      .subscription-panel-body {
+        padding: 17px 20px 20px;
+      }
+
+      .subscription-details {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 9px;
+      }
+
+      .subscription-detail {
+        min-width: 0;
+        padding: 12px;
+        border: 1px solid rgba(125, 190, 255, 0.15);
+        border-radius: 13px;
+        background: rgba(255, 255, 255, 0.045);
+      }
+
+      .subscription-detail span {
+        display: block;
+        margin-bottom: 5px;
+        color: #94a3b8;
+        font-size: 9px;
+        font-weight: 900;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      .subscription-detail strong {
+        display: block;
+        color: #ffffff;
+        font-size: 12px;
+        line-height: 1.45;
+        overflow-wrap: anywhere;
+      }
+
+      .subscription-detail strong.good {
+        color: #86efac;
+      }
+
+      .subscription-detail strong.warn {
+        color: #fde68a;
+      }
+
+      .subscription-message {
+        display: flex;
+        align-items: flex-start;
+        gap: 9px;
+        margin-top: 12px;
+        padding: 11px 12px;
+        border: 1px solid rgba(125, 211, 252, 0.16);
+        border-radius: 11px;
+        background: rgba(14, 165, 233, 0.07);
+        color: #bfdbfe;
+        font-size: 10px;
+        line-height: 1.55;
+      }
+
+      .subscription-message .ui-icon {
+        width: 17px;
+        height: 17px;
+        flex: 0 0 17px;
+        margin-top: 1px;
+      }
+
+      .subscription-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 13px;
+      }
+
+      .subscription-button {
+        min-height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        padding: 8px 11px;
+        border: 1px solid rgba(125, 190, 255, 0.24);
+        border-radius: 10px;
+        background: rgba(22, 119, 255, 0.15);
+        color: #ffffff;
+        text-decoration: none;
+        font-size: 10px;
+        font-weight: 900;
+      }
+
+      .subscription-button .ui-icon {
+        width: 15px;
+        height: 15px;
+      }
+
+      .subscription-button.primary {
+        border-color: transparent;
+        background: linear-gradient(135deg, #2563eb, #0ea5e9);
+      }
+
+      /* =========================================
+         FIXED BOTTOM-LEFT BACK BUTTON
+         ========================================= */
+
+      .worker-payment-back {
+        position: fixed;
+        left: calc(13px + env(safe-area-inset-left, 0px));
+        bottom: calc(13px + env(safe-area-inset-bottom, 0px));
+        z-index: 1200;
+        width: 40px;
+        height: 40px;
+        display: grid;
+        place-items: center;
+        border: 1px solid rgba(147, 197, 253, 0.27);
+        border-radius: 12px;
+        background: rgba(6, 35, 72, 0.92);
+        color: #ffffff;
+        box-shadow: 0 10px 26px rgba(2, 6, 23, 0.28);
+        text-decoration: none;
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+      }
+
+      .worker-payment-back .ui-icon {
+        width: 19px;
+        height: 19px;
+      }
+
+      .worker-payment-back:active {
+        transform: scale(0.96);
+      }
+
+      @media (max-width: 850px) {
+        .subscription-details {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 650px) {
+        .subscription-panel {
+          margin-top: 12px;
+          border-radius: 17px;
+        }
+
+        .subscription-panel-head {
+          padding: 14px;
+        }
+
+        .subscription-panel-body {
+          padding: 13px 14px 15px;
+        }
+
+        .subscription-panel-title h2 {
+          font-size: 16px;
+        }
+
+        .subscription-details {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 7px;
+        }
+
+        .subscription-detail {
+          padding: 10px;
+        }
+
+        .subscription-actions {
+          display: grid;
+          grid-template-columns: 1fr;
+        }
+
+        .subscription-button {
+          width: 100%;
+        }
+
+        .worker-payment-back {
+          width: 38px;
+          height: 38px;
+          left: calc(10px + env(safe-area-inset-left, 0px));
+          bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+        }
+      }
+
+      @media (max-width: 390px) {
+        .subscription-details {
+          grid-template-columns: 1fr;
+        }
+      }
+
+</style>
+  
+    {% include 'complaints/base_style.html' %}
+</head>
 
   <body>
     <!--   
@@ -1153,7 +1597,14 @@
 
       <section class="payment-hero">
         <div class="hero-main">
-          <div class="hero-icon">💳</div>
+          <div class="hero-icon" aria-hidden="true">
+            <svg class="ui-icon" viewBox="0 0 24 24">
+              <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+              <path d="M3 10h18"></path>
+              <path d="M7 15h4"></path>
+              <circle cx="17" cy="15" r="1"></circle>
+            </svg>
+          </div>
 
           <div class="hero-text">
             <h1>Payment Details</h1>
@@ -1163,7 +1614,13 @@
         </div>
 
         <div class="secure-box">
-          <div class="secure-icon">🔒</div>
+          <div class="secure-icon" aria-hidden="true">
+            <svg class="ui-icon" viewBox="0 0 24 24">
+              <path d="M12 3 20 6v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6Z"></path>
+              <rect x="9" y="10" width="6" height="5" rx="1"></rect>
+              <path d="M10.5 10V8.5a1.5 1.5 0 0 1 3 0V10"></path>
+            </svg>
+          </div>
 
           <div>
             <strong>Secure Payments</strong>
@@ -1181,7 +1638,14 @@
         <!-- TOTAL EARNINGS -->
 
         <article class="summary-card green">
-          <div class="summary-icon">₹</div>
+          <div class="summary-icon" aria-hidden="true">
+            <svg class="ui-icon" viewBox="0 0 24 24">
+              <path d="M4 7h16v12H4z"></path>
+              <path d="M16 11h4"></path>
+              <circle cx="16" cy="13" r="1"></circle>
+              <path d="M7 10h4M7 14h3"></path>
+            </svg>
+          </div>
 
           <div class="summary-title">Total Earnings</div>
 
@@ -1193,7 +1657,12 @@
         <!-- PENDING PAYOUT -->
 
         <article class="summary-card blue">
-          <div class="summary-icon">◷</div>
+          <div class="summary-icon" aria-hidden="true">
+            <svg class="ui-icon" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="9"></circle>
+              <path d="M12 7v5l3 2"></path>
+            </svg>
+          </div>
 
           <div class="summary-title">Pending Payout</div>
 
@@ -1205,7 +1674,13 @@
         <!-- TOTAL PAYOUTS -->
 
         <article class="summary-card purple">
-          <div class="summary-icon">🏦</div>
+          <div class="summary-icon" aria-hidden="true">
+            <svg class="ui-icon" viewBox="0 0 24 24">
+              <path d="M4 4h16v16H4z"></path>
+              <path d="M8 9h8M8 13h5M8 17h7"></path>
+              <path d="m16 15 1.5 1.5L20 14"></path>
+            </svg>
+          </div>
 
           <div class="summary-title">Total Payouts</div>
 
@@ -1216,16 +1691,247 @@
 
         <!-- SUBSCRIPTION -->
 
-        <article class="summary-card orange">
-          <div class="summary-icon">👑</div>
+        {% with subscription=worker.subscription %}
+          <article class="summary-card orange">
+            <div class="summary-icon" aria-hidden="true">
+              <svg class="ui-icon" viewBox="0 0 24 24">
+                <path d="M5 16 3 7l5 3 4-6 4 6 5-3-2 9H5Z"></path>
+                <path d="M5 19h14"></path>
+              </svg>
+            </div>
 
-          <div class="summary-title">Subscription</div>
+            <div class="summary-title">Worker Pro</div>
 
-          <div class="summary-value subscription-value">Not Active</div>
-
-          <div class="summary-note">Worker Premium</div>
-        </article>
+            {% if subscription and subscription.is_premium_active %}
+              <div class="summary-value subscription-value">Active</div>
+              <div class="summary-note">{{ subscription.plan_label }}</div>
+            {% elif subscription and subscription.status == "pending" %}
+              <div class="summary-value subscription-value">Pending</div>
+              <div class="summary-note">{{ subscription.plan_label }}</div>
+            {% elif subscription %}
+              <div class="summary-value subscription-value">
+                {{ subscription.get_status_display }}
+              </div>
+              <div class="summary-note">{{ subscription.plan_label }}</div>
+            {% else %}
+              <div class="summary-value subscription-value">Not Active</div>
+              <div class="summary-note">Worker Pro</div>
+            {% endif %}
+          </article>
+        {% endwith %}
       </section>
+
+      <!-- =====================================
+           WORKER PRO SUBSCRIPTION
+           ===================================== -->
+      {% with subscription=worker.subscription %}
+        <section class="subscription-panel">
+          <div class="subscription-panel-head">
+            <div class="subscription-panel-title">
+              <div class="subscription-panel-icon" aria-hidden="true">
+                <svg class="ui-icon" viewBox="0 0 24 24">
+                  <path d="M5 16 3 7l5 3 4-6 4 6 5-3-2 9H5Z"></path>
+                  <path d="M5 19h14"></path>
+                </svg>
+              </div>
+
+              <div>
+                <h2>Worker Pro Subscription</h2>
+
+                {% if subscription %}
+                  <p>{{ subscription.plan_label }}</p>
+                {% else %}
+                  <p>No Worker Pro subscription has been started yet.</p>
+                {% endif %}
+              </div>
+            </div>
+
+            {% if subscription and subscription.is_premium_active %}
+              <span class="subscription-status active">
+                <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="m5 12 4 4L19 6"></path>
+                </svg>
+                Active
+              </span>
+            {% elif subscription and subscription.status == "pending" %}
+              <span class="subscription-status pending">
+                <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="12" cy="12" r="9"></circle>
+                  <path d="M12 7v5l3 2"></path>
+                </svg>
+                Pending
+              </span>
+            {% elif subscription %}
+              <span class="subscription-status {{ subscription.status }}">
+                {{ subscription.get_status_display }}
+              </span>
+            {% else %}
+              <span class="subscription-status inactive">Not Active</span>
+            {% endif %}
+          </div>
+
+          <div class="subscription-panel-body">
+            {% if subscription %}
+              <div class="subscription-details">
+                <div class="subscription-detail">
+                  <span>Plan</span>
+                  <strong>{{ subscription.plan_label }}</strong>
+                </div>
+
+                <div class="subscription-detail">
+                  <span>AI Credits</span>
+                  <strong>{{ subscription.ai_credits_per_cycle }} / 30 days</strong>
+                </div>
+
+                <div class="subscription-detail">
+                  <span>Renewal Price</span>
+                  <strong>
+                    ₹{{ subscription.renewal_price }}
+                    / {{ subscription.billing_period_label }}
+                  </strong>
+                </div>
+
+                <div class="subscription-detail">
+                  <span>Auto Renewal</span>
+                  {% if subscription.cancel_at_period_end %}
+                    <strong class="warn">Off</strong>
+                  {% elif subscription.is_premium_active %}
+                    <strong class="good">On</strong>
+                  {% else %}
+                    <strong>—</strong>
+                  {% endif %}
+                </div>
+
+                <div class="subscription-detail">
+                  <span>Current Access Until</span>
+                  <strong>
+                    {% if subscription.current_period_end %}
+                      {{ subscription.current_period_end|date:"d M Y, h:i A" }}
+                    {% else %}
+                      —
+                    {% endif %}
+                  </strong>
+                </div>
+
+                <div class="subscription-detail">
+                  <span>Next Billing</span>
+                  <strong>
+                    {% if subscription.cancel_at_period_end %}
+                      Future renewal off
+                    {% elif subscription.next_billing_at %}
+                      {{ subscription.next_billing_at|date:"d M Y, h:i A" }}
+                    {% else %}
+                      —
+                    {% endif %}
+                  </strong>
+                </div>
+
+                <div class="subscription-detail">
+                  <span>Gateway Status</span>
+                  <strong>
+                    {% if subscription.last_gateway_status %}
+                      {{ subscription.last_gateway_status|title }}
+                    {% else %}
+                      {{ subscription.get_status_display }}
+                    {% endif %}
+                  </strong>
+                </div>
+
+                <div class="subscription-detail">
+                  <span>Last Synced</span>
+                  <strong>
+                    {% if subscription.last_synced_at %}
+                      {{ subscription.last_synced_at|date:"d M Y, h:i A" }}
+                    {% else %}
+                      —
+                    {% endif %}
+                  </strong>
+                </div>
+              </div>
+
+              {% if subscription.is_premium_active %}
+                <div class="subscription-message">
+                  <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 3 20 6v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6Z"></path>
+                    <path d="m8.5 12 2.2 2.2L15.8 9"></path>
+                  </svg>
+
+                  <span>
+                    Worker Pro access is active.
+                    {% if subscription.cancel_at_period_end and subscription.current_period_end %}
+                      Future renewal is off, but your paid access continues until
+                      {{ subscription.current_period_end|date:"d M Y" }}.
+                    {% else %}
+                      Your current paid access and renewal details are shown above.
+                    {% endif %}
+                  </span>
+                </div>
+              {% elif subscription.status == "pending" %}
+                <div class="subscription-message">
+                  <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="12" r="9"></circle>
+                    <path d="M12 7v5l3 2"></path>
+                  </svg>
+
+                  <span>
+                    Worker Pro is not active yet. Complete payment authorization
+                    and refresh the Razorpay status from the Worker Pro page.
+                  </span>
+                </div>
+              {% else %}
+                <div class="subscription-message">
+                  <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="12" r="9"></circle>
+                    <path d="M12 8v5"></path>
+                    <circle cx="12" cy="16" r=".8" fill="currentColor" stroke="none"></circle>
+                  </svg>
+
+                  <span>Worker Pro is currently not active on this worker account.</span>
+                </div>
+              {% endif %}
+
+              <div class="subscription-actions">
+                <a
+                  class="subscription-button primary"
+                  href="{% url 'worker_subscription_payment' %}"
+                >
+                  <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M5 16 3 7l5 3 4-6 4 6 5-3-2 9H5Z"></path>
+                    <path d="M5 19h14"></path>
+                  </svg>
+                  <span>Manage Worker Pro</span>
+                </a>
+              </div>
+            {% else %}
+              <div class="subscription-message">
+                <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="12" cy="12" r="9"></circle>
+                  <path d="M12 8v5"></path>
+                  <circle cx="12" cy="16" r=".8" fill="currentColor" stroke="none"></circle>
+                </svg>
+
+                <span>
+                  Worker Pro is not active. You can view the available plans
+                  before starting a subscription.
+                </span>
+              </div>
+
+              <div class="subscription-actions">
+                <a
+                  class="subscription-button primary"
+                  href="{% url 'worker_subscription_payment' %}"
+                >
+                  <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M5 16 3 7l5 3 4-6 4 6 5-3-2 9H5Z"></path>
+                    <path d="M5 19h14"></path>
+                  </svg>
+                  <span>View Worker Pro Plans</span>
+                </a>
+              </div>
+            {% endif %}
+          </div>
+        </section>
+      {% endwith %}
 
       <!--   =====================================
            MONEY MANAGEMENT - UI ONLY
@@ -1233,7 +1939,13 @@
       <section class="money-grid">
         <article class="money-card">
           <div class="money-card-title">
-            <span>💰</span><span>Earnings Wallet & Bank</span>
+            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 7h16v12H4z"></path>
+              <path d="M16 11h4"></path>
+              <circle cx="16" cy="13" r="1"></circle>
+              <path d="M6 7V5h11"></path>
+            </svg>
+            <span>Earnings Wallet & Bank</span>
           </div>
           <div class="money-card-subtitle">Manage your available earnings and payout bank accounts.</div>
 
@@ -1244,15 +1956,40 @@
           </div>
 
           <div class="action-grid">
-            <button type="button" class="money-action" data-modal="addMoneyModal"><span>＋</span><span>Add Money</span></button>
-            <button type="button" class="money-action" data-modal="withdrawModal"><span>🏦</span><span>Withdraw</span></button>
-            <button type="button" class="money-action" data-modal="transferModal"><span>⇄</span><span>Transfer</span></button>
+            <button type="button" class="money-action" data-modal="addMoneyModal">
+              <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="9"></circle>
+                <path d="M12 8v8M8 12h8"></path>
+              </svg>
+              <span>Add Money</span>
+            </button>
+            <button type="button" class="money-action" data-modal="withdrawModal">
+              <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 3v12"></path>
+                <path d="m7 10 5 5 5-5"></path>
+                <path d="M5 21h14"></path>
+              </svg>
+              <span>Withdraw</span>
+            </button>
+            <button type="button" class="money-action" data-modal="transferModal">
+              <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 7h13"></path>
+                <path d="m14 4 3 3-3 3"></path>
+                <path d="M20 17H7"></path>
+                <path d="m10 14-3 3 3 3"></path>
+              </svg>
+              <span>Transfer</span>
+            </button>
           </div>
         </article>
 
         <article class="money-card">
           <div class="money-card-title">
-            <span>🏛️</span><span>Bank Accounts</span>
+            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m3 10 9-6 9 6"></path>
+              <path d="M5 10v8M9 10v8M15 10v8M19 10v8M3 20h18"></path>
+            </svg>
+            <span>Bank Accounts</span>
           </div>
           <div class="money-card-subtitle">Select a saved bank or add a new Savings / Current account.</div>
 
@@ -1263,23 +2000,38 @@
             </div>
           </div>
 
-          <button type="button" class="bank-add-button" data-modal="bankModal">＋ Add Bank Account</button>
+          <button type="button" class="bank-add-button" data-modal="bankModal"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="9"></circle>
+              <path d="M12 8v8M8 12h8"></path>
+            </svg>
+            <span>Add Bank Account</span></button>
         </article>
       </section>
 
       <section class="feature-strip">
         <div class="feature-item">
-          <span>⭐</span>
+          <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m3 10 9-6 9 6"></path>
+          <path d="M5 10v8M9 10v8M15 10v8M19 10v8M3 20h18"></path>
+          <path d="m15 14 2 2 4-4"></path>
+        </svg>
           <strong>Primary Bank</strong>
           <small>Choose one saved account as the default account for withdrawals and payouts.</small>
         </div>
         <div class="feature-item">
-          <span>🛡️</span>
+          <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 3 20 6v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6Z"></path>
+          <path d="m8.5 12 2.2 2.2L15.8 9"></path>
+        </svg>
           <strong>Secure Confirmation</strong>
           <small>Transfer and withdrawal confirmation will be connected securely with the backend.</small>
         </div>
         <div class="feature-item">
-          <span>📋</span>
+          <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M7 12h10"></path>
+          <path d="m14 9 3 3-3 3"></path>
+        </svg>
           <strong>Transfer Status</strong>
           <small>Pending, successful and failed transfers or withdrawals will appear in transaction history.</small>
         </div>
@@ -1291,7 +2043,12 @@
            =====================================   -->
       <section class="qr-pay-card">
         <div class="qr-pay-title">
-          <span>📷</span>
+          <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="3" y="3" width="6" height="6"></rect>
+            <rect x="15" y="3" width="6" height="6"></rect>
+            <rect x="3" y="15" width="6" height="6"></rect>
+            <path d="M15 15h3v3h3M18 12v3M12 18h3M15 21h6"></path>
+          </svg>
           <span>QR & Scanner</span>
         </div>
 
@@ -1304,14 +2061,28 @@
               <div class="scanner-label">Camera scanner preview will appear here after integration.</div>
 
               <div class="scanner-gallery">
-                <button type="button" class="gallery-button" id="galleryButton">🖼️ Choose QR from Gallery</button>
+                <button type="button" class="gallery-button" id="galleryButton">
+                  <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <rect x="3" y="4" width="18" height="16" rx="2"></rect>
+                    <circle cx="8" cy="9" r="2"></circle>
+                    <path d="m5 17 4-4 3 3 2-2 5 3"></path>
+                  </svg>
+                  <span>Choose QR from Gallery</span>
+                </button>
                 <input type="file" id="galleryInput" class="gallery-input" accept="image/*" aria-label="Choose QR image from gallery" />
               </div>
               <div class="gallery-selection" id="gallerySelection" aria-live="polite"></div>
             </div>
 
             <div class="qr-view">
-              <div class="linked-qr-placeholder">▦</div>
+              <div class="linked-qr-placeholder" aria-hidden="true">
+                <svg class="ui-icon" viewBox="0 0 24 24">
+                  <rect x="3" y="3" width="6" height="6"></rect>
+                  <rect x="15" y="3" width="6" height="6"></rect>
+                  <rect x="3" y="15" width="6" height="6"></rect>
+                  <path d="M15 15h2v2h2v4M21 15h-2M15 19h2M15 21h2M19 19h2"></path>
+                </svg>
+              </div>
               <strong>Bank-linked QR</strong>
               <small>After backend connection, the QR associated with the bank/payment account already added in Bank Accounts will appear here.</small>
             </div>
@@ -1319,12 +2090,34 @@
         </div>
 
         <div class="scanner-actions">
-          <button type="button" class="scanner-button" id="showScannerButton">📷 Scanner</button>
+          <button type="button" class="scanner-button" id="showScannerButton">
+            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 8V4h4M16 4h4v4M20 16v4h-4M8 20H4v-4"></path>
+              <rect x="7" y="7" width="10" height="10" rx="2"></rect>
+              <circle cx="12" cy="12" r="2.5"></circle>
+            </svg>
+            <span>Scanner</span>
+          </button>
 
-          <button type="button" class="scanner-button" id="showQrButton">▦ Show QR</button>
+          <button type="button" class="scanner-button" id="showQrButton">
+            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="3" y="3" width="6" height="6"></rect>
+              <rect x="15" y="3" width="6" height="6"></rect>
+              <rect x="3" y="15" width="6" height="6"></rect>
+              <path d="M15 15h3v3h3M18 12v3M12 18h3M15 21h6"></path>
+            </svg>
+            <span>Show QR</span>
+          </button>
         </div>
 
-        <div class="qr-safety">🔐 Before payment confirmation, recipient name/payment identity and amount should be shown. Scanning a QR must never trigger an automatic payment.</div>
+        <div class="qr-safety">
+          <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 3 20 6v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6Z"></path>
+            <path d="M12 8v5"></path>
+            <circle cx="12" cy="16" r=".8" fill="currentColor" stroke="none"></circle>
+          </svg>
+          <span>Before payment confirmation, recipient name/payment identity and amount should be shown. Scanning a QR must never trigger an automatic payment.</span>
+        </div>
       </section>
 
       <!--    =====================================
@@ -1334,18 +2127,29 @@
       <section class="section-card">
         <div class="section-header">
           <div class="section-title">
-            <span>💳</span>
+            <span></span>
 
             <span>Transaction History</span>
           </div>
 
-          <button type="button" class="filter-button" aria-label="Transaction filter">All Transactions</button>
+          <button type="button" class="filter-button" aria-label="Transaction filter">
+            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 5h16l-6 7v5l-4 2v-7Z"></path>
+            </svg>
+            <span>All Transactions</span>
+          </button>
         </div>
 
         <!-- EMPTY STATE -->
 
         <div class="empty-state">
-          <div class="empty-icon">🧾</div>
+          <div class="empty-icon" aria-hidden="true">
+            <svg class="ui-icon" viewBox="0 0 24 24">
+              <path d="M5 3h14v18H5z"></path>
+              <path d="M8 8h8M8 12h6M8 16h4"></path>
+              <path d="m16 16 1.5 1.5L20 15"></path>
+            </svg>
+          </div>
 
           <h2>No transactions yet</h2>
 
@@ -1366,7 +2170,13 @@
 
       <section class="help-card">
         <div class="help-left">
-          <div class="help-icon">🎧</div>
+          <div class="help-icon" aria-hidden="true">
+            <svg class="ui-icon" viewBox="0 0 24 24">
+              <path d="M4 13v-1a8 8 0 0 1 16 0v1"></path>
+              <path d="M4 13h3v6H5a2 2 0 0 1-2-2v-2a2 2 0 0 1 1-2ZM20 13h-3v6h2a2 2 0 0 0 2-2v-2a2 2 0 0 0-1-2Z"></path>
+              <path d="M17 19c-1 2-3 2-5 2"></path>
+            </svg>
+          </div>
 
           <div class="help-text">
             <h3>Need Help?</h3>
@@ -1375,11 +2185,33 @@
           </div>
         </div>
 
-        <button type="button" class="support-button">💬 Contact Support</button>
+        <button type="button" class="support-button">
+          <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 5h16v12H8l-4 4Z"></path>
+            <path d="M8 9h8M8 13h5"></path>
+          </svg>
+          <span>Contact Support</span>
+        </button>
       </section>
 
-      <div class="ui-note">Payment backend is not connected to this page yet. Real earnings, payouts and subscription transactions will be connected later.</div>
+      <div class="ui-note">
+        Worker Pro status above is read from the worker subscription saved by Smart Complaint.
+        Earnings wallet, bank payout, transfer and QR payout tools on this page are still UI-only
+        until their backend is connected.
+      </div>
     </main>
+
+    <a
+      class="worker-payment-back"
+      href="{% url 'worker_dashboard' %}"
+      aria-label="Back to Worker Dashboard"
+      title="Back"
+    >
+      <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="m15 18-6-6 6-6"></path>
+        <path d="M9 12h11"></path>
+      </svg>
+    </a>
 
     <!--   =====================================
          PAYMENT ACTION MODALS - UI ONLY
@@ -1387,8 +2219,18 @@
     <div class="payment-modal" id="bankModal" aria-hidden="true">
       <div class="modal-card">
         <div class="modal-head">
-          <h2>🏦 Add Bank Account</h2>
-          <button type="button" class="modal-close" data-close-modal>×</button>
+          <h2>
+            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m3 10 9-6 9 6"></path>
+              <path d="M5 10v8M9 10v8M15 10v8M19 10v8M3 20h18"></path>
+            </svg>
+            <span>Add Bank Account</span>
+          </h2>
+          <button type="button" class="modal-close" data-close-modal aria-label="Close">
+            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6 6l12 12M18 6 6 18"></path>
+            </svg>
+          </button>
         </div>
         <div class="form-group">
           <label>Bank</label>
@@ -1428,7 +2270,12 @@
           <label>IFSC Code</label>
           <input class="form-control" type="text" autocomplete="off" placeholder="Enter IFSC code" />
         </div>
-        <button type="button" class="modal-submit" data-ui-submit>Save Bank Account</button>
+        <button type="button" class="modal-submit" data-ui-submit>
+          <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="m5 12 4 4L19 6"></path>
+          </svg>
+          <span>Save Bank Account</span>
+        </button>
         <div class="modal-info">UI only for now. Bank details are not saved until the backend is connected.</div>
       </div>
     </div>
@@ -1436,8 +2283,18 @@
     <div class="payment-modal" id="addMoneyModal" aria-hidden="true">
       <div class="modal-card">
         <div class="modal-head">
-          <h2>＋ Add Money</h2>
-          <button type="button" class="modal-close" data-close-modal>×</button>
+          <h2>
+            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="9"></circle>
+              <path d="M12 8v8M8 12h8"></path>
+            </svg>
+            <span>Add Money</span>
+          </h2>
+          <button type="button" class="modal-close" data-close-modal aria-label="Close">
+            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6 6l12 12M18 6 6 18"></path>
+            </svg>
+          </button>
         </div>
         <div class="form-group">
           <label>Amount</label>
@@ -1451,7 +2308,13 @@
             <option>Payment Gateway</option>
           </select>
         </div>
-        <button type="button" class="modal-submit" data-ui-submit>Continue</button>
+        <button type="button" class="modal-submit" data-ui-submit>
+          <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M5 12h14"></path>
+            <path d="m13 6 6 6-6 6"></path>
+          </svg>
+          <span>Continue</span>
+        </button>
         <div class="modal-info">No real payment will be made from this UI until payment backend integration is completed.</div>
       </div>
     </div>
@@ -1459,8 +2322,19 @@
     <div class="payment-modal" id="withdrawModal" aria-hidden="true">
       <div class="modal-card">
         <div class="modal-head">
-          <h2>🏦 Withdraw Money</h2>
-          <button type="button" class="modal-close" data-close-modal>×</button>
+          <h2>
+            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 3v12"></path>
+              <path d="m7 10 5 5 5-5"></path>
+              <path d="M5 21h14"></path>
+            </svg>
+            <span>Withdraw Money</span>
+          </h2>
+          <button type="button" class="modal-close" data-close-modal aria-label="Close">
+            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6 6l12 12M18 6 6 18"></path>
+            </svg>
+          </button>
         </div>
         <div class="form-group">
           <label>Withdraw Amount</label>
@@ -1472,7 +2346,13 @@
             <option value="">Select saved bank account</option>
           </select>
         </div>
-        <button type="button" class="modal-submit" data-ui-submit>Review Withdrawal</button>
+        <button type="button" class="modal-submit" data-ui-submit>
+          <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M5 12h14"></path>
+            <path d="m13 6 6 6-6 6"></path>
+          </svg>
+          <span>Review Withdrawal</span>
+        </button>
         <div class="modal-info">A saved bank account and sufficient real balance will be required after backend connection.</div>
       </div>
     </div>
@@ -1480,8 +2360,20 @@
     <div class="payment-modal" id="transferModal" aria-hidden="true">
       <div class="modal-card">
         <div class="modal-head">
-          <h2>⇄ Transfer Money</h2>
-          <button type="button" class="modal-close" data-close-modal>×</button>
+          <h2>
+            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 7h13"></path>
+              <path d="m14 4 3 3-3 3"></path>
+              <path d="M20 17H7"></path>
+              <path d="m10 14-3 3 3 3"></path>
+            </svg>
+            <span>Transfer Money</span>
+          </h2>
+          <button type="button" class="modal-close" data-close-modal aria-label="Close">
+            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6 6l12 12M18 6 6 18"></path>
+            </svg>
+          </button>
         </div>
         <div class="form-group">
           <label>Recipient</label>
@@ -1495,7 +2387,13 @@
           <label>Note (Optional)</label>
           <input class="form-control" type="text" maxlength="120" placeholder="Payment note" />
         </div>
-        <button type="button" class="modal-submit" data-ui-submit>Review Transfer</button>
+        <button type="button" class="modal-submit" data-ui-submit>
+          <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M5 12h14"></path>
+            <path d="m13 6 6 6-6 6"></path>
+          </svg>
+          <span>Review Transfer</span>
+        </button>
         <div class="modal-info">Recipient validation, balance checks and secure confirmation will be connected later.</div>
       </div>
     </div>

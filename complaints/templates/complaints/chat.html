@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>
       {% if chat_inbox %}
         Worker Chats
@@ -686,7 +686,7 @@
           font-size: 0;
         }
         .send-button::after {
-          content: '➤';
+          content: '';
           font-size: 17px;
         }
         .emoji-picker {
@@ -703,6 +703,514 @@
         .inbox-item {
           padding: 13px;
         }
+      }
+      
+      /* =====================================================
+               CHAT POLISH: AVATARS, COMPOSER, EMOJI PICKER, MOBILE
+            ===================================================== */
+      
+      .chat-ui-svg {
+        width: 20px;
+        height: 20px;
+        display: inline-block;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        vertical-align: middle;
+      }
+      
+      .chat-page {
+        padding-top: 72px;
+      }
+      
+      .chat-card {
+        display: flex;
+        flex-direction: column;
+        min-height: min(760px, calc(100dvh - 105px));
+      }
+      
+      .chat-header {
+        flex: 0 0 auto;
+      }
+      
+      .chat-avatar {
+        position: relative;
+        width: 48px;
+        height: 48px;
+        min-width: 48px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.18);
+      }
+      
+      .chat-avatar img {
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: cover;
+        border-radius: inherit;
+      }
+      
+      .chat-avatar-fallback {
+        width: 100%;
+        height: 100%;
+        display: grid;
+        place-items: center;
+        color: #ffffff;
+      }
+      
+      .chat-avatar-fallback .chat-ui-svg {
+        width: 24px;
+        height: 24px;
+      }
+      
+      .chat-role {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        margin-left: 6px;
+        padding: 3px 7px;
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.12);
+        color: #eff6ff;
+        font-size: 9px;
+        font-weight: 900;
+        vertical-align: middle;
+      }
+      
+      .chat-role .chat-ui-svg {
+        width: 11px;
+        height: 11px;
+      }
+      
+      .chat-messages {
+        flex: 1 1 auto;
+        height: auto;
+        min-height: 330px;
+      }
+      
+      .composer {
+        position: relative;
+        z-index: 15;
+        flex: 0 0 auto;
+        padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px));
+        border-top: 1px solid #dbeafe;
+        background: #ffffff;
+      }
+      
+      .composer-form {
+        grid-template-columns: 38px 38px minmax(0, 1fr) 38px;
+        gap: 7px;
+        align-items: end;
+      }
+      
+      .composer-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 11px;
+        font-size: 0;
+      }
+      
+      .composer-icon .chat-ui-svg {
+        width: 19px;
+        height: 19px;
+      }
+      
+      .composer textarea {
+        display: block;
+        width: 100%;
+        min-width: 0;
+        min-height: 38px;
+        max-height: 112px;
+        padding: 9px 11px;
+        border-radius: 12px;
+        resize: none;
+        line-height: 1.4;
+      }
+      
+      .send-button {
+        width: 38px;
+        height: 38px;
+        min-width: 38px;
+        display: grid;
+        place-items: center;
+        padding: 0;
+        border-radius: 11px;
+        font-size: 0;
+      }
+      
+      .send-button .chat-ui-svg {
+        width: 18px;
+        height: 18px;
+      }
+      
+      .send-button:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
+      
+      .emoji-picker {
+        left: 54px;
+        bottom: 62px;
+        width: min(330px, calc(100vw - 28px));
+        max-height: 250px;
+        padding: 0;
+        overflow: hidden;
+        grid-template-columns: none;
+        gap: 0;
+      }
+      
+      .emoji-picker.show {
+        display: block;
+      }
+      
+      .emoji-picker-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 10px 12px;
+        border-bottom: 1px solid #e2e8f0;
+        background: #f8fafc;
+      }
+      
+      .emoji-picker-head strong {
+        color: #0f172a;
+        font-size: 12px;
+      }
+      
+      .emoji-picker-head span {
+        color: #64748b;
+        font-size: 9px;
+      }
+      
+      .emoji-groups {
+        max-height: 205px;
+        overflow-y: auto;
+        padding: 9px;
+      }
+      
+      .emoji-group + .emoji-group {
+        margin-top: 10px;
+      }
+      
+      .emoji-group-title {
+        margin: 0 0 6px 3px;
+        color: #64748b;
+        font-size: 9px;
+        font-weight: 900;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+      
+      .emoji-grid {
+        display: grid;
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 3px;
+      }
+      
+      .emoji {
+        min-width: 0;
+        height: 34px;
+        display: grid;
+        place-items: center;
+        padding: 0;
+        border-radius: 8px;
+        font-size: 19px;
+        line-height: 1;
+      }
+      
+      .emoji:focus-visible {
+        outline: 2px solid #60a5fa;
+        outline-offset: 1px;
+      }
+      
+      .selected-image-strip {
+        flex: 0 0 auto;
+      }
+      
+      .remove-image,
+      .message-menu-button {
+        display: grid;
+        place-items: center;
+        font-size: 0;
+      }
+      
+      .remove-image .chat-ui-svg {
+        width: 15px;
+        height: 15px;
+      }
+      
+      .message-menu-button .chat-ui-svg {
+        width: 17px;
+        height: 17px;
+      }
+      
+      .inbox-person {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        min-width: 0;
+      }
+      
+      .inbox-avatar {
+        width: 42px;
+        height: 42px;
+        flex: 0 0 42px;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        border-radius: 50%;
+        background: #dbeafe;
+        color: #1d4ed8;
+      }
+      
+      .inbox-avatar img {
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: cover;
+      }
+      
+      .inbox-avatar .chat-ui-svg {
+        width: 21px;
+        height: 21px;
+      }
+      
+      body.sc-theme-dark .emoji-picker,
+      body.worker-theme-dark .emoji-picker {
+        background: #1e293b;
+        border-color: #334155;
+      }
+      
+      body.sc-theme-dark .emoji-picker-head,
+      body.worker-theme-dark .emoji-picker-head {
+        background: #172033;
+        border-color: #334155;
+      }
+      
+      body.sc-theme-dark .emoji-picker-head strong,
+      body.worker-theme-dark .emoji-picker-head strong {
+        color: #f8fafc;
+      }
+      
+      body.sc-theme-dark .emoji,
+      body.worker-theme-dark .emoji {
+        color: #ffffff;
+      }
+      
+      body.sc-theme-dark .emoji:hover,
+      body.worker-theme-dark .emoji:hover {
+        background: #334155;
+      }
+      
+      body.sc-theme-glass .emoji-picker,
+      body.worker-theme-glass .emoji-picker {
+        background: rgba(15, 23, 42, 0.95);
+        border-color: rgba(255, 255, 255, 0.14);
+      }
+      
+      body.sc-theme-glass .emoji-picker-head,
+      body.worker-theme-glass .emoji-picker-head {
+        background: rgba(255, 255, 255, 0.07);
+        border-color: rgba(255, 255, 255, 0.12);
+      }
+      
+      body.sc-theme-glass .emoji-picker-head strong,
+      body.worker-theme-glass .emoji-picker-head strong {
+        color: #ffffff;
+      }
+      
+      body.sc-theme-glass .emoji-group-title,
+      body.worker-theme-glass .emoji-group-title {
+        color: #cbd5e1;
+      }
+      
+      @media (max-width: 860px) {
+        .chat-card {
+          min-height: calc(100dvh - 86px);
+        }
+      
+        .chat-messages {
+          height: auto;
+          min-height: 0;
+        }
+      }
+      
+      @media (max-width: 600px) {
+        .chat-page {
+          width: 100%;
+          margin: 0;
+          padding: 68px 0 0;
+        }
+      
+        .chat-shell {
+          display: block;
+        }
+      
+        .chat-card {
+          height: calc(100dvh - 68px);
+          min-height: 0;
+          border-radius: 0;
+        }
+      
+        .chat-header {
+          padding: 10px 10px;
+        }
+      
+        .chat-avatar {
+          width: 39px;
+          height: 39px;
+          min-width: 39px;
+        }
+      
+        .chat-title h1 {
+          font-size: 14px;
+        }
+      
+        .chat-title p {
+          margin-top: 3px;
+          font-size: 10px;
+        }
+      
+        .chat-role {
+          margin-left: 4px;
+          padding: 2px 5px;
+          font-size: 8px;
+        }
+      
+        .chat-messages {
+          flex: 1 1 0;
+          height: auto;
+          min-height: 0;
+          padding: 11px 9px;
+        }
+      
+        .composer {
+          position: sticky;
+          bottom: 0;
+          padding: 7px 8px calc(7px + env(safe-area-inset-bottom, 0px));
+        }
+      
+        .composer-form {
+          grid-template-columns: 34px 34px minmax(0, 1fr) 34px;
+          gap: 5px;
+        }
+      
+        .composer-icon {
+          width: 34px;
+          height: 34px;
+          border-radius: 10px;
+        }
+      
+        .composer-icon .chat-ui-svg {
+          width: 17px;
+          height: 17px;
+        }
+      
+        .composer textarea {
+          min-height: 34px;
+          max-height: 88px;
+          padding: 7px 9px;
+          border-radius: 10px;
+          font-size: 13px;
+        }
+      
+        .send-button {
+          width: 34px;
+          height: 34px;
+          min-width: 34px;
+          border-radius: 10px;
+        }
+      
+        .send-button .chat-ui-svg {
+          width: 16px;
+          height: 16px;
+        }
+      
+        .emoji-picker {
+          left: 6px;
+          bottom: 50px;
+          width: calc(100vw - 12px);
+          max-height: 220px;
+          border-radius: 13px;
+        }
+      
+        .emoji-groups {
+          max-height: 178px;
+          padding: 7px;
+        }
+      
+        .emoji-grid {
+          grid-template-columns: repeat(7, minmax(0, 1fr));
+          gap: 2px;
+        }
+      
+        .emoji {
+          height: 31px;
+          font-size: 18px;
+        }
+      
+        .message-wrap {
+          max-width: calc(100% - 28px);
+        }
+      
+        .selected-image-strip {
+          padding: 7px 9px;
+          font-size: 10px;
+        }
+      }
+      
+      @media (max-width: 360px) {
+        .composer-form {
+          grid-template-columns: 32px 32px minmax(0, 1fr) 32px;
+          gap: 4px;
+        }
+      
+        .composer-icon,
+        .send-button {
+          width: 32px;
+          height: 32px;
+          min-width: 32px;
+        }
+      
+        .composer textarea {
+          min-height: 32px;
+          font-size: 12px;
+        }
+      
+        .emoji-grid {
+          grid-template-columns: repeat(6, minmax(0, 1fr));
+        }
+      }
+    </style>
+
+    {% include 'complaints/base_style.html' %}
+    <style>
+      .chat-ui-svg {
+        width: 22px;
+        height: 22px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        vertical-align: middle;
+      }
+      .empty-chat-icon {
+        display: grid;
+        place-items: center;
+        margin-bottom: 10px;
+      }
+      .empty-chat-icon .chat-ui-svg {
+        width: 38px;
+        height: 38px;
+      }
+      .composer-icon .chat-ui-svg {
+        width: 21px;
+        height: 21px;
       }
     </style>
   </head>
@@ -722,7 +1230,12 @@
       {% if chat_inbox %}
         <section class="inbox-card">
           <header class="inbox-head">
-            <h1>💬 Worker Chats</h1>
+            <h1>
+              <svg class="chat-ui-svg" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 5h16v12H8l-4 4z"></path>
+                <path d="M8 9h8M8 13h5"></path>
+              </svg>Worker Chats
+            </h1>
             <p>Open a complaint to chat with the assigned customer.</p>
           </header>
 
@@ -737,11 +1250,31 @@
           <div class="inbox-list">
             {% for item in worker_chat_complaints %}
               <a class="inbox-item" href="{% url 'complaint_chat' item.id %}">
-                <div class="inbox-main">
-                  <div class="inbox-title">{{ item.subject }}</div>
-                  <div class="inbox-meta">{{ item.tracking_id }} · {{ item.user.username }} · {{ item.status }}</div>
+                <div class="inbox-person">
+                  <div class="inbox-avatar">
+                    {% if item.user.user_profile.photo %}
+                      <img src="{{ item.user.user_profile.photo.url }}" alt="{{ item.user.get_full_name|default:item.user.username }}" />
+                    {% else %}
+                      <svg class="chat-ui-svg" viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="12" cy="8" r="4"></circle>
+                        <path d="M4 21a8 8 0 0 1 16 0"></path>
+                      </svg>
+                    {% endif %}
+                  </div>
+
+                  <div class="inbox-main">
+                    <div class="inbox-title">{{ item.subject }}</div>
+                    <div class="inbox-meta">{{ item.tracking_id }} ·
+                      {{ item.user.get_full_name|default:item.user.username }} ·
+                      {{ item.status }}</div>
+                  </div>
                 </div>
-                <div class="inbox-open">Open Chat →</div>
+
+                <div class="inbox-open">
+                  <svg class="chat-ui-svg" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M5 12h14M13 6l6 6-6 6"></path>
+                  </svg>
+                </div>
               </a>
             {% empty %}
               <div class="inbox-empty">
@@ -757,12 +1290,36 @@
             <header class="chat-header">
               <div class="chat-person">
                 <div class="chat-avatar">
-                  {% if is_complaint_user and complaint.assigned_worker and complaint.assigned_worker.photo %}
-                    <img src="{{ complaint.assigned_worker.photo.url }}" alt="Worker" />
+                  {% if is_complaint_user %}
+                    {% if complaint.assigned_worker and complaint.assigned_worker.photo %}
+                      <img src="{{ complaint.assigned_worker.photo.url }}" alt="{{ complaint.assigned_worker.name }}" />
+                    {% else %}
+                      <span class="chat-avatar-fallback" aria-hidden="true">
+                        <svg class="chat-ui-svg" viewBox="0 0 24 24">
+                          <circle cx="12" cy="8" r="4"></circle>
+                          <path d="M4 21a8 8 0 0 1 16 0"></path>
+                          <path d="M8 5V3h8v2"></path>
+                        </svg>
+                      </span>
+                    {% endif %}
                   {% elif is_assigned_worker %}
-                    {{ complaint.user.username|first|upper }}
+                    {% if complaint.user.user_profile.photo %}
+                      <img src="{{ complaint.user.user_profile.photo.url }}" alt="{{ complaint.user.get_full_name|default:complaint.user.username }}" />
+                    {% else %}
+                      <span class="chat-avatar-fallback" aria-hidden="true">
+                        <svg class="chat-ui-svg" viewBox="0 0 24 24">
+                          <circle cx="12" cy="8" r="4"></circle>
+                          <path d="M4 21a8 8 0 0 1 16 0"></path>
+                        </svg>
+                      </span>
+                    {% endif %}
                   {% else %}
-                    💬
+                    <span class="chat-avatar-fallback" aria-hidden="true">
+                      <svg class="chat-ui-svg" viewBox="0 0 24 24">
+                        <path d="M4 5h16v12H8l-4 4Z"></path>
+                        <path d="M8 9h8M8 13h5"></path>
+                      </svg>
+                    </span>
                   {% endif %}
                 </div>
                 <div class="chat-title">
@@ -770,11 +1327,24 @@
                     {% if is_complaint_user %}
                       {% if complaint.assigned_worker %}
                         {{ complaint.assigned_worker.name }}
+                        <span class="chat-role">
+                          <svg class="chat-ui-svg" viewBox="0 0 24 24" aria-hidden="true">
+                            <circle cx="12" cy="8" r="4"></circle>
+                            <path d="M4 21a8 8 0 0 1 16 0"></path>
+                            <path d="M8 5V3h8v2"></path>
+                          </svg>Worker
+                        </span>
                       {% else %}
                         Complaint Chat
                       {% endif %}
                     {% else %}
-                      {{ complaint.user.username }}
+                      {{ complaint.user.get_full_name|default:complaint.user.username }}
+                      <span class="chat-role">
+                        <svg class="chat-ui-svg" viewBox="0 0 24 24" aria-hidden="true">
+                          <circle cx="12" cy="8" r="4"></circle>
+                          <path d="M4 21a8 8 0 0 1 16 0"></path>
+                        </svg>Citizen
+                      </span>
                     {% endif %}
                   </h1>
                   <p>{{ complaint.tracking_id }} · {{ complaint.subject }}</p>
@@ -821,7 +1391,13 @@
                     </div>
 
                     {% if chat.sender == request.user %}
-                      <button type="button" class="message-menu-button" data-menu-button="{{ chat.id }}">⋮</button>
+                      <button type="button" class="message-menu-button" data-menu-button="{{ chat.id }}" aria-label="Message options">
+                        <svg class="chat-ui-svg" viewBox="0 0 24 24" aria-hidden="true">
+                          <circle cx="12" cy="5" r="1"></circle>
+                          <circle cx="12" cy="12" r="1"></circle>
+                          <circle cx="12" cy="19" r="1"></circle>
+                        </svg>
+                      </button>
                       <div class="message-menu" id="messageMenu{{ chat.id }}">
                         {% if chat.can_edit and chat.message %}
                           <button type="button" class="menu-action edit-message-button" data-message-id="{{ chat.id }}" data-message-text="{{ chat.message|escapejs }}">Edit</button>
@@ -840,7 +1416,12 @@
               {% empty %}
                 <div class="empty-chat">
                   <div>
-                    <div style="font-size:38px; margin-bottom:10px;">💬</div>
+                    <div class="empty-chat-icon">
+                      <svg class="chat-ui-svg" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M4 5h16v12H8l-4 4z"></path>
+                        <path d="M8 9h8M8 13h5"></path>
+                      </svg>
+                    </div>
                     <strong>No messages yet</strong><br /><br />
                     Send the first message for this complaint.
                   </div>
@@ -850,38 +1431,110 @@
 
             <div class="selected-image-strip" id="selectedImageStrip">
               <span id="selectedImageName">Selected image</span>
-              <button type="button" class="remove-image" id="removeSelectedImage">×</button>
+              <button type="button" class="remove-image" id="removeSelectedImage" aria-label="Remove selected image">
+                <svg class="chat-ui-svg" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M6 6l12 12M18 6 6 18"></path>
+                </svg>
+              </button>
             </div>
 
             <div class="composer">
-              <div class="emoji-picker" id="emojiPicker">
-                <button type="button" class="emoji">😀</button><button type="button" class="emoji">😃</button>
-                <button type="button" class="emoji">😄</button><button type="button" class="emoji">😁</button>
-                <button type="button" class="emoji">😊</button><button type="button" class="emoji">🙂</button>
-                <button type="button" class="emoji">😍</button><button type="button" class="emoji">🥰</button>
-                <button type="button" class="emoji">😎</button><button type="button" class="emoji">🤔</button>
-                <button type="button" class="emoji">😢</button><button type="button" class="emoji">😭</button>
-                <button type="button" class="emoji">😡</button><button type="button" class="emoji">👍</button>
-                <button type="button" class="emoji">👎</button><button type="button" class="emoji">🙏</button>
-                <button type="button" class="emoji">👏</button><button type="button" class="emoji">👌</button>
-                <button type="button" class="emoji">❤️</button><button type="button" class="emoji">💙</button>
-                <button type="button" class="emoji">🔥</button><button type="button" class="emoji">🎉</button>
-                <button type="button" class="emoji">✅</button><button type="button" class="emoji">❌</button>
-                <button type="button" class="emoji">⚠️</button><button type="button" class="emoji">📍</button>
-                <button type="button" class="emoji">🛠️</button><button type="button" class="emoji">🚧</button>
-                <button type="button" class="emoji">⭐</button><button type="button" class="emoji">💯</button>
+              <div class="emoji-picker" id="emojiPicker" aria-label="Chat emoji picker">
+                <div class="emoji-picker-head">
+                  <strong>Chat reactions</strong>
+                  <span>Citizen + worker friendly</span>
+                </div>
+
+                <div class="emoji-groups">
+                  <div class="emoji-group">
+                    <div class="emoji-group-title">Common</div>
+                    <div class="emoji-grid">
+                      <button type="button" class="emoji" aria-label="Smile">🙂</button>
+                      <button type="button" class="emoji" aria-label="Happy">😊</button>
+                      <button type="button" class="emoji" aria-label="Thanks">🙏</button>
+                      <button type="button" class="emoji" aria-label="Thumbs up">👍</button>
+                      <button type="button" class="emoji" aria-label="OK">👌</button>
+                      <button type="button" class="emoji" aria-label="Check">✅</button>
+                      <button type="button" class="emoji" aria-label="Attention">⚠️</button>
+                      <button type="button" class="emoji" aria-label="Please">🤝</button>
+                      <button type="button" class="emoji" aria-label="Strong">💪</button>
+                      <button type="button" class="emoji" aria-label="Idea">💡</button>
+                      <button type="button" class="emoji" aria-label="Location">📍</button>
+                      <button type="button" class="emoji" aria-label="Photo">📷</button>
+                      <button type="button" class="emoji" aria-label="Time">⏱️</button>
+                      <button type="button" class="emoji" aria-label="Done">☑️</button>
+                    </div>
+                  </div>
+
+                  <div class="emoji-group">
+                    <div class="emoji-group-title">Worker & service</div>
+                    <div class="emoji-grid">
+                      <button type="button" class="emoji" aria-label="Worker">👷</button>
+                      <button type="button" class="emoji" aria-label="Construction worker">👷‍♂️</button>
+                      <button type="button" class="emoji" aria-label="Woman worker">👷‍♀️</button>
+                      <button type="button" class="emoji" aria-label="Tools">🛠️</button>
+                      <button type="button" class="emoji" aria-label="Wrench">🔧</button>
+                      <button type="button" class="emoji" aria-label="Hammer">🔨</button>
+                      <button type="button" class="emoji" aria-label="Cleaning">🧹</button>
+                      <button type="button" class="emoji" aria-label="Electric">⚡</button>
+                      <button type="button" class="emoji" aria-label="Water">💧</button>
+                      <button type="button" class="emoji" aria-label="Safety">🦺</button>
+                      <button type="button" class="emoji" aria-label="Road">🚧</button>
+                      <button type="button" class="emoji" aria-label="Home">🏠</button>
+                      <button type="button" class="emoji" aria-label="Community">🏘️</button>
+                      <button type="button" class="emoji" aria-label="Clean">✨</button>
+                    </div>
+                  </div>
+
+                  <div class="emoji-group">
+                    <div class="emoji-group-title">Citizen</div>
+                    <div class="emoji-grid">
+                      <button type="button" class="emoji" aria-label="Citizen">🧑</button>
+                      <button type="button" class="emoji" aria-label="Man">👨</button>
+                      <button type="button" class="emoji" aria-label="Woman">👩</button>
+                      <button type="button" class="emoji" aria-label="People">👥</button>
+                      <button type="button" class="emoji" aria-label="Community help">🫶</button>
+                      <button type="button" class="emoji" aria-label="Message">💬</button>
+                      <button type="button" class="emoji" aria-label="Phone">📱</button>
+                      <button type="button" class="emoji" aria-label="Notification">🔔</button>
+                      <button type="button" class="emoji" aria-label="Report">📝</button>
+                      <button type="button" class="emoji" aria-label="Resolved">🎯</button>
+                      <button type="button" class="emoji" aria-label="Celebrate">🎉</button>
+                      <button type="button" class="emoji" aria-label="Heart">💙</button>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <form method="post" enctype="multipart/form-data" class="composer-form" id="sendMessageForm">
                 {% csrf_token %}
                 <input type="hidden" name="action" value="send" />
 
-                <button type="button" class="composer-icon" id="emojiButton" aria-label="Emoji">😊</button>
-                <label class="composer-icon" for="chatImage" aria-label="Attach image">📎</label>
+                <label class="composer-icon" for="chatImage" aria-label="Attach image" title="Attach image">
+                  <svg class="chat-ui-svg" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M21 11.5l-8.5 8.5a6 6 0 0 1-8.5-8.5l9-9a4 4 0 0 1 5.7 5.7l-9 9a2 2 0 0 1-2.8-2.8l8.3-8.3"></path>
+                  </svg>
+                </label>
+
                 <input type="file" name="image" id="chatImage" accept="image/jpeg,image/png,image/webp,image/gif" hidden />
 
-                <textarea name="message" id="messageInput" maxlength="2000" placeholder="Type a message..."></textarea>
-                <button type="submit" class="send-button">Send</button>
+                <button type="button" class="composer-icon" id="emojiButton" aria-label="Open emoji picker" title="Emoji" aria-expanded="false">
+                  <svg class="chat-ui-svg" viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="12" r="9"></circle>
+                    <path d="M8.5 14.5c1 1.2 2.1 1.8 3.5 1.8s2.5-.6 3.5-1.8"></path>
+                    <circle cx="9" cy="10" r=".8" fill="currentColor" stroke="none"></circle>
+                    <circle cx="15" cy="10" r=".8" fill="currentColor" stroke="none"></circle>
+                  </svg>
+                </button>
+
+                <textarea name="message" id="messageInput" maxlength="2000" rows="1" placeholder="Write a message..." aria-label="Chat message"></textarea>
+
+                <button type="submit" class="send-button" id="sendButton" aria-label="Send message" title="Send">
+                  <svg class="chat-ui-svg" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="m22 2-7 20-4-9-9-4Z"></path>
+                    <path d="M22 2 11 13"></path>
+                  </svg>
+                </button>
               </form>
             </div>
           </section>
@@ -903,7 +1556,7 @@
               <span class="info-label">Priority</span><div class="info-value">{{ complaint.priority }}</div>
             </div>
             <div class="info-item">
-              <span class="info-label">Customer</span><div class="info-value">{{ complaint.user.username }}</div>
+              <span class="info-label">Customer</span><div class="info-value">{{ complaint.user.get_full_name|default:complaint.user.username }}</div>
             </div>
             {% if complaint.assigned_worker %}
               <div class="info-item">
@@ -958,17 +1611,52 @@
           const emojiButton = document.getElementById('emojiButton')
           const emojiPicker = document.getElementById('emojiPicker')
           const messageInput = document.getElementById('messageInput')
+          const sendMessageForm = document.getElementById('sendMessageForm')
+          const sendButton = document.getElementById('sendButton')
+        
+          function resizeMessageInput() {
+            if (!messageInput) return
+            messageInput.style.height = 'auto'
+            const nextHeight = Math.min(messageInput.scrollHeight, 112)
+            messageInput.style.height = Math.max(34, nextHeight) + 'px'
+          }
+        
+          if (messageInput) {
+            messageInput.addEventListener('input', resizeMessageInput)
+            resizeMessageInput()
+          }
+        
+          if (sendMessageForm) {
+            sendMessageForm.addEventListener('submit', function (event) {
+              const imageInputForSend = document.getElementById('chatImage')
+              const hasText = Boolean(messageInput && messageInput.value.trim())
+              const hasImage = Boolean(imageInputForSend && imageInputForSend.files && imageInputForSend.files.length)
+        
+              if (!hasText && !hasImage) {
+                event.preventDefault()
+                if (messageInput) messageInput.focus()
+                return
+              }
+        
+              if (sendButton) {
+                sendButton.disabled = true
+              }
+            })
+          }
         
           if (emojiButton && emojiPicker) {
             emojiButton.addEventListener('click', function (event) {
               event.stopPropagation()
+              const willOpen = !emojiPicker.classList.contains('show')
               emojiPicker.classList.toggle('show')
+              emojiButton.setAttribute('aria-expanded', willOpen ? 'true' : 'false')
             })
             emojiPicker.addEventListener('click', function (event) {
               event.stopPropagation()
             })
             document.addEventListener('click', function () {
               emojiPicker.classList.remove('show')
+              emojiButton.setAttribute('aria-expanded', 'false')
             })
           }
         
@@ -981,6 +1669,13 @@
               messageInput.focus()
               const next = start + button.textContent.length
               messageInput.setSelectionRange(next, next)
+              if (emojiPicker) {
+                emojiPicker.classList.remove('show')
+              }
+              if (emojiButton) {
+                emojiButton.setAttribute('aria-expanded', 'false')
+              }
+              resizeMessageInput()
             })
           })
         

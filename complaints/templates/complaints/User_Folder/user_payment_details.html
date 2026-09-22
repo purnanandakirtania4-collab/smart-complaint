@@ -2,2249 +2,813 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-    <title>User Settings | Smart Complaint</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Payment Details | Smart Complaint</title>
 
     {% include 'complaints/base_style.html' %}
 
     <style>
-      /* =========================================
-                             COMMON
-                          ========================================= */
-      
       * {
         box-sizing: border-box;
       }
       
+      html,
+      body {
+        max-width: 100%;
+        overflow-x: hidden;
+      }
+      
+      .pay-page {
+        width: min(940px, calc(100% - 24px));
+        max-width: 100%;
+        margin: 0 auto;
+        padding: calc(78px + env(safe-area-inset-top, 0px)) 0 calc(78px + env(safe-area-inset-bottom, 0px));
+        overflow: hidden;
+      }
+      
+      .pay-head {
+        min-width: 0;
+        margin-bottom: 14px;
+        color: #ffffff;
+      }
+      
+      .pay-head-row {
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        gap: 11px;
+      }
+      
+      .pay-head-row > div:last-child {
+        min-width: 0;
+      }
+      
+      .pay-head-icon {
+        width: 42px;
+        height: 42px;
+        flex: 0 0 42px;
+        display: grid;
+        place-items: center;
+        border: 1px solid rgba(147, 197, 253, 0.28);
+        border-radius: 12px;
+        background: linear-gradient(135deg, rgba(37, 99, 235, 0.88), rgba(14, 165, 233, 0.72));
+        box-shadow: 0 12px 26px rgba(2, 6, 23, 0.18);
+      }
+      
       .ui-icon {
-        width: 21px;
-        height: 21px;
-      
+        width: 19px;
+        height: 19px;
         display: inline-block;
-      
         fill: none;
         stroke: currentColor;
-      
         stroke-width: 2;
         stroke-linecap: round;
         stroke-linejoin: round;
-      
         flex-shrink: 0;
       }
       
-      /* =========================================
-                             PAGE WRAPPER
-                          ========================================= */
-      
-      .settings-wrapper {
-        max-width: 900px;
-      
-        margin: 30px auto;
-      
-        padding: 0 15px 45px;
-      }
-      
-      /* =========================================
-                             HEADER
-                          ========================================= */
-      
-      .settings-header {
-        color: white;
-      
-        margin-bottom: 22px;
-      }
-      
-      .settings-header h1 {
-        margin: 0 0 7px;
-      
-        display: flex;
-        align-items: center;
-      
-        gap: 10px;
-      
-        font-size: 30px;
-      }
-      
-      .settings-header h1 .ui-icon {
-        width: 26px;
-        height: 26px;
-      }
-      
-      .settings-header p {
-        margin: 0;
-      
-        font-size: 15px;
-      
-        opacity: 0.95;
-      }
-      
-      /* =========================================
-                             CARD
-                          ========================================= */
-      
-      .settings-card {
-        background: white;
-      
-        border-radius: 18px;
-      
-        padding: 22px;
-      
-        box-shadow: 0 5px 22px rgba(0, 0, 0, 0.09);
-      }
-      
-      /* =========================================
-                             SECTION LABEL
-                          ========================================= */
-      
-      .section-label {
-        margin: 3px 0 10px;
-      
-        color: #64748b;
-      
-        font-size: 12px;
-        font-weight: 800;
-      
-        text-transform: uppercase;
-      
-        letter-spacing: 0.7px;
-      }
-      
-      .section-label:not(:first-child) {
-        margin-top: 26px;
-      }
-      
-      /* =========================================
-                             SETTINGS ITEM
-                          ========================================= */
-      
-      .settings-item {
-        display: flex;
-      
-        align-items: center;
-      
-        justify-content: space-between;
-      
-        gap: 18px;
-      
-        padding: 17px 0;
-      
-        border-bottom: 1px solid #e2e8f0;
-      }
-      
-      .settings-item:last-child {
-        border-bottom: none;
-      }
-      
-      /* =========================================
-                             LEFT CONTENT
-                          ========================================= */
-      
-      .settings-left {
-        min-width: 0;
-      
-        display: flex;
-      
-        align-items: center;
-      
-        gap: 14px;
-      }
-      
-      /* =========================================
-                             ICON
-                          ========================================= */
-      
-      .settings-icon {
-        width: 47px;
-        height: 47px;
-      
-        display: grid;
-      
-        place-items: center;
-      
-        flex-shrink: 0;
-      
-        border-radius: 13px;
-      
-        background: #eff6ff;
-      
-        color: #2563eb;
-      }
-      
-      .settings-icon .ui-icon {
+      .pay-head-icon .ui-icon {
         width: 22px;
         height: 22px;
       }
       
-      /* =========================================
-                             TEXT
-                          ========================================= */
+      .pay-head h1 {
+        margin: 0;
+        color: #ffffff;
+        font-size: clamp(22px, 4vw, 27px);
+        line-height: 1.15;
+        font-weight: 950;
+        letter-spacing: -0.02em;
+        overflow-wrap: anywhere;
+      }
       
-      .settings-text {
+      .pay-head p {
+        margin: 5px 0 0;
+        color: #bfdbfe;
+        font-size: 12px;
+        line-height: 1.45;
+      }
+      
+      .pay-grid {
         min-width: 0;
-      }
-      
-      .settings-text h3 {
-        margin: 0 0 4px;
-      
-        color: #0f172a;
-      
-        font-size: 16px;
-        font-weight: 750;
-      }
-      
-      .settings-text p {
-        margin: 0;
-      
-        color: #64748b;
-      
-        font-size: 13px;
-      
-        line-height: 1.5;
-      }
-      
-      /* =========================================
-                             BUTTON
-                          ========================================= */
-      
-      .settings-action {
-        min-width: 104px;
-      
-        padding: 10px 15px;
-      
-        display: inline-flex;
-      
-        align-items: center;
-      
-        justify-content: center;
-      
-        gap: 7px;
-      
-        border: none;
-      
-        border-radius: 9px;
-      
-        background: #2563eb;
-      
-        color: white;
-      
-        text-decoration: none;
-      
-        font-size: 13px;
-        font-weight: 700;
-      
-        white-space: nowrap;
-      
-        cursor: pointer;
-      
-        transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
-      }
-      
-      .settings-action:hover {
-        background: #1d4ed8;
-      
-        transform: translateY(-1px);
-      
-        box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
-      }
-      
-      /* =========================================
-                             DELETE OPTION
-                          ========================================= */
-      
-      .delete-item .settings-icon {
-        background: #fef2f2;
-      
-        color: #dc2626;
-      }
-      
-      .delete-item .settings-text h3 {
-        color: #b91c1c;
-      }
-      
-      .danger-action {
-        background: #dc2626;
-      }
-      
-      .danger-action:hover {
-        background: #b91c1c;
-      
-        box-shadow: 0 4px 10px rgba(220, 38, 38, 0.2);
-      }
-      
-      /* =========================================
-                             BACK BUTTON
-                          ========================================= */
-      
-      .back-box {
-        margin-top: 20px;
-      }
-      
-      /* =========================================
-                             MODAL BACKGROUND
-                          ========================================= */
-      
-      .settings-modal {
-        position: fixed;
-      
-        inset: 0;
-      
-        z-index: 9999;
-      
-        display: none;
-      
-        align-items: center;
-      
-        justify-content: center;
-      
-        padding: 20px;
-      
-        background: rgba(15, 23, 42, 0.68);
-      
-        backdrop-filter: blur(3px);
-      }
-      
-      .settings-modal.show {
-        display: flex;
-      }
-      
-      /* =========================================
-                             MODAL CARD
-                          ========================================= */
-      
-      .modal-card {
-        width: 100%;
-      
-        max-width: 560px;
-      
-        max-height: 90vh;
-      
-        overflow-y: auto;
-      
-        background: white;
-      
-        border-radius: 18px;
-      
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
-      
-        animation: modalOpen 0.18s ease;
-      }
-      
-      @keyframes modalOpen {
-        from {
-          opacity: 0;
-      
-          transform: translateY(10px) scale(0.98);
-        }
-      
-        to {
-          opacity: 1;
-      
-          transform: translateY(0) scale(1);
-        }
-      }
-      
-      /* =========================================
-                             MODAL HEADER
-                          ========================================= */
-      
-      .modal-header {
-        padding: 20px 22px;
-      
-        display: flex;
-      
-        align-items: center;
-      
-        justify-content: space-between;
-      
-        gap: 15px;
-      
-        border-bottom: 1px solid #e2e8f0;
-      }
-      
-      .modal-title-box {
-        display: flex;
-      
-        align-items: center;
-      
-        gap: 11px;
-      }
-      
-      .modal-title-icon {
-        width: 40px;
-        height: 40px;
-      
         display: grid;
-      
-        place-items: center;
-      
-        border-radius: 11px;
-      
-        background: #eff6ff;
-      
-        color: #2563eb;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 13px;
+        margin-bottom: 14px;
       }
       
-      .modal-title-icon .ui-icon {
-        width: 20px;
-        height: 20px;
-      }
-      
-      .modal-header h2 {
-        margin: 0;
-      
-        color: #0f172a;
-      
-        font-size: 19px;
-      }
-      
-      .modal-close {
-        width: 36px;
-        height: 36px;
-      
-        display: grid;
-      
-        place-items: center;
-      
-        flex-shrink: 0;
-      
-        border: none;
-      
-        border-radius: 9px;
-      
-        background: #f1f5f9;
-      
-        color: #475569;
-      
-        cursor: pointer;
-      }
-      
-      .modal-close:hover {
-        background: #e2e8f0;
-      }
-      
-      /* =========================================
-                             MODAL BODY
-                          ========================================= */
-      
-      .modal-body {
-        padding: 22px;
-      }
-      
-      .modal-description {
-        margin: 0 0 20px;
-      
-        color: #64748b;
-      
-        font-size: 14px;
-      
-        line-height: 1.6;
-      }
-      
-      /* =========================================
-                             FORM
-                          ========================================= */
-      
-      .form-group {
-        margin-bottom: 17px;
-      }
-      
-      .form-group:last-child {
-        margin-bottom: 0;
-      }
-      
-      .form-label {
-        display: block;
-      
-        margin-bottom: 7px;
-      
-        color: #334155;
-      
-        font-size: 13px;
-        font-weight: 700;
-      }
-      
-      .form-control {
-        width: 100%;
-      
-        padding: 11px 12px;
-      
-        border: 1px solid #cbd5e1;
-      
-        border-radius: 9px;
-      
-        outline: none;
-      
-        background: white;
-      
-        color: #0f172a;
-      
-        font-size: 14px;
-      
-        transition: border-color 0.2s ease, box-shadow 0.2s ease;
-      }
-      
-      .form-control:focus {
-        border-color: #2563eb;
-      
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
-      }
-      
-      textarea.form-control {
-        min-height: 105px;
-      
-        resize: vertical;
-      }
-      
-      /* =========================================
-                             TWO COLUMN FORM
-                          ========================================= */
-      
-      .form-row {
-        display: grid;
-      
-        grid-template-columns: 1fr 1fr;
-      
-        gap: 14px;
-      }
-      
-      /* =========================================
-                             MODAL FOOTER
-                          ========================================= */
-      
-      .modal-footer {
-        padding: 16px 22px 22px;
-      
-        display: flex;
-      
-        align-items: center;
-      
-        justify-content: flex-end;
-      
-        gap: 10px;
-      }
-      
-      .modal-btn {
-        padding: 10px 16px;
-      
-        border: none;
-      
-        border-radius: 9px;
-      
-        font-size: 13px;
-        font-weight: 700;
-      
-        cursor: pointer;
-      }
-      
-      .modal-btn-secondary {
-        background: #e2e8f0;
-      
-        color: #334155;
-      }
-      
-      .modal-btn-secondary:hover {
-        background: #cbd5e1;
-      }
-      
-      .modal-btn-primary {
-        background: #2563eb;
-      
-        color: white;
-      }
-      
-      .modal-btn-primary:hover {
-        background: #1d4ed8;
-      }
-      
-      .modal-btn-danger {
-        background: #dc2626;
-      
-        color: white;
-      }
-      
-      .modal-btn-danger:hover {
-        background: #b91c1c;
-      }
-      
-      /* =========================================
-                             TERMS BOX
-                          ========================================= */
-      
-      .terms-box {
+      .pay-card {
+        min-width: 0;
+        max-width: 100%;
         padding: 16px;
-      
-        border: 1px solid #e2e8f0;
-      
-        border-radius: 11px;
-      
-        background: #f8fafc;
-      
-        color: #475569;
-      
-        font-size: 13px;
-      
-        line-height: 1.7;
+        overflow: hidden;
+        border: 1px solid rgba(191, 219, 254, 0.24);
+        border-radius: 16px;
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(255, 255, 255, 0.065), rgba(99, 102, 241, 0.08));
+        color: #ffffff;
+        box-shadow: 0 18px 42px rgba(2, 6, 23, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
       }
       
-      .terms-box h3 {
-        margin: 0 0 8px;
+      .pay-card.full {
+        grid-column: 1 / -1;
+      }
       
-        color: #0f172a;
-      
+      .pay-card-title {
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0 0 11px;
+        color: #ffffff;
         font-size: 15px;
+        font-weight: 900;
       }
       
-      .terms-box p {
-        margin: 0 0 15px;
-      }
-      
-      .terms-box p:last-child {
-        margin-bottom: 0;
-      }
-      
-      /* =========================================
-                             ABOUT
-                          ========================================= */
-      
-      .about-logo {
-        width: 70px;
-        height: 70px;
-      
-        margin: 0 auto 15px;
-      
+      .pay-summary {
+        min-width: 0;
         display: grid;
-      
-        place-items: center;
-      
-        border-radius: 20px;
-      
-        background: #eff6ff;
-      
-        color: #2563eb;
+        gap: 0;
       }
       
-      .about-logo .ui-icon {
-        width: 34px;
-        height: 34px;
+      .pay-row {
+        min-width: 0;
+        display: grid;
+        grid-template-columns: minmax(90px, 0.72fr) minmax(0, 1.28fr);
+        align-items: center;
+        gap: 10px;
+        padding: 9px 0;
+        border-bottom: 1px solid rgba(191, 219, 254, 0.12);
       }
       
-      .about-content {
+      .pay-row:last-child {
+        border-bottom: 0;
+      }
+      
+      .pay-label {
+        min-width: 0;
+        color: #a9c4ee;
+        font-size: 11px;
+        line-height: 1.4;
+      }
+      
+      .pay-value {
+        min-width: 0;
+        color: #ffffff;
+        font-size: 12px;
+        font-weight: 850;
+        line-height: 1.45;
+        text-align: right;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+      }
+      
+      .status-pill {
+        justify-self: end;
+        max-width: 100%;
+        min-height: 24px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 4px 8px;
+        border-radius: 999px;
+        font-size: 10px;
+        line-height: 1.2;
+        font-weight: 900;
+        white-space: normal;
         text-align: center;
       }
       
-      .about-content h3 {
-        margin: 0 0 5px;
-      
-        color: #0f172a;
-      
-        font-size: 21px;
+      .status-active,
+      .status-paid {
+        border: 1px solid rgba(110, 231, 183, 0.28);
+        background: rgba(16, 185, 129, 0.14);
+        color: #a7f3d0;
       }
       
-      .about-content p {
-        margin: 0 0 8px;
-      
-        color: #64748b;
-      
-        font-size: 13px;
-      
-        line-height: 1.6;
+      .status-pending,
+      .status-created {
+        border: 1px solid rgba(253, 230, 138, 0.26);
+        background: rgba(245, 158, 11, 0.12);
+        color: #fde68a;
       }
       
-      .app-version {
-        display: inline-block;
-      
-        margin-top: 8px;
-      
-        padding: 6px 11px;
-      
-        border-radius: 20px;
-      
-        background: #f1f5f9;
-      
-        color: #475569;
-      
-        font-size: 12px;
-        font-weight: 700;
+      .status-failed,
+      .status-cancelled,
+      .status-refunded,
+      .status-inactive,
+      .status-expired {
+        border: 1px solid rgba(252, 165, 165, 0.24);
+        background: rgba(220, 38, 38, 0.1);
+        color: #fecaca;
       }
       
-      /* =========================================
-                             WARNING BOX
-                          ========================================= */
-      
-      .warning-box {
-        padding: 14px;
-      
-        margin-bottom: 18px;
-      
-        display: flex;
-      
-        align-items: flex-start;
-      
-        gap: 10px;
-      
-        border: 1px solid #fecaca;
-      
-        border-radius: 10px;
-      
-        background: #fef2f2;
-      
-        color: #991b1b;
-      
-        font-size: 13px;
-      
-        line-height: 1.55;
-      }
-      
-      .warning-box .ui-icon {
-        margin-top: 1px;
-      }
-      
-      /* =========================================
-                             UI MESSAGE
-                          ========================================= */
-      
-      .ui-message {
-        position: fixed;
-      
-        left: 50%;
-        bottom: 25px;
-      
-        z-index: 10000;
-      
-        display: none;
-      
-        transform: translateX(-50%);
-      
-        padding: 11px 17px;
-      
-        border-radius: 10px;
-      
-        background: #0f172a;
-      
-        color: white;
-      
-        font-size: 13px;
-        font-weight: 650;
-      
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-      }
-      
-      .ui-message.show {
-        display: block;
-      
-        animation: messageIn 0.2s ease;
-      }
-      
-      @keyframes messageIn {
-        from {
-          opacity: 0;
-      
-          transform: translate(-50%, 8px);
-        }
-      
-        to {
-          opacity: 1;
-      
-          transform: translate(-50%, 0);
-        }
-      }
-      
-      /* =========================================
-                             DARK MODE
-                          ========================================= */
-      
-      body.dark-mode .settings-card,
-      body.dark-mode .modal-card {
-        background: #1e293b;
-      }
-      
-      body.dark-mode .settings-item,
-      body.dark-mode .modal-header {
-        border-color: #334155;
-      }
-      
-      body.dark-mode .settings-icon,
-      body.dark-mode .modal-title-icon {
-        background: #334155;
-      
-        color: #bfdbfe;
-      }
-      
-      body.dark-mode .settings-text h3,
-      body.dark-mode .modal-header h2,
-      body.dark-mode .terms-box h3,
-      body.dark-mode .about-content h3 {
-        color: #f8fafc;
-      }
-      
-      body.dark-mode .settings-text p,
-      body.dark-mode .modal-description,
-      body.dark-mode .about-content p {
-        color: #cbd5e1;
-      }
-      
-      body.dark-mode .section-label {
-        color: #94a3b8;
-      }
-      
-      body.dark-mode .form-label {
-        color: #e2e8f0;
-      }
-      
-      body.dark-mode .form-control {
-        background: #0f172a;
-      
-        border-color: #475569;
-      
-        color: white;
-      }
-      
-      body.dark-mode .modal-close {
-        background: #334155;
-      
-        color: #e2e8f0;
-      }
-      
-      body.dark-mode .terms-box {
-        background: #0f172a;
-      
-        border-color: #334155;
-      
-        color: #cbd5e1;
-      }
-      
-      body.dark-mode .app-version {
-        background: #334155;
-      
-        color: #cbd5e1;
-      }
-      
-      body.dark-mode .delete-item .settings-icon {
-        background: rgba(220, 38, 38, 0.15);
-      
-        color: #fca5a5;
-      }
-      
-      body.dark-mode .delete-item .settings-text h3 {
-        color: #fca5a5;
-      }
-      
-      /* =========================================
-                             MOBILE
-                          ========================================= */
-      
-      @media (max-width: 650px) {
-        .settings-wrapper {
-          margin-top: 20px;
-      
-          padding: 0 12px 30px;
-        }
-      
-        .settings-header h1 {
-          font-size: 25px;
-        }
-      
-        .settings-card {
-          padding: 14px 16px;
-        }
-      
-        .settings-item {
-          align-items: flex-start;
-      
-          flex-direction: column;
-      
-          gap: 13px;
-        }
-      
-        .settings-left {
-          width: 100%;
-        }
-      
-        .settings-action {
-          width: 100%;
-        }
-      
-        .form-row {
-          grid-template-columns: 1fr;
-        }
-      
-        .modal-card {
-          max-height: 94vh;
-        }
-      
-        .modal-footer {
-          flex-direction: column-reverse;
-        }
-      
-        .modal-btn {
-          width: 100%;
-        }
-      }
-      
-      /* =====================================================
-                     FINAL LIGHT / DARK / GLASS THEME SUPPORT
-                  ===================================================== */
-      
-      body.sc-theme-light .settings-card,
-      body.sc-theme-light .modal-card {
-        background: #ffffff !important;
-        border: 1px solid #e2e8f0 !important;
-        color: #172554 !important;
-      }
-      
-      body.sc-theme-light .settings-item,
-      body.sc-theme-light .modal-header {
-        border-color: #e2e8f0 !important;
-      }
-      body.sc-theme-light .settings-text h3,
-      body.sc-theme-light .modal-header h2,
-      body.sc-theme-light .terms-box h3,
-      body.sc-theme-light .about-content h3 {
-        color: #0f172a !important;
-      }
-      body.sc-theme-light .settings-text p,
-      body.sc-theme-light .modal-description,
-      body.sc-theme-light .about-content p {
-        color: #64748b !important;
-      }
-      
-      body.sc-theme-dark .settings-card,
-      body.sc-theme-dark .modal-card {
-        background: #1e293b !important;
-        border: 1px solid #334155 !important;
-        color: #e2e8f0 !important;
-      }
-      
-      body.sc-theme-dark .settings-item,
-      body.sc-theme-dark .modal-header {
-        border-color: #334155 !important;
-      }
-      body.sc-theme-dark .settings-icon,
-      body.sc-theme-dark .modal-title-icon {
-        background: #334155 !important;
-        color: #bfdbfe !important;
-      }
-      body.sc-theme-dark .settings-text h3,
-      body.sc-theme-dark .modal-header h2,
-      body.sc-theme-dark .terms-box h3,
-      body.sc-theme-dark .about-content h3 {
-        color: #f8fafc !important;
-      }
-      body.sc-theme-dark .settings-text p,
-      body.sc-theme-dark .modal-description,
-      body.sc-theme-dark .about-content p {
-        color: #cbd5e1 !important;
-      }
-      body.sc-theme-dark .section-label {
-        color: #94a3b8 !important;
-      }
-      body.sc-theme-dark .form-label {
-        color: #e2e8f0 !important;
-      }
-      body.sc-theme-dark .form-control {
-        background: #0f172a !important;
-        border-color: #475569 !important;
-        color: #ffffff !important;
-      }
-      body.sc-theme-dark .modal-close,
-      body.sc-theme-dark .app-version {
-        background: #334155 !important;
-        color: #e2e8f0 !important;
-      }
-      body.sc-theme-dark .terms-box {
-        background: #0f172a !important;
-        border-color: #334155 !important;
-        color: #cbd5e1 !important;
-      }
-      
-      body.sc-theme-glass .settings-card,
-      body.sc-theme-glass .modal-card {
-        background: linear-gradient(135deg, rgba(96, 165, 250, 0.14), rgba(255, 255, 255, 0.075), rgba(99, 102, 241, 0.08)) !important;
-        border: 1px solid rgba(191, 219, 254, 0.28) !important;
-        color: #ffffff !important;
-        box-shadow: 0 30px 75px rgba(2, 6, 23, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
-        backdrop-filter: blur(25px);
-        -webkit-backdrop-filter: blur(25px);
-      }
-      
-      body.sc-theme-glass .settings-item,
-      body.sc-theme-glass .modal-header {
-        border-color: rgba(191, 219, 254, 0.16) !important;
-      }
-      
-      body.sc-theme-glass .section-label {
-        color: rgba(219, 234, 254, 0.72) !important;
-      }
-      
-      body.sc-theme-glass .settings-text h3,
-      body.sc-theme-glass .modal-header h2,
-      body.sc-theme-glass .terms-box h3,
-      body.sc-theme-glass .about-content h3 {
-        color: #ffffff !important;
-      }
-      
-      body.sc-theme-glass .settings-text p,
-      body.sc-theme-glass .modal-description,
-      body.sc-theme-glass .about-content p {
-        color: rgba(219, 234, 254, 0.78) !important;
-      }
-      
-      body.sc-theme-glass .settings-icon,
-      body.sc-theme-glass .modal-title-icon,
-      body.sc-theme-glass .about-logo {
-        background: rgba(255, 255, 255, 0.11) !important;
-        border: 1px solid rgba(255, 255, 255, 0.18) !important;
-        color: #bfdbfe !important;
-      }
-      
-      body.sc-theme-glass .form-label {
-        color: rgba(255, 255, 255, 0.92) !important;
-      }
-      body.sc-theme-glass .form-control {
-        background: rgba(255, 255, 255, 0.09) !important;
-        border: 1px solid rgba(191, 219, 254, 0.22) !important;
-        color: #ffffff !important;
-      }
-      body.sc-theme-glass .form-control::placeholder {
-        color: rgba(219, 234, 254, 0.55) !important;
-      }
-      body.sc-theme-glass select.form-control option {
-        background: #0f172a;
-        color: #ffffff;
-      }
-      
-      body.sc-theme-glass .terms-box {
-        background: rgba(255, 255, 255, 0.07) !important;
-        border-color: rgba(191, 219, 254, 0.18) !important;
-        color: rgba(219, 234, 254, 0.84) !important;
-      }
-      
-      body.sc-theme-glass .modal-close,
-      body.sc-theme-glass .app-version {
-        background: rgba(255, 255, 255, 0.1) !important;
-        color: #ffffff !important;
-        border: 1px solid rgba(255, 255, 255, 0.15) !important;
-      }
-      
-      body.sc-theme-glass .settings-action {
-        border: 1px solid rgba(255, 255, 255, 0.18) !important;
-        color: #ffffff !important;
-      }
-      
-      body.sc-theme-glass .delete-item .settings-icon {
-        background: rgba(220, 38, 38, 0.13) !important;
-        border-color: rgba(252, 165, 165, 0.2) !important;
-        color: #fca5a5 !important;
-      }
-      body.sc-theme-glass .delete-item .settings-text h3 {
-        color: #fca5a5 !important;
-      }
-      body.sc-theme-glass .warning-box {
-        background: rgba(220, 38, 38, 0.1) !important;
-        border-color: rgba(252, 165, 165, 0.22) !important;
-        color: #fecaca !important;
-      }
-      
-      @media (max-width: 650px) {
-        body.sc-theme-glass .settings-card,
-        body.sc-theme-glass .modal-card {
-          backdrop-filter: blur(18px);
-          -webkit-backdrop-filter: blur(18px);
-        }
-        body.sc-theme-glass .settings-item {
-          background: rgba(255, 255, 255, 0.02);
-        }
-      }
-
-      /* =====================================================
-         PREMIUM THEMES - FUTURE UI
-         ===================================================== */
-      .premium-theme-item {
-        position: relative;
-      }
-
-      .premium-settings-icon,
-      .premium-modal-icon {
-        background: linear-gradient(145deg, #eef2ff, #eff6ff) !important;
-        color: #4f46e5 !important;
-      }
-
-      .premium-title-line {
+      .pay-actions {
         display: flex;
         align-items: center;
         flex-wrap: wrap;
         gap: 8px;
+        margin-top: 12px;
       }
-
-      .premium-title-line h3 {
-        margin-bottom: 0;
-      }
-
-      .future-badge,
-      .locked-badge {
+      
+      .pay-btn {
+        min-height: 34px;
+        max-width: 100%;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 5px;
-        border-radius: 999px;
+        gap: 6px;
+        padding: 7px 10px;
+        border: 1px solid rgba(191, 219, 254, 0.2);
+        border-radius: 9px;
+        color: #ffffff;
+        background: rgba(255, 255, 255, 0.08);
+        text-decoration: none;
         font-size: 10px;
-        font-weight: 800;
-        letter-spacing: .04em;
+        line-height: 1.2;
+        font-weight: 900;
+        text-align: center;
+        overflow-wrap: anywhere;
+      }
+      
+      .pay-btn .ui-icon {
+        width: 15px;
+        height: 15px;
+      }
+      
+      .pay-btn.primary {
+        border-color: transparent;
+        background: linear-gradient(135deg, #2563eb, #0ea5e9);
+        box-shadow: 0 8px 18px rgba(37, 99, 235, 0.18);
+      }
+      
+      .history-wrap {
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+      }
+      
+      .history-table {
+        width: 100%;
+        max-width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+      }
+      
+      .history-table th,
+      .history-table td {
+        min-width: 0;
+        padding: 10px 8px;
+        border-bottom: 1px solid rgba(191, 219, 254, 0.12);
+        text-align: left;
+        vertical-align: middle;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+      }
+      
+      .history-table th {
+        color: #93c5fd;
+        font-size: 9px;
+        font-weight: 900;
+        letter-spacing: 0.04em;
         text-transform: uppercase;
       }
-
-      .future-badge {
-        padding: 5px 8px;
-        background: #eef2ff;
-        color: #4f46e5;
-        border: 1px solid #c7d2fe;
+      
+      .history-table td {
+        color: #dbeafe;
+        font-size: 11px;
+        line-height: 1.4;
       }
-
-      .future-badge .ui-icon,
-      .locked-badge .ui-icon {
-        width: 13px;
-        height: 13px;
+      
+      .history-table td strong {
+        color: #ffffff;
       }
-
-      .premium-action .ui-icon {
+      
+      .history-table th:nth-child(1),
+      .history-table td:nth-child(1) {
+        width: 19%;
+      }
+      
+      .history-table th:nth-child(2),
+      .history-table td:nth-child(2) {
+        width: 29%;
+      }
+      
+      .history-table th:nth-child(3),
+      .history-table td:nth-child(3) {
+        width: 16%;
+      }
+      
+      .history-table th:nth-child(4),
+      .history-table td:nth-child(4) {
+        width: 15%;
+      }
+      
+      .history-table th:nth-child(5),
+      .history-table td:nth-child(5) {
+        width: 21%;
+      }
+      
+      .history-table .status-pill {
+        justify-self: start;
+      }
+      
+      .empty-state {
+        padding: 20px 10px;
+        text-align: center;
+        color: #a9c4ee;
+        font-size: 12px;
+        line-height: 1.55;
+      }
+      
+      .security-note {
+        min-width: 0;
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        margin-top: 13px;
+        padding: 11px 12px;
+        border: 1px solid rgba(125, 211, 252, 0.18);
+        border-radius: 11px;
+        background: rgba(14, 165, 233, 0.07);
+        color: #bfdbfe;
+        font-size: 10px;
+        line-height: 1.5;
+        overflow-wrap: anywhere;
+      }
+      
+      .security-note .ui-icon {
         width: 17px;
         height: 17px;
+        flex: 0 0 17px;
       }
-
-      .premium-modal-card {
-        max-width: 720px;
-      }
-
-      .modal-kicker {
-        margin-top: 3px;
-        color: #64748b;
-        font-size: 11px;
-        font-weight: 700;
-        letter-spacing: .04em;
-        text-transform: uppercase;
-      }
-
-      .premium-theme-grid {
+      
+      .page-back {
+        position: fixed;
+        left: calc(12px + env(safe-area-inset-left, 0px));
+        bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+        z-index: 700;
+        width: 38px;
+        height: 38px;
         display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 14px;
-      }
-
-      .premium-theme-card {
-        overflow: hidden;
-        border: 1px solid #e2e8f0;
-        border-radius: 16px;
-        background: #fff;
-        box-shadow: 0 10px 28px rgba(15, 23, 42, .07);
-      }
-
-      .theme-preview {
-        position: relative;
-        height: 128px;
-        overflow: hidden;
-        padding: 20px;
-        isolation: isolate;
-      }
-
-      .preview-orb {
-        position: absolute;
-        display: block;
-        border-radius: 50%;
-        filter: blur(2px);
-        opacity: .82;
-        z-index: -1;
-      }
-
-      .preview-panel {
-        width: 74%;
-        height: 88px;
-        margin: 0 auto;
-        padding: 17px;
-        display: flex;
-        flex-direction: column;
-        gap: 9px;
-        border-radius: 14px;
+        place-items: center;
+        border: 1px solid rgba(147, 197, 253, 0.28);
+        border-radius: 11px;
+        background: rgba(7, 35, 72, 0.92);
+        color: #ffffff;
+        box-shadow: 0 8px 22px rgba(2, 6, 23, 0.25);
+        text-decoration: none;
         backdrop-filter: blur(14px);
         -webkit-backdrop-filter: blur(14px);
-        box-shadow: 0 14px 30px rgba(2, 6, 23, .18);
       }
-
-      .preview-panel span {
-        display: block;
-        height: 8px;
-        border-radius: 999px;
+      
+      .page-back .ui-icon {
+        width: 18px;
+        height: 18px;
       }
-
-      .preview-panel span:nth-child(1) { width: 58%; }
-      .preview-panel span:nth-child(2) { width: 82%; }
-      .preview-panel span:nth-child(3) { width: 68%; }
-
-      .aurora-theme-preview .theme-preview {
-        background: linear-gradient(135deg, #071a2d, #102b4e 55%, #192044);
+      
+      body.sc-theme-light .pay-head h1 {
+        color: #172554;
       }
-      .aurora-theme-preview .orb-one {
-        width: 95px; height: 95px; left: -15px; top: -20px;
-        background: #2dd4bf;
-      }
-      .aurora-theme-preview .orb-two {
-        width: 100px; height: 100px; right: -18px; bottom: -38px;
-        background: #8b5cf6;
-      }
-      .aurora-theme-preview .preview-panel {
-        background: rgba(255,255,255,.13);
-        border: 1px solid rgba(255,255,255,.22);
-      }
-      .aurora-theme-preview .preview-panel span { background: rgba(255,255,255,.72); }
-
-      .midnight-theme-preview .theme-preview {
-        background: linear-gradient(145deg, #020617, #0f172a 58%, #172554);
-      }
-      .midnight-theme-preview .orb-one {
-        width: 90px; height: 90px; left: -25px; bottom: -30px;
-        background: #2563eb;
-      }
-      .midnight-theme-preview .orb-two {
-        width: 72px; height: 72px; right: 0; top: -25px;
-        background: #0ea5e9;
-      }
-      .midnight-theme-preview .preview-panel {
-        background: rgba(15,23,42,.78);
-        border: 1px solid rgba(96,165,250,.22);
-      }
-      .midnight-theme-preview .preview-panel span { background: #60a5fa; }
-
-      .royal-theme-preview .theme-preview {
-        background: linear-gradient(145deg, #1e103f, #3b1768 55%, #111827);
-      }
-      .royal-theme-preview .orb-one {
-        width: 95px; height: 95px; left: -22px; top: -28px;
-        background: #a855f7;
-      }
-      .royal-theme-preview .orb-two {
-        width: 92px; height: 92px; right: -20px; bottom: -28px;
-        background: #ec4899;
-      }
-      .royal-theme-preview .preview-panel {
-        background: rgba(255,255,255,.12);
-        border: 1px solid rgba(233,213,255,.25);
-      }
-      .royal-theme-preview .preview-panel span { background: #e9d5ff; }
-
-      .ocean-theme-preview .theme-preview {
-        background: linear-gradient(145deg, #042f49, #075985 55%, #0f172a);
-      }
-      .ocean-theme-preview .orb-one {
-        width: 98px; height: 98px; left: -24px; bottom: -34px;
-        background: #22d3ee;
-      }
-      .ocean-theme-preview .orb-two {
-        width: 80px; height: 80px; right: -12px; top: -20px;
-        background: #38bdf8;
-      }
-      .ocean-theme-preview .preview-panel {
-        background: rgba(255,255,255,.13);
-        border: 1px solid rgba(186,230,253,.25);
-      }
-      .ocean-theme-preview .preview-panel span { background: #bae6fd; }
-
-      .theme-card-footer {
-        min-height: 102px;
-        padding: 14px;
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-        gap: 10px;
-      }
-
-      .theme-card-footer strong {
-        display: block;
-        margin-bottom: 5px;
-        color: #0f172a;
-        font-size: 14px;
-      }
-
-      .theme-card-footer small {
-        display: block;
+      body.sc-theme-light .pay-head p {
         color: #64748b;
-        font-size: 11px;
-        line-height: 1.45;
       }
-
-      .locked-badge {
-        flex: 0 0 auto;
-        padding: 5px 7px;
-        background: #f8fafc;
+      
+      body.sc-theme-light .pay-card {
+        background: rgba(255, 255, 255, 0.96);
+        border-color: #dbeafe;
+        color: #172554;
+        box-shadow: 0 18px 42px rgba(15, 23, 42, 0.08);
+      }
+      
+      body.sc-theme-light .pay-card-title,
+      body.sc-theme-light .pay-value,
+      body.sc-theme-light .history-table td strong {
+        color: #172554;
+      }
+      
+      body.sc-theme-light .pay-label,
+      body.sc-theme-light .history-table td,
+      body.sc-theme-light .empty-state {
         color: #64748b;
-        border: 1px solid #e2e8f0;
       }
-
-      .premium-note {
-        margin-top: 16px;
-        padding: 13px 14px;
-        display: flex;
-        align-items: flex-start;
-        gap: 10px;
-        border: 1px solid #bfdbfe;
-        border-radius: 12px;
+      
+      body.sc-theme-light .pay-row,
+      body.sc-theme-light .history-table th,
+      body.sc-theme-light .history-table td {
+        border-color: #e2e8f0;
+      }
+      
+      body.sc-theme-light .security-note {
         background: #eff6ff;
+        border-color: #bfdbfe;
         color: #1e3a8a;
       }
-
-      .premium-note > .ui-icon {
-        width: 19px;
-        height: 19px;
-        margin-top: 1px;
+      
+      body.sc-theme-light .pay-btn:not(.primary) {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+        color: #334155;
       }
-
-      .premium-note strong,
-      .premium-note span {
-        display: block;
+      
+      body:is(.sc-theme-royal, .sc-theme-royalblue, .sc-theme-emerald, .sc-theme-rose, .sc-theme-sunset, .sc-theme-cyber, .sc-theme-gold, .sc-theme-slate) .pay-card {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.055));
+        border-color: rgba(255, 255, 255, 0.18);
       }
-
-      .premium-note strong {
-        margin-bottom: 3px;
-        font-size: 13px;
+      
+      @media (max-width: 720px) {
+        .pay-page {
+          width: min(100% - 16px, 940px);
+          padding-top: calc(68px + env(safe-area-inset-top, 0px));
+          padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+        }
+      
+        .pay-head {
+          margin-bottom: 11px;
+        }
+        .pay-head-row {
+          gap: 9px;
+        }
+      
+        .pay-head-icon {
+          width: 38px;
+          height: 38px;
+          flex-basis: 38px;
+          border-radius: 11px;
+        }
+      
+        .pay-head-icon .ui-icon {
+          width: 20px;
+          height: 20px;
+        }
+      
+        .pay-head h1 {
+          font-size: 21px;
+        }
+      
+        .pay-head p {
+          font-size: 10px;
+          line-height: 1.4;
+        }
+      
+        .pay-grid {
+          grid-template-columns: minmax(0, 1fr);
+          gap: 10px;
+        }
+      
+        .pay-card.full {
+          grid-column: auto;
+        }
+      
+        .pay-card {
+          padding: 13px;
+          border-radius: 14px;
+        }
+      
+        .pay-card-title {
+          margin-bottom: 8px;
+          font-size: 14px;
+        }
+      
+        .pay-row {
+          grid-template-columns: minmax(78px, 0.8fr) minmax(0, 1.2fr);
+          gap: 8px;
+          padding: 8px 0;
+        }
+      
+        .pay-label {
+          font-size: 10px;
+        }
+        .pay-value {
+          font-size: 11px;
+        }
+      
+        .pay-actions {
+          margin-top: 10px;
+        }
+      
+        .pay-btn {
+          min-height: 32px;
+          width: auto;
+          max-width: 100%;
+          padding: 6px 9px;
+          border-radius: 8px;
+          font-size: 9.5px;
+        }
+      
+        .history-wrap {
+          overflow: visible;
+        }
+      
+        .history-table,
+        .history-table tbody,
+        .history-table tr,
+        .history-table td {
+          display: block;
+          width: 100%;
+          max-width: 100%;
+        }
+      
+        .history-table {
+          table-layout: auto;
+        }
+        .history-table thead {
+          display: none;
+        }
+      
+        .history-table tbody {
+          display: grid;
+          gap: 9px;
+        }
+      
+        .history-table tr {
+          overflow: hidden;
+          padding: 4px 10px;
+          border: 1px solid rgba(191, 219, 254, 0.15);
+          border-radius: 11px;
+          background: rgba(255, 255, 255, 0.035);
+        }
+      
+        .history-table td {
+          width: 100% !important;
+          display: grid;
+          grid-template-columns: 82px minmax(0, 1fr);
+          gap: 8px;
+          padding: 7px 0;
+          border-bottom: 1px solid rgba(191, 219, 254, 0.1);
+          font-size: 10px;
+        }
+      
+        .history-table td:last-child {
+          border-bottom: 0;
+        }
+      
+        .history-table td::before {
+          color: #93c5fd;
+          font-size: 8.5px;
+          font-weight: 900;
+          letter-spacing: 0.04em;
+          text-transform: uppercase;
+        }
+      
+        .history-table td:nth-child(1)::before {
+          content: 'Date';
+        }
+        .history-table td:nth-child(2)::before {
+          content: 'Payment';
+        }
+        .history-table td:nth-child(3)::before {
+          content: 'Amount';
+        }
+        .history-table td:nth-child(4)::before {
+          content: 'Status';
+        }
+        .history-table td:nth-child(5)::before {
+          content: 'Paid At';
+        }
+      
+        .history-table td[colspan] {
+          display: block;
+          padding: 0;
+        }
+      
+        .history-table td[colspan]::before {
+          display: none;
+        }
+      
+        body.sc-theme-light .history-table tr {
+          background: #f8fafc;
+          border-color: #e2e8f0;
+        }
+      
+        .empty-state {
+          padding: 18px 8px;
+          font-size: 11px;
+        }
+      
+        .security-note {
+          margin-top: 10px;
+          padding: 10px;
+          font-size: 9.5px;
+        }
       }
-
-      .premium-note span {
-        font-size: 12px;
-        line-height: 1.5;
+      
+      @media (max-width: 380px) {
+        .pay-page {
+          width: min(100% - 12px, 940px);
+        }
+        .pay-card {
+          padding: 11px;
+        }
+      
+        .pay-row {
+          grid-template-columns: 72px minmax(0, 1fr);
+        }
+      
+        .history-table td {
+          grid-template-columns: 72px minmax(0, 1fr);
+        }
+      
+        .pay-head p {
+          display: none;
+        }
       }
-
-      .settings-back-link {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      .settings-back-link .ui-icon {
-        width: 18px;
-        height: 18px;
-      }
-
-      .modal-close .ui-icon {
-        width: 18px;
-        height: 18px;
-      }
-
-      body.sc-theme-dark .modal-kicker { color: #94a3b8; }
-      body.sc-theme-dark .premium-theme-card {
-        background: #0f172a;
-        border-color: #334155;
-      }
-      body.sc-theme-dark .theme-card-footer strong { color: #f8fafc; }
-      body.sc-theme-dark .theme-card-footer small { color: #94a3b8; }
-      body.sc-theme-dark .locked-badge {
-        background: #1e293b;
-        border-color: #334155;
-        color: #cbd5e1;
-      }
-      body.sc-theme-dark .premium-note {
-        background: rgba(37,99,235,.12);
-        border-color: rgba(96,165,250,.25);
-        color: #bfdbfe;
-      }
-
-      body.sc-theme-glass .modal-kicker { color: rgba(219,234,254,.68); }
-      body.sc-theme-glass .premium-theme-card {
-        background: rgba(255,255,255,.07);
-        border-color: rgba(191,219,254,.18);
-        box-shadow: 0 14px 34px rgba(2,6,23,.18);
-      }
-      body.sc-theme-glass .theme-card-footer strong { color: #fff; }
-      body.sc-theme-glass .theme-card-footer small { color: rgba(219,234,254,.72); }
-      body.sc-theme-glass .locked-badge {
-        background: rgba(255,255,255,.08);
-        border-color: rgba(255,255,255,.14);
-        color: #dbeafe;
-      }
-      body.sc-theme-glass .future-badge {
-        background: rgba(129,140,248,.12);
-        border-color: rgba(165,180,252,.22);
-        color: #c7d2fe;
-      }
-      body.sc-theme-glass .premium-note {
-        background: rgba(59,130,246,.09);
-        border-color: rgba(147,197,253,.2);
-        color: #dbeafe;
-      }
-
-      @media (max-width: 650px) {
-        .premium-theme-grid { grid-template-columns: 1fr; }
-        .premium-modal-card { max-height: 94vh; }
-        .theme-preview { height: 118px; }
-        .theme-card-footer { min-height: auto; }
-      }
-
-    
-      /* TEMPORARY FULL-PAGE PREMIUM THEME TEST */
-      .try-theme-btn {
-        flex: 0 0 auto;
-        border: 1px solid #c7d2fe;
-        border-radius: 999px;
-        padding: 7px 10px;
-        background: #eef2ff;
-        color: #4338ca;
-        font: inherit;
-        font-size: 10px;
-        font-weight: 900;
-        cursor: pointer;
-      }
-      .theme-test-bar {
-        position: fixed;
-        left: 50%;
-        bottom: 18px;
-        transform: translateX(-50%);
-        z-index: 10050;
-        display: none;
-        align-items: center;
-        gap: 10px;
-        width: min(92vw, 560px);
-        padding: 11px 13px;
-        border-radius: 14px;
-        background: rgba(15,23,42,.92);
-        color: #fff;
-        box-shadow: 0 18px 45px rgba(2,6,23,.35);
-        backdrop-filter: blur(14px);
-      }
-      .theme-test-bar.active { display: flex; }
-      .theme-test-bar strong { flex: 1; font-size: 12px; }
-      .theme-test-bar button {
-        border: 0; border-radius: 9px; padding: 8px 11px;
-        background: #fff; color: #0f172a; font-weight: 900; cursor: pointer;
-      }
-
-      body.preview-aurora,
-      body.preview-midnight,
-      body.preview-royal,
-      body.preview-ocean {
-        min-height: 100vh;
-        background-attachment: fixed !important;
-      }
-      body.preview-aurora { background: radial-gradient(circle at 12% 12%, rgba(45,212,191,.28), transparent 28%), radial-gradient(circle at 88% 18%, rgba(139,92,246,.30), transparent 30%), linear-gradient(145deg,#061826,#102b4e 55%,#171a38) !important; }
-      body.preview-midnight { background: radial-gradient(circle at 85% 8%, rgba(37,99,235,.22), transparent 28%), linear-gradient(145deg,#020617,#0f172a 55%,#172554) !important; }
-      body.preview-royal { background: radial-gradient(circle at 12% 12%, rgba(168,85,247,.30), transparent 28%), radial-gradient(circle at 88% 20%, rgba(236,72,153,.20), transparent 30%), linear-gradient(145deg,#190c35,#35145f 55%,#111827) !important; }
-      body.preview-ocean { background: radial-gradient(circle at 15% 12%, rgba(34,211,238,.27), transparent 28%), linear-gradient(145deg,#032638,#075985 55%,#0f172a) !important; }
-
-      body.preview-aurora .settings-card, body.preview-aurora .modal-card,
-      body.preview-royal .settings-card, body.preview-royal .modal-card,
-      body.preview-ocean .settings-card, body.preview-ocean .modal-card {
-        background: rgba(255,255,255,.10) !important;
-        border: 1px solid rgba(255,255,255,.20) !important;
-        box-shadow: 0 24px 60px rgba(2,6,23,.28) !important;
-        backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-      }
-      body.preview-midnight .settings-card, body.preview-midnight .modal-card {
-        background: rgba(15,23,42,.88) !important;
-        border: 1px solid rgba(96,165,250,.18) !important;
-        box-shadow: 0 24px 60px rgba(0,0,0,.34) !important;
-      }
-      body.preview-aurora .settings-text h3, body.preview-aurora .modal-header h2, body.preview-aurora .modal-label,
-      body.preview-midnight .settings-text h3, body.preview-midnight .modal-header h2, body.preview-midnight .modal-label,
-      body.preview-royal .settings-text h3, body.preview-royal .modal-header h2, body.preview-royal .modal-label,
-      body.preview-ocean .settings-text h3, body.preview-ocean .modal-header h2, body.preview-ocean .modal-label { color:#fff !important; }
-      body.preview-aurora .settings-text p, body.preview-midnight .settings-text p,
-      body.preview-royal .settings-text p, body.preview-ocean .settings-text p { color:rgba(226,232,240,.82) !important; }
-      body.preview-aurora .settings-item, body.preview-midnight .settings-item,
-      body.preview-royal .settings-item, body.preview-ocean .settings-item { border-color:rgba(255,255,255,.13) !important; }
-      body.preview-aurora .settings-icon, body.preview-midnight .settings-icon,
-      body.preview-royal .settings-icon, body.preview-ocean .settings-icon {
-        background:rgba(255,255,255,.12) !important; color:#fff !important;
-      }
-      body.preview-aurora .modal-input, body.preview-aurora .modal-select, body.preview-aurora .modal-textarea,
-      body.preview-midnight .modal-input, body.preview-midnight .modal-select, body.preview-midnight .modal-textarea,
-      body.preview-royal .modal-input, body.preview-royal .modal-select, body.preview-royal .modal-textarea,
-      body.preview-ocean .modal-input, body.preview-ocean .modal-select, body.preview-ocean .modal-textarea {
-        background:rgba(255,255,255,.09) !important; border-color:rgba(255,255,255,.20) !important; color:#fff !important;
-      }
-
-
-      .premium-theme-grid { grid-template-columns:1fr !important; }
-      .premium-theme-card.royal-theme-preview { max-width:520px; margin:0 auto; width:100%; }
-      .royal-apply-btn { padding:8px 12px; border:0; border-radius:999px; color:#fff; background:linear-gradient(135deg,#7e22ce,#d946ef); font-weight:900; cursor:pointer; box-shadow:0 9px 22px rgba(126,34,206,.25); }
-      .royal-theme-actions { display:flex; flex-wrap:wrap; gap:9px; margin-top:12px; }
-      body.sc-theme-royal .premium-theme-card { background:rgba(255,255,255,.08)!important; border-color:rgba(233,213,255,.18)!important; }
-      body.sc-theme-royal .theme-card-footer strong { color:#fff!important; }
-      body.sc-theme-royal .theme-card-footer small { color:rgba(237,233,254,.72)!important; }
-
-
-      .appearance-modal-card{max-width:760px}
-      .appearance-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
-      .appearance-card{padding:0 0 13px;overflow:hidden;border:1px solid #e2e8f0;border-radius:15px;background:#fff;color:#0f172a;text-align:left;font-family:inherit;cursor:pointer;transition:.2s ease}
-      .appearance-card:hover{transform:translateY(-2px);box-shadow:0 15px 34px rgba(15,23,42,.12)}
-      .appearance-art{display:block;height:94px;margin-bottom:12px}
-      .appearance-card strong,.appearance-card small{display:block;padding:0 13px}
-      .appearance-card strong{font-size:14px}.appearance-card small{margin-top:4px;color:#64748b;font-size:11px}
-      .light-preview .appearance-art{background:linear-gradient(145deg,#fff,#eef2f7)}
-      .dark-preview .appearance-art{background:linear-gradient(145deg,#020617,#1e293b)}
-      .glass-preview .appearance-art{background:radial-gradient(circle at 15% 15%,#22d3ee,transparent 34%),linear-gradient(145deg,#06243d,#0b3b67)}
-      .royal-preview .appearance-art{background:radial-gradient(circle at 15% 15%,#a855f7,transparent 34%),radial-gradient(circle at 85% 80%,#d946ef,transparent 34%),linear-gradient(145deg,#1e103f,#111827)}
-      .royalblue-preview .appearance-art{background:radial-gradient(circle at 15% 15%,#3b82f6,transparent 34%),radial-gradient(circle at 85% 80%,#6366f1,transparent 34%),linear-gradient(145deg,#050b1d,#17134b)}
-      .emerald-preview .appearance-art{background:radial-gradient(circle at 15% 15%,#10b981,transparent 34%),radial-gradient(circle at 85% 80%,#06b6d4,transparent 34%),linear-gradient(145deg,#031713,#082b38)}
-      .rose-preview .appearance-art{background:radial-gradient(circle at 15% 15%,#e11d48,transparent 34%),radial-gradient(circle at 85% 80%,#a855f7,transparent 34%),linear-gradient(145deg,#1c0710,#2d123f)}
-      .appearance-note{margin:15px 0 0;padding:12px 13px;border-radius:11px;background:#f8fafc;border:1px solid #e2e8f0;color:#64748b;font-size:11px;line-height:1.55}
-      body.sc-theme-dark .appearance-card,body.sc-theme-royal .appearance-card,body.sc-theme-royalblue .appearance-card,body.sc-theme-emerald .appearance-card,body.sc-theme-rose .appearance-card{background:rgba(15,23,42,.75);border-color:rgba(255,255,255,.14);color:#fff}
-      body.sc-theme-dark .appearance-card small,body.sc-theme-royal .appearance-card small,body.sc-theme-royalblue .appearance-card small,body.sc-theme-emerald .appearance-card small,body.sc-theme-rose .appearance-card small{color:#cbd5e1}
-      @media(max-width:600px){.appearance-grid{grid-template-columns:1fr}}
-
-
-      .crimson-preview .appearance-art{background:radial-gradient(circle at 15% 15%,#ef4444,transparent 34%),radial-gradient(circle at 85% 80%,#be185d,transparent 34%),linear-gradient(145deg,#1b0609,#2b0b22)}
-      .teal-preview .appearance-art{background:radial-gradient(circle at 15% 15%,#14b8a6,transparent 34%),radial-gradient(circle at 85% 80%,#0e7490,transparent 34%),linear-gradient(145deg,#031817,#082f49)}
-      .amber-preview .appearance-art{background:radial-gradient(circle at 15% 15%,#f59e0b,transparent 34%),radial-gradient(circle at 85% 80%,#ea580c,transparent 34%),linear-gradient(145deg,#1c1003,#3b1608)}
-      .indigo-preview .appearance-art{background:radial-gradient(circle at 15% 15%,#6366f1,transparent 34%),radial-gradient(circle at 85% 80%,#8b5cf6,transparent 34%),linear-gradient(145deg,#080a24,#2e1065)}
-
-</style>
+    </style>
   </head>
 
   <body>
-    <!--    =========================================
-         NAVBAR
-    =========================================    -->
-
     {% include 'complaints/User_Folder/navbar.html' %}
 
-    <!--    =========================================
-         SETTINGS PAGE
-    =========================================    -->
-
-    {% if messages %}
-      <div class="settings-wrapper" style="padding-bottom:0; margin-bottom:0;">
-        {% for message in messages %}
-          <div style="margin-bottom:10px; padding:12px 14px; border-radius:10px; background:rgba(15,23,42,.88); color:#fff; font-size:14px;">{{ message }}</div>
-        {% endfor %}
-      </div>
-    {% endif %}
-
-    <div class="settings-wrapper">
-      <!-- HEADER -->
-
-      <div class="settings-header">
-        <h1>
-          <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="12" cy="12" r="3"></circle>
-
-            <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21h-4v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H3v-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6V3h4v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.1v4H21a1.7 1.7 0 0 0-1.6 1z"></path>
-          </svg>User Settings
-        </h1>
-
-        <p>Manage your account, security and support options.</p>
-      </div>
-
-      <!--    =========================================
-             SETTINGS CARD
-        =========================================    -->
-
-      <div class="settings-card">
-        <!--    =====================================
-                 ACCOUNT
-            ======================================    -->
-
-        <div class="section-label">Account</div>
-
-        <!-- PROFILE -->
-
-        <div class="settings-item">
-          <div class="settings-left">
-            <div class="settings-icon">
-              <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
-                <circle cx="12" cy="8" r="4"></circle>
-
-                <path d="M4.5 21a7.5 7.5 0 0 1 15 0"></path>
-              </svg>
-            </div>
-
-            <div class="settings-text">
-              <h3>Profile</h3>
-
-              <p>View or update your personal profile.</p>
-            </div>
+    <main class="pay-page">
+      <header class="pay-head">
+        <div class="pay-head-row">
+          <div class="pay-head-icon">
+            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+              <path d="M3 10h18"></path>
+              <path d="M7 15h4"></path>
+            </svg>
           </div>
 
-          <a href="{% url 'profile' %}" class="settings-action">Open Profile</a>
-        </div>
-
-        <!-- CHANGE PASSWORD -->
-
-        <div class="settings-item">
-          <div class="settings-left">
-            <div class="settings-icon">
-              <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
-                <circle cx="8" cy="15" r="4"></circle>
-
-                <path d="m11 12 9-9"></path>
-
-                <path d="m17 3 4 4"></path>
-              </svg>
-            </div>
-
-            <div class="settings-text">
-              <h3>Change Password</h3>
-
-              <p>Update your account password securely.</p>
-            </div>
-          </div>
-
-          <button type="button" class="settings-action" onclick="openModal('passwordModal')">Change</button>
-        </div>
-
-        <!-- ADDRESS -->
-
-        <div class="settings-item">
-          <div class="settings-left">
-            <div class="settings-icon">
-              <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M12 21s7-5.1 7-12a7 7 0 1 0-14 0c0 6.9 7 12 7 12z"></path>
-
-                <circle cx="12" cy="9" r="2.5"></circle>
-              </svg>
-            </div>
-
-            <div class="settings-text">
-              <h3>Address / Location</h3>
-
-              <p>Manage your saved address and location.</p>
-            </div>
-          </div>
-
-          <button type="button" class="settings-action" onclick="openModal('addressModal')">Manage</button>
-        </div>
-
-        <!-- =====================================
-             APPEARANCE
-        ====================================== -->
-        <div class="section-label">Theme</div>
-
-        <div class="settings-item appearance-settings-item">
-          <div class="settings-left">
-            <div class="settings-icon">
-              <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M12 3a9 9 0 1 0 0 18h1.2a1.8 1.8 0 0 0 0-3.6h-1a2 2 0 0 1 0-4H15a6 6 0 0 0 0-12Z"></path>
-                <circle cx="7.5" cy="10" r=".8"></circle><circle cx="9.5" cy="6.8" r=".8"></circle><circle cx="14" cy="6.5" r=".8"></circle>
-              </svg>
-            </div>
-            <div class="settings-text">
-              <h3>Theme</h3>
-              <p>Choose White, Dark or a professional Glass color theme.</p>
-            </div>
-          </div>
-          <button type="button" class="settings-action" onclick="openModal('appearanceModal')">Choose Theme</button>
-        </div>
-
-        <!--    =====================================
-                 SUPPORT & INFORMATION
-            ======================================    -->
-
-        <div class="section-label">Support & Information</div>
-
-        <!-- TERMS -->
-
-        <div class="settings-item">
-          <div class="settings-left">
-            <div class="settings-icon">
-              <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M6 2h8l4 4v16H6z"></path>
-
-                <path d="M14 2v5h5"></path>
-
-                <path d="M9 12h6"></path>
-
-                <path d="M9 16h6"></path>
-              </svg>
-            </div>
-
-            <div class="settings-text">
-              <h3>User Terms & Conditions</h3>
-
-              <p>Read the rules and conditions for using Smart Complaint.</p>
-            </div>
-          </div>
-
-          <button type="button" class="settings-action" onclick="openModal('termsModal')">View</button>
-        </div>
-
-        <!-- HELP -->
-
-        <div class="settings-item">
-          <div class="settings-left">
-            <div class="settings-icon">
-              <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
-                <circle cx="12" cy="12" r="9"></circle>
-
-                <path d="M9.8 9a2.4 2.4 0 1 1 3.9 1.9c-.9.7-1.7 1.1-1.7 2.6"></path>
-
-                <path d="M12 17h.01"></path>
-              </svg>
-            </div>
-
-            <div class="settings-text">
-              <h3>Help & Support</h3>
-
-              <p>Get help with complaints, account issues or app problems.</p>
-            </div>
-          </div>
-
-          <button type="button" class="settings-action" onclick="openModal('supportModal')">Get Help</button>
-        </div>
-
-        <!-- ABOUT -->
-
-        <div class="settings-item">
-          <div class="settings-left">
-            <div class="settings-icon">
-              <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
-                <circle cx="12" cy="12" r="9"></circle>
-
-                <path d="M12 11v6"></path>
-
-                <path d="M12 7h.01"></path>
-              </svg>
-            </div>
-
-            <div class="settings-text">
-              <h3>About Smart Complaint</h3>
-
-              <p>Learn more about Smart Complaint and this application.</p>
-            </div>
-          </div>
-
-          <button type="button" class="settings-action" onclick="openModal('aboutModal')">About</button>
-        </div>
-
-        <!--    =====================================
-                 ACCOUNT MANAGEMENT
-            ======================================    -->
-
-        <div class="section-label">Account Management</div>
-
-        <!-- DELETE ACCOUNT -->
-
-        <div class="settings-item delete-item">
-          <div class="settings-left">
-            <div class="settings-icon">
-              <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M3 6h18"></path>
-
-                <path d="M8 6V4h8v2"></path>
-
-                <path d="M19 6l-1 15H6L5 6"></path>
-
-                <path d="M10 11v6"></path>
-
-                <path d="M14 11v6"></path>
-              </svg>
-            </div>
-
-            <div class="settings-text">
-              <h3>Delete Account</h3>
-
-              <p>Permanently delete your Smart Complaint account.</p>
-            </div>
-          </div>
-
-          <button type="button" class="settings-action danger-action" onclick="openModal('deleteModal')">Delete</button>
-        </div>
-      </div>
-
-      <!-- BACK -->
-
-      <div class="back-box">
-        <a href="{% url 'home' %}" class="btn btn-light settings-back-link"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"></path><path d="M9 12h11"></path></svg><span>Back to Home</span></a>
-      </div>
-    </div>
-
-    <!--    =====================================================
-         CHANGE PASSWORD MODAL
-    ======================================================    -->
-
-    <div class="settings-modal" id="passwordModal">
-      <div class="modal-card">
-        <form method="post" action="{% url 'user_change_password' %}">
-          {% csrf_token %}
-        <div class="modal-header">
-          <div class="modal-title-box">
-            <div class="modal-title-icon">
-              <svg class="ui-icon" viewBox="0 0 24 24">
-                <circle cx="8" cy="15" r="4"></circle>
-
-                <path d="m11 12 9-9"></path>
-
-                <path d="m17 3 4 4"></path>
-              </svg>
-            </div>
-
-            <h2>Change Password</h2>
-          </div>
-
-          <button type="button" class="modal-close" onclick="closeModal('passwordModal')" aria-label="Close"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
-        </div>
-
-        <div class="modal-body">
-          <p class="modal-description">Create a strong password to keep your account secure.</p>
-
-          <div class="form-group">
-            <label class="form-label">Current Password</label>
-
-            <input type="password" class="form-control" name="current_password" placeholder="Enter current password" autocomplete="current-password" required />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">New Password</label>
-
-            <input type="password" class="form-control" name="new_password" placeholder="Enter new password" autocomplete="new-password" minlength="6" required />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Confirm New Password</label>
-
-            <input type="password" class="form-control" name="confirm_password" placeholder="Confirm new password" autocomplete="new-password" minlength="6" required />
-          </div>
-        </div>
-
-        <div class="modal-footer">
-          <button type="button" class="modal-btn modal-btn-secondary" onclick="closeModal('passwordModal')">Cancel</button>
-
-          <button type="submit" class="modal-btn modal-btn-primary">Update Password</button>
-        </div>
-        </form>
-      </div>
-    </div>
-
-    <!--    =====================================================
-         ADDRESS MODAL
-    ======================================================    -->
-
-    <div class="settings-modal" id="addressModal">
-      <div class="modal-card">
-        <form method="post" action="{% url 'user_update_address' %}">
-          {% csrf_token %}
-        <div class="modal-header">
-          <div class="modal-title-box">
-            <div class="modal-title-icon">
-              <svg class="ui-icon" viewBox="0 0 24 24">
-                <path d="M12 21s7-5.1 7-12a7 7 0 1 0-14 0c0 6.9 7 12 7 12z"></path>
-
-                <circle cx="12" cy="9" r="2.5"></circle>
-              </svg>
-            </div>
-
-            <h2>Address / Location</h2>
-          </div>
-
-          <button type="button" class="modal-close" onclick="closeModal('addressModal')" aria-label="Close"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
-        </div>
-
-        <div class="modal-body">
-          <p class="modal-description">Add your preferred address. Later we can connect this with map and location services.</p>
-
-          <div class="form-group">
-            <label class="form-label">Full Address</label>
-
-            <textarea class="form-control" name="address" maxlength="500" placeholder="House number, street, area..." required>{{ user_profile.address }}</textarea>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">City</label>
-
-              <input type="text" class="form-control" name="city" maxlength="100" value="{{ user_profile.city }}" placeholder="Enter city" required />
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">State</label>
-
-              <input type="text" class="form-control" name="state" maxlength="100" value="{{ user_profile.state }}" placeholder="Enter state" required />
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">PIN Code</label>
-
-            <input type="text" class="form-control" name="pincode" maxlength="6" inputmode="numeric" pattern="[0-9]{6}" value="{{ user_profile.pincode }}" placeholder="Enter PIN code" required />
-          </div>
-        </div>
-
-        <div class="modal-footer">
-          <button type="button" class="modal-btn modal-btn-secondary" onclick="closeModal('addressModal')">Cancel</button>
-
-          <button type="submit" class="modal-btn modal-btn-primary">Save Address</button>
-        </div>
-        </form>
-      </div>
-    </div>
-
-    <!-- =====================================================
-         APPEARANCE MODAL
-    ====================================================== -->
-    <div class="settings-modal" id="appearanceModal">
-      <div class="modal-card appearance-modal-card">
-        <div class="modal-header">
           <div>
-            <h2>Theme</h2>
-            <div class="modal-kicker">Choose your app theme</div>
+            <h1>Payment Details</h1>
+            <p>View your Citizen Premium access and your Smart Complaint payment history.</p>
           </div>
-          <button type="button" class="modal-close" onclick="closeModal('appearanceModal')" aria-label="Close">
-            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
-          </button>
         </div>
-        <div class="modal-body">
-          <div class="appearance-grid">
-            <button type="button" class="appearance-card light-preview" data-user-theme="light"><span class="appearance-art"></span><strong>White</strong><small>Clean & simple</small></button>
-            <button type="button" class="appearance-card dark-preview" data-user-theme="dark"><span class="appearance-art"></span><strong>Dark</strong><small>Comfortable dark mode</small></button>
-            <button type="button" class="appearance-card glass-preview" data-user-theme="glass"><span class="appearance-art"></span><strong>Ocean Glass</strong><small>Classic blue glass</small></button>
-            <button type="button" class="appearance-card royal-preview" data-user-theme="royal"><span class="appearance-art"></span><strong>Royal Purple Glass</strong><small>Luxury violet glass</small></button>
-            <button type="button" class="appearance-card royalblue-preview" data-user-theme="royalblue"><span class="appearance-art"></span><strong>Royal Blue Glass</strong><small>Professional sapphire glass</small></button>
-            <button type="button" class="appearance-card emerald-preview" data-user-theme="emerald"><span class="appearance-art"></span><strong>Emerald Glass</strong><small>Premium green glass</small></button>
-            <button type="button" class="appearance-card rose-preview" data-user-theme="rose"><span class="appearance-art"></span><strong>Rose Royal Glass</strong><small>Elegant rose & violet</small></button>
-            <button type="button" class="appearance-card crimson-preview" data-user-theme="crimson"><span class="appearance-art"></span><strong>Crimson Glass</strong><small>Bold premium red</small></button>
-            <button type="button" class="appearance-card teal-preview" data-user-theme="teal"><span class="appearance-art"></span><strong>Teal Glass</strong><small>Modern teal & cyan</small></button>
-            <button type="button" class="appearance-card amber-preview" data-user-theme="amber"><span class="appearance-art"></span><strong>Amber Glass</strong><small>Warm luxury amber</small></button>
-            <button type="button" class="appearance-card indigo-preview" data-user-theme="indigo"><span class="appearance-art"></span><strong>Indigo Glass</strong><small>Deep indigo & violet</small></button>
-          </div>
-          <p class="appearance-note">All 11 themes are available for testing now. Premium locking can be added later after you choose the final collection.</p>
-        </div>
-      </div>
-    </div>
+      </header>
 
-    <!--    =====================================================
-         TERMS MODAL
-    ======================================================    -->
+      <section class="pay-grid">
+        <article class="pay-card">
+          <h2 class="pay-card-title">
+            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="8" r="4"></circle>
+              <path d="M4 21a8 8 0 0 1 16 0"></path>
+            </svg>Account
+          </h2>
 
-    <div class="settings-modal" id="termsModal">
-      <div class="modal-card">
-        <div class="modal-header">
-          <div class="modal-title-box">
-            <div class="modal-title-icon">
-              <svg class="ui-icon" viewBox="0 0 24 24">
-                <path d="M6 2h8l4 4v16H6z"></path>
-
-                <path d="M14 2v5h5"></path>
-
-                <path d="M9 12h6"></path>
-
-                <path d="M9 16h6"></path>
-              </svg>
+          <div class="pay-summary">
+            <div class="pay-row">
+              <span class="pay-label">Username</span>
+              <span class="pay-value">{{ request.user.username }}</span>
             </div>
 
-            <h2>User Terms & Conditions</h2>
-          </div>
-
-          <button type="button" class="modal-close" onclick="closeModal('termsModal')" aria-label="Close"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
-        </div>
-
-        <div class="modal-body">
-          <div class="terms-box">
-            <h3>1. Account Responsibility</h3>
-
-            <p>Users are responsible for providing correct account information and keeping their login details secure.</p>
-
-            <h3>2. Complaint Information</h3>
-
-            <p>Users should provide accurate complaint details, location information and supporting photos when required.</p>
-
-            <h3>3. Proper Use</h3>
-
-            <p>Smart Complaint should not be used for false, misleading, abusive or unlawful complaints.</p>
-
-            <h3>4. Service Updates</h3>
-
-            <p>Features, policies and services may be updated as the Smart Complaint platform develops.</p>
-
-            <h3>5. Final Terms</h3>
-
-            <p>These terms explain the current rules for using Smart Complaint. A public legal Terms page can be published before production release.</p>
-          </div>
-        </div>
-
-        <div class="modal-footer">
-          <button type="button" class="modal-btn modal-btn-primary" onclick="closeModal('termsModal')">Close</button>
-        </div>
-      </div>
-    </div>
-
-    <!--    =====================================================
-         HELP & SUPPORT MODAL
-    ======================================================    -->
-
-    <div class="settings-modal" id="supportModal">
-      <div class="modal-card">
-        <form method="post" action="{% url 'user_support_request' %}">
-          {% csrf_token %}
-        <div class="modal-header">
-          <div class="modal-title-box">
-            <div class="modal-title-icon">
-              <svg class="ui-icon" viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="9"></circle>
-
-                <path d="M9.8 9a2.4 2.4 0 1 1 3.9 1.9c-.9.7-1.7 1.1-1.7 2.6"></path>
-
-                <path d="M12 17h.01"></path>
-              </svg>
+            <div class="pay-row">
+              <span class="pay-label">Email</span>
+              <span class="pay-value">{{ request.user.email|default:'Not added' }}</span>
             </div>
-
-            <h2>Help & Support</h2>
           </div>
+        </article>
 
-          <button type="button" class="modal-close" onclick="closeModal('supportModal')" aria-label="Close"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
-        </div>
+        <article class="pay-card">
+          <h2 class="pay-card-title">
+            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 3 20 6v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6Z"></path>
+              <path d="m8.5 12 2.2 2.2L15.8 9"></path>
+            </svg>Citizen Premium
+          </h2>
 
-        <div class="modal-body">
-          <p class="modal-description">Tell us what type of problem you are facing.</p>
+          {% with membership=request.user.citizen_premium_membership %}
+            <div class="pay-summary">
+              <div class="pay-row">
+                <span class="pay-label">Status</span>
 
-          <div class="form-group">
-            <label class="form-label">Issue Type</label>
-
-            <select class="form-control" name="issue_type" required>
-              <option value="">Select an issue</option>
-
-              <option>Complaint Issue</option>
-
-              <option>Worker Issue</option>
-
-              <option>Payment Issue</option>
-
-              <option>Account Issue</option>
-
-              <option>Technical Problem</option>
-
-              <option>Other</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Subject</label>
-
-            <input type="text" class="form-control" name="subject" maxlength="150" placeholder="Enter subject" required />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Message</label>
-
-            <textarea class="form-control" name="message" maxlength="2000" placeholder="Explain your problem..." required></textarea>
-          </div>
-        </div>
-
-        <div class="modal-footer">
-          <button type="button" class="modal-btn modal-btn-secondary" onclick="closeModal('supportModal')">Cancel</button>
-
-          <button type="submit" class="modal-btn modal-btn-primary">Send Request</button>
-        </div>
-        </form>
-      </div>
-    </div>
-
-    <!--    =====================================================
-         ABOUT MODAL
-    ======================================================    -->
-
-    <div class="settings-modal" id="aboutModal">
-      <div class="modal-card">
-        <div class="modal-header">
-          <div class="modal-title-box">
-            <div class="modal-title-icon">
-              <svg class="ui-icon" viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="9"></circle>
-
-                <path d="M12 11v6"></path>
-
-                <path d="M12 7h.01"></path>
-              </svg>
-            </div>
-
-            <h2>About</h2>
-          </div>
-
-          <button type="button" class="modal-close" onclick="closeModal('aboutModal')" aria-label="Close"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
-        </div>
-
-        <div class="modal-body">
-          <div class="about-content">
-            <div class="about-logo">
-              <svg class="ui-icon" viewBox="0 0 24 24">
-                <path d="M4 20V10l8-6 8 6v10"></path>
-
-                <path d="M9 20v-6h6v6"></path>
-              </svg>
-            </div>
-
-            <h3>Smart Complaint</h3>
-
-            <p>Smart Complaint is designed to help users submit, track and manage service complaints efficiently.</p>
-
-            <p>The platform helps connect users with suitable workers and provides complaint tracking, communication and service-management features.</p>
-
-            <span class="app-version">Version 1.0</span>
-          </div>
-        </div>
-
-        <div class="modal-footer">
-          <button type="button" class="modal-btn modal-btn-primary" onclick="closeModal('aboutModal')">Close</button>
-        </div>
-      </div>
-    </div>
-
-    <!--    =====================================================
-         DELETE ACCOUNT MODAL
-    ======================================================    -->
-
-    <div class="settings-modal" id="deleteModal">
-      <div class="modal-card">
-        <form method="post" action="{% url 'user_delete_account' %}" id="userDeleteAccountForm">
-          {% csrf_token %}
-
-          <div class="modal-header">
-            <div class="modal-title-box">
-              <div class="modal-title-icon" style="background: #fef2f2; color: #dc2626;">
-                <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M3 6h18"></path>
-                  <path d="M8 6V4h8v2"></path>
-                  <path d="M19 6l-1 15H6L5 6"></path>
-                  <path d="M10 11v6"></path>
-                  <path d="M14 11v6"></path>
-                </svg>
+                {% if membership and membership.is_active %}
+                  <span class="status-pill status-active">Active</span>
+                {% elif membership %}
+                  <span class="status-pill status-{{ membership.status }}">{{ membership.get_status_display }}</span>
+                {% else %}
+                  <span class="status-pill status-inactive">Inactive</span>
+                {% endif %}
               </div>
 
-              <h2>Delete Account</h2>
+              <div class="pay-row">
+                <span class="pay-label">Plan price</span>
+                <span class="pay-value">
+                  {% if membership %}
+                    ₹{{ membership.price|floatformat:0 }} / 30 days
+                  {% else %}
+                    ₹79 / 30 days
+                  {% endif %}
+                </span>
+              </div>
+
+              {% if membership and membership.is_active %}
+                <div class="pay-row">
+                  <span class="pay-label">Access until</span>
+                  <span class="pay-value">{{ membership.current_period_end|date:'d M Y, h:i A' }}</span>
+                </div>
+
+                <div class="pay-row">
+                  <span class="pay-label">Days remaining</span>
+                  <span class="pay-value">{{ membership.days_remaining }}</span>
+                </div>
+              {% endif %}
             </div>
+          {% endwith %}
 
-            <button type="button" class="modal-close" onclick="closeModal('deleteModal')" aria-label="Close"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
-          </div>
-
-          <div class="modal-body">
-            <div class="warning-box">
+          <div class="pay-actions">
+            <a class="pay-btn primary" href="{% url 'citizen_premium' %}">
               <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M12 3 2 21h20L12 3z"></path>
-                <path d="M12 9v5"></path>
-                <path d="M12 18h.01"></path>
-              </svg>
+                <path d="M5 16 3 7l5 3 4-6 4 6 5-3-2 9H5Z"></path>
+                <path d="M5 19h14"></path>
+              </svg>Manage Citizen Premium
+            </a>
+          </div>
+        </article>
 
-              <div>
-                This action is permanent. Your account, complaints, related chat history,
-                ratings, notifications and account data will be deleted.
-              </div>
-            </div>
+        <article class="pay-card full">
+          <h2 class="pay-card-title">
+            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 4h16v16H4z"></path>
+              <path d="M8 9h8M8 13h5M8 17h7"></path>
+            </svg>Payment History
+          </h2>
 
-            <div class="form-group">
-              <label class="form-label" for="userDeletePassword">Current Password</label>
-              <input
-                type="password"
-                class="form-control"
-                id="userDeletePassword"
-                name="password"
-                placeholder="Enter your current password"
-                autocomplete="current-password"
-                required
-              />
-            </div>
+          <div class="history-wrap">
+            <table class="history-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Payment For</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Paid At</th>
+                </tr>
+              </thead>
 
-            <div class="form-group">
-              <label class="form-label" for="deleteConfirmText">Type DELETE to confirm</label>
-              <input
-                type="text"
-                class="form-control"
-                id="deleteConfirmText"
-                name="confirmation"
-                placeholder="Type DELETE"
-                autocomplete="off"
-                required
-              />
-            </div>
+              <tbody>
+                {% for payment in request.user.payment_transactions.all %}
+                  <tr>
+                    <td>{{ payment.created_at|date:'d M Y, h:i A' }}</td>
+
+                    <td>
+                      <strong>{{ payment.get_payment_for_display }}</strong>
+                      {% if payment.description %}
+                        <br />
+                        {{ payment.description }}
+                      {% endif %}
+                    </td>
+
+                    <td>
+                      <strong>{{ payment.currency }} {{ payment.amount|floatformat:2 }}</strong>
+                    </td>
+
+                    <td>
+                      <span class="status-pill status-{{ payment.status }}">{{ payment.get_status_display }}</span>
+                    </td>
+
+                    <td>
+                      {% if payment.paid_at %}
+                        {{ payment.paid_at|date:'d M Y, h:i A' }}
+                      {% else %}
+                        —
+                      {% endif %}
+                    </td>
+                  </tr>
+                {% empty %}
+                  <tr>
+                    <td colspan="5">
+                      <div class="empty-state">No payment transaction is available for this account yet.</div>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
           </div>
 
-          <div class="modal-footer">
-            <button type="button" class="modal-btn modal-btn-secondary" onclick="closeModal('deleteModal')">Cancel</button>
-            <button type="submit" class="modal-btn modal-btn-danger">Delete Account Permanently</button>
+          <div class="security-note">
+            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 3 20 6v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6Z"></path>
+              <path d="M9 12h6"></path>
+            </svg>
+
+            <span>Smart Complaint does not show card numbers, CVV, OTPs or banking credentials on this page. Payment history shows only app-side transaction information.</span>
           </div>
-        </form>
-      </div>
-    </div>
+        </article>
+      </section>
+    </main>
 
-    <!--    =========================================
-         UI MESSAGE
-    =========================================    -->
-
-
-    <!--    =========================================
-         JAVASCRIPT
-    =========================================    -->
+    <a class="page-back" href="{% url 'home' %}" aria-label="Back to home">
+      <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="m15 18-6-6 6-6"></path>
+        <path d="M9 12h11"></path>
+      </svg>
+    </a>
 
     <script>
-      function openModal(modalId) {
-        const modal = document.getElementById(modalId)
+      ;(function () {
+        'use strict'
       
-        if (!modal) {
-          return
+        /*
+         * This page does not decide premium entitlement.
+         * User Settings / server-backed membership sync controls access.
+         * Here we only reapply the already-authorized saved theme.
+         */
+        if (window.SmartComplaintTheme && typeof window.SmartComplaintTheme.applySavedTheme === 'function') {
+          window.SmartComplaintTheme.applySavedTheme()
         }
-      
-        modal.classList.add('show')
-      
-        document.body.style.overflow = 'hidden'
-      }
-      
-      function closeModal(modalId) {
-        const modal = document.getElementById(modalId)
-      
-        if (!modal) {
-          return
-        }
-      
-        modal.classList.remove('show')
-      
-        document.body.style.overflow = ''
-      }
-      
-      function showUiMessage(message) {
-        const messageBox = document.getElementById('uiMessage')
-      
-        messageBox.textContent = message
-      
-        messageBox.classList.add('show')
-      
-        setTimeout(function () {
-          messageBox.classList.remove('show')
-        }, 2500)
-      }
-      
-      function uiOnlyAction(modalId) {
-        closeModal(modalId)
-
-        showUiMessage('This option is not connected to the backend yet.')
-      }
-      
-      document.querySelectorAll('.settings-modal').forEach(function (modal) {
-        modal.addEventListener('click', function (event) {
-          if (event.target === modal) {
-            closeModal(modal.id)
-          }
-        })
-      })
-      
-      document.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape') {
-          document.querySelectorAll('.settings-modal.show').forEach(function (modal) {
-            closeModal(modal.id)
-          })
-        }
-      })
+      })()
     </script>
-
-
-
-
-
-
-<script>
-(function(){
-  document.querySelectorAll('[data-user-theme]').forEach(function(btn){
-    btn.addEventListener('click',function(){
-      const theme=btn.dataset.userTheme;
-      if(window.SmartComplaintTheme) window.SmartComplaintTheme.setUserTheme(theme);
-      closeModal('appearanceModal');
-    });
-  });
-})();
-</script>
-
-</body>
+  </body>
 </html>

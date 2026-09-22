@@ -7,8 +7,8 @@
   }
   
   /* =====================================================
-         ICON
-      ===================================================== */
+             ICON
+          ===================================================== */
   
   .sc-svg-icon {
     width: 22px;
@@ -22,8 +22,8 @@
   }
   
   /* =====================================================
-         MENU BUTTON
-      ===================================================== */
+             MENU BUTTON
+          ===================================================== */
   
   .sc-menu-button {
     position: fixed;
@@ -62,8 +62,8 @@
   }
   
   /* =====================================================
-         OVERLAY
-      ===================================================== */
+             OVERLAY
+          ===================================================== */
   
   .sc-sidebar-overlay {
     position: fixed;
@@ -85,8 +85,8 @@
   }
   
   /* =====================================================
-         SIDEBAR
-      ===================================================== */
+             SIDEBAR
+          ===================================================== */
   
   .sc-sidebar {
     position: fixed;
@@ -120,8 +120,8 @@
   }
   
   /* =====================================================
-         HEADER
-      ===================================================== */
+             HEADER
+          ===================================================== */
   
   .sc-sidebar-header {
     padding: 20px 16px;
@@ -178,8 +178,8 @@
   }
   
   /* =====================================================
-         USER
-      ===================================================== */
+             USER
+          ===================================================== */
   
   .sc-user-box {
     margin: 14px 12px 8px;
@@ -227,8 +227,8 @@
   }
   
   /* =====================================================
-         MENU
-      ===================================================== */
+             MENU
+          ===================================================== */
   
   .sc-menu {
     flex: 1;
@@ -321,8 +321,8 @@
   }
   
   /* =====================================================
-         APPEARANCE PANEL
-      ===================================================== */
+             APPEARANCE PANEL
+          ===================================================== */
   
   .sc-appearance-panel {
     margin-top: 4px;
@@ -453,8 +453,8 @@
   }
   
   /* =====================================================
-         LIGHT THEME
-      ===================================================== */
+             LIGHT THEME
+          ===================================================== */
   
   body.sc-theme-light .sc-sidebar {
     background: #ffffff;
@@ -466,8 +466,8 @@
   }
   
   /* =====================================================
-         DARK THEME
-      ===================================================== */
+             DARK THEME
+          ===================================================== */
   
   body.sc-theme-dark {
     background: #0f172a !important;
@@ -549,8 +549,8 @@
   }
   
   /* =====================================================
-         GLASS THEME
-      ===================================================== */
+             GLASS THEME
+          ===================================================== */
   
   body.sc-theme-glass {
     background: radial-gradient(circle at 15% 15%, rgba(var(--sc-glass-rgb), 0.45), transparent 35%), radial-gradient(circle at 85% 85%, rgba(var(--sc-glass-rgb-2), 0.35), transparent 40%), linear-gradient(135deg, #0f172a, #1e293b, #172554) !important;
@@ -666,8 +666,8 @@
   }
   
   /* =====================================================
-         MOBILE
-      ===================================================== */
+             MOBILE
+          ===================================================== */
   
   @media (max-width: 700px) {
     .sc-menu-button {
@@ -684,7 +684,7 @@
   }
 </style>
 
-<button type="button" class="sc-menu-button" id="scMenuButton" aria-label="Open menu">
+<button type="button" class="sc-menu-button" id="scMenuButton" aria-label="Open menu" aria-controls="scSidebar" aria-expanded="false">
   <svg class="sc-svg-icon" viewBox="0 0 24 24" aria-hidden="true">
     <path d="M4 7h16"></path>
     <path d="M4 12h16"></path>
@@ -758,7 +758,13 @@
     </a>
 
     <a href="{% url 'user_payment_details' %}" class="sc-menu-link">
-      <span class="sc-menu-icon">💳</span>
+      <span class="sc-menu-icon">
+        <svg class="sc-svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+          <path d="M3 10h18"></path>
+          <path d="M7 15h4"></path>
+        </svg>
+      </span>
 
       <span>Payment Details</span>
     </a>
@@ -777,7 +783,14 @@
     <!-- APPEARANCE -->
 
     <button type="button" class="sc-appearance-button" id="scAppearanceButton">
-      <span class="sc-menu-icon">🎨</span>
+      <span class="sc-menu-icon">
+        <svg class="sc-svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 3a9 9 0 1 0 0 18h1.5a2 2 0 0 0 0-4H12a1.5 1.5 0 0 1 0-3h2a7 7 0 0 0-2-11z"></path>
+          <circle cx="7.5" cy="10" r="1"></circle>
+          <circle cx="10" cy="7" r="1"></circle>
+          <circle cx="15" cy="8" r="1"></circle>
+        </svg>
+      </span>
 
       <span>Appearance</span>
     </button>
@@ -826,22 +839,16 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function () {
+    'use strict'
+  
     const sidebar = document.getElementById('scSidebar')
-  
     const overlay = document.getElementById('scSidebarOverlay')
-  
     const menuButton = document.getElementById('scMenuButton')
-  
     const closeButton = document.getElementById('scCloseButton')
-  
     const appearanceButton = document.getElementById('scAppearanceButton')
-  
     const appearancePanel = document.getElementById('scAppearancePanel')
-  
     const glassColors = document.getElementById('scGlassColors')
-  
     const themeButtons = document.querySelectorAll('.sc-theme-option')
-  
     const colorButtons = document.querySelectorAll('.sc-color-option')
   
     const glassColorMap = {
@@ -849,22 +856,18 @@
         primary: '37, 99, 235',
         secondary: '59, 130, 246'
       },
-  
       indigo: {
         primary: '79, 70, 229',
         secondary: '99, 102, 241'
       },
-  
       teal: {
         primary: '15, 118, 110',
         secondary: '20, 184, 166'
       },
-  
       purple: {
         primary: '124, 58, 237',
         secondary: '147, 51, 234'
       },
-  
       slate: {
         primary: '71, 85, 105',
         secondary: '100, 116, 139'
@@ -872,27 +875,48 @@
     }
   
     function openSidebar() {
+      if (!sidebar || !overlay) return
+  
       sidebar.classList.add('open')
-  
       overlay.classList.add('active')
-  
       document.body.style.overflow = 'hidden'
+  
+      if (menuButton) {
+        menuButton.setAttribute('aria-expanded', 'true')
+      }
     }
   
     function closeSidebar() {
+      if (!sidebar || !overlay) return
+  
       sidebar.classList.remove('open')
-  
       overlay.classList.remove('active')
-  
       document.body.style.overflow = ''
+  
+      if (menuButton) {
+        menuButton.setAttribute('aria-expanded', 'false')
+      }
+    }
+  
+    function markThemeControls(theme) {
+      themeButtons.forEach(function (button) {
+        button.classList.toggle('active', button.dataset.theme === theme)
+      })
+  
+      if (glassColors) {
+        glassColors.classList.toggle('show', theme === 'glass')
+      }
     }
   
     function setGlassColor(color) {
-      const selected = glassColorMap[color] || glassColorMap.blue
+      const selectedColor = glassColorMap[color] || glassColorMap.blue
   
-      document.documentElement.style.setProperty('--sc-glass-rgb', selected.primary)
+      document.documentElement.style.setProperty('--sc-glass-rgb', selectedColor.primary)
+      document.documentElement.style.setProperty('--sc-glass-rgb-2', selectedColor.secondary)
   
-      document.documentElement.style.setProperty('--sc-glass-rgb-2', selected.secondary)
+      if (window.SmartComplaintTheme && typeof window.SmartComplaintTheme.applyGlobalColor === 'function') {
+        window.SmartComplaintTheme.applyGlobalColor(color)
+      }
   
       colorButtons.forEach(function (button) {
         button.classList.toggle('active', button.dataset.color === color)
@@ -902,36 +926,59 @@
     }
   
     function setTheme(theme) {
-      document.body.classList.remove('sc-theme-light', 'sc-theme-dark', 'sc-theme-glass', 'dark-mode')
+      /*
+       * Important:
+       * The shared base_style theme manager knows all free + premium themes.
+       * Do not remove premium classes or rewrite a premium theme to "light"
+       * from the navbar.
+       */
+      if (window.SmartComplaintTheme && typeof window.SmartComplaintTheme.setUserTheme === 'function') {
+        const appliedTheme = window.SmartComplaintTheme.setUserTheme(theme)
   
-      if (theme === 'dark') {
-        document.body.classList.add('sc-theme-dark')
-      } else if (theme === 'glass') {
-        document.body.classList.add('sc-theme-glass')
-      } else {
-        document.body.classList.add('sc-theme-light')
-  
-        theme = 'light'
+        markThemeControls(appliedTheme)
+        return appliedTheme
       }
   
-      themeButtons.forEach(function (button) {
-        button.classList.toggle('active', button.dataset.theme === theme)
-      })
+      // Safe fallback for older pages only.
+      const fallbackTheme = ['light', 'dark', 'glass'].includes(theme) ? theme : 'light'
   
-      glassColors.classList.toggle('show', theme === 'glass')
+      document.body.classList.remove('sc-theme-light', 'sc-theme-dark', 'sc-theme-glass', 'dark-mode')
   
-      localStorage.setItem('smartComplaintThemeV2', theme)
+      document.body.classList.add('sc-theme-' + fallbackTheme)
+  
+      localStorage.setItem('smartComplaintThemeV2', fallbackTheme)
+  
+      markThemeControls(fallbackTheme)
+      return fallbackTheme
     }
   
-    menuButton.addEventListener('click', openSidebar)
+    if (menuButton) {
+      menuButton.addEventListener('click', function (event) {
+        event.preventDefault()
+        event.stopPropagation()
+        openSidebar()
+      })
+    }
   
-    closeButton.addEventListener('click', closeSidebar)
+    if (closeButton) {
+      closeButton.addEventListener('click', function (event) {
+        event.preventDefault()
+        event.stopPropagation()
+        closeSidebar()
+      })
+    }
   
-    overlay.addEventListener('click', closeSidebar)
+    if (overlay) {
+      overlay.addEventListener('click', closeSidebar)
+    }
   
-    appearanceButton.addEventListener('click', function () {
-      appearancePanel.classList.toggle('open')
-    })
+    if (appearanceButton && appearancePanel) {
+      appearanceButton.addEventListener('click', function (event) {
+        event.preventDefault()
+        event.stopPropagation()
+        appearancePanel.classList.toggle('open')
+      })
+    }
   
     themeButtons.forEach(function (button) {
       button.addEventListener('click', function () {
@@ -941,22 +988,38 @@
   
     colorButtons.forEach(function (button) {
       button.addEventListener('click', function () {
-        setGlassColor(this.dataset.color)
-  
+        const color = this.dataset.color
+        setGlassColor(color)
         setTheme('glass')
       })
     })
-  
-    const savedTheme = localStorage.getItem('smartComplaintThemeV2') || 'light'
   
     const savedColor = localStorage.getItem('smartComplaintGlassColor') || 'blue'
   
     setGlassColor(savedColor)
   
-    setTheme(savedTheme)
+    /*
+     * Do not call the old local navbar theme implementation here.
+     * It used to turn Royal/Emerald/etc. back into Light.
+     */
+    if (window.SmartComplaintTheme && typeof window.SmartComplaintTheme.applySavedTheme === 'function') {
+      window.SmartComplaintTheme.applySavedTheme()
+  
+      const currentTheme = typeof window.SmartComplaintTheme.getUserTheme === 'function' ? window.SmartComplaintTheme.getUserTheme() : localStorage.getItem('smartComplaintThemeV2') || 'light'
+  
+      markThemeControls(currentTheme)
+    } else {
+      setTheme(localStorage.getItem('smartComplaintThemeV2') || 'light')
+    }
+  
+    document.addEventListener('smartComplaintThemeChanged', function (event) {
+      if (event.detail && event.detail.workerPage === false) {
+        markThemeControls(event.detail.theme)
+      }
+    })
   
     document.addEventListener('keydown', function (event) {
-      if (event.key === 'Escape' && sidebar.classList.contains('open')) {
+      if (event.key === 'Escape' && sidebar && sidebar.classList.contains('open')) {
         closeSidebar()
       }
     })
@@ -967,16 +1030,17 @@
     document.addEventListener(
       'touchstart',
       function (event) {
+        if (!event.changedTouches.length) return
         touchStartX = event.changedTouches[0].screenX
       },
-      {
-        passive: true
-      }
+      { passive: true }
     )
   
     document.addEventListener(
       'touchend',
       function (event) {
+        if (!event.changedTouches.length || !sidebar) return
+  
         touchEndX = event.changedTouches[0].screenX
   
         const distance = touchEndX - touchStartX
@@ -989,9 +1053,7 @@
           closeSidebar()
         }
       },
-      {
-        passive: true
-      }
+      { passive: true }
     )
   })
 </script>
@@ -1049,5 +1111,18 @@
   }
   .sc-logout {
     color: #fecaca !important;
+  }
+</style>
+
+<style>
+  /* Mobile safe-area polish */
+  .sc-menu-button {
+    top: calc(14px + env(safe-area-inset-top, 0px));
+    left: calc(14px + env(safe-area-inset-left, 0px));
+  }
+  
+  .sc-sidebar {
+    height: 100dvh;
+    padding-top: env(safe-area-inset-top, 0px);
   }
 </style>

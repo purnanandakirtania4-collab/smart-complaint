@@ -1,407 +1,452 @@
 <!DOCTYPE html>
 {% load static %}
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>{{ target_user.get_full_name|default:target_user.username }} | Community Profile</title>
 
-    {% include 'complaints/base_style.html' %}
+    {% include "complaints/base_style.html" %}
 
     <style>
-      .community-page {
-        width: min(780px, calc(100% - 28px));
-        margin: 0 auto;
-        padding: 88px 0 42px;
-      }
-      
-      .community-back {
-        display: inline-flex;
-        margin-bottom: 14px;
-        color: #bfdbfe;
-        font-size: 13px;
-        font-weight: 900;
-        text-decoration: none;
-      }
-      
-      .community-card {
-        overflow: hidden;
-        border: 1px solid rgba(148, 163, 184, 0.24);
-        border-radius: 24px;
-        background: rgba(15, 45, 82, 0.7);
-        color: #ffffff;
-        box-shadow: 0 22px 58px rgba(2, 6, 23, 0.24);
-        backdrop-filter: blur(18px);
-      }
-      
-      .community-hero {
-        position: relative;
-        overflow: hidden;
-        padding: 28px 24px 22px;
-        background: linear-gradient(135deg, rgba(37, 99, 235, 0.82), rgba(91, 33, 182, 0.82));
-      }
-      
-      .community-hero::after {
-        content: '';
-        position: absolute;
-        width: 220px;
-        height: 220px;
-        right: -80px;
-        top: -110px;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.08);
-      }
-      
-      .community-person {
-        position: relative;
-        z-index: 1;
-        display: flex;
-        align-items: center;
-        gap: 17px;
-      }
-      
-      .community-avatar {
-        width: 94px;
-        height: 94px;
-        min-width: 94px;
-        display: grid;
-        place-items: center;
-        overflow: hidden;
-        border: 4px solid rgba(255, 255, 255, 0.7);
-        border-radius: 50%;
-        background: #dbeafe;
-        color: #1d4ed8;
-        font-size: 30px;
-        font-weight: 950;
-      }
-      
-      .community-avatar img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-      
-      .community-name {
-        margin: 0;
-        color: #ffffff;
-        font-size: 28px;
-        font-weight: 950;
-      }
-      
-      .community-username {
-        margin-top: 4px;
-        color: #dbeafe;
-        font-size: 13px;
-        font-weight: 800;
-      }
-      
-      .community-meta {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 7px;
-        margin-top: 9px;
-      }
-      
-      .community-pill {
-        padding: 6px 9px;
-        border: 1px solid rgba(255, 255, 255, 0.14);
-        border-radius: 999px;
-        background: rgba(255, 255, 255, 0.1);
-        color: #ffffff;
-        font-size: 10px;
-        font-weight: 900;
-      }
-      
-      .community-actions {
-        position: relative;
-        z-index: 1;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin-top: 18px;
-      }
-      
-      .community-btn {
-        min-height: 42px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0 16px;
-        border: 1px solid rgba(255, 255, 255, 0.16);
-        border-radius: 11px;
-        background: rgba(255, 255, 255, 0.13);
-        color: #ffffff;
-        cursor: pointer;
-        font: inherit;
-        font-size: 12px;
-        font-weight: 900;
-        text-decoration: none;
-      }
-      
-      .community-btn.primary {
-        border: 0;
-        background: linear-gradient(135deg, #22c55e, #059669);
-      }
-      
-      .community-stats {
-        display: grid;
-        grid-template-columns: repeat(5, minmax(0, 1fr));
-        gap: 1px;
-        background: rgba(255, 255, 255, 0.07);
-      }
-      
-      .community-stat {
-        padding: 16px 8px;
-        background: rgba(15, 45, 82, 0.92);
-        text-align: center;
-      }
-      
-      .community-stat strong {
-        display: block;
-        color: #ffffff;
-        font-size: 19px;
-      }
-      
-      .community-stat span {
-        display: block;
-        margin-top: 4px;
-        color: #94a3b8;
-        font-size: 10px;
-        font-weight: 800;
-      }
-      
-      .community-section {
-        padding: 21px;
-        border-top: 1px solid rgba(255, 255, 255, 0.07);
-      }
-      
-      .community-section h2 {
-        margin: 0 0 13px;
-        color: #ffffff;
-        font-size: 18px;
-      }
-      
-      .community-info {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 10px;
-      }
-      
-      .community-info-card {
-        padding: 13px;
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 13px;
-        background: rgba(255, 255, 255, 0.05);
-      }
-      
-      .community-info-card span {
-        display: block;
-        color: #94a3b8;
-        font-size: 10px;
-        font-weight: 800;
-      }
-      
-      .community-info-card strong {
-        display: block;
-        margin-top: 5px;
-        color: #ffffff;
-        font-size: 13px;
-      }
-      
-      .community-achievements {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-      }
-      
-      .community-achievement {
-        display: inline-flex;
-        align-items: center;
-        gap: 7px;
-        padding: 8px 10px;
-        border: 1px solid rgba(245, 158, 11, 0.2);
-        border-radius: 999px;
-        background: rgba(245, 158, 11, 0.1);
-        color: #fde68a;
-        font-size: 10px;
-        font-weight: 900;
-      }
-      
-      @media (max-width: 650px) {
+        .community-page {
+            width: min(780px, calc(100% - 28px));
+            margin: 0 auto;
+            padding: 88px 0 42px;
+        }
+
+        .community-back {
+            display: inline-flex;
+            margin-bottom: 14px;
+            color: #bfdbfe;
+            font-size: 13px;
+            font-weight: 900;
+            text-decoration: none;
+        }
+
+        .community-card {
+            overflow: hidden;
+            border: 1px solid rgba(148, 163, 184, 0.24);
+            border-radius: 24px;
+            background: rgba(15, 45, 82, 0.70);
+            color: #ffffff;
+            box-shadow: 0 22px 58px rgba(2, 6, 23, 0.24);
+            backdrop-filter: blur(18px);
+        }
+
+        .community-hero {
+            position: relative;
+            overflow: hidden;
+            padding: 28px 24px 22px;
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(37, 99, 235, 0.82),
+                    rgba(91, 33, 182, 0.82)
+                );
+        }
+
+        .community-hero::after {
+            content: "";
+            position: absolute;
+            width: 220px;
+            height: 220px;
+            right: -80px;
+            top: -110px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
         .community-person {
-          align-items: flex-start;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 17px;
         }
-      
+
         .community-avatar {
-          width: 76px;
-          height: 76px;
-          min-width: 76px;
+            width: 94px;
+            height: 94px;
+            min-width: 94px;
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+            border: 4px solid rgba(255, 255, 255, 0.70);
+            border-radius: 50%;
+            background: #dbeafe;
+            color: #1d4ed8;
+            font-size: 30px;
+            font-weight: 950;
         }
-      
+
+        .community-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
         .community-name {
-          font-size: 23px;
+            margin: 0;
+            color: #ffffff;
+            font-size: 28px;
+            font-weight: 950;
         }
-      
+
+        .community-username {
+            margin-top: 4px;
+            color: #dbeafe;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .community-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+            margin-top: 9px;
+        }
+
+        .community-pill {
+            padding: 6px 9px;
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.10);
+            color: #ffffff;
+            font-size: 10px;
+            font-weight: 900;
+        }
+
+        .community-actions {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 18px;
+        }
+
+        .community-btn {
+            min-height: 42px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 16px;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            border-radius: 11px;
+            background: rgba(255, 255, 255, 0.13);
+            color: #ffffff;
+            cursor: pointer;
+            font: inherit;
+            font-size: 12px;
+            font-weight: 900;
+            text-decoration: none;
+        }
+
+        .community-btn.primary {
+            border: 0;
+            background: linear-gradient(135deg, #22c55e, #059669);
+        }
+
         .community-stats {
-          grid-template-columns: repeat(2, 1fr);
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 1px;
+            background: rgba(255, 255, 255, 0.07);
         }
-      
-        .community-stat:first-child {
-          grid-column: 1 / -1;
+
+        .community-stat {
+            padding: 16px 8px;
+            background: rgba(15, 45, 82, 0.92);
+            text-align: center;
         }
-      
+
+        .community-stat strong {
+            display: block;
+            color: #ffffff;
+            font-size: 19px;
+        }
+
+        .community-stat span {
+            display: block;
+            margin-top: 4px;
+            color: #94a3b8;
+            font-size: 10px;
+            font-weight: 800;
+        }
+
+        .community-section {
+            padding: 21px;
+            border-top: 1px solid rgba(255, 255, 255, 0.07);
+        }
+
+        .community-section h2 {
+            margin: 0 0 13px;
+            color: #ffffff;
+            font-size: 18px;
+        }
+
         .community-info {
-          grid-template-columns: 1fr;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
         }
-      }
+
+        .community-info-card {
+            padding: 13px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 13px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .community-info-card span {
+            display: block;
+            color: #94a3b8;
+            font-size: 10px;
+            font-weight: 800;
+        }
+
+        .community-info-card strong {
+            display: block;
+            margin-top: 5px;
+            color: #ffffff;
+            font-size: 13px;
+        }
+
+        .community-achievements {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .community-achievement {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 8px 10px;
+            border: 1px solid rgba(245, 158, 11, 0.20);
+            border-radius: 999px;
+            background: rgba(245, 158, 11, 0.10);
+            color: #fde68a;
+            font-size: 10px;
+            font-weight: 900;
+        }
+
+        @media (max-width: 650px) {
+            .community-person {
+                align-items: flex-start;
+            }
+
+            .community-avatar {
+                width: 76px;
+                height: 76px;
+                min-width: 76px;
+            }
+
+            .community-name {
+                font-size: 23px;
+            }
+
+            .community-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .community-stat:first-child {
+                grid-column: 1 / -1;
+            }
+
+            .community-info {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
-  </head>
+</head>
 
-  <body>
+<body>
     <main class="community-page">
-      {% if request.user.is_authenticated %}
-        {% if request.user == target_user %}
-          <a class="community-back" href="{% url 'profile' %}">← My Profile</a>
-        {% else %}
-          <a class="community-back" href="{% url 'people_you_may_know' %}">← Community</a>
-        {% endif %}
-      {% else %}
-        <a class="community-back" href="{% url 'login' %}">← Smart Complaint</a>
-      {% endif %}
 
-      <section class="community-card">
-        <div class="community-hero">
-          <div class="community-person">
-            <div class="community-avatar">
-              {% if target_profile.photo %}
-                <img src="{{ target_profile.photo.url }}" alt="{{ target_user.username }}" />
-              {% else %}
-                {{ target_user.username|first|upper }}
-              {% endif %}
-            </div>
-
-            <div>
-              <h1 class="community-name">{{ target_user.get_full_name|default:target_user.username }}</h1>
-
-              <div class="community-username">@{{ target_user.username }}</div>
-
-              <div class="community-meta">
-                <span class="community-pill">{{ league.level.name }} Citizen</span>
-
-                {% if target_profile.city or target_profile.state %}
-                  <span class="community-pill">
-                    {% if target_profile.city %}
-                      {{ target_profile.city }}
-                    {% endif %}
-                    {% if target_profile.city and target_profile.state %}
-                      ,
-                    {% endif %}
-                    {% if target_profile.state %}
-                      {{ target_profile.state }}
-                    {% endif %}
-                  </span>
-                {% endif %}
-
-                <span class="community-pill">Joined {{ target_user.date_joined|date:'M Y' }}</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="community-actions">
+        {% if request.user.is_authenticated %}
             {% if request.user == target_user %}
-              <a class="community-btn" href="{% url 'profile' %}">Edit Profile</a>
-            {% elif can_follow %}
-              <form method="post" action="{% url 'toggle_user_follow' target_user.username %}">
-                {% csrf_token %}
-
-                <button class="community-btn primary" type="submit">
-                  {% if is_following %}
-                    Following
-                  {% else %}
-                    Follow
-                  {% endif %}
-                </button>
-              </form>
-            {% elif not request.user.is_authenticated %}
-              <a class="community-btn" href="{% url 'login' %}">Login to Follow</a>
+                <a class="community-back" href="{% url 'profile' %}">
+                    ← My Profile
+                </a>
+            {% else %}
+                <a class="community-back" href="{% url 'people_you_may_know' %}">
+                    ← Community
+                </a>
             {% endif %}
-          </div>
-        </div>
+        {% else %}
+            <a class="community-back" href="{% url 'login' %}">
+                ← Smart Complaint
+            </a>
+        {% endif %}
 
-        <div class="community-stats">
-          <div class="community-stat">
-            <strong>{{ league.xp }}</strong>
-            <span>Lifetime XP</span>
-          </div>
+        <section class="community-card">
+            <div class="community-hero">
 
-          <div class="community-stat">
-            <strong>{{ league.resolved }}</strong>
-            <span>Resolved</span>
-          </div>
+                <div class="community-person">
+                    <div class="community-avatar">
+                        {% if target_profile.photo %}
+                            <img
+                                src="{{ target_profile.photo.url }}"
+                                alt="{{ target_user.username }}"
+                            >
+                        {% else %}
+                            {{ target_user.username|first|upper }}
+                        {% endif %}
+                    </div>
 
-          <div class="community-stat">
-            <strong>{{ followers_count }}</strong>
-            <span>Followers</span>
-          </div>
+                    <div>
+                        <h1 class="community-name">
+                            {{ target_user.get_full_name|default:target_user.username }}
+                        </h1>
 
-          <div class="community-stat">
-            <strong>{{ following_count }}</strong>
-            <span>Following</span>
-          </div>
+                        <div class="community-username">
+                            @{{ target_user.username }}
+                        </div>
 
-          <div class="community-stat">
-            <strong>
-              {% if user_rating_count %}
-                {{ user_average_rating|floatformat:1 }}
-              {% else %}
-                —
-              {% endif %}
-            </strong>
-            <span>Citizen Rating</span>
-          </div>
-        </div>
+                        <div class="community-meta">
+                            <span class="community-pill">
+                                {{ league.level.name }} Citizen
+                            </span>
 
-        <section class="community-section">
-          <h2>Community Profile</h2>
+                            {% if target_profile.city or target_profile.state %}
+                                <span class="community-pill">
+                                    {% if target_profile.city %}
+                                        {{ target_profile.city }}
+                                    {% endif %}
+                                    {% if target_profile.city and target_profile.state %},
+                                    {% endif %}
+                                    {% if target_profile.state %}
+                                        {{ target_profile.state }}
+                                    {% endif %}
+                                </span>
+                            {% endif %}
 
-          <div class="community-info">
-            <div class="community-info-card">
-              <span>League</span>
-              <strong>{{ league.level.name }} Citizen</strong>
+                            <span class="community-pill">
+                                Joined {{ target_user.date_joined|date:"M Y" }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="community-actions">
+                    {% if request.user == target_user %}
+                        <a
+                            class="community-btn"
+                            href="{% url 'profile' %}"
+                        >
+                            Edit Profile
+                        </a>
+
+                    {% elif can_follow %}
+                        <form
+                            method="post"
+                            action="{% url 'toggle_user_follow' target_user.username %}"
+                        >
+                            {% csrf_token %}
+
+                            <button
+                                class="community-btn primary"
+                                type="submit"
+                            >
+                                {% if is_following %}
+                                    Following
+                                {% else %}
+                                    Follow
+                                {% endif %}
+                            </button>
+                        </form>
+
+                    {% elif not request.user.is_authenticated %}
+                        <a
+                            class="community-btn"
+                            href="{% url 'login' %}"
+                        >
+                            Login to Follow
+                        </a>
+                    {% endif %}
+                </div>
             </div>
 
-            <div class="community-info-card">
-              <span>Verified Resolutions</span>
-              <strong>{{ league.verified }}</strong>
+            <div class="community-stats">
+                <div class="community-stat">
+                    <strong>{{ league.xp }}</strong>
+                    <span>Lifetime XP</span>
+                </div>
+
+                <div class="community-stat">
+                    <strong>{{ league.resolved }}</strong>
+                    <span>Resolved</span>
+                </div>
+
+                <div class="community-stat">
+                    <strong>{{ followers_count }}</strong>
+                    <span>Followers</span>
+                </div>
+
+                <div class="community-stat">
+                    <strong>{{ following_count }}</strong>
+                    <span>Following</span>
+                </div>
+
+                <div class="community-stat">
+                    <strong>
+                        {% if user_rating_count %}
+                            {{ user_average_rating|floatformat:1 }}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </strong>
+                    <span>Citizen Rating</span>
+                </div>
             </div>
 
-            <div class="community-info-card">
-              <span>Helpful Ratings Given</span>
-              <strong>{{ league.ratings }}</strong>
-            </div>
+            <section class="community-section">
+                <h2>Community Profile</h2>
 
-            <div class="community-info-card">
-              <span>Detailed Reports</span>
-              <strong>{{ league.detailed }}</strong>
-            </div>
-          </div>
+                <div class="community-info">
+                    <div class="community-info-card">
+                        <span>League</span>
+                        <strong>{{ league.level.name }} Citizen</strong>
+                    </div>
+
+                    <div class="community-info-card">
+                        <span>Verified Resolutions</span>
+                        <strong>{{ league.verified }}</strong>
+                    </div>
+
+                    <div class="community-info-card">
+                        <span>Helpful Ratings Given</span>
+                        <strong>{{ league.ratings }}</strong>
+                    </div>
+
+                    <div class="community-info-card">
+                        <span>Detailed Reports</span>
+                        <strong>{{ league.detailed }}</strong>
+                    </div>
+                </div>
+            </section>
+
+            <section class="community-section">
+                <h2>
+                    Achievements ({{ unlocked_achievement_count }})
+                </h2>
+
+                <div class="community-achievements">
+                    {% for item in unlocked_achievements %}
+                        <span class="community-achievement">
+                            <span>{{ item.icon }}</span>
+                            {{ item.title }}
+                        </span>
+                    {% empty %}
+                        <span style="color:#94a3b8;font-size:12px;">
+                            No achievements unlocked yet.
+                        </span>
+                    {% endfor %}
+                </div>
+            </section>
         </section>
-
-        <section class="community-section">
-          <h2>Achievements ({{ unlocked_achievement_count }})</h2>
-
-          <div class="community-achievements">
-            {% for item in unlocked_achievements %}
-              <span class="community-achievement">
-                <span>{{ item.icon }}</span>
-                {{ item.title }}
-              </span>
-            {% empty %}
-              <span style="color:#94a3b8;font-size:12px;">No achievements unlocked yet.</span>
-            {% endfor %}
-          </div>
-        </section>
-      </section>
     </main>
-  </body>
+</body>
 </html>
