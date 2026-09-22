@@ -255,38 +255,97 @@
     .wp-manage-row span { color: #94a3b8; }
     .wp-manage-row strong { color: #fff; text-align: right; }
 
-    .wp-secondary,
-    .wp-danger {
+    .wp-secondary {
       min-height: 39px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 7px;
       padding: 0 12px;
+      border: 1px solid rgba(165,180,252,.22);
       border-radius: 10px;
+      background: rgba(99,102,241,.10);
+      color: #e0e7ff;
       cursor: pointer;
       font: inherit;
       font-size: 9px;
       font-weight: 900;
     }
 
-    .wp-secondary {
-      border: 1px solid rgba(165,180,252,.22);
-      background: rgba(99,102,241,.10);
-      color: #e0e7ff;
-    }
-
-    .wp-danger {
-      border: 1px solid rgba(248,113,113,.22);
-      background: rgba(239,68,68,.08);
-      color: #fecaca;
-    }
-
     .wp-actions {
       display: flex;
       flex-wrap: wrap;
+      align-items: center;
       gap: 8px;
       margin-top: 13px;
+    }
+
+    .wp-renewal-tools {
+      margin-top: 12px;
+      border-top: 1px solid rgba(255,255,255,.06);
+      padding-top: 9px;
+    }
+
+    .wp-renewal-tools summary {
+      width: fit-content;
+      color: #94a3b8;
+      cursor: pointer;
+      font-size: 8px;
+      font-weight: 800;
+      line-height: 1.4;
+      list-style: none;
+      user-select: none;
+    }
+
+    .wp-renewal-tools summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .wp-renewal-tools summary::after {
+      content: "  ›";
+      color: #64748b;
+    }
+
+    .wp-renewal-tools[open] summary::after {
+      content: "  ⌄";
+    }
+
+    .wp-renewal-box {
+      margin-top: 9px;
+      padding: 10px;
+      border: 1px solid rgba(148,163,184,.14);
+      border-radius: 10px;
+      background: rgba(2,6,23,.13);
+    }
+
+    .wp-renewal-copy {
+      margin: 0;
+      color: #94a3b8;
+      font-size: 8px;
+      line-height: 1.55;
+    }
+
+    .wp-renewal-off {
+      min-height: 30px;
+      margin-top: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 0 9px;
+      border: 1px solid rgba(148,163,184,.18);
+      border-radius: 8px;
+      background: rgba(148,163,184,.06);
+      color: #cbd5e1;
+      cursor: pointer;
+      font: inherit;
+      font-size: 8px;
+      font-weight: 800;
+    }
+
+    .wp-renewal-off .wp-icon {
+      width: 14px;
+      height: 14px;
     }
 
     .wp-note {
@@ -566,24 +625,36 @@
             </form>
           {% endif %}
 
-          {% if subscription.is_premium_active and subscription.razorpay_subscription_id and not subscription.cancel_at_period_end %}
-            <form
-              method="post"
-              action="{% url 'worker_subscription_cancel_renewal' %}"
-              onsubmit="return confirm('Turn off future Worker Pro renewal? Current paid access will remain until the period ends.');"
-            >
-              {% csrf_token %}
-              <input type="hidden" name="confirm_cancel" value="yes">
-
-              <button class="wp-danger" type="submit">
-                <svg class="wp-icon" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M6 6l12 12M18 6 6 18"></path>
-                </svg>
-                Turn Off Future Renewal
-              </button>
-            </form>
-          {% endif %}
         </div>
+
+        {% if subscription.is_premium_active and subscription.razorpay_subscription_id and not subscription.cancel_at_period_end %}
+          <details class="wp-renewal-tools">
+            <summary>Manage renewal</summary>
+
+            <div class="wp-renewal-box">
+              <p class="wp-renewal-copy">
+                You can stop future automatic renewal at any time. Your current
+                paid Worker Pro access will continue until the active period ends.
+              </p>
+
+              <form
+                method="post"
+                action="{% url 'worker_subscription_cancel_renewal' %}"
+                onsubmit="return confirm('Turn off future Worker Pro renewal? Current paid access will remain until the period ends.');"
+              >
+                {% csrf_token %}
+                <input type="hidden" name="confirm_cancel" value="yes">
+
+                <button class="wp-renewal-off" type="submit">
+                  <svg class="wp-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M6 6l12 12M18 6 6 18"></path>
+                  </svg>
+                  Turn Off Future Renewal
+                </button>
+              </form>
+            </div>
+          </details>
+        {% endif %}
       </section>
     </div>
 
