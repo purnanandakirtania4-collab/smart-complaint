@@ -1489,43 +1489,120 @@
       body.sc-theme-dark .appearance-card small,body.sc-theme-royal .appearance-card small,body.sc-theme-royalblue .appearance-card small,body.sc-theme-emerald .appearance-card small,body.sc-theme-rose .appearance-card small{color:#cbd5e1}
       @media(max-width:600px){.appearance-grid{grid-template-columns:1fr}}
 
+
       /* =====================================================
-         SETTINGS LIVE THEME PICKER - 11 THEMES
-         ===================================================== */
-      .appearance-modal-card { max-width: 780px; }
-      .appearance-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:13px; }
-      .appearance-card { padding:0 0 13px; overflow:hidden; border:1px solid #e2e8f0; border-radius:15px; background:#fff; color:#0f172a; text-align:left; font-family:inherit; cursor:pointer; transition:.2s ease; }
-      .appearance-card:hover { transform:translateY(-2px); box-shadow:0 15px 34px rgba(15,23,42,.12); }
-      .appearance-card.is-active { outline:3px solid rgba(59,130,246,.35); border-color:#60a5fa; }
-      .appearance-art { display:block; height:94px; margin-bottom:12px; }
-      .appearance-card strong,.appearance-card small { display:block; padding:0 13px; }
-      .appearance-card strong { font-size:14px; }
-      .appearance-card small { margin-top:4px; color:#64748b; font-size:11px; }
-      .light-preview .appearance-art{background:linear-gradient(145deg,#fff,#eef2f7)}
-      .dark-preview .appearance-art{background:linear-gradient(145deg,#020617,#1e293b)}
-      .glass-preview .appearance-art{background:radial-gradient(circle at 15% 15%,#22d3ee,transparent 34%),linear-gradient(145deg,#06243d,#0b3b67)}
-      .royal-preview .appearance-art{background:radial-gradient(circle at 15% 15%,#a855f7,transparent 34%),radial-gradient(circle at 85% 80%,#d946ef,transparent 34%),linear-gradient(145deg,#1e103f,#111827)}
-      .royalblue-preview .appearance-art{background:radial-gradient(circle at 15% 15%,#3b82f6,transparent 34%),radial-gradient(circle at 85% 80%,#6366f1,transparent 34%),linear-gradient(145deg,#050b1d,#17134b)}
-      .emerald-preview .appearance-art{background:radial-gradient(circle at 15% 15%,#10b981,transparent 34%),radial-gradient(circle at 85% 80%,#06b6d4,transparent 34%),linear-gradient(145deg,#031713,#082b38)}
-      .rose-preview .appearance-art{background:radial-gradient(circle at 15% 15%,#e11d48,transparent 34%),radial-gradient(circle at 85% 80%,#a855f7,transparent 34%),linear-gradient(145deg,#1c0710,#2d123f)}
-      .sunset-preview .appearance-art{background:radial-gradient(circle at 18% 18%,#fb7185,transparent 34%),radial-gradient(circle at 82% 78%,#f59e0b,transparent 34%),linear-gradient(145deg,#431407,#4c1d95)}
-      .cyber-preview .appearance-art{background:radial-gradient(circle at 18% 18%,#22d3ee,transparent 34%),radial-gradient(circle at 82% 78%,#a3e635,transparent 34%),linear-gradient(145deg,#020617,#083344)}
-      .gold-preview .appearance-art{background:radial-gradient(circle at 18% 18%,#facc15,transparent 34%),radial-gradient(circle at 82% 78%,#f97316,transparent 34%),linear-gradient(145deg,#1c1917,#422006)}
-      .slate-preview .appearance-art{background:radial-gradient(circle at 18% 18%,#94a3b8,transparent 34%),radial-gradient(circle at 82% 78%,#38bdf8,transparent 34%),linear-gradient(145deg,#0f172a,#1e293b)}
-      .appearance-note { margin:15px 0 0; padding:12px 13px; border-radius:11px; background:#f8fafc; border:1px solid #e2e8f0; color:#64748b; font-size:11px; line-height:1.55; }
-      @media(max-width:600px){.appearance-grid{grid-template-columns:1fr}}
+         CITIZEN PREMIUM MEMBERSHIP
+      ===================================================== */
+      .membership-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 7px;
+        padding: 5px 8px;
+        border: 1px solid #cbd5e1;
+        border-radius: 999px;
+        background: #f8fafc;
+        color: #475569;
+        font-size: 10px;
+        font-weight: 900;
+      }
 
+      .membership-status.active {
+        border-color: #bbf7d0;
+        background: #ecfdf5;
+        color: #047857;
+      }
 
-      /* Premium theme locking */
-      .appearance-card { position:relative; }
-      .appearance-card .premium-badge { position:absolute; top:9px; right:9px; z-index:2; padding:5px 8px; border-radius:999px; background:rgba(15,23,42,.86); color:#fff; font-size:9px; font-weight:800; letter-spacing:.05em; box-shadow:0 5px 15px rgba(15,23,42,.18); }
-      .appearance-card.is-locked { opacity:.72; }
-      .appearance-card.is-locked .appearance-art { filter:saturate(.65) brightness(.82); }
-      .appearance-card.is-locked::after { content:""; position:absolute; inset:0; pointer-events:none; background:rgba(15,23,42,.08); }
-      .premium-lock-button { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); z-index:4; display:none; align-items:center; gap:6px; padding:8px 11px; border:1px solid rgba(255,255,255,.42); border-radius:999px; background:rgba(15,23,42,.9); color:#fff; font-size:10px; font-weight:900; letter-spacing:.06em; box-shadow:0 8px 24px rgba(15,23,42,.28); pointer-events:none; }
-      .appearance-card.is-locked .premium-lock-button { display:inline-flex; }
-      .premium-lock-button svg { width:14px; height:14px; fill:currentColor; flex:0 0 14px; }
-      .premium-status-note { margin:12px 0 0; padding:11px 13px; border-radius:11px; background:#fffbeb; border:1px solid #fde68a; color:#92400e; font-size:11px; line-height:1.5; }
+      .membership-status .ui-icon {
+        width: 13px;
+        height: 13px;
+      }
+
+      .premium-membership-icon {
+        background: linear-gradient(145deg, #eef2ff, #e0e7ff) !important;
+        color: #4f46e5 !important;
+      }
+
+      .appearance-card[data-premium-theme="true"] {
+        position: relative;
+      }
+
+      .appearance-card[data-premium-theme="true"]::after {
+        content: "Premium";
+        position: absolute;
+        top: 9px;
+        right: 9px;
+        padding: 4px 7px;
+        border: 1px solid rgba(255,255,255,.28);
+        border-radius: 999px;
+        background: rgba(15,23,42,.72);
+        color: #fff;
+        font-size: 9px;
+        font-weight: 900;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+        backdrop-filter: blur(8px);
+      }
+
+      .appearance-card[data-premium-locked="true"] {
+        opacity: .72;
+      }
+
+      .premium-inline-note {
+        margin-top: 12px;
+        padding: 11px 12px;
+        display: flex;
+        align-items: flex-start;
+        gap: 9px;
+        border: 1px solid #c7d2fe;
+        border-radius: 11px;
+        background: #eef2ff;
+        color: #3730a3;
+        font-size: 11px;
+        line-height: 1.5;
+      }
+
+      .premium-inline-note .ui-icon {
+        width: 18px;
+        height: 18px;
+        margin-top: 1px;
+      }
+
+      .premium-inline-note a {
+        color: inherit;
+        font-weight: 900;
+      }
+
+      body.sc-theme-dark .membership-status {
+        background: #1e293b;
+        border-color: #334155;
+        color: #cbd5e1;
+      }
+
+      body.sc-theme-dark .membership-status.active {
+        background: rgba(16,185,129,.12);
+        border-color: rgba(52,211,153,.22);
+        color: #a7f3d0;
+      }
+
+      body.sc-theme-dark .premium-inline-note {
+        background: rgba(79,70,229,.12);
+        border-color: rgba(129,140,248,.25);
+        color: #c7d2fe;
+      }
+
+      body.sc-theme-glass .membership-status {
+        background: rgba(255,255,255,.07);
+        border-color: rgba(191,219,254,.18);
+        color: #dbeafe;
+      }
+
+      body.sc-theme-glass .premium-inline-note {
+        background: rgba(99,102,241,.10);
+        border-color: rgba(165,180,252,.22);
+        color: #e0e7ff;
+      }
+
 </style>
   </head>
 
@@ -1642,6 +1719,54 @@
           <button type="button" class="settings-action" onclick="openModal('addressModal')">Manage</button>
         </div>
 
+
+        <!-- =====================================
+             PREMIUM & AI
+        ====================================== -->
+        <div class="section-label">Premium & AI</div>
+
+        <div class="settings-item">
+          <div class="settings-left">
+            <div class="settings-icon premium-membership-icon">
+              <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 3 20 8l-8 13L4 8Z"></path>
+                <path d="M4 8h16M8 8l4 13 4-13M8 8l4-5 4 5"></path>
+              </svg>
+            </div>
+
+            <div class="settings-text">
+              <h3>Citizen Premium</h3>
+
+              {% if user_is_premium %}
+                <p>
+                  60 AI credits per paid cycle and access to Premium themes.
+                  Your normal complaint services remain unchanged.
+                </p>
+
+                <div class="membership-status active">
+                  <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="m5 12 4 4L19 6"></path>
+                  </svg>
+                  Active until {{ premium_membership.current_period_end|date:"d M Y" }}
+                </div>
+              {% else %}
+                <p>
+                  Free accounts receive 3 lifetime AI trial credits.
+                  Upgrade only if the extra AI allowance and Premium themes are useful to you.
+                </p>
+
+                <div class="membership-status">
+                  {{ ai_status.credits_remaining }} / {{ ai_status.credit_limit }} free AI credits remaining
+                </div>
+              {% endif %}
+            </div>
+          </div>
+
+          <a href="{% url 'citizen_premium' %}" class="settings-action">
+            {% if user_is_premium %}Manage{% else %}View Premium{% endif %}
+          </a>
+        </div>
+
         <!-- =====================================
              APPEARANCE
         ====================================== -->
@@ -1657,7 +1782,7 @@
             </div>
             <div class="settings-text">
               <h3>Appearance</h3>
-              <p>Choose from 11 live themes. Your selection is saved on this device.</p>
+              <p>Choose White, Dark or one of five professional Glass themes.</p>
             </div>
           </div>
           <button type="button" class="settings-action" onclick="openModal('appearanceModal')">Choose Theme</button>
@@ -1921,23 +2046,30 @@
         </div>
         <div class="modal-body">
           <div class="appearance-grid">
-            <button type="button" class="appearance-card light-preview" data-user-theme="light"><span class="appearance-art"></span><strong>White</strong><small>Clean & simple</small></button>
-            <button type="button" class="appearance-card dark-preview" data-user-theme="dark"><span class="appearance-art"></span><strong>Dark</strong><small>Comfortable dark mode</small></button>
-            <button type="button" class="appearance-card glass-preview" data-user-theme="glass"><span class="appearance-art"></span><strong>Ocean Glass</strong><small>Classic blue glass</small></button>
-            <button type="button" class="appearance-card royal-preview" data-user-theme="royal" data-premium-theme="true"><span class="appearance-art"></span><span class="premium-badge">PREMIUM</span><span class="premium-lock-button" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 16 3 7l5 3 4-6 4 6 5-3-2 9H5Zm0 2h14v2H5v-2Z"/></svg><span>PREMIUM</span></span><strong>Royal Purple Glass</strong><small>Luxury violet glass</small></button>
-            <button type="button" class="appearance-card royalblue-preview" data-user-theme="royalblue" data-premium-theme="true"><span class="appearance-art"></span><span class="premium-badge">PREMIUM</span><span class="premium-lock-button" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 16 3 7l5 3 4-6 4 6 5-3-2 9H5Zm0 2h14v2H5v-2Z"/></svg><span>PREMIUM</span></span><strong>Royal Blue Glass</strong><small>Professional sapphire glass</small></button>
-            <button type="button" class="appearance-card emerald-preview" data-user-theme="emerald" data-premium-theme="true"><span class="appearance-art"></span><span class="premium-badge">PREMIUM</span><span class="premium-lock-button" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 16 3 7l5 3 4-6 4 6 5-3-2 9H5Zm0 2h14v2H5v-2Z"/></svg><span>PREMIUM</span></span><strong>Emerald Glass</strong><small>Premium green glass</small></button>
-            <button type="button" class="appearance-card rose-preview" data-user-theme="rose" data-premium-theme="true"><span class="appearance-art"></span><span class="premium-badge">PREMIUM</span><span class="premium-lock-button" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 16 3 7l5 3 4-6 4 6 5-3-2 9H5Zm0 2h14v2H5v-2Z"/></svg><span>PREMIUM</span></span><strong>Rose Royal Glass</strong><small>Elegant rose & violet</small></button>
-            <button type="button" class="appearance-card sunset-preview" data-user-theme="sunset" data-premium-theme="true"><span class="appearance-art"></span><span class="premium-badge">PREMIUM</span><span class="premium-lock-button" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 16 3 7l5 3 4-6 4 6 5-3-2 9H5Zm0 2h14v2H5v-2Z"/></svg><span>PREMIUM</span></span><strong>Sunset Glass</strong><small>Warm coral & violet</small></button>
-            <button type="button" class="appearance-card cyber-preview" data-user-theme="cyber" data-premium-theme="true"><span class="appearance-art"></span><span class="premium-badge">PREMIUM</span><span class="premium-lock-button" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 16 3 7l5 3 4-6 4 6 5-3-2 9H5Zm0 2h14v2H5v-2Z"/></svg><span>PREMIUM</span></span><strong>Cyber Glass</strong><small>Cyan & neon green</small></button>
-            <button type="button" class="appearance-card gold-preview" data-user-theme="gold" data-premium-theme="true"><span class="appearance-art"></span><span class="premium-badge">PREMIUM</span><span class="premium-lock-button" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 16 3 7l5 3 4-6 4 6 5-3-2 9H5Zm0 2h14v2H5v-2Z"/></svg><span>PREMIUM</span></span><strong>Golden Glass</strong><small>Premium amber & gold</small></button>
-            <button type="button" class="appearance-card slate-preview" data-user-theme="slate" data-premium-theme="true"><span class="appearance-art"></span><span class="premium-badge">PREMIUM</span><span class="premium-lock-button" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 16 3 7l5 3 4-6 4 6 5-3-2 9H5Zm0 2h14v2H5v-2Z"/></svg><span>PREMIUM</span></span><strong>Slate Glass</strong><small>Professional steel blue</small></button>
+            <button type="button" class="appearance-card light-preview" data-user-theme="light"><span class="appearance-art"></span><strong>White</strong><small>Free theme</small></button>
+            <button type="button" class="appearance-card dark-preview" data-user-theme="dark"><span class="appearance-art"></span><strong>Dark</strong><small>Free theme</small></button>
+            <button type="button" class="appearance-card glass-preview" data-user-theme="glass"><span class="appearance-art"></span><strong>Ocean Glass</strong><small>Free theme</small></button>
+
+            <button type="button" class="appearance-card royal-preview" data-user-theme="royal" data-premium-theme="true" {% if not user_is_premium %}data-premium-locked="true" aria-disabled="true"{% endif %}><span class="appearance-art"></span><strong>Royal Purple Glass</strong><small>Citizen Premium</small></button>
+            <button type="button" class="appearance-card royalblue-preview" data-user-theme="royalblue" data-premium-theme="true" {% if not user_is_premium %}data-premium-locked="true" aria-disabled="true"{% endif %}><span class="appearance-art"></span><strong>Royal Blue Glass</strong><small>Citizen Premium</small></button>
+            <button type="button" class="appearance-card emerald-preview" data-user-theme="emerald" data-premium-theme="true" {% if not user_is_premium %}data-premium-locked="true" aria-disabled="true"{% endif %}><span class="appearance-art"></span><strong>Emerald Glass</strong><small>Citizen Premium</small></button>
+            <button type="button" class="appearance-card rose-preview" data-user-theme="rose" data-premium-theme="true" {% if not user_is_premium %}data-premium-locked="true" aria-disabled="true"{% endif %}><span class="appearance-art"></span><strong>Rose Royal Glass</strong><small>Citizen Premium</small></button>
           </div>
-          {% if user_is_premium %}
-          <p class="appearance-note">Premium active — all 11 themes are unlocked.</p>
-          {% else %}
-          <p class="premium-status-note">Free plan: White, Dark and Ocean Glass are unlocked. Premium themes are locked.</p>
-          {% endif %}
+
+          <div class="premium-inline-note">
+            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 3 20 8l-8 13L4 8Z"></path>
+              <path d="M4 8h16"></path>
+            </svg>
+
+            <div>
+              White, Dark and Ocean Glass remain free.
+              Premium themes are included with Citizen Premium.
+              {% if not user_is_premium %}
+                <a href="{% url 'citizen_premium' %}">View the Premium plan</a>.
+              {% endif %}
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -2270,32 +2402,30 @@
 
 
 <script>
-(function () {
+(function(){
   "use strict";
-  const buttons = document.querySelectorAll('[data-user-theme]');
-  const isPremium = {{ user_is_premium|yesno:"true,false" }};
-  if (window.SmartComplaintTheme) window.SmartComplaintTheme.setUserPremiumAccess(isPremium);
-  function markActive(theme) {
-    buttons.forEach(function (btn) {
-      btn.classList.toggle('is-active', btn.dataset.userTheme === theme);
-      btn.classList.toggle('is-locked', btn.dataset.premiumTheme === 'true' && !isPremium);
-    });
-  }
-  buttons.forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      if (!window.SmartComplaintTheme) return;
-      if (btn.dataset.premiumTheme === 'true' && !isPremium) {
-        showUiMessage('This is a Premium theme. Premium access is not active on your account.');
+
+  const userIsPremium = {% if user_is_premium %}true{% else %}false{% endif %};
+
+  document.querySelectorAll('[data-user-theme]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      const premiumTheme = btn.dataset.premiumTheme === 'true';
+
+      if (premiumTheme && !userIsPremium) {
+        showUiMessage(
+          'This theme is included with Citizen Premium. Free themes remain available.'
+        );
         return;
       }
-      const theme = window.SmartComplaintTheme.setUserTheme(btn.dataset.userTheme);
-      markActive(theme);
+
+      const theme = btn.dataset.userTheme;
+
+      if (window.SmartComplaintTheme) {
+        window.SmartComplaintTheme.setUserTheme(theme);
+      }
+
       closeModal('appearanceModal');
     });
-  });
-  if (window.SmartComplaintTheme) markActive(window.SmartComplaintTheme.getUserTheme());
-  document.addEventListener('smartComplaintThemeChanged', function (event) {
-    if (!event.detail.workerPage) markActive(event.detail.theme);
   });
 })();
 </script>

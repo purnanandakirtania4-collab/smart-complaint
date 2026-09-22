@@ -1,903 +1,608 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Worker Pro | Smart Complaint</title>
 
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  {% include 'complaints/base_style.html' %}
 
-    <title>Worker Subscription Payment | Smart Complaint</title>
+  <style>
+    * { box-sizing: border-box; }
 
-    {% include 'complaints/base_style.html' %}
+    .wp-page {
+      width: min(960px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 86px 0 46px;
+    }
 
-    <style>
-      .ui-icon {
-        width: 21px;
-        height: 21px;
-        display: inline-block;
-        vertical-align: middle;
-        fill: none;
-        stroke: currentColor;
-        stroke-width: 2;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-        flex-shrink: 0;
-      }
-      .icon-inline {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-      }
-      .status-dot {
-        width: 9px;
-        height: 9px;
-        border-radius: 50%;
-        display: inline-block;
-        margin-right: 6px;
-        vertical-align: middle;
-        background: #16a34a;
-      }
-      
-      .payment-icon {
-        color: #1d4ed8;
-      }
-      .payment-icon .ui-icon {
-        width: 34px;
-        height: 34px;
-      }
-      .plan-title,
-      .discount,
-      .notice strong,
-      .security {
-        display: flex;
-        align-items: center;
-        gap: 7px;
-      }
-      .pay-button {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-      }
-      
-      body {
-        margin: 0;
-        min-height: 100vh;
-      
-        font-family: Arial, Helvetica, sans-serif;
-      
-        background: linear-gradient(135deg, #0f172a, #1d4ed8, #2563eb);
-      
-        padding: 30px 15px;
-      }
-      
-      /* =========================================
-                       MAIN CONTAINER
-                    ========================================= */
-      
-      .payment-container {
-        max-width: 720px;
-        margin: auto;
-      }
-      
-      /* =========================================
-                       PAYMENT CARD
-                    ========================================= */
-      
-      .payment-card {
-        background: #ffffff;
-      
-        border-radius: 22px;
-      
-        padding: 35px;
-      
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
-      }
-      
-      /* =========================================
-                       HEADER
-                    ========================================= */
-      
-      .header {
-        text-align: center;
-      
-        margin-bottom: 25px;
-      }
-      
-      .payment-icon {
-        width: 75px;
-        height: 75px;
-      
-        margin: auto;
-      
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      
-        border-radius: 50%;
-      
-        background: #dbeafe;
-      
-        font-size: 34px;
-      }
-      
-      .header h1 {
-        margin-top: 15px;
-        margin-bottom: 7px;
-      
-        color: #172554;
-      
-        font-size: 29px;
-      }
-      
-      .header p {
-        margin: 0;
-      
-        color: #64748b;
-      
-        line-height: 1.5;
-      }
-      
-      /* =========================================
-                       TEST MODE BADGE
-                    ========================================= */
-      
-      .test-badge {
-        width: fit-content;
-      
-        margin: 0 auto 25px auto;
-      
-        padding: 7px 14px;
-      
-        border-radius: 20px;
-      
-        background: #fef3c7;
-        color: #92400e;
-      
-        font-size: 13px;
-        font-weight: bold;
-      }
-      
-      /* =========================================
-                       WORKER DETAILS
-                    ========================================= */
-      
-      .worker-box {
-        margin-bottom: 22px;
-      
-        padding: 18px;
-      
-        border-radius: 14px;
-      
-        border: 1px solid #bfdbfe;
-      
-        background: #eff6ff;
-      }
-      
-      .worker-label {
-        margin-bottom: 7px;
-      
-        color: #64748b;
-      
-        font-size: 13px;
-        font-weight: 700;
-      }
-      
-      .worker-name {
-        color: #172554;
-      
-        font-size: 18px;
-        font-weight: 800;
-      }
-      
-      .worker-id {
-        margin-top: 4px;
-      
-        color: #475569;
-      
-        font-size: 13px;
-      }
-      
-      /* =========================================
-                       PLAN BOX
-                    ========================================= */
-      
-      .plan-box {
-        padding: 22px;
-      
-        border-radius: 16px;
-      
-        border: 1px solid #dbeafe;
-      
-        background: linear-gradient(135deg, #eff6ff, #ffffff);
-      
-        margin-bottom: 25px;
-      }
-      
-      .plan-title {
-        color: #1e3a8a;
-      
-        font-size: 20px;
-        font-weight: 900;
-      
-        margin-bottom: 20px;
-      }
-      
-      /* =========================================
-                       FIRST MONTH
-                    ========================================= */
-      
-      .first-box {
-        padding-bottom: 18px;
-      
-        border-bottom: 1px solid #dbeafe;
-      }
-      
-      .small-label {
-        color: #64748b;
-      
-        font-size: 13px;
-        font-weight: 700;
-      }
-      
-      .first-price {
-        margin-top: 5px;
-      
-        color: #16a34a;
-      
-        font-size: 40px;
-        font-weight: 900;
-      }
-      
-      .first-text {
-        color: #475569;
-      
-        font-size: 14px;
-        font-weight: 700;
-      }
-      
-      /* =========================================
-                       RECURRING PRICE
-                    ========================================= */
-      
-      .recurring-box {
-        margin-top: 20px;
-      }
-      
-      .price-row {
-        display: flex;
-      
-        align-items: center;
-      
-        gap: 10px;
-      
-        flex-wrap: wrap;
-      
-        margin-top: 7px;
-      }
-      
-      .old-price {
-        color: #94a3b8;
-      
-        font-size: 23px;
-        font-weight: 800;
-      
-        text-decoration: line-through;
-        text-decoration-thickness: 2px;
-      }
-      
-      .new-price {
-        color: #2563eb;
-      
-        font-size: 36px;
-        font-weight: 900;
-      }
-      
-      .per-month {
-        color: #64748b;
-      
-        font-size: 14px;
-        font-weight: 700;
-      }
-      
-      .discount {
-        padding: 6px 11px;
-      
-        border-radius: 20px;
-      
-        background: #dcfce7;
-      
-        color: #166534;
-      
-        font-size: 12px;
-        font-weight: 900;
-      }
-      
-      .autopay-text {
-        margin-top: 10px;
-      
-        color: #475569;
-      
-        font-size: 14px;
-        line-height: 1.6;
-      }
-      
-      /* =========================================
-                       TODAY PAYMENT
-                    ========================================= */
-      
-      .today-box {
-        display: flex;
-      
-        justify-content: space-between;
-        align-items: center;
-      
-        gap: 15px;
-      
-        margin-bottom: 22px;
-      
-        padding: 18px;
-      
-        border-radius: 14px;
-      
-        background: #f8fafc;
-      
-        border: 1px solid #e2e8f0;
-      }
-      
-      .today-label {
-        color: #475569;
-      
-        font-weight: 700;
-      }
-      
-      .today-price {
-        color: #16a34a;
-      
-        font-size: 27px;
-        font-weight: 900;
-      }
-      
-      /* =========================================
-                       AUTOPAY NOTICE
-                    ========================================= */
-      
-      .notice {
-        margin-bottom: 22px;
-      
-        padding: 17px;
-      
-        border-radius: 12px;
-      
-        border-left: 5px solid #f59e0b;
-      
-        background: #fffbeb;
-      
-        color: #92400e;
-      
-        line-height: 1.6;
-      
-        font-size: 14px;
-      }
-      
-      /* =========================================
-                       ERROR MESSAGE
-                    ========================================= */
-      
-      .error-box {
-        margin-bottom: 20px;
-      
-        padding: 15px;
-      
-        border-radius: 12px;
-      
-        background: #fee2e2;
-      
-        border: 1px solid #fecaca;
-      
-        color: #991b1b;
-      
-        font-size: 14px;
-        font-weight: 700;
-      
-        line-height: 1.5;
-      }
-      
-      /* =========================================
-                       PAYMENT BUTTON
-                    ========================================= */
-      
-      .pay-form {
-        margin: 0;
-      }
-      
-      .pay-button {
-        width: 100%;
-      
-        padding: 16px;
-      
-        border: none;
-      
-        border-radius: 12px;
-      
-        background: linear-gradient(135deg, #1d4ed8, #2563eb);
-      
-        color: #ffffff;
-      
-        font-size: 17px;
-        font-weight: 900;
-      
-        cursor: pointer;
-      
-        transition: 0.2s;
-      }
-      
-      .pay-button:hover {
-        transform: translateY(-2px);
-      
-        box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
-      }
-      
-      .pay-button:disabled {
-        opacity: 0.7;
-        cursor: not-allowed;
-        transform: none;
-      }
-      
-      /* =========================================
-                       SECURITY
-                    ========================================= */
-      
-      .security {
-        margin-top: 18px;
-      
-        padding: 15px;
-      
-        text-align: center;
-      
-        border-radius: 12px;
-      
-        background: #f1f5f9;
-      
-        color: #64748b;
-      
-        font-size: 12px;
-      
-        line-height: 1.7;
-      }
-      
-      /* =========================================
-                       BACK LINK
-                    ========================================= */
-      
-      .back-link {
-        display: block;
-      
-        margin-top: 20px;
-      
-        text-align: center;
-      
-        color: #2563eb;
-      
-        text-decoration: none;
-      
-        font-weight: 800;
-      
-        font-size: 14px;
-      }
-      
-      .back-link:hover {
-        text-decoration: underline;
-      }
-      
-      /* =========================================
-                       MOBILE
-                    ========================================= */
-      
-      @media (max-width: 600px) {
-        body {
-          padding: 15px 10px;
-        }
-      
-        .payment-card {
-          padding: 25px 18px;
-        }
-      
-        .header h1 {
-          font-size: 24px;
-        }
-      
-        .first-price {
-          font-size: 34px;
-        }
-      
-        .new-price {
-          font-size: 31px;
-        }
-      
-        .today-price {
-          font-size: 24px;
-        }
-      }
-      
-      /* =====================================================
-         NEW LIGHT / DARK / GLASS THEME SUPPORT
-      ===================================================== */
-      
-      body.worker-theme-glass .theme-glass-surface,
-      body.worker-theme-glass .profile,
-      body.worker-theme-glass .box,
-      body.worker-theme-glass .settings-card,
-      body.worker-theme-glass .modal-card,
-      body.worker-theme-glass .payment-card,
-      body.worker-theme-glass .terms-card {
-        background: linear-gradient(135deg, rgba(96, 165, 250, 0.13), rgba(255, 255, 255, 0.075), rgba(99, 102, 241, 0.08)) !important;
-        border: 1px solid rgba(191, 219, 254, 0.27) !important;
-        color: #ffffff !important;
-        box-shadow: 0 26px 65px rgba(2, 6, 23, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
-        backdrop-filter: blur(25px);
-        -webkit-backdrop-filter: blur(25px);
-      }
-      
-      body.worker-theme-glass h1,
-      body.worker-theme-glass h2,
-      body.worker-theme-glass h3,
-      body.worker-theme-glass .value,
-      body.worker-theme-glass .worker-name,
-      body.worker-theme-glass .settings-text h3,
-      body.worker-theme-glass .modal-header h2,
-      body.worker-theme-glass .modal-label,
-      body.worker-theme-glass .header h1,
-      body.worker-theme-glass .rule h3 {
-        color: #ffffff !important;
-      }
-      
-      body.worker-theme-glass .box,
-      body.worker-theme-glass .photo-upload,
-      body.worker-theme-glass .notice,
-      body.worker-theme-glass .privacy,
-      body.worker-theme-glass .worker-box,
-      body.worker-theme-glass .plan-box,
-      body.worker-theme-glass .today-box,
-      body.worker-theme-glass .security,
-      body.worker-theme-glass .rule,
-      body.worker-theme-glass .important,
-      body.worker-theme-glass .availability-box,
-      body.worker-theme-glass .modal-note {
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.11), rgba(59, 130, 246, 0.055)) !important;
-        border-color: rgba(191, 219, 254, 0.25) !important;
-        color: rgba(255, 255, 255, 0.9) !important;
-        backdrop-filter: blur(15px);
-        -webkit-backdrop-filter: blur(15px);
-      }
-      
-      body.worker-theme-glass .box-label,
-      body.worker-theme-glass .rating-count,
-      body.worker-theme-glass .file-help,
-      body.worker-theme-glass .settings-text p,
-      body.worker-theme-glass .header p,
-      body.worker-theme-glass .worker-label,
-      body.worker-theme-glass .worker-id,
-      body.worker-theme-glass .small-label,
-      body.worker-theme-glass .first-text,
-      body.worker-theme-glass .per-month,
-      body.worker-theme-glass .autopay-text,
-      body.worker-theme-glass .today-label,
-      body.worker-theme-glass .rule p {
-        color: rgba(219, 234, 254, 0.76) !important;
-      }
-      
-      body.worker-theme-glass .avatar,
-      body.worker-theme-glass .icon,
-      body.worker-theme-glass .header-icon,
-      body.worker-theme-glass .payment-icon,
-      body.worker-theme-glass .settings-icon {
-        background: rgba(255, 255, 255, 0.12) !important;
-        border-color: rgba(255, 255, 255, 0.25) !important;
-        color: #ffffff !important;
-      }
-      
-      body.worker-theme-glass .rating-card {
-        background: rgba(245, 158, 11, 0.12) !important;
-        border-color: rgba(253, 230, 138, 0.28) !important;
-      }
-      
-      body.worker-theme-glass .rating-number {
-        color: #ffffff !important;
-      }
-      
-      body.worker-theme-glass .worker-id,
-      body.worker-theme-glass .back-link,
-      body.worker-theme-glass .worker-id,
-      body.worker-theme-glass .plan-title {
-        color: #bfdbfe !important;
-      }
-      
-      body.worker-theme-glass .modal-input,
-      body.worker-theme-glass .modal-select,
-      body.worker-theme-glass .modal-textarea {
-        background: rgba(255, 255, 255, 0.09) !important;
-        border-color: rgba(255, 255, 255, 0.2) !important;
-        color: #ffffff !important;
-      }
-      
-      body.worker-theme-glass .modal-select option {
-        background: #0f172a;
-        color: #ffffff;
-      }
-      
-      body.worker-theme-glass .settings-item {
-        border-color: rgba(191, 219, 254, 0.15) !important;
-      }
-      
-      body.worker-theme-glass .settings-action,
-      body.worker-theme-glass .pay-button,
-      body.worker-theme-glass .back-button {
-        background: linear-gradient(135deg, rgba(var(--app-primary-rgb), 0.95), rgba(var(--app-secondary-rgb), 0.88)) !important;
-        border: 1px solid rgba(255, 255, 255, 0.2) !important;
-        color: #ffffff !important;
-        box-shadow: 0 9px 24px rgba(var(--app-primary-rgb), 0.24);
-      }
-      
-      body.worker-theme-glass .subscription-action {
-        background: linear-gradient(135deg, #16a34a, #15803d) !important;
-      }
-      
-      body.worker-theme-glass .danger-action,
-      body.worker-theme-glass .modal-delete {
-        background: linear-gradient(135deg, #dc2626, #b91c1c) !important;
-      }
-      
-      body.worker-theme-glass .test-badge,
-      body.worker-theme-glass .discount {
-        box-shadow: 0 5px 15px rgba(2, 6, 23, 0.12);
-      }
-      
-      body.worker-theme-glass .first-price,
-      body.worker-theme-glass .today-price {
-        color: #86efac !important;
-      }
-      
-      body.worker-theme-glass .new-price {
-        color: #bfdbfe !important;
-      }
-      
-      body.worker-theme-glass .old-price {
-        color: rgba(219, 234, 254, 0.55) !important;
-      }
-      
-      body.worker-theme-glass .notice {
-        border-left-color: #f59e0b !important;
-      }
-      
-      body.worker-theme-glass .important {
-        border-left-color: #f97316 !important;
-      }
-      
-      body.worker-theme-dark .theme-glass-surface,
-      body.worker-theme-dark .profile,
-      body.worker-theme-dark .box,
-      body.worker-theme-dark .settings-card,
-      body.worker-theme-dark .modal-card,
-      body.worker-theme-dark .payment-card,
-      body.worker-theme-dark .terms-card {
-        background: #1e293b !important;
-        color: #e2e8f0 !important;
-        border-color: #334155 !important;
-      }
-      
-      body.worker-theme-glass {
-        padding-top: 94px !important;
-      }
-      body.worker-theme-glass .payment-card {
-        color: #ffffff !important;
-      }
-      body.worker-theme-glass .notice {
-        color: #fde68a !important;
-      }
-      body.worker-theme-dark .payment-card {
-        background: #1e293b !important;
-        color: #e2e8f0 !important;
-      }
-    </style>
-  </head>
+    .wp-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 14px;
+      color: #bfdbfe;
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 900;
+    }
 
-  <body class="worker-page">
-    {% include 'complaints/Worker_Folder/worker_navbar.html' %}
-    <div class="payment-container">
-      <div class="payment-card">
-        <!--   =====================================
-                 HEADER
-            ======================================   -->
+    .wp-icon {
+      width: 19px;
+      height: 19px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
 
-        <div class="header">
-          <div class="payment-icon">
-            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <rect x="3" y="5" width="18" height="14" rx="2"></rect>
-              <path d="M3 10h18"></path>
+    .wp-card {
+      border: 1px solid rgba(129,140,248,.25);
+      border-radius: 22px;
+      background:
+        radial-gradient(circle at 85% 15%, rgba(99,102,241,.20), transparent 28%),
+        rgba(15,45,82,.78);
+      color: #fff;
+      box-shadow: 0 22px 58px rgba(2,6,23,.22);
+      overflow: hidden;
+    }
+
+    .wp-main {
+      display: grid;
+      grid-template-columns: minmax(0,1fr) 310px;
+      gap: 22px;
+      padding: 27px;
+    }
+
+    .wp-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 9px;
+      border: 1px solid rgba(199,210,254,.18);
+      border-radius: 999px;
+      background: rgba(99,102,241,.10);
+      color: #c7d2fe;
+      font-size: 9px;
+      font-weight: 950;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+
+    .wp-title {
+      margin: 13px 0 0;
+      font-size: clamp(28px, 5vw, 43px);
+      line-height: 1.05;
+    }
+
+    .wp-sub {
+      max-width: 610px;
+      margin: 12px 0 0;
+      color: #cbd5e1;
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .wp-trust {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      margin-top: 16px;
+      padding: 11px 12px;
+      border: 1px solid rgba(125,211,252,.16);
+      border-radius: 11px;
+      background: rgba(14,165,233,.06);
+      color: #bfdbfe;
+      font-size: 10px;
+      line-height: 1.55;
+    }
+
+    .wp-price {
+      padding: 20px;
+      border: 1px solid rgba(255,255,255,.13);
+      border-radius: 17px;
+      background: rgba(2,6,23,.23);
+    }
+
+    .wp-today {
+      font-size: 33px;
+      font-weight: 950;
+    }
+
+    .wp-today small {
+      color: #c7d2fe;
+      font-size: 11px;
+    }
+
+    .wp-next {
+      margin-top: 8px;
+      color: #cbd5e1;
+      font-size: 10px;
+      line-height: 1.5;
+    }
+
+    .wp-btn {
+      width: 100%;
+      min-height: 44px;
+      margin-top: 15px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 0;
+      border-radius: 11px;
+      background: #fff;
+      color: #312e81;
+      cursor: pointer;
+      font: inherit;
+      font-size: 11px;
+      font-weight: 950;
+    }
+
+    .wp-btn:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+    }
+
+    .wp-status-grid {
+      display: grid;
+      grid-template-columns: repeat(4,minmax(0,1fr));
+      gap: 1px;
+      border-top: 1px solid rgba(255,255,255,.09);
+      background: rgba(255,255,255,.05);
+    }
+
+    .wp-stat {
+      padding: 14px 10px;
+      background: rgba(2,6,23,.15);
+      text-align: center;
+    }
+
+    .wp-stat strong {
+      display: block;
+      color: #fff;
+      font-size: 13px;
+    }
+
+    .wp-stat span {
+      display: block;
+      margin-top: 4px;
+      color: #94a3b8;
+      font-size: 8px;
+      font-weight: 800;
+    }
+
+    .wp-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .wp-panel {
+      padding: 19px;
+      border: 1px solid rgba(148,163,184,.20);
+      border-radius: 17px;
+      background: rgba(15,45,82,.66);
+      color: #fff;
+    }
+
+    .wp-panel h2 {
+      margin: 0;
+      font-size: 15px;
+    }
+
+    .wp-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .wp-feature {
+      display: grid;
+      grid-template-columns: 34px minmax(0,1fr);
+      gap: 9px;
+      align-items: center;
+    }
+
+    .wp-feature-icon {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(129,140,248,.20);
+      border-radius: 10px;
+      background: rgba(99,102,241,.09);
+      color: #c7d2fe;
+    }
+
+    .wp-feature-icon .wp-icon {
+      width: 17px;
+      height: 17px;
+    }
+
+    .wp-feature strong {
+      display: block;
+      font-size: 10px;
+    }
+
+    .wp-feature span {
+      display: block;
+      margin-top: 2px;
+      color: #94a3b8;
+      font-size: 9px;
+      line-height: 1.45;
+    }
+
+    .wp-manage {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .wp-manage-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,.07);
+      font-size: 10px;
+    }
+
+    .wp-manage-row:last-child { border-bottom: 0; }
+
+    .wp-manage-row span { color: #94a3b8; }
+    .wp-manage-row strong { color: #fff; text-align: right; }
+
+    .wp-secondary,
+    .wp-danger {
+      min-height: 39px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 0 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      font: inherit;
+      font-size: 9px;
+      font-weight: 900;
+    }
+
+    .wp-secondary {
+      border: 1px solid rgba(165,180,252,.22);
+      background: rgba(99,102,241,.10);
+      color: #e0e7ff;
+    }
+
+    .wp-danger {
+      border: 1px solid rgba(248,113,113,.22);
+      background: rgba(239,68,68,.08);
+      color: #fecaca;
+    }
+
+    .wp-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 13px;
+    }
+
+    .wp-note {
+      margin-top: 15px;
+      padding: 14px;
+      border: 1px solid rgba(148,163,184,.18);
+      border-radius: 14px;
+      background: rgba(15,45,82,.52);
+      color: #cbd5e1;
+      font-size: 9px;
+      line-height: 1.65;
+    }
+
+    .wp-note strong { color: #fff; }
+
+    .wp-alert {
+      margin-bottom: 12px;
+      padding: 11px 12px;
+      border: 1px solid rgba(248,113,113,.20);
+      border-radius: 11px;
+      background: rgba(239,68,68,.08);
+      color: #fecaca;
+      font-size: 10px;
+      line-height: 1.5;
+    }
+
+    .wp-ok {
+      color: #86efac !important;
+    }
+
+    @media (max-width:760px) {
+      .wp-main,
+      .wp-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .wp-status-grid {
+        grid-template-columns: repeat(2,minmax(0,1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+  {% include 'complaints/Worker_Folder/worker_navbar.html' %}
+
+  <main class="wp-page">
+    <a class="wp-back" href="{% url 'worker_dashboard' %}">
+      <svg class="wp-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="m15 18-6-6 6-6"></path>
+      </svg>
+      Worker Dashboard
+    </a>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="wp-alert">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+
+    {% if gateway_sync_error %}
+      <div class="wp-alert">{{ gateway_sync_error }}</div>
+    {% endif %}
+
+    <section class="wp-card">
+      <div class="wp-main">
+        <div>
+          <div class="wp-eyebrow">
+            <svg class="wp-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 3 20 8l-8 13L4 8Z"></path>
+              <path d="M4 8h16"></path>
             </svg>
+            Worker Pro
           </div>
 
-          <h1>Worker Subscription</h1>
+          <h1 class="wp-title">Professional tools with clear recurring billing.</h1>
 
-          <p>Activate your Smart Complaint worker subscription securely.</p>
-        </div>
+          <p class="wp-sub">
+            Worker Pro includes 150 AI credits per active billing period and
+            worker premium tools. AI suggestions remain optional and never
+            change complaint status or verify completion automatically.
+          </p>
 
-        <!--   =====================================
-                 TEST MODE
-            ======================================   -->
-
-        <div class="test-badge icon-inline">
-          <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M9 3h6"></path>
-            <path d="M10 3v5l-5 9a2 2 0 0 0 1.7 3h10.6A2 2 0 0 0 19 17l-5-9V3"></path>
-            <path d="M8 14h8"></path>
-          </svg>Razorpay Test Mode
-        </div>
-
-        <!--   =====================================
-                 DJANGO MESSAGES
-            ======================================   -->
-
-        {% if messages %}
-          {% for message in messages %}
-            <div class="error-box">{{ message }}</div>
-          {% endfor %}
-        {% endif %}
-
-        <!--   =====================================
-                 WORKER DETAILS
-            ======================================   -->
-
-        <div class="worker-box">
-          <div class="worker-label">SUBSCRIPTION FOR</div>
-
-          <div class="worker-name">{{ worker.name }}</div>
-
-          <div class="worker-id">Worker ID:
-            {{ worker.worker_id }}</div>
-        </div>
-
-        <!--   =====================================
-                 PLAN
-            ======================================   -->
-
-        <div class="plan-box">
-          <div class="plan-title">
-            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3l-5.6 2.9 1.1-6.2L3 9.6l6.2-.9L12 3z"></path>
-            </svg>Smart Complaint Worker Plan
+          <div class="wp-trust">
+            <svg class="wp-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 3 20 6v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6Z"></path>
+              <path d="m8.5 12 2.2 2.2L15.8 9"></path>
+            </svg>
+            <div>
+              First introductory period: ₹49. Regular recurring price:
+              ₹149 per month from the next billing period. Future renewal
+              can be turned off from this page.
+            </div>
           </div>
+        </div>
 
-          <!-- FIRST MONTH -->
-
-          <div class="first-box">
-            <div class="small-label">FIRST MONTH</div>
-
-            <div class="first-price">₹49</div>
-
-            <div class="first-text">Special introductory price</div>
-          </div>
-
-          <!-- SECOND MONTH -->
-
-          <div class="recurring-box">
-            <div class="small-label">FROM SECOND MONTH</div>
-
-            <div class="price-row">
-              <span class="old-price">₹499</span>
-
-              <span class="new-price">₹149</span>
-
-              <span class="per-month">/ month</span>
-
-              <span class="discount">
-                <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M12 22c4 0 7-2.8 7-6.7 0-3.2-1.8-5.2-4.2-7.8-.4 2.4-1.7 3.7-2.8 4.5.3-4.2-1.4-7-4-10 0 4.8-3 6.4-3 10.2C5 18.1 8 22 12 22z"></path>
-                </svg>70% OFF
-              </span>
+        <div class="wp-price">
+          {% if subscription.is_premium_active %}
+            <div class="wp-today">
+              Active
+              <small>Worker Pro</small>
             </div>
 
-            <div class="autopay-text">₹149 will be charged every month through AutoPay after successful recurring mandate authorization.</div>
+            <div class="wp-next">
+              {% if subscription.cancel_at_period_end %}
+                Automatic renewal is off. Access continues until the current period ends.
+              {% elif subscription.next_billing_at %}
+                Next scheduled billing: {{ subscription.next_billing_at|date:"d M Y" }}.
+              {% else %}
+                Subscription is active. Refresh status for the latest billing date.
+              {% endif %}
+            </div>
+
+          {% else %}
+            <div class="wp-today">
+              ₹49 <small>introductory first period</small>
+            </div>
+
+            <div class="wp-next">
+              Then ₹149/month through Razorpay recurring billing after authorisation.
+            </div>
+
+            <form method="post">
+              {% csrf_token %}
+              <button
+                class="wp-btn"
+                type="submit"
+                {% if not worker_pro_configured %}disabled{% endif %}
+              >
+                <svg class="wp-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="3" y="6" width="18" height="12" rx="2"></rect>
+                  <path d="M3 10h18"></path>
+                </svg>
+                Continue to Secure Razorpay
+              </button>
+            </form>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="wp-status-grid">
+        <div class="wp-stat">
+          <strong>{{ subscription.status|title }}</strong>
+          <span>Local Entitlement</span>
+        </div>
+
+        <div class="wp-stat">
+          <strong>{{ subscription.last_gateway_status|default:"Not synced"|title }}</strong>
+          <span>Razorpay Status</span>
+        </div>
+
+        <div class="wp-stat">
+          <strong>
+            {% if subscription.current_period_end %}
+              {{ subscription.current_period_end|date:"d M Y" }}
+            {% else %}
+              —
+            {% endif %}
+          </strong>
+          <span>Current Access Until</span>
+        </div>
+
+        <div class="wp-stat">
+          <strong>
+            {% if subscription.cancel_at_period_end %}
+              Off
+            {% else %}
+              On
+            {% endif %}
+          </strong>
+          <span>Automatic Renewal</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="wp-grid">
+      <section class="wp-panel">
+        <h2>Worker Pro includes</h2>
+
+        <div class="wp-list">
+          <div class="wp-feature">
+            <div class="wp-feature-icon">
+              <svg class="wp-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 3 13.5 7.5 18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5Z"></path>
+              </svg>
+            </div>
+            <div>
+              <strong>150 AI credits per active period</strong>
+              <span>Complaint summaries, work checklists and reply drafts use controlled credits.</span>
+            </div>
+          </div>
+
+          <div class="wp-feature">
+            <div class="wp-feature-icon">
+              <svg class="wp-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 5h16M4 10h16M4 15h10M4 20h7"></path>
+              </svg>
+            </div>
+            <div>
+              <strong>AI Complaint Summary</strong>
+              <span>Short worker-oriented overview without exposing unnecessary private data.</span>
+            </div>
+          </div>
+
+          <div class="wp-feature">
+            <div class="wp-feature-icon">
+              <svg class="wp-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="m4 6 2 2 4-4M12 6h8M4 13l2 2 4-4M12 13h8"></path>
+              </svg>
+            </div>
+            <div>
+              <strong>Work Checklist</strong>
+              <span>Practical preparation steps with safety-first language.</span>
+            </div>
+          </div>
+
+          <div class="wp-feature">
+            <div class="wp-feature-icon">
+              <svg class="wp-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 4h16v12H8l-4 4Z"></path>
+                <path d="M8 8h8M8 12h5"></path>
+              </svg>
+            </div>
+            <div>
+              <strong>Reply Draft</strong>
+              <span>Creates a draft only. The worker reviews and chooses whether to send it.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="wp-panel">
+        <h2>Subscription management</h2>
+
+        <div class="wp-manage">
+          <div class="wp-manage-row">
+            <span>Introductory price</span>
+            <strong>₹{{ first_month_price }}</strong>
+          </div>
+
+          <div class="wp-manage-row">
+            <span>Regular monthly price</span>
+            <strong>₹{{ monthly_price }}</strong>
+          </div>
+
+          <div class="wp-manage-row">
+            <span>Razorpay subscription</span>
+            <strong>
+              {% if subscription.razorpay_subscription_id %}
+                Connected
+              {% else %}
+                Not created
+              {% endif %}
+            </strong>
+          </div>
+
+          <div class="wp-manage-row">
+            <span>Webhook</span>
+            <strong class="{% if webhook_configured %}wp-ok{% endif %}">
+              {% if webhook_configured %}Configured{% else %}Needs setup{% endif %}
+            </strong>
           </div>
         </div>
 
-        <!--   =====================================
-                 TODAY PAYMENT
-            ======================================   -->
+        <div class="wp-actions">
+          {% if subscription.razorpay_subscription_id %}
+            <form method="post" action="{% url 'worker_subscription_sync' %}">
+              {% csrf_token %}
+              <button class="wp-secondary" type="submit">
+                <svg class="wp-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M20 6v5h-5"></path>
+                  <path d="M4 18v-5h5"></path>
+                  <path d="M6.5 8a7 7 0 0 1 11.7-2L20 8"></path>
+                  <path d="M17.5 16a7 7 0 0 1-11.7 2L4 16"></path>
+                </svg>
+                Refresh Razorpay Status
+              </button>
+            </form>
+          {% endif %}
 
-        <div class="today-box">
-          <div class="today-label">Amount payable today</div>
+          {% if subscription.is_premium_active and subscription.razorpay_subscription_id and not subscription.cancel_at_period_end %}
+            <form
+              method="post"
+              action="{% url 'worker_subscription_cancel_renewal' %}"
+              onsubmit="return confirm('Turn off future Worker Pro renewal? Current paid access will remain until the period ends.');"
+            >
+              {% csrf_token %}
+              <input type="hidden" name="confirm_cancel" value="yes">
 
-          <div class="today-price">₹49</div>
+              <button class="wp-danger" type="submit">
+                <svg class="wp-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M6 6l12 12M18 6 6 18"></path>
+                </svg>
+                Turn Off Future Renewal
+              </button>
+            </form>
+          {% endif %}
         </div>
-
-        <!--   =====================================
-                 AUTOPAY INFORMATION
-            ======================================   -->
-
-        <div class="notice">
-          <strong>
-            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12 3 2.7 20h18.6L12 3z"></path>
-              <path d="M12 9v5"></path>
-              <path d="M12 17h.01"></path>
-            </svg>AutoPay Information
-          </strong>
-
-          <br /><br />
-
-          By continuing, you will be asked to authorize a recurring AutoPay mandate.
-
-          <br /><br />
-
-          Today you pay only
-          <strong>₹49</strong>.
-
-          After the first month,
-          <strong>₹149 per month</strong>
-          may be automatically charged according to the authorized mandate until the subscription is cancelled.
-        </div>
-
-        <!--   =====================================
-                 REAL BACKEND POST FORM
-            ======================================   -->
-
-        <form method="post" action="{% url 'worker_subscription_payment' %}" class="pay-form" id="subscriptionForm">
-          {% csrf_token %}
-
-          <button type="submit" class="pay-button" id="subscribeButton">
-            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <rect x="5" y="10" width="14" height="11" rx="2"></rect>
-              <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
-            </svg>Pay ₹49 & Activate AutoPay
-          </button>
-        </form>
-
-        <!--   =====================================
-                 SECURITY
-            ======================================   -->
-
-        <div class="security">
-          <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M12 3l7 3v5c0 4.8-2.9 8.1-7 10-4.1-1.9-7-5.2-7-10V6l7-3z"></path>
-            <path d="M9.5 12l1.7 1.7L15 9.9"></path>
-          </svg>Payment and AutoPay authorization will be handled securely through Razorpay.
-
-          <br /><br />
-
-          Smart Complaint does not collect or store your UPI PIN, card CVV or net banking password.
-
-          <br /><br />
-
-          <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M9 3h6"></path>
-            <path d="M10 3v5l-5 9a2 2 0 0 0 1.7 3h10.6A2 2 0 0 0 19 17l-5-9V3"></path>
-            <path d="M8 14h8"></path>
-          </svg>Test Mode is currently active, so no real money will be deducted.
-        </div>
-
-        <!--   =====================================
-                 BACK
-            ======================================   -->
-
-        <a href="{% url 'terms_conditions' %}" class="back-link">← Back to Terms & Conditions</a>
-      </div>
+      </section>
     </div>
 
-    <!--   =========================================
-         PREVENT DOUBLE CLICK
-    =========================================   -->
+    {% if not worker_pro_configured %}
+      <div class="wp-note">
+        <strong>Payment configuration incomplete:</strong>
+        RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET and RAZORPAY_WORKER_PLAN_ID
+        must be configured on the server before workers can start Worker Pro.
+      </div>
+    {% endif %}
 
-    <script>
-      const subscriptionForm = document.getElementById('subscriptionForm')
-      
-      const subscribeButton = document.getElementById('subscribeButton')
-      
-      subscriptionForm.addEventListener('submit', function () {
-        subscribeButton.disabled = true
-      
-        subscribeButton.innerText = '⏳ Opening Razorpay...'
-      })
-    </script>
-  </body>
+    <div class="wp-note">
+      <strong>Transparent billing:</strong>
+      Razorpay handles recurring authorisation and billing. Worker Pro access
+      is based on verified Razorpay subscription status. Failed payment or
+      incomplete authorisation does not activate Worker Pro. Turning off
+      future renewal does not remove already-paid access before the current
+      period ends.
+    </div>
+  </main>
+</body>
 </html>

@@ -2274,9 +2274,477 @@
 
 
 <style>
-.worker-page .page{width:min(1180px,calc(100% - 32px));padding-top:30px}.dashboard-header{display:none}.dashboard-summary{position:relative;padding:28px!important;background:linear-gradient(135deg,rgba(3,78,93,.92),rgba(8,105,111,.72),rgba(13,148,136,.55))!important;border:1px solid rgba(45,212,191,.28)!important;color:#fff!important}.dashboard-summary:after{content:"👷";position:absolute;right:34px;top:20px;font-size:82px;opacity:.92}.dashboard-summary-main{padding-right:120px}.dashboard-summary-avatar{width:84px!important;height:84px!important;min-width:84px!important;border-color:#d5fffa!important;background:#ccfbf1!important}.dashboard-summary-kicker{color:#99f6e4!important}.dashboard-summary-text h2{color:#fff!important;font-size:31px!important}.dashboard-summary-text p{color:#ccfbf1!important;max-width:700px}.worker-id-pill{background:rgba(255,255,255,.12)!important;color:#e6fffb!important}.approved-pill{background:rgba(16,185,129,.20)!important;color:#a7f3d0!important;border:1px solid rgba(52,211,153,.22)}.section-title{font-size:20px!important;margin-top:22px!important}.complaint{background:rgba(8,47,73,.72)!important;border:1px solid rgba(45,212,191,.17)!important;color:#e6fffb!important;box-shadow:0 18px 44px rgba(2,6,23,.24)!important}.complaint-head h2,.complaint-user-name,.info b{color:#fff!important}.tracking-id,.complaint-user-meta,.photo-note{color:#a8c5d1!important}.desc,.complaint-user-profile,.info,.photo-box,.location-box,.rating-box,.otp-box{background:rgba(255,255,255,.055)!important;border-color:rgba(148,163,184,.16)!important;color:#dbeafe!important}.photo-title,.location-title,.otp-title,.rating-title{color:#99f6e4!important}.worker-dashboard-design-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:18px 0 24px}.worker-dashboard-stat{padding:18px;border-radius:17px;border:1px solid rgba(45,212,191,.18);background:linear-gradient(145deg,rgba(5,63,91,.86),rgba(8,92,104,.64));color:#fff;text-align:center;box-shadow:0 14px 34px rgba(2,6,23,.20)}.worker-dashboard-stat span{display:block;color:#99f6e4;font-size:12px}.worker-dashboard-stat b{display:block;margin-top:7px;font-size:28px}.worker-dashboard-stat small{display:block;margin-top:5px;color:#94a3b8}.worker-dashboard-stat:first-child b{color:#7dd3fc}
+.worker-page .page{width:min(1180px,calc(100% - 32px));padding-top:30px}.dashboard-header{display:none}.dashboard-summary{position:relative;padding:28px!important;background:linear-gradient(135deg,rgba(3,78,93,.92),rgba(8,105,111,.72),rgba(13,148,136,.55))!important;border:1px solid rgba(45,212,191,.28)!important;color:#fff!important}.dashboard-summary:after{content:"";position:absolute;right:34px;top:20px;font-size:82px;opacity:.92}.dashboard-summary-main{padding-right:120px}.dashboard-summary-avatar{width:84px!important;height:84px!important;min-width:84px!important;border-color:#d5fffa!important;background:#ccfbf1!important}.dashboard-summary-kicker{color:#99f6e4!important}.dashboard-summary-text h2{color:#fff!important;font-size:31px!important}.dashboard-summary-text p{color:#ccfbf1!important;max-width:700px}.worker-id-pill{background:rgba(255,255,255,.12)!important;color:#e6fffb!important}.approved-pill{background:rgba(16,185,129,.20)!important;color:#a7f3d0!important;border:1px solid rgba(52,211,153,.22)}.section-title{font-size:20px!important;margin-top:22px!important}.complaint{background:rgba(8,47,73,.72)!important;border:1px solid rgba(45,212,191,.17)!important;color:#e6fffb!important;box-shadow:0 18px 44px rgba(2,6,23,.24)!important}.complaint-head h2,.complaint-user-name,.info b{color:#fff!important}.tracking-id,.complaint-user-meta,.photo-note{color:#a8c5d1!important}.desc,.complaint-user-profile,.info,.photo-box,.location-box,.rating-box,.otp-box{background:rgba(255,255,255,.055)!important;border-color:rgba(148,163,184,.16)!important;color:#dbeafe!important}.photo-title,.location-title,.otp-title,.rating-title{color:#99f6e4!important}.worker-dashboard-design-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:18px 0 24px}.worker-dashboard-stat{padding:18px;border-radius:17px;border:1px solid rgba(45,212,191,.18);background:linear-gradient(145deg,rgba(5,63,91,.86),rgba(8,92,104,.64));color:#fff;text-align:center;box-shadow:0 14px 34px rgba(2,6,23,.20)}.worker-dashboard-stat span{display:block;color:#99f6e4;font-size:12px}.worker-dashboard-stat b{display:block;margin-top:7px;font-size:28px}.worker-dashboard-stat small{display:block;margin-top:5px;color:#94a3b8}.worker-dashboard-stat:first-child b{color:#7dd3fc}
 body.worker-theme-light .complaint{background:#fff!important;color:#172554!important;border-color:#dbeafe!important}body.worker-theme-light .complaint-head h2,body.worker-theme-light .complaint-user-name,body.worker-theme-light .info b{color:#172554!important}body.worker-theme-light .desc,body.worker-theme-light .complaint-user-profile,body.worker-theme-light .info,body.worker-theme-light .photo-box,body.worker-theme-light .location-box,body.worker-theme-light .rating-box,body.worker-theme-light .otp-box{background:#f8fafc!important;color:#334155!important;border-color:#e2e8f0!important}body.worker-theme-light .worker-dashboard-stat{background:#fff;color:#172554;border-color:#dbeafe}body.worker-theme-light .worker-dashboard-stat b{color:#172554}body.worker-theme-light .worker-dashboard-stat span{color:#0f766e}
 @media(max-width:760px){.dashboard-summary:after{display:none}.dashboard-summary-main{padding-right:0}.worker-dashboard-design-stats{grid-template-columns:repeat(2,1fr)}}@media(max-width:480px){.worker-page .page{width:calc(100% - 20px)}.dashboard-summary{padding:20px!important}.dashboard-summary-main{align-items:flex-start}.dashboard-summary-text h2{font-size:25px!important}.worker-dashboard-design-stats{gap:10px}.worker-dashboard-stat{padding:14px 8px}}
+</style>
+
+
+<style>
+/* =========================================================
+   WORKER AI ASSIST
+========================================================= */
+.worker-ai-panel {
+    margin: 16px 0;
+    padding: 16px;
+    border: 1px solid rgba(129, 140, 248, .28);
+    border-radius: 16px;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(30, 64, 175, .15),
+            rgba(91, 33, 182, .14)
+        );
+}
+
+.worker-ai-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.worker-ai-title {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    min-width: 0;
+}
+
+.worker-ai-title-icon {
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(165, 180, 252, .24);
+    border-radius: 11px;
+    background: rgba(79, 70, 229, .16);
+    color: #c7d2fe;
+}
+
+.worker-ai-title-icon .ui-icon {
+    width: 20px;
+    height: 20px;
+}
+
+.worker-ai-title h3 {
+    margin: 0;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 950;
+}
+
+.worker-ai-title p {
+    margin: 4px 0 0;
+    color: #a5b4fc;
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+.worker-ai-credit {
+    flex: 0 0 auto;
+    padding: 6px 9px;
+    border: 1px solid rgba(196, 181, 253, .22);
+    border-radius: 999px;
+    background: rgba(99, 102, 241, .11);
+    color: #ddd6fe;
+    font-size: 9px;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+.worker-ai-trust {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-top: 11px;
+    padding: 10px;
+    border: 1px solid rgba(125, 211, 252, .16);
+    border-radius: 10px;
+    background: rgba(14, 165, 233, .06);
+    color: #bfdbfe;
+    font-size: 9px;
+    line-height: 1.55;
+}
+
+.worker-ai-trust .ui-icon {
+    width: 17px;
+    height: 17px;
+    flex: 0 0 17px;
+    margin-top: 1px;
+}
+
+.worker-ai-actions {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 11px;
+}
+
+.worker-ai-btn {
+    min-height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 8px 10px;
+    border: 1px solid rgba(129, 140, 248, .22);
+    border-radius: 10px;
+    background: rgba(79, 70, 229, .12);
+    color: #e0e7ff;
+    cursor: pointer;
+    font: inherit;
+    font-size: 9px;
+    font-weight: 900;
+    line-height: 1.25;
+}
+
+.worker-ai-btn:hover:not(:disabled) {
+    border-color: rgba(165, 180, 252, .45);
+    background: rgba(79, 70, 229, .20);
+}
+
+.worker-ai-btn:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+}
+
+.worker-ai-btn .ui-icon {
+    width: 16px;
+    height: 16px;
+}
+
+.worker-ai-status {
+    min-height: 15px;
+    margin-top: 8px;
+    color: #94a3b8;
+    font-size: 9px;
+    line-height: 1.45;
+}
+
+.worker-ai-status.success {
+    color: #a7f3d0;
+}
+
+.worker-ai-status.error {
+    color: #fecaca;
+}
+
+.worker-ai-upgrade {
+    display: none;
+    margin-top: 9px;
+    color: #c7d2fe;
+    font-size: 9px;
+    font-weight: 900;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.worker-ai-result {
+    display: none;
+    margin-top: 11px;
+    padding: 12px;
+    border: 1px solid rgba(52, 211, 153, .18);
+    border-radius: 12px;
+    background: rgba(16, 185, 129, .06);
+}
+
+.worker-ai-result.active {
+    display: block;
+}
+
+.worker-ai-result-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 9px;
+}
+
+.worker-ai-result-head strong {
+    color: #d1fae5;
+    font-size: 10px;
+}
+
+.worker-ai-cache {
+    display: none;
+    padding: 4px 7px;
+    border-radius: 999px;
+    background: rgba(59, 130, 246, .12);
+    color: #bfdbfe;
+    font-size: 8px;
+    font-weight: 900;
+}
+
+.worker-ai-cache.active {
+    display: inline-flex;
+}
+
+.worker-ai-result-body {
+    color: #e2e8f0;
+    font-size: 10px;
+    line-height: 1.6;
+}
+
+.worker-ai-field {
+    margin-top: 8px;
+    padding: 9px;
+    border: 1px solid rgba(148, 163, 184, .12);
+    border-radius: 9px;
+    background: rgba(255, 255, 255, .035);
+}
+
+.worker-ai-field:first-child {
+    margin-top: 0;
+}
+
+.worker-ai-label {
+    display: block;
+    margin-bottom: 3px;
+    color: #94a3b8;
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
+.worker-ai-list {
+    margin: 0;
+    padding-left: 18px;
+}
+
+.worker-ai-list li + li {
+    margin-top: 5px;
+}
+
+.worker-ai-copy {
+    margin-top: 9px;
+    min-height: 34px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 0 10px;
+    border: 1px solid rgba(52, 211, 153, .22);
+    border-radius: 9px;
+    background: rgba(16, 185, 129, .10);
+    color: #a7f3d0;
+    cursor: pointer;
+    font: inherit;
+    font-size: 9px;
+    font-weight: 900;
+}
+
+.worker-ai-copy.active {
+    display: inline-flex;
+}
+
+.worker-ai-copy .ui-icon {
+    width: 14px;
+    height: 14px;
+}
+
+body.worker-theme-light .worker-ai-panel {
+    background: #f8fafc;
+    border-color: #c7d2fe;
+}
+
+body.worker-theme-light .worker-ai-title h3,
+body.worker-theme-light .worker-ai-result-body {
+    color: #172554;
+}
+
+body.worker-theme-light .worker-ai-title p,
+body.worker-theme-light .worker-ai-status,
+body.worker-theme-light .worker-ai-label {
+    color: #64748b;
+}
+
+body.worker-theme-light .worker-ai-credit {
+    background: #eef2ff;
+    border-color: #c7d2fe;
+    color: #4338ca;
+}
+
+body.worker-theme-light .worker-ai-trust {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+    color: #1e40af;
+}
+
+body.worker-theme-light .worker-ai-btn {
+    background: #eef2ff;
+    border-color: #c7d2fe;
+    color: #3730a3;
+}
+
+body.worker-theme-light .worker-ai-result {
+    background: #ecfdf5;
+    border-color: #bbf7d0;
+}
+
+body.worker-theme-light .worker-ai-result-head strong {
+    color: #065f46;
+}
+
+body.worker-theme-light .worker-ai-field {
+    background: #fff;
+    border-color: #dbeafe;
+}
+
+@media (max-width: 720px) {
+    .worker-ai-head {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+
+    .worker-ai-credit {
+        justify-self: start;
+    }
+
+    .worker-ai-actions {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+
+<style>
+/* =========================================================
+   LOCAL WORKER PRO TEST
+========================================================= */
+.worker-local-test {
+    margin: 0 0 24px;
+    padding: 16px;
+    border: 1px dashed rgba(191, 219, 254, .34);
+    border-radius: 16px;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(15, 23, 42, .28),
+            rgba(30, 64, 175, .18)
+        );
+    color: #e2e8f0;
+}
+
+.worker-local-test-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.worker-local-test-title {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+}
+
+.worker-local-test-title .ui-icon {
+    width: 19px;
+    height: 19px;
+    color: #c7d2fe;
+    flex: 0 0 19px;
+}
+
+.worker-local-test-title strong {
+    display: block;
+    color: #fff;
+    font-size: 12px;
+}
+
+.worker-local-test-title span {
+    display: block;
+    margin-top: 3px;
+    color: #94a3b8;
+    font-size: 9px;
+    line-height: 1.5;
+}
+
+.worker-local-test-status {
+    flex: 0 0 auto;
+    padding: 6px 9px;
+    border: 1px solid rgba(196, 181, 253, .22);
+    border-radius: 999px;
+    background: rgba(99, 102, 241, .11);
+    color: #ddd6fe;
+    font-size: 9px;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+.worker-local-test-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.worker-local-test-btn {
+    min-height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 0 12px;
+    border: 1px solid rgba(165, 180, 252, .24);
+    border-radius: 10px;
+    background: rgba(79, 70, 229, .15);
+    color: #e0e7ff;
+    cursor: pointer;
+    font: inherit;
+    font-size: 9px;
+    font-weight: 900;
+}
+
+.worker-local-test-btn.reset {
+    background: rgba(15, 23, 42, .24);
+    color: #dbeafe;
+}
+
+.worker-local-test-btn .ui-icon {
+    width: 15px;
+    height: 15px;
+}
+
+body.worker-theme-light .worker-local-test {
+    background: #f8fafc;
+    border-color: #c7d2fe;
+    color: #334155;
+}
+
+body.worker-theme-light .worker-local-test-title strong {
+    color: #172554;
+}
+
+body.worker-theme-light .worker-local-test-status {
+    background: #eef2ff;
+    color: #4338ca;
+    border-color: #c7d2fe;
+}
+
+body.worker-theme-light .worker-local-test-btn {
+    background: #eef2ff;
+    color: #3730a3;
+    border-color: #c7d2fe;
+}
+
+@media (max-width: 620px) {
+    .worker-local-test-head {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+
+    .worker-local-test-status {
+        justify-self: start;
+    }
+
+    .worker-local-test-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+}
 </style>
 
 </head>
@@ -2458,6 +2926,76 @@ body.worker-theme-light .complaint{background:#fff!important;color:#172554!impor
             <div class="worker-dashboard-stat"><span>Resolved</span><b>—</b><small>Live count next</small></div>
             <div class="worker-dashboard-stat"><span>Total Completed</span><b>—</b><small>Live count next</small></div>
         </section>
+
+
+        {% if local_worker_pro_test_allowed %}
+            <section class="worker-local-test">
+                <div class="worker-local-test-head">
+                    <div class="worker-local-test-title">
+                        <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M9 3h6"></path>
+                            <path d="M10 3v5l-5 9a2 2 0 0 0 1.7 3h10.6A2 2 0 0 0 19 17l-5-9V3"></path>
+                            <path d="M8 14h8"></path>
+                        </svg>
+
+                        <div>
+                            <strong>Local Worker Pro Test</strong>
+                            <span>
+                                Localhost-only control for testing the 150-credit Worker Pro
+                                experience without creating a Razorpay subscription.
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="worker-local-test-status">
+                        {% if worker_subscription.is_premium_active %}
+                            Worker Pro Active
+                        {% else %}
+                            Free Worker
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="worker-local-test-actions">
+                    <form
+                        method="post"
+                        action="{% url 'activate_local_test_worker_pro' %}"
+                    >
+                        {% csrf_token %}
+
+                        <button
+                            type="submit"
+                            class="worker-local-test-btn"
+                        >
+                            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M12 3 20 8l-8 13L4 8Z"></path>
+                                <path d="M4 8h16"></path>
+                            </svg>
+                            Activate Test Worker Pro
+                        </button>
+                    </form>
+
+                    <form
+                        method="post"
+                        action="{% url 'reset_local_test_worker_pro' %}"
+                    >
+                        {% csrf_token %}
+
+                        <button
+                            type="submit"
+                            class="worker-local-test-btn reset"
+                        >
+                            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M4 12a8 8 0 1 0 2.3-5.7L4 8"></path>
+                                <path d="M4 4v4h4"></path>
+                            </svg>
+                            Reset to Free Worker
+                        </button>
+                    </form>
+                </div>
+            </section>
+        {% endif %}
+
 
         <!-- =================================================
              ASSIGNED COMPLAINTS
@@ -2836,6 +3374,160 @@ body.worker-theme-light .complaint{background:#fff!important;color:#172554!impor
 
 
                 </div>
+
+
+
+                <!-- =========================================
+                     WORKER AI ASSIST
+                ========================================== -->
+
+                <section
+                    class="worker-ai-panel"
+                    data-worker-ai-panel
+                    data-complaint-id="{{ complaint.id }}"
+                >
+                    <div class="worker-ai-head">
+                        <div class="worker-ai-title">
+                            <div class="worker-ai-title-icon">
+                                <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M12 3 13.5 7.5 18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5Z"></path>
+                                    <path d="M19 15.5 19.8 18 22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-1Z"></path>
+                                </svg>
+                            </div>
+
+                            <div>
+                                <h3>Worker AI Assist</h3>
+                                <p>
+                                    Optional support for understanding the complaint,
+                                    preparing work and drafting a reply.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="worker-ai-credit" data-worker-ai-credit>
+                            Loading AI credits…
+                        </div>
+                    </div>
+
+                    <div class="worker-ai-trust">
+                        <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M12 3 20 6v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6Z"></path>
+                            <path d="m8.5 12 2.2 2.2L15.8 9"></path>
+                        </svg>
+
+                        <span>
+                            AI suggestions never change complaint status, verify OTP,
+                            mark work complete or send a message automatically.
+                            Review every suggestion before using it.
+                        </span>
+                    </div>
+
+                    <div class="worker-ai-actions">
+                        <button
+                            type="button"
+                            class="worker-ai-btn"
+                            data-worker-ai-action="summary"
+                            data-credit-cost="2"
+                            data-url="{% url 'worker_ai_summary' complaint.id %}"
+                            disabled
+                        >
+                            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M4 5h16"></path>
+                                <path d="M4 10h16"></path>
+                                <path d="M4 15h10"></path>
+                                <path d="M4 20h7"></path>
+                            </svg>
+                            Complaint Summary · 2 credits
+                        </button>
+
+                        <button
+                            type="button"
+                            class="worker-ai-btn"
+                            data-worker-ai-action="checklist"
+                            data-credit-cost="2"
+                            data-url="{% url 'worker_ai_checklist' complaint.id %}"
+                            disabled
+                        >
+                            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="m4 6 2 2 4-4"></path>
+                                <path d="M12 6h8"></path>
+                                <path d="m4 13 2 2 4-4"></path>
+                                <path d="M12 13h8"></path>
+                                <path d="m4 20 2 2 4-4"></path>
+                                <path d="M12 20h8"></path>
+                            </svg>
+                            Work Checklist · 2 credits
+                        </button>
+
+                        <button
+                            type="button"
+                            class="worker-ai-btn"
+                            data-worker-ai-action="reply"
+                            data-credit-cost="1"
+                            data-url="{% url 'worker_ai_reply' complaint.id %}"
+                            disabled
+                        >
+                            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M4 4h16v12H8l-4 4Z"></path>
+                                <path d="M8 8h8"></path>
+                                <path d="M8 12h5"></path>
+                            </svg>
+                            Reply Draft · 1 credit
+                        </button>
+                    </div>
+
+                    <div
+                        class="worker-ai-status"
+                        data-worker-ai-status
+                        role="status"
+                        aria-live="polite"
+                    >
+                        Checking your AI allowance…
+                    </div>
+
+                    <a
+                        class="worker-ai-upgrade"
+                        data-worker-ai-upgrade
+                        href="{% url 'terms_conditions' %}"
+                    >
+                        View Worker Pro
+                    </a>
+
+                    <div
+                        class="worker-ai-result"
+                        data-worker-ai-result
+                    >
+                        <div class="worker-ai-result-head">
+                            <strong data-worker-ai-result-title>
+                                AI suggestion
+                            </strong>
+
+                            <span
+                                class="worker-ai-cache"
+                                data-worker-ai-cache
+                            >
+                                Saved result · no extra credit
+                            </span>
+                        </div>
+
+                        <div
+                            class="worker-ai-result-body"
+                            data-worker-ai-result-body
+                        ></div>
+
+                        <button
+                            type="button"
+                            class="worker-ai-copy"
+                            data-worker-ai-copy
+                        >
+                            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <rect x="8" y="8" width="11" height="11" rx="2"></rect>
+                                <path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"></path>
+                            </svg>
+                            Copy Reply
+                        </button>
+                    </div>
+                </section>
 
 
                 <!-- =========================================
@@ -3639,6 +4331,664 @@ body.worker-theme-light .complaint{background:#fff!important;color:#172554!impor
 
 
     </main>
+
+
+<script>
+(function () {
+    "use strict";
+
+    const panels = Array.from(
+        document.querySelectorAll(
+            "[data-worker-ai-panel]"
+        )
+    );
+
+    if (!panels.length) return;
+
+    const statusUrl = "{% url 'ai_status' %}";
+    const csrfInput = document.querySelector(
+        'input[name="csrfmiddlewaretoken"]'
+    );
+
+    let currentAI = null;
+
+    function setPanelStatus(
+        panel,
+        message,
+        state
+    ) {
+        const node = panel.querySelector(
+            "[data-worker-ai-status]"
+        );
+
+        if (!node) return;
+
+        node.textContent = message || "";
+        node.classList.remove(
+            "success",
+            "error"
+        );
+
+        if (state) {
+            node.classList.add(state);
+        }
+    }
+
+    function renderCredits(ai) {
+        currentAI = ai;
+
+        panels.forEach(function (panel) {
+            const pill = panel.querySelector(
+                "[data-worker-ai-credit]"
+            );
+
+            const upgrade = panel.querySelector(
+                "[data-worker-ai-upgrade]"
+            );
+
+            if (!ai) {
+                if (pill) {
+                    pill.textContent =
+                        "AI unavailable";
+                }
+
+                panel.querySelectorAll(
+                    "[data-worker-ai-action]"
+                ).forEach(function (button) {
+                    button.disabled = true;
+                });
+
+                return;
+            }
+
+            const remaining = Number(
+                ai.credits_remaining || 0
+            );
+
+            const limit = Number(
+                ai.credit_limit || 0
+            );
+
+            if (pill) {
+                pill.textContent =
+                    remaining +
+                    " / " +
+                    limit +
+                    " credits · " +
+                    ai.plan_label;
+            }
+
+            panel.querySelectorAll(
+                "[data-worker-ai-action]"
+            ).forEach(function (button) {
+                const cost = Number(
+                    button.dataset.creditCost || 0
+                );
+
+                button.disabled =
+                    remaining < cost;
+            });
+
+            if (upgrade) {
+                upgrade.style.display =
+                    ai.is_premium
+                        ? "none"
+                        : "inline-block";
+            }
+
+            if (remaining <= 0) {
+                setPanelStatus(
+                    panel,
+                    ai.is_premium
+                        ? "Your Worker Pro AI allowance is currently exhausted."
+                        : "Your free Worker AI trial credits are finished.",
+                    "error"
+                );
+            } else {
+                setPanelStatus(
+                    panel,
+                    "AI is optional. Credits are charged only for a successful new result.",
+                    ""
+                );
+            }
+        });
+    }
+
+    async function loadStatus() {
+        try {
+            const response = await fetch(
+                statusUrl,
+                {
+                    method: "GET",
+                    headers: {
+                        "X-Requested-With":
+                            "XMLHttpRequest"
+                    },
+                    credentials:
+                        "same-origin"
+                }
+            );
+
+            const data = await response.json();
+
+            if (
+                !response.ok
+                || !data.success
+            ) {
+                throw new Error(
+                    data.error
+                    || "AI status is unavailable."
+                );
+            }
+
+            renderCredits(
+                data.ai
+            );
+
+        } catch (error) {
+            currentAI = null;
+
+            panels.forEach(function (panel) {
+                renderCredits(null);
+
+                setPanelStatus(
+                    panel,
+                    error.message
+                    || "AI is temporarily unavailable.",
+                    "error"
+                );
+            });
+        }
+    }
+
+    function clearNode(node) {
+        while (node.firstChild) {
+            node.removeChild(
+                node.firstChild
+            );
+        }
+    }
+
+    function field(label, value) {
+        const box = document.createElement(
+            "div"
+        );
+        box.className =
+            "worker-ai-field";
+
+        const labelNode =
+            document.createElement(
+                "span"
+            );
+
+        labelNode.className =
+            "worker-ai-label";
+
+        labelNode.textContent =
+            label;
+
+        const valueNode =
+            document.createElement(
+                "div"
+            );
+
+        valueNode.textContent =
+            value || "Not available";
+
+        box.appendChild(
+            labelNode
+        );
+
+        box.appendChild(
+            valueNode
+        );
+
+        return box;
+    }
+
+    function showResult(
+        panel,
+        action,
+        data
+    ) {
+        const result = panel.querySelector(
+            "[data-worker-ai-result]"
+        );
+
+        const title = panel.querySelector(
+            "[data-worker-ai-result-title]"
+        );
+
+        const body = panel.querySelector(
+            "[data-worker-ai-result-body]"
+        );
+
+        const cache = panel.querySelector(
+            "[data-worker-ai-cache]"
+        );
+
+        const copy = panel.querySelector(
+            "[data-worker-ai-copy]"
+        );
+
+        if (
+            !result
+            || !title
+            || !body
+        ) {
+            return;
+        }
+
+        clearNode(body);
+
+        if (cache) {
+            cache.classList.toggle(
+                "active",
+                Boolean(data.cached)
+            );
+        }
+
+        if (copy) {
+            copy.classList.remove(
+                "active"
+            );
+            copy.dataset.reply = "";
+        }
+
+        if (action === "summary") {
+            title.textContent =
+                "Complaint Summary";
+
+            body.appendChild(
+                field(
+                    "Summary",
+                    data.summary
+                )
+            );
+
+            body.appendChild(
+                field(
+                    "Key Issue",
+                    data.key_issue
+                )
+            );
+
+            body.appendChild(
+                field(
+                    "Recommended Focus",
+                    data.recommended_focus
+                )
+            );
+        }
+
+        if (action === "checklist") {
+            title.textContent =
+                "Work Checklist";
+
+            const listBox =
+                document.createElement(
+                    "div"
+                );
+
+            listBox.className =
+                "worker-ai-field";
+
+            const labelNode =
+                document.createElement(
+                    "span"
+                );
+
+            labelNode.className =
+                "worker-ai-label";
+
+            labelNode.textContent =
+                "Suggested Steps";
+
+            const list =
+                document.createElement(
+                    "ol"
+                );
+
+            list.className =
+                "worker-ai-list";
+
+            (data.steps || []).forEach(
+                function (step) {
+                    const item =
+                        document.createElement(
+                            "li"
+                        );
+
+                    item.textContent =
+                        step;
+
+                    list.appendChild(
+                        item
+                    );
+                }
+            );
+
+            listBox.appendChild(
+                labelNode
+            );
+
+            listBox.appendChild(
+                list
+            );
+
+            body.appendChild(
+                listBox
+            );
+
+            body.appendChild(
+                field(
+                    "Safety Note",
+                    data.safety_note
+                )
+            );
+        }
+
+        if (action === "reply") {
+            title.textContent =
+                "Reply Draft";
+
+            body.appendChild(
+                field(
+                    "Draft Message",
+                    data.reply
+                )
+            );
+
+            if (copy) {
+                copy.dataset.reply =
+                    data.reply || "";
+
+                copy.classList.add(
+                    "active"
+                );
+            }
+        }
+
+        result.classList.add(
+            "active"
+        );
+
+        setPanelStatus(
+            panel,
+            data.cached
+                ? "Saved result shown instantly. No extra AI credit was used."
+                : "AI suggestion created successfully.",
+            "success"
+        );
+    }
+
+    function isOffline() {
+        return navigator.onLine === false;
+    }
+
+    function startAdaptiveProgress(
+        panel
+    ) {
+        const timers = [];
+
+        timers.push(
+            window.setTimeout(
+                function () {
+                    setPanelStatus(
+                        panel,
+                        "Checking saved results or preparing AI assistance…",
+                        ""
+                    );
+                },
+                450
+            )
+        );
+
+        timers.push(
+            window.setTimeout(
+                function () {
+                    setPanelStatus(
+                        panel,
+                        "AI is still working. The rest of the dashboard remains usable.",
+                        ""
+                    );
+                },
+                3500
+            )
+        );
+
+        timers.push(
+            window.setTimeout(
+                function () {
+                    setPanelStatus(
+                        panel,
+                        "This is taking longer than usual. Slow internet or provider traffic may be the reason. Credits are charged only after a successful result.",
+                        ""
+                    );
+                },
+                8000
+            )
+        );
+
+        return function stopAdaptiveProgress() {
+            timers.forEach(
+                function (timer) {
+                    window.clearTimeout(
+                        timer
+                    );
+                }
+            );
+        };
+    }
+
+    async function runAction(
+        panel,
+        button
+    ) {
+        if (button.disabled) return;
+
+        if (isOffline()) {
+            setPanelStatus(
+                panel,
+                "No internet connection. The dashboard is still usable; reconnect before using AI.",
+                "error"
+            );
+            return;
+        }
+
+        const stopAdaptiveProgress =
+            startAdaptiveProgress(
+                panel
+            );
+
+        const action =
+            button.dataset.workerAiAction;
+
+        const url =
+            button.dataset.url;
+
+        const buttons =
+            panel.querySelectorAll(
+                "[data-worker-ai-action]"
+            );
+
+        const oldText =
+            button.textContent;
+
+        buttons.forEach(
+            function (item) {
+                item.disabled = true;
+            }
+        );
+
+        setPanelStatus(
+            panel,
+            "Generating suggestion…",
+            ""
+        );
+
+        try {
+            const response = await fetch(
+                url,
+                {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken":
+                            csrfInput
+                                ? csrfInput.value
+                                : "",
+                        "X-Requested-With":
+                            "XMLHttpRequest"
+                    },
+                    credentials:
+                        "same-origin"
+                }
+            );
+
+            let data = {};
+
+            try {
+                data =
+                    await response.json();
+            } catch (parseError) {
+                throw new Error(
+                    "AI returned an unreadable response."
+                );
+            }
+
+            if (data.ai) {
+                renderCredits(
+                    data.ai
+                );
+            }
+
+            if (
+                !response.ok
+                || !data.success
+            ) {
+                throw new Error(
+                    data.error
+                    || "AI suggestion could not be created."
+                );
+            }
+
+            showResult(
+                panel,
+                action,
+                data
+            );
+
+        } catch (error) {
+            setPanelStatus(
+                panel,
+                error.message
+                || "AI is temporarily unavailable.",
+                "error"
+            );
+        } finally {
+            stopAdaptiveProgress();
+
+            if (currentAI) {
+                renderCredits(
+                    currentAI
+                );
+            }
+        }
+    }
+
+    panels.forEach(function (panel) {
+        panel.querySelectorAll(
+            "[data-worker-ai-action]"
+        ).forEach(function (button) {
+            button.addEventListener(
+                "click",
+                function () {
+                    runAction(
+                        panel,
+                        button
+                    );
+                }
+            );
+        });
+
+        const copy = panel.querySelector(
+            "[data-worker-ai-copy]"
+        );
+
+        if (copy) {
+            copy.addEventListener(
+                "click",
+                async function () {
+                    const reply =
+                        copy.dataset.reply || "";
+
+                    if (!reply) return;
+
+                    try {
+                        await navigator.clipboard.writeText(
+                            reply
+                        );
+
+                        setPanelStatus(
+                            panel,
+                            "Reply copied. Review it before sending.",
+                            "success"
+                        );
+                    } catch (error) {
+                        setPanelStatus(
+                            panel,
+                            "Could not copy automatically. Select the draft text manually.",
+                            "error"
+                        );
+                    }
+                }
+            );
+        }
+    });
+
+    window.addEventListener(
+        "offline",
+        function () {
+            panels.forEach(
+                function (panel) {
+                    panel.querySelectorAll(
+                        "[data-worker-ai-action]"
+                    ).forEach(
+                        function (button) {
+                            button.disabled = true;
+                        }
+                    );
+
+                    setPanelStatus(
+                        panel,
+                        "You are offline. Normal worker actions remain available; AI will return after reconnection.",
+                        "error"
+                    );
+                }
+            );
+        }
+    );
+
+    window.addEventListener(
+        "online",
+        function () {
+            panels.forEach(
+                function (panel) {
+                    setPanelStatus(
+                        panel,
+                        "Connection restored. Checking AI allowance…",
+                        "success"
+                    );
+                }
+            );
+
+            loadStatus();
+        }
+    );
+
+    loadStatus();
+})();
+</script>
 
 </body>
 

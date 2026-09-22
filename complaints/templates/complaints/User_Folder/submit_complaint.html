@@ -702,8 +702,8 @@
       }
       
       /* =====================================================
-               PROFESSIONAL UI POLISH
-               ===================================================== */
+                     PROFESSIONAL UI POLISH
+                     ===================================================== */
       .icon-text {
         display: inline-flex;
         align-items: center;
@@ -947,6 +947,294 @@
           font-size: 18px;
         }
       }
+      
+      /* =====================================================
+               AI ASSIST
+            ===================================================== */
+      .ai-assist {
+        margin-top: 16px;
+        overflow: hidden;
+        border: 1px solid rgba(167, 139, 250, 0.38);
+        border-radius: 16px;
+        background: radial-gradient(circle at top right, rgba(124, 58, 237, 0.18), transparent 32%), linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(124, 58, 237, 0.1));
+      }
+      
+      .ai-assist-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 14px;
+        padding: 16px 16px 12px;
+      }
+      
+      .ai-assist-title {
+        display: flex;
+        align-items: flex-start;
+        gap: 11px;
+        min-width: 0;
+      }
+      
+      .ai-assist-icon {
+        width: 42px;
+        height: 42px;
+        flex: 0 0 42px;
+        display: grid;
+        place-items: center;
+        border-radius: 13px;
+        background: linear-gradient(135deg, #2563eb, #7c3aed);
+        color: #fff;
+        box-shadow: 0 9px 22px rgba(79, 70, 229, 0.26);
+      }
+      
+      .ai-assist-icon svg {
+        width: 22px;
+        height: 22px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      
+      .ai-assist-title h3 {
+        margin: 0;
+        color: #fff;
+        font-size: 16px;
+        font-weight: 950;
+      }
+      
+      .ai-assist-title p {
+        margin: 5px 0 0;
+        color: #c4b5fd;
+        font-size: 11px;
+        line-height: 1.5;
+      }
+      
+      .ai-credit-pill {
+        flex: 0 0 auto;
+        padding: 7px 10px;
+        border: 1px solid rgba(196, 181, 253, 0.3);
+        border-radius: 999px;
+        background: rgba(124, 58, 237, 0.14);
+        color: #ddd6fe;
+        font-size: 10px;
+        font-weight: 900;
+        white-space: nowrap;
+      }
+      
+      .ai-assist-body {
+        padding: 0 16px 16px;
+      }
+      
+      .ai-trust-note {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 10px 11px;
+        border: 1px solid rgba(125, 211, 252, 0.18);
+        border-radius: 11px;
+        background: rgba(14, 165, 233, 0.07);
+        color: #bfdbfe;
+        font-size: 10px;
+        line-height: 1.55;
+      }
+      
+      .ai-trust-note strong {
+        color: #fff;
+      }
+      
+      .ai-actions {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 9px;
+        margin-top: 12px;
+      }
+      
+      .ai-analyze-btn {
+        min-height: 42px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 0 15px;
+        border: 0;
+        border-radius: 11px;
+        background: linear-gradient(135deg, #2563eb, #7c3aed);
+        color: #fff;
+        cursor: pointer;
+        font: inherit;
+        font-size: 12px;
+        font-weight: 950;
+        box-shadow: 0 10px 24px rgba(79, 70, 229, 0.24);
+        transition: 0.2s ease;
+      }
+      
+      .ai-analyze-btn:hover:not(:disabled) {
+        transform: translateY(-1px);
+      }
+      
+      .ai-analyze-btn:disabled {
+        cursor: not-allowed;
+        opacity: 0.52;
+        box-shadow: none;
+      }
+      
+      .ai-upgrade-link {
+        min-height: 42px;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 0 14px;
+        border: 1px solid rgba(250, 204, 21, 0.3);
+        border-radius: 11px;
+        background: rgba(245, 158, 11, 0.1);
+        color: #fde68a;
+        font-size: 11px;
+        font-weight: 900;
+        text-decoration: none;
+      }
+      
+      .ai-inline-status {
+        color: #a9c4ee;
+        font-size: 10px;
+        line-height: 1.45;
+      }
+      
+      .ai-inline-status.error {
+        color: #fecaca;
+      }
+      
+      .ai-inline-status.success {
+        color: #a7f3d0;
+      }
+      
+      .ai-result {
+        display: none;
+        margin-top: 13px;
+        padding: 13px;
+        border: 1px solid rgba(52, 211, 153, 0.22);
+        border-radius: 13px;
+        background: rgba(16, 185, 129, 0.07);
+      }
+      
+      .ai-result.active {
+        display: block;
+      }
+      
+      .ai-result-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+      
+      .ai-result-top strong {
+        color: #d1fae5;
+        font-size: 12px;
+      }
+      
+      .ai-cache-badge {
+        display: none;
+        padding: 4px 7px;
+        border-radius: 999px;
+        background: rgba(59, 130, 246, 0.14);
+        color: #bfdbfe;
+        font-size: 9px;
+        font-weight: 900;
+      }
+      
+      .ai-cache-badge.active {
+        display: inline-flex;
+      }
+      
+      .ai-result-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 9px;
+      }
+      
+      .ai-result-item {
+        padding: 10px;
+        border: 1px solid rgba(167, 243, 208, 0.12);
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.045);
+      }
+      
+      .ai-result-item.full {
+        grid-column: 1 / -1;
+      }
+      
+      .ai-result-label {
+        display: block;
+        color: #94a3b8;
+        font-size: 9px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      
+      .ai-result-value {
+        display: block;
+        margin-top: 4px;
+        color: #fff;
+        font-size: 12px;
+        font-weight: 850;
+        line-height: 1.5;
+        overflow-wrap: anywhere;
+      }
+      
+      .ai-result-controls {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 10px;
+      }
+      
+      .ai-apply-btn {
+        min-height: 36px;
+        padding: 0 11px;
+        border: 1px solid rgba(52, 211, 153, 0.25);
+        border-radius: 9px;
+        background: rgba(16, 185, 129, 0.12);
+        color: #a7f3d0;
+        cursor: pointer;
+        font: inherit;
+        font-size: 10px;
+        font-weight: 900;
+      }
+      
+      .ai-result-disclaimer {
+        color: #94a3b8;
+        font-size: 9px;
+        line-height: 1.5;
+      }
+      
+      @media (max-width: 700px) {
+        .ai-assist-head {
+          display: grid;
+          grid-template-columns: 1fr;
+        }
+      
+        .ai-credit-pill {
+          justify-self: start;
+        }
+      
+        .ai-result-grid {
+          grid-template-columns: 1fr;
+        }
+      
+        .ai-result-item.full {
+          grid-column: auto;
+        }
+      
+        .ai-analyze-btn,
+        .ai-upgrade-link {
+          width: 100%;
+        }
+      }
     </style>
   </head>
 
@@ -1034,12 +1322,92 @@
 
                   <div class="form-group full">
                     <label class="label">Complaint Subject</label>
-                    <input class="input" name="subject" placeholder="Example: Street light not working" required />
+                    <input class="input" id="complaintSubject" name="subject" placeholder="Example: Street light not working" required />
                   </div>
 
                   <div class="form-group full">
                     <label class="label">Detailed Description</label>
-                    <textarea class="textarea" name="description" placeholder="Describe your complaint in detail..." required></textarea>
+                    <textarea class="textarea" id="complaintDescription" name="description" placeholder="Describe your complaint in detail..." required></textarea>
+                  </div>
+
+                  <div class="form-group full">
+                    <section class="ai-assist" id="aiAssistCard" aria-labelledby="aiAssistTitle">
+                      <div class="ai-assist-head">
+                        <div class="ai-assist-title">
+                          <div class="ai-assist-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24">
+                              <path d="m12 3 1.4 4.2L18 9l-4.6 1.8L12 15l-1.4-4.2L6 9l4.6-1.8Z" />
+                              <path d="m19 15 .8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8Z" />
+                            </svg>
+                          </div>
+
+                          <div>
+                            <h3 id="aiAssistTitle">AI Assist</h3>
+                            <p>Optional help for category, priority and a short complaint summary. For a useful result, describe what is wrong, the affected place/item, and when or how long it happens.</p>
+                          </div>
+                        </div>
+
+                        <div class="ai-credit-pill" id="aiCreditPill">Loading AI credits…</div>
+                      </div>
+
+                      <div class="ai-assist-body">
+                        <div class="ai-trust-note">
+                          <svg viewBox="0 0 24 24" aria-hidden="true" style="width:18px;height:18px;flex:0 0 18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;">
+                            <path d="M12 3 20 6v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6Z"></path>
+                            <path d="m8.5 12 2.2 2.2L15.8 9"></path>
+                          </svg>
+                          <span>
+                            <strong>You stay in control.</strong>
+                            AI never submits the complaint or changes your priority automatically. One credit is used only after a successful new analysis. Normal complaint submission remains available without AI.
+                          </span>
+                        </div>
+
+                        <div class="ai-actions">
+                          <button class="ai-analyze-btn" id="aiAnalyzeBtn" type="button" disabled>
+                            <svg viewBox="0 0 24 24" aria-hidden="true" style="width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;">
+                              <path d="M12 3 13.5 7.5 18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5Z"></path>
+                              <path d="M19 15.5 19.8 18 22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-1Z"></path>
+                            </svg>
+                            <span id="aiAnalyzeBtnText">Analyze Complaint</span>
+                          </button>
+
+                          <a class="ai-upgrade-link" id="aiUpgradeLink" href="{% url 'citizen_premium' %}">View Citizen Premium</a>
+
+                          <span class="ai-inline-status" id="aiInlineStatus" role="status" aria-live="polite">Checking your AI allowance…</span>
+                        </div>
+
+                        <div class="ai-result" id="aiResult">
+                          <div class="ai-result-top">
+                            <strong>AI suggestion</strong>
+
+                            <span class="ai-cache-badge" id="aiCacheBadge">Saved result · no extra credit</span>
+                          </div>
+
+                          <div class="ai-result-grid">
+                            <div class="ai-result-item">
+                              <span class="ai-result-label">Suggested Category</span>
+                              <span class="ai-result-value" id="aiSuggestedCategory">—</span>
+                            </div>
+
+                            <div class="ai-result-item">
+                              <span class="ai-result-label">Suggested Priority</span>
+                              <span class="ai-result-value" id="aiSuggestedPriority">—</span>
+                            </div>
+
+                            <div class="ai-result-item full">
+                              <span class="ai-result-label">Short Summary</span>
+                              <span class="ai-result-value" id="aiSuggestedSummary">—</span>
+                            </div>
+                          </div>
+
+                          <div class="ai-result-controls">
+                            <button class="ai-apply-btn" id="aiApplyPriorityBtn" type="button">Use Suggested Priority</button>
+
+                            <span class="ai-result-disclaimer">AI can make mistakes. Review the suggestion before using it.</span>
+                          </div>
+                        </div>
+                      </div>
+                    </section>
                   </div>
                 </div>
 
@@ -1388,6 +1756,283 @@
     </main>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+      ;(function () {
+        'use strict'
+      
+        const statusUrl = "{% url 'ai_status' %}"
+        const analyzeUrl = "{% url 'analyze_complaint_ai' %}"
+        const description = document.getElementById('complaintDescription')
+        const analyzeBtn = document.getElementById('aiAnalyzeBtn')
+        const analyzeBtnText = document.getElementById('aiAnalyzeBtnText')
+        const creditPill = document.getElementById('aiCreditPill')
+        const inlineStatus = document.getElementById('aiInlineStatus')
+        const upgradeLink = document.getElementById('aiUpgradeLink')
+        const resultBox = document.getElementById('aiResult')
+        const categoryText = document.getElementById('aiSuggestedCategory')
+        const priorityText = document.getElementById('aiSuggestedPriority')
+        const summaryText = document.getElementById('aiSuggestedSummary')
+        const cacheBadge = document.getElementById('aiCacheBadge')
+        const applyPriorityBtn = document.getElementById('aiApplyPriorityBtn')
+        const csrfInput = document.querySelector('#complaintForm input[name="csrfmiddlewaretoken"]')
+      
+        let currentAI = null
+        let currentSuggestedPriority = ''
+        let lastAnalyzedDescription = ''
+        let loading = false
+      
+        function setStatus(message, state) {
+          inlineStatus.textContent = message || ''
+          inlineStatus.classList.remove('error', 'success')
+      
+          if (state) {
+            inlineStatus.classList.add(state)
+          }
+        }
+      
+        function setLoading(isLoading) {
+          loading = isLoading
+          analyzeBtn.disabled = isLoading || !canAnalyze()
+      
+          analyzeBtnText.textContent = isLoading ? 'Analyzing…' : 'Analyze Complaint'
+        }
+      
+        function canAnalyze() {
+          return Boolean(currentAI && Number(currentAI.credits_remaining) > 0)
+        }
+      
+        function renderCreditStatus(ai) {
+          currentAI = ai
+      
+          if (!ai) {
+            creditPill.textContent = 'AI unavailable'
+            analyzeBtn.disabled = true
+            return
+          }
+      
+          const remaining = Number(ai.credits_remaining || 0)
+          const limit = Number(ai.credit_limit || 0)
+          const periodText = ai.period === 'monthly' ? 'this month' : 'trial'
+      
+          creditPill.textContent = remaining + ' / ' + limit + ' credits · ' + ai.plan_label
+      
+          if (remaining <= 0) {
+            analyzeBtn.disabled = true
+            upgradeLink.style.display = 'inline-flex'
+      
+            setStatus(ai.period === 'monthly' ? 'Your AI credits are finished for this month.' : 'Your free AI trial credits are finished.', 'error')
+      
+            return
+          }
+      
+          upgradeLink.style.display = 'none'
+          analyzeBtn.disabled = loading
+      
+          setStatus('1 credit per successful new analysis · ' + periodText, '')
+        }
+      
+        async function loadAIStatus() {
+          try {
+            const response = await fetch(statusUrl, {
+              method: 'GET',
+              headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+              },
+              credentials: 'same-origin'
+            })
+      
+            const data = await response.json()
+      
+            if (!response.ok || !data.success) {
+              throw new Error(data.error || 'AI status is unavailable.')
+            }
+      
+            renderCreditStatus(data.ai)
+          } catch (error) {
+            currentAI = null
+            analyzeBtn.disabled = true
+            creditPill.textContent = 'AI unavailable'
+      
+            setStatus(error.message || 'AI is temporarily unavailable. You can still submit manually.', 'error')
+          }
+        }
+      
+        function showResult(data) {
+          currentSuggestedPriority = String(data.priority || '').trim()
+      
+          categoryText.textContent = data.category || 'Not available'
+      
+          priorityText.textContent = currentSuggestedPriority || 'Not available'
+      
+          summaryText.textContent = data.summary || 'No summary returned.'
+      
+          cacheBadge.classList.toggle('active', Boolean(data.cached))
+      
+          resultBox.classList.add('active')
+      
+          lastAnalyzedDescription = description.value.trim()
+      
+          if (data.cached) {
+            setStatus('Saved result shown instantly. No extra AI credit was used.', 'success')
+          } else {
+            setStatus('AI analysis completed successfully.', 'success')
+          }
+        }
+      
+        function isOffline() {
+          return navigator.onLine === false
+        }
+      
+        function startAdaptiveProgress() {
+          const timers = []
+      
+          timers.push(
+            window.setTimeout(function () {
+              if (loading) {
+                setStatus('Checking for a saved result or preparing AI assistance…', '')
+              }
+            }, 450)
+          )
+      
+          timers.push(
+            window.setTimeout(function () {
+              if (loading) {
+                setStatus('AI is still working. You can continue reviewing the complaint while it finishes.', '')
+              }
+            }, 3500)
+          )
+      
+          timers.push(
+            window.setTimeout(function () {
+              if (loading) {
+                setStatus('This is taking longer than usual. Slow internet or provider traffic may be the reason. A credit is charged only after a successful result.', '')
+              }
+            }, 8000)
+          )
+      
+          return function stopAdaptiveProgress() {
+            timers.forEach(function (timer) {
+              window.clearTimeout(timer)
+            })
+          }
+        }
+      
+        async function analyzeComplaint() {
+          if (loading) return
+      
+          const text = description.value.trim()
+      
+          if (text.length < 10) {
+            description.focus()
+      
+            setStatus('Add enough detail first: what is wrong, the affected place/item, and when or how long it happens.', 'error')
+      
+            return
+          }
+      
+          if (isOffline()) {
+            setStatus('No internet connection. Your complaint form is safe. Reconnect and try AI again.', 'error')
+            return
+          }
+      
+          if (!canAnalyze()) {
+            setStatus('No AI credits are available for this account.', 'error')
+            return
+          }
+      
+          setLoading(true)
+          const stopAdaptiveProgress = startAdaptiveProgress()
+          resultBox.classList.remove('active')
+          cacheBadge.classList.remove('active')
+      
+          try {
+            const response = await fetch(analyzeUrl, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfInput ? csrfInput.value : '',
+                'X-Requested-With': 'XMLHttpRequest'
+              },
+              credentials: 'same-origin',
+              body: JSON.stringify({
+                description: text
+              })
+            })
+      
+            let data = {}
+      
+            try {
+              data = await response.json()
+            } catch (parseError) {
+              throw new Error('AI returned an unreadable response. Please continue manually.')
+            }
+      
+            if (data.ai) {
+              renderCreditStatus(data.ai)
+            }
+      
+            if (!response.ok || !data.success) {
+              const code = data.code || ''
+      
+              if (code === 'credits_exhausted' || code === 'free_budget_reached') {
+                upgradeLink.style.display = 'inline-flex'
+              }
+      
+              throw new Error(data.error || 'AI analysis is temporarily unavailable.')
+            }
+      
+            showResult(data)
+          } catch (error) {
+            setStatus(error.message || 'AI analysis failed. No successful-analysis credit was charged.', 'error')
+          } finally {
+            stopAdaptiveProgress()
+            setLoading(false)
+          }
+        }
+      
+        analyzeBtn.addEventListener('click', analyzeComplaint)
+      
+        applyPriorityBtn.addEventListener('click', function () {
+          const allowed = ['Normal', 'High', 'Emergency']
+      
+          if (!allowed.includes(currentSuggestedPriority)) {
+            setStatus('No valid AI priority is available to apply.', 'error')
+            return
+          }
+      
+          const radio = document.querySelector('input[name="priority"][value="' + currentSuggestedPriority + '"]')
+      
+          if (!radio) {
+            setStatus('Suggested priority could not be applied.', 'error')
+            return
+          }
+      
+          radio.checked = true
+          radio.dispatchEvent(new Event('change', { bubbles: true }))
+      
+          setStatus('Suggested priority applied. You can still change it manually.', 'success')
+        })
+      
+        description.addEventListener('input', function () {
+          if (resultBox.classList.contains('active') && lastAnalyzedDescription && description.value.trim() !== lastAnalyzedDescription) {
+            setStatus('Description changed after the AI analysis. Re-analyze only if you need a fresh suggestion.', '')
+          }
+        })
+      
+        window.addEventListener('offline', function () {
+          analyzeBtn.disabled = true
+          setStatus('You are offline. Normal complaint editing still works; AI will be available after reconnection.', 'error')
+        })
+      
+        window.addEventListener('online', function () {
+          setStatus('Connection restored. Checking AI allowance…', 'success')
+          loadAIStatus()
+        })
+      
+        loadAIStatus()
+      })()
+    </script>
 
     <script>
       function setLocationButtonState(label, state) {

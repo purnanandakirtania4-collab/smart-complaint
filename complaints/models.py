@@ -75,6 +75,43 @@ class UserProfile(models.Model):
         return self.user.username
 
 
+class UserFollow(models.Model):
+    """
+    Community follow relationship for normal Smart Complaint users.
+
+    follower  -> the user who follows
+    following -> the user being followed
+    """
+
+    follower = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="following_links",
+    )
+    following = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="follower_links",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["follower", "following"],
+                name="unique_user_follow",
+            ),
+            models.CheckConstraint(
+                check=~models.Q(follower=models.F("following")),
+                name="prevent_self_follow",
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.follower.username} -> {self.following.username}"
+
+
 class SupportRequest(models.Model):
     ISSUE_TYPE_CHOICES = [
         ("Complaint Issue", "Complaint Issue"),
@@ -319,6 +356,70 @@ class WorkerProfile(models.Model):
         return f"{worker_label} - {self.name}"
 
 
+class WorkerFollow(models.Model):
+    """
+    A logged-in Smart Complaint user can follow an approved worker.
+
+    The follower can be either a normal citizen account or a worker account.
+    A worker cannot follow their own WorkerProfile; that rule is enforced
+    in the view because it spans the User and WorkerProfile tables.
+    """
+
+    follower = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="worker_following_links",
+    )
+    worker = models.ForeignKey(
+        WorkerProfile,
+        on_delete=models.CASCADE,
+        related_name="social_followers",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["follower", "worker"],
+                name="unique_worker_follow",
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.follower.username} -> {self.worker.name}"
+
+
+class WorkerProfileLike(models.Model):
+    """
+    One profile appreciation/like per logged-in user per worker.
+    """
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="liked_worker_profiles",
+    )
+    worker = models.ForeignKey(
+        WorkerProfile,
+        on_delete=models.CASCADE,
+        related_name="profile_likes",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "worker"],
+                name="unique_worker_profile_like",
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.user.username} likes {self.worker.name}"
+
+
 class WorkerPayoutDetails(models.Model):
     PAYOUT_METHOD_CHOICES = [
         ("upi", "UPI"),
@@ -434,22 +535,342 @@ class WorkerSubscription(models.Model):
     current_period_end = models.DateTimeField(null=True, blank=True)
     next_billing_at = models.DateTimeField(null=True, blank=True)
     cancelled_at = models.DateTimeField(null=True, blank=True)
+
+    cancel_at_period_end = models.BooleanField(
+        default=False,
+    )
+
+    last_gateway_status = models.CharField(
+        max_length=30,
+        blank=True,
+        default="",
+    )
+
+    last_synced_at = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     @property
     def is_premium_active(self):
         """Return True only while the worker subscription is usable."""
+        now = timezone.now()
+
+        if (
+            self.cancel_at_period_end
+            and self.current_period_end
+            and self.current_period_end > now
+        ):
+            return True
+
         if self.status != "active":
             return False
 
-        if self.current_period_end and self.current_period_end <= timezone.now():
+        if (
+            self.current_period_end
+            and self.current_period_end <= now
+        ):
             return False
 
         return True
 
     def __str__(self):
         return f"{self.worker.worker_id or 'PENDING'} - {self.status}"
+
+
+class UserPremiumMembership(models.Model):
+    """
+    Citizen Premium is intentionally a prepaid 30-day pass.
+
+    It does NOT auto-renew. A new verified Razorpay payment extends
+    access by another 30 days and starts a fresh AI-credit cycle.
+    """
+
+    STATUS_CHOICES = [
+        ("inactive", "Inactive"),
+        ("active", "Active"),
+        ("expired", "Expired"),
+    ]
+
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name="citizen_premium_membership",
+    )
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default="inactive",
+    )
+
+    price = models.DecimalField(
+        max_digits=8,
+        decimal_places=2,
+        default=79,
+    )
+
+    current_period_start = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+    current_period_end = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+    activated_at = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+    last_paid_at = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+    last_razorpay_payment_id = models.CharField(
+        max_length=100,
+        blank=True,
+        default="",
+    )
+
+    renewal_count = models.PositiveIntegerField(
+        default=0,
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True,
+    )
+
+    @property
+    def is_active(self):
+        if self.status != "active":
+            return False
+
+        if not self.current_period_end:
+            return False
+
+        return self.current_period_end > timezone.now()
+
+    @property
+    def days_remaining(self):
+        if not self.is_active:
+            return 0
+
+        seconds = (
+            self.current_period_end
+            - timezone.now()
+        ).total_seconds()
+
+        return max(
+            int(
+                (seconds + 86399)
+                // 86400
+            ),
+            0,
+        )
+
+    def __str__(self):
+        return (
+            f"{self.user.username} - "
+            f"{self.status} - "
+            f"{self.current_period_end or 'No expiry'}"
+        )
+
+
+class AIMonthlyBudget(models.Model):
+    """
+    Internal AI safety ledger.
+
+    This does not replace Google/Gemini billing controls.
+    It gives Smart Complaint an app-side monthly spending guard.
+    """
+
+    year = models.PositiveSmallIntegerField()
+    month = models.PositiveSmallIntegerField(
+        validators=[
+            MinValueValidator(1),
+            MaxValueValidator(12),
+        ]
+    )
+
+    budget_inr = models.DecimalField(
+        max_digits=12,
+        decimal_places=4,
+        default=100,
+    )
+
+    total_reserved_inr = models.DecimalField(
+        max_digits=12,
+        decimal_places=6,
+        default=0,
+    )
+    total_spent_inr = models.DecimalField(
+        max_digits=12,
+        decimal_places=6,
+        default=0,
+    )
+
+    free_reserved_inr = models.DecimalField(
+        max_digits=12,
+        decimal_places=6,
+        default=0,
+    )
+    free_spent_inr = models.DecimalField(
+        max_digits=12,
+        decimal_places=6,
+        default=0,
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-year", "-month"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["year", "month"],
+                name="unique_ai_monthly_budget",
+            ),
+        ]
+
+    def __str__(self):
+        return (
+            f"AI Budget {self.year}-{self.month:02d} "
+            f"₹{self.total_spent_inr}/₹{self.budget_inr}"
+        )
+
+
+class AIUsageLog(models.Model):
+    FEATURE_CHOICES = [
+        ("complaint_analysis", "Complaint Analysis"),
+        ("translation", "Translation"),
+        ("category_suggestion", "Category Suggestion"),
+        ("detailed_analysis", "Detailed Complaint Analysis"),
+        ("worker_summary", "Worker Complaint Summary"),
+        ("worker_checklist", "Worker Work Checklist"),
+        ("worker_reply", "Worker Reply Generator"),
+        ("photo_analysis", "Photo Analysis"),
+        ("help_chat", "AI Help Chat"),
+    ]
+
+    PLAN_CHOICES = [
+        ("free", "Free Citizen"),
+        ("citizen_premium", "Citizen Premium"),
+        ("worker_free", "Free Worker"),
+        ("worker_pro", "Worker Pro"),
+    ]
+
+    STATUS_CHOICES = [
+        ("reserved", "Reserved"),
+        ("success", "Success"),
+        ("failed", "Failed"),
+    ]
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="ai_usage_logs",
+    )
+
+    feature = models.CharField(
+        max_length=40,
+        choices=FEATURE_CHOICES,
+    )
+    plan = models.CharField(
+        max_length=30,
+        choices=PLAN_CHOICES,
+    )
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default="reserved",
+    )
+
+    credit_cost = models.PositiveSmallIntegerField(
+        default=1,
+    )
+
+    model_name = models.CharField(
+        max_length=100,
+        blank=True,
+        default="",
+    )
+
+    request_hash = models.CharField(
+        max_length=64,
+        blank=True,
+        default="",
+        db_index=True,
+    )
+
+    reserved_cost_inr = models.DecimalField(
+        max_digits=12,
+        decimal_places=6,
+        default=0,
+    )
+    estimated_cost_inr = models.DecimalField(
+        max_digits=12,
+        decimal_places=6,
+        default=0,
+    )
+
+    input_tokens = models.PositiveIntegerField(
+        default=0,
+    )
+    output_tokens = models.PositiveIntegerField(
+        default=0,
+    )
+    total_tokens = models.PositiveIntegerField(
+        default=0,
+    )
+
+    # Only the safe structured AI result is cached here.
+    # Raw complaint text / prompts are intentionally not stored.
+    response_json = models.JSONField(
+        null=True,
+        blank=True,
+    )
+
+    error_code = models.CharField(
+        max_length=80,
+        blank=True,
+        default="",
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+    completed_at = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+    class Meta:
+        ordering = ["-created_at"]
+        indexes = [
+            models.Index(
+                fields=["user", "status", "created_at"],
+                name="ai_user_status_idx",
+            ),
+            models.Index(
+                fields=["feature", "created_at"],
+                name="ai_feature_time_idx",
+            ),
+        ]
+
+    def __str__(self):
+        return (
+            f"{self.user.username} - "
+            f"{self.feature} - "
+            f"{self.status}"
+        )
 
 
 class Complaint(models.Model):
@@ -700,6 +1121,7 @@ class PaymentTransaction(models.Model):
     PAYMENT_FOR_CHOICES = [
         ("complaint", "Complaint / Service"),
         ("worker_subscription", "Worker Subscription"),
+        ("citizen_premium", "Citizen Premium"),
         ("other", "Other"),
     ]
 
@@ -726,6 +1148,14 @@ class PaymentTransaction(models.Model):
     )
     worker_subscription = models.ForeignKey(
         WorkerSubscription,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="payment_transactions",
+    )
+
+    user_premium_membership = models.ForeignKey(
+        UserPremiumMembership,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,

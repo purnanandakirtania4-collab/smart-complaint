@@ -4,11 +4,12 @@ import re
 import json
 import os
 from datetime import timedelta
+from decimal import Decimal
 
 import razorpay
 
 from django.conf import settings
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import (
     authenticate,
     login,
@@ -22,7 +23,7 @@ from django.core.files.storage import default_storage
 from django.core.files import File
 from django.contrib.staticfiles import finders
 from django.db import transaction
-from django.db.models import Avg, Count, Case, When, Value, IntegerField
+from django.db.models import Avg, Count, Case, When, Value, IntegerField, Q
 from django.utils import timezone
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_POST
@@ -30,8 +31,13 @@ from django.views.decorators.csrf import csrf_exempt
 
 from .models import (
     Complaint,
+    ComplaintStatusHistory,
     WorkerProfile,
+    WorkerFollow,
+    WorkerProfileLike,
     UserProfile,
+    UserPremiumMembership,
+    UserFollow,
     Rating,
     WorkerSubscription,
     WorkerPayoutDetails,
@@ -43,6 +49,7 @@ from .models import (
 )
 
 from .firebase_push import send_push_to_user
+from .ai_limits import get_ai_credit_status
 
 
 # =========================================================
@@ -188,9 +195,44 @@ def home(request):
     if admin_redirect:
         return admin_redirect
 
+    # Monthly public leaderboard data is also shown as a
+    # compact right-side panel on the User Home page.
+    user_rows = _user_rows(monthly=True)
+    worker_rows = _worker_rows(monthly=True)
+
+    league = next(
+        (
+            row
+            for row in user_rows
+            if row["user"].pk == request.user.pk
+        ),
+        None,
+    )
+
+    if league is None:
+        league = {
+            "user": request.user,
+            "name": request.user.get_full_name() or request.user.username,
+            "xp": 0,
+            "resolved": 0,
+            "ratings": 0,
+            "detailed": 0,
+            "verified": 0,
+            "rank": len(user_rows) + 1,
+            "level": _league_level(0),
+        }
+
+    activity = _user_activity_snapshot(request.user)
+
     return render(
         request,
-        'complaints/User_Folder/home.html'
+        'complaints/User_Folder/home.html',
+        {
+            'league': league,
+            'activity': activity,
+            'public_worker_rows': worker_rows,
+            'public_user_rows': user_rows,
+        }
     )
 
 
@@ -395,10 +437,16 @@ def profile(request):
 
     user = request.user
 
-    user_profile, created = (
-        UserProfile.objects.get_or_create(
-            user=user
+    # Worker accounts keep using the existing worker profile system.
+    if WorkerProfile.objects.filter(user=user).exists():
+        worker = user.worker_profile
+        return redirect(
+            'worker_profile',
+            worker_id=worker.id,
         )
+
+    user_profile, created = UserProfile.objects.get_or_create(
+        user=user
     )
 
     user_rating_data = (
@@ -413,13 +461,8 @@ def profile(request):
         )
     )
 
-    user_average_rating = (
-        user_rating_data['average']
-    )
-
-    user_rating_count = (
-        user_rating_data['total']
-    )
+    user_average_rating = user_rating_data['average']
+    user_rating_count = user_rating_data['total']
 
     if request.method == 'POST':
 
@@ -546,12 +589,11 @@ def profile(request):
 
             if user_profile.photo:
 
-                old_photo = (
-                    user_profile.photo.name
-                )
+                old_photo = user_profile.photo.name
 
-                if default_storage.exists(
+                if (
                     old_photo
+                    and default_storage.exists(old_photo)
                 ):
 
                     default_storage.delete(
@@ -581,7 +623,6 @@ def profile(request):
         user.first_name = first_name
         user.last_name = last_name
         user.email = email
-
         user.save()
 
         user_profile.phone = phone
@@ -597,6 +638,139 @@ def profile(request):
             'profile'
         )
 
+    lifetime_rows = _user_rows(
+        monthly=False
+    )
+
+    league = next(
+        (
+            row
+            for row in lifetime_rows
+            if row['user'].pk == user.pk
+        ),
+        None,
+    )
+
+    if league is None:
+        league = _find_user_row(
+            user,
+            monthly=False,
+        )
+
+    followers_count = UserFollow.objects.filter(
+        following=user
+    ).count()
+
+    following_count = UserFollow.objects.filter(
+        follower=user
+    ).count()
+
+    network_user_ids = set(
+        UserFollow.objects.filter(
+            follower=user
+        ).values_list(
+            'following_id',
+            flat=True,
+        )
+    )
+
+    network_user_ids.update(
+        UserFollow.objects.filter(
+            following=user
+        ).values_list(
+            'follower_id',
+            flat=True,
+        )
+    )
+
+    network_count = len(
+        network_user_ids
+    )
+
+    following_ids = set(
+        UserFollow.objects.filter(
+            follower=user
+        ).values_list(
+            'following_id',
+            flat=True,
+        )
+    )
+
+    candidate_profiles = list(
+        UserProfile.objects
+        .select_related('user')
+        .filter(
+            user__worker_profile__isnull=True,
+            user__is_staff=False,
+            user__is_superuser=False,
+        )
+        .exclude(
+            user=user
+        )
+        .exclude(
+            user_id__in=following_ids
+        )
+    )
+
+    current_city = (
+        user_profile.city
+        or ''
+    ).strip().lower()
+
+    candidate_profiles.sort(
+        key=lambda item: (
+            0
+            if (
+                current_city
+                and (item.city or '').strip().lower()
+                == current_city
+            )
+            else 1,
+            (
+                item.user.get_full_name()
+                or item.user.username
+            ).lower(),
+        )
+    )
+
+    row_map = {
+        row['user'].pk: row
+        for row in lifetime_rows
+    }
+
+    suggestions = []
+
+    for item in candidate_profiles[:4]:
+
+        suggestion_league = row_map.get(
+            item.user_id
+        )
+
+        if suggestion_league is None:
+            suggestion_league = {
+                'level': _league_level(0),
+                'xp': 0,
+                'resolved': 0,
+            }
+
+        suggestions.append(
+            {
+                'user': item.user,
+                'profile': item,
+                'league': suggestion_league,
+            }
+        )
+
+    achievement_cards = _user_achievement_cards(
+        league
+    )
+
+    unlocked_achievements = [
+        item
+        for item in achievement_cards
+        if item['unlocked']
+    ]
+
     return render(
         request,
         'complaints/User_Folder/profile.html',
@@ -605,7 +779,1611 @@ def profile(request):
             'user_profile': user_profile,
             'user_average_rating': user_average_rating,
             'user_rating_count': user_rating_count,
+            'league': league,
+            'followers_count': followers_count,
+            'following_count': following_count,
+            'network_count': network_count,
+            'suggestions': suggestions,
+            'unlocked_achievements': unlocked_achievements[:4],
+            'unlocked_achievement_count': len(
+                unlocked_achievements
+            ),
         }
+    )
+
+
+# =========================================================
+# USER COMMUNITY / FOLLOW SYSTEM
+# =========================================================
+
+def public_user_profile(request, username):
+    """
+    Public safe community profile.
+
+    Private fields such as email, phone, gender, exact address,
+    pincode and payment information are intentionally not exposed.
+    """
+
+    target_user = get_object_or_404(
+        User.objects.filter(
+            worker_profile__isnull=True,
+            is_staff=False,
+            is_superuser=False,
+        ),
+        username=username,
+    )
+
+    target_profile, created = UserProfile.objects.get_or_create(
+        user=target_user
+    )
+
+    league = _find_user_row(
+        target_user,
+        monthly=False,
+    )
+
+    rating_data = (
+        Rating.objects
+        .filter(
+            complaint__user=target_user,
+            rating_type='worker_to_user',
+        )
+        .aggregate(
+            average=Avg('stars'),
+            total=Count('id'),
+        )
+    )
+
+    followers_count = UserFollow.objects.filter(
+        following=target_user
+    ).count()
+
+    following_count = UserFollow.objects.filter(
+        follower=target_user
+    ).count()
+
+    can_follow = False
+    is_following = False
+
+    if request.user.is_authenticated:
+
+        is_worker_viewer = WorkerProfile.objects.filter(
+            user=request.user
+        ).exists()
+
+        can_follow = (
+            not is_worker_viewer
+            and request.user.pk != target_user.pk
+            and not request.user.is_staff
+            and not request.user.is_superuser
+        )
+
+        if can_follow:
+            is_following = UserFollow.objects.filter(
+                follower=request.user,
+                following=target_user,
+            ).exists()
+
+    achievement_cards = _user_achievement_cards(
+        league
+    )
+
+    unlocked_achievements = [
+        item
+        for item in achievement_cards
+        if item['unlocked']
+    ]
+
+    return render(
+        request,
+        'complaints/User_Folder/public_user_profile.html',
+        {
+            'target_user': target_user,
+            'target_profile': target_profile,
+            'league': league,
+            'user_average_rating': rating_data['average'],
+            'user_rating_count': rating_data['total'],
+            'followers_count': followers_count,
+            'following_count': following_count,
+            'can_follow': can_follow,
+            'is_following': is_following,
+            'unlocked_achievements': unlocked_achievements[:6],
+            'unlocked_achievement_count': len(
+                unlocked_achievements
+            ),
+        },
+    )
+
+
+@login_required(login_url='login')
+@require_POST
+def toggle_user_follow(request, username):
+
+    admin_redirect = _admin_account_redirect(request)
+    if admin_redirect:
+        return admin_redirect
+
+    if WorkerProfile.objects.filter(
+        user=request.user
+    ).exists():
+
+        messages.error(
+            request,
+            'Community follow is available for citizen accounts.'
+        )
+
+        return redirect(
+            'worker_dashboard'
+        )
+
+    target_user = get_object_or_404(
+        User.objects.filter(
+            worker_profile__isnull=True,
+            is_staff=False,
+            is_superuser=False,
+        ),
+        username=username,
+    )
+
+    if target_user.pk == request.user.pk:
+
+        messages.info(
+            request,
+            'You cannot follow your own profile.'
+        )
+
+        return redirect(
+            'profile'
+        )
+
+    follow, created = UserFollow.objects.get_or_create(
+        follower=request.user,
+        following=target_user,
+    )
+
+    if created:
+
+        messages.success(
+            request,
+            f'You are now following {target_user.get_full_name() or target_user.username}.'
+        )
+
+    else:
+
+        follow.delete()
+
+        messages.info(
+            request,
+            f'You unfollowed {target_user.get_full_name() or target_user.username}.'
+        )
+
+    source = request.POST.get(
+        'source',
+        ''
+    ).strip()
+
+    if source == 'people':
+        return redirect(
+            'people_you_may_know'
+        )
+
+    if source == 'followers':
+        return redirect(
+            'user_followers'
+        )
+
+    if source == 'following':
+        return redirect(
+            'user_following'
+        )
+
+    if source == 'profile':
+        return redirect(
+            'profile'
+        )
+
+    return redirect(
+        'public_user_profile',
+        username=target_user.username,
+    )
+
+
+@login_required(login_url='login')
+def user_followers(request):
+
+    admin_redirect = _admin_account_redirect(request)
+    if admin_redirect:
+        return admin_redirect
+
+    if WorkerProfile.objects.filter(
+        user=request.user
+    ).exists():
+
+        return redirect(
+            'worker_dashboard'
+        )
+
+    links = (
+        UserFollow.objects
+        .filter(
+            following=request.user
+        )
+        .select_related(
+            'follower',
+            'follower__user_profile',
+        )
+    )
+
+    following_ids = set(
+        UserFollow.objects.filter(
+            follower=request.user
+        ).values_list(
+            'following_id',
+            flat=True,
+        )
+    )
+
+    rows = _user_rows(
+        monthly=False
+    )
+
+    row_map = {
+        row['user'].pk: row
+        for row in rows
+    }
+
+    people = []
+
+    for link in links:
+
+        person = link.follower
+
+        people.append(
+            {
+                'user': person,
+                'profile': getattr(
+                    person,
+                    'user_profile',
+                    None,
+                ),
+                'league': row_map.get(
+                    person.pk,
+                    {
+                        'level': _league_level(0),
+                        'xp': 0,
+                        'resolved': 0,
+                    },
+                ),
+                'is_following': (
+                    person.pk in following_ids
+                ),
+            }
+        )
+
+    return render(
+        request,
+        'complaints/User_Folder/followers.html',
+        {
+            'people': people,
+            'page_title': 'Followers',
+        },
+    )
+
+
+@login_required(login_url='login')
+def user_following(request):
+
+    admin_redirect = _admin_account_redirect(request)
+    if admin_redirect:
+        return admin_redirect
+
+    if WorkerProfile.objects.filter(
+        user=request.user
+    ).exists():
+
+        return redirect(
+            'worker_dashboard'
+        )
+
+    links = (
+        UserFollow.objects
+        .filter(
+            follower=request.user
+        )
+        .select_related(
+            'following',
+            'following__user_profile',
+        )
+    )
+
+    rows = _user_rows(
+        monthly=False
+    )
+
+    row_map = {
+        row['user'].pk: row
+        for row in rows
+    }
+
+    people = []
+
+    for link in links:
+
+        person = link.following
+
+        people.append(
+            {
+                'user': person,
+                'profile': getattr(
+                    person,
+                    'user_profile',
+                    None,
+                ),
+                'league': row_map.get(
+                    person.pk,
+                    {
+                        'level': _league_level(0),
+                        'xp': 0,
+                        'resolved': 0,
+                    },
+                ),
+                'is_following': True,
+            }
+        )
+
+    return render(
+        request,
+        'complaints/User_Folder/following.html',
+        {
+            'people': people,
+            'page_title': 'Following',
+        },
+    )
+
+
+@login_required(login_url='login')
+def people_you_may_know(request):
+
+    admin_redirect = _admin_account_redirect(request)
+    if admin_redirect:
+        return admin_redirect
+
+    if WorkerProfile.objects.filter(
+        user=request.user
+    ).exists():
+
+        return redirect(
+            'worker_dashboard'
+        )
+
+    user_profile, created = UserProfile.objects.get_or_create(
+        user=request.user
+    )
+
+    following_ids = set(
+        UserFollow.objects.filter(
+            follower=request.user
+        ).values_list(
+            'following_id',
+            flat=True,
+        )
+    )
+
+    candidate_profiles = list(
+        UserProfile.objects
+        .select_related(
+            'user'
+        )
+        .filter(
+            user__worker_profile__isnull=True,
+            user__is_staff=False,
+            user__is_superuser=False,
+        )
+        .exclude(
+            user=request.user
+        )
+        .exclude(
+            user_id__in=following_ids
+        )
+    )
+
+    current_city = (
+        user_profile.city
+        or ''
+    ).strip().lower()
+
+    candidate_profiles.sort(
+        key=lambda item: (
+            0
+            if (
+                current_city
+                and (item.city or '').strip().lower()
+                == current_city
+            )
+            else 1,
+            (
+                item.user.get_full_name()
+                or item.user.username
+            ).lower(),
+        )
+    )
+
+    rows = _user_rows(
+        monthly=False
+    )
+
+    row_map = {
+        row['user'].pk: row
+        for row in rows
+    }
+
+    people = []
+
+    for item in candidate_profiles:
+
+        people.append(
+            {
+                'user': item.user,
+                'profile': item,
+                'league': row_map.get(
+                    item.user_id,
+                    {
+                        'level': _league_level(0),
+                        'xp': 0,
+                        'resolved': 0,
+                    },
+                ),
+            }
+        )
+
+    return render(
+        request,
+        'complaints/User_Folder/people.html',
+        {
+            'people': people,
+        },
+    )
+
+
+# =========================================================
+# CITIZEN PREMIUM
+# =========================================================
+
+CITIZEN_PREMIUM_PRICE = Decimal("79.00")
+CITIZEN_PREMIUM_DAYS = 30
+
+
+def _local_premium_test_allowed(request):
+    """
+    Development-only Citizen Premium switch.
+
+    ALL three conditions are required:
+    1. Django DEBUG=True
+    2. LOCAL_PREMIUM_TEST_ENABLED=True
+    3. Request host is localhost / 127.0.0.1
+
+    This keeps the local test switch unavailable on Railway/live.
+    """
+
+    enabled = (
+        str(
+            os.environ.get(
+                "LOCAL_PREMIUM_TEST_ENABLED",
+                "",
+            )
+        )
+        .strip()
+        .lower()
+        in {
+            "1",
+            "true",
+            "yes",
+            "on",
+        }
+    )
+
+    host = (
+        request.get_host()
+        .split(":")[0]
+        .strip()
+        .lower()
+    )
+
+    return (
+        settings.DEBUG
+        and enabled
+        and host in {
+            "127.0.0.1",
+            "localhost",
+        }
+    )
+
+
+
+def _local_worker_pro_test_allowed(request):
+    """
+    Development-only Worker Pro switch.
+
+    ALL three conditions are required:
+    1. Django DEBUG=True
+    2. LOCAL_WORKER_PRO_TEST_ENABLED=True
+    3. Request host is localhost / 127.0.0.1
+
+    Railway/live will not expose this test control unless someone
+    deliberately misconfigures all three conditions.
+    """
+
+    enabled = (
+        str(
+            os.environ.get(
+                "LOCAL_WORKER_PRO_TEST_ENABLED",
+                "",
+            )
+        )
+        .strip()
+        .lower()
+        in {
+            "1",
+            "true",
+            "yes",
+            "on",
+        }
+    )
+
+    host = (
+        request.get_host()
+        .split(":")[0]
+        .strip()
+        .lower()
+    )
+
+    return (
+        settings.DEBUG
+        and enabled
+        and host in {
+            "127.0.0.1",
+            "localhost",
+        }
+    )
+
+def _sync_citizen_premium(user):
+    """
+    Keep the paid membership and the existing UserProfile.is_premium
+    flag aligned.
+
+    UserProfile.is_premium remains useful to the existing theme UI,
+    but payment/expiry authority comes from UserPremiumMembership.
+    """
+
+    profile, created = (
+        UserProfile.objects
+        .get_or_create(user=user)
+    )
+
+    membership, created = (
+        UserPremiumMembership.objects
+        .get_or_create(user=user)
+    )
+
+    if (
+        membership.status == "active"
+        and not membership.is_active
+    ):
+        membership.status = "expired"
+        membership.save(
+            update_fields=[
+                "status",
+                "updated_at",
+            ]
+        )
+
+    active = membership.is_active
+
+    if profile.is_premium != active:
+        profile.is_premium = active
+        profile.save(
+            update_fields=[
+                "is_premium",
+                "updated_at",
+            ]
+        )
+
+    return profile, membership, active
+
+
+def _activate_citizen_premium(
+    membership,
+    payment,
+):
+    """
+    Activate exactly once per verified Razorpay payment.
+
+    Each successful ₹79 payment:
+    - adds 30 days,
+    - starts a fresh 60-credit AI cycle,
+    - never creates an automatic debit.
+    """
+
+    payment_id = (
+        payment.razorpay_payment_id
+        or ""
+    ).strip()
+
+    if (
+        payment_id
+        and membership.last_razorpay_payment_id
+        == payment_id
+    ):
+        return membership
+
+    now = timezone.now()
+
+    if (
+        membership.current_period_end
+        and membership.current_period_end > now
+    ):
+        base_end = (
+            membership.current_period_end
+        )
+    else:
+        base_end = now
+
+    membership.status = "active"
+    membership.price = (
+        CITIZEN_PREMIUM_PRICE
+    )
+
+    # Fresh AI-credit cycle starts now.
+    membership.current_period_start = now
+
+    # Access itself is extended from the later of now/current expiry.
+    membership.current_period_end = (
+        base_end
+        + timedelta(
+            days=CITIZEN_PREMIUM_DAYS
+        )
+    )
+
+    if not membership.activated_at:
+        membership.activated_at = now
+
+    membership.last_paid_at = now
+    membership.last_razorpay_payment_id = (
+        payment_id
+    )
+    membership.renewal_count += 1
+
+    membership.save(
+        update_fields=[
+            "status",
+            "price",
+            "current_period_start",
+            "current_period_end",
+            "activated_at",
+            "last_paid_at",
+            "last_razorpay_payment_id",
+            "renewal_count",
+            "updated_at",
+        ]
+    )
+
+    profile, created = (
+        UserProfile.objects
+        .get_or_create(
+            user=membership.user
+        )
+    )
+
+    if not profile.is_premium:
+        profile.is_premium = True
+        profile.save(
+            update_fields=[
+                "is_premium",
+                "updated_at",
+            ]
+        )
+
+    return membership
+
+
+@login_required(login_url="login")
+def citizen_premium(request):
+
+    admin_redirect = _admin_account_redirect(
+        request
+    )
+    if admin_redirect:
+        return admin_redirect
+
+    if WorkerProfile.objects.filter(
+        user=request.user
+    ).exists():
+        return redirect(
+            "worker_settings"
+        )
+
+    profile, membership, is_active = (
+        _sync_citizen_premium(
+            request.user
+        )
+    )
+
+    ai_status = get_ai_credit_status(
+        request.user
+    )
+
+    return render(
+        request,
+        "complaints/User_Folder/citizen_premium.html",
+        {
+            "user_profile": profile,
+            "membership": membership,
+            "premium_active": is_active,
+            "premium_price":
+                CITIZEN_PREMIUM_PRICE,
+            "premium_days":
+                CITIZEN_PREMIUM_DAYS,
+            "ai_status":
+                ai_status,
+            "local_premium_test_allowed":
+                _local_premium_test_allowed(
+                    request
+                ),
+        },
+    )
+
+
+@login_required(login_url="login")
+@require_POST
+def create_citizen_premium_order(request):
+
+    admin_redirect = _admin_account_redirect(
+        request
+    )
+    if admin_redirect:
+        return admin_redirect
+
+    if WorkerProfile.objects.filter(
+        user=request.user
+    ).exists():
+        return JsonResponse(
+            {
+                "success": False,
+                "message":
+                    "Citizen Premium is for citizen accounts.",
+            },
+            status=403,
+        )
+
+    razorpay_key_id = getattr(
+        settings,
+        "RAZORPAY_KEY_ID",
+        "",
+    )
+
+    razorpay_key_secret = getattr(
+        settings,
+        "RAZORPAY_KEY_SECRET",
+        "",
+    )
+
+    if (
+        not razorpay_key_id
+        or not razorpay_key_secret
+    ):
+        return JsonResponse(
+            {
+                "success": False,
+                "message":
+                    "Payment service is not configured.",
+            },
+            status=503,
+        )
+
+    profile, membership, active = (
+        _sync_citizen_premium(
+            request.user
+        )
+    )
+
+    payment = PaymentTransaction.objects.create(
+        payer=request.user,
+        user_premium_membership=membership,
+        payment_for="citizen_premium",
+        amount=CITIZEN_PREMIUM_PRICE,
+        currency="INR",
+        status="created",
+        description=(
+            "Citizen Premium - 30 day pass"
+        ),
+    )
+
+    receipt = (
+        f"sc_cp_{payment.id}"
+    )
+
+    payment.receipt = receipt
+    payment.save(
+        update_fields=[
+            "receipt",
+            "updated_at",
+        ]
+    )
+
+    try:
+        client = razorpay.Client(
+            auth=(
+                razorpay_key_id,
+                razorpay_key_secret,
+            )
+        )
+
+        order = client.order.create(
+            {
+                "amount": int(
+                    CITIZEN_PREMIUM_PRICE
+                    * 100
+                ),
+                "currency": "INR",
+                "receipt": receipt,
+                "notes": {
+                    "payment_transaction_id":
+                        str(payment.id),
+                    "purpose":
+                        "Citizen Premium 30 day pass",
+                    "user_id":
+                        str(request.user.id),
+                },
+            }
+        )
+
+        order_id = str(
+            order.get(
+                "id",
+                "",
+            )
+        ).strip()
+
+        if not order_id:
+            raise ValueError(
+                "Razorpay order ID missing."
+            )
+
+        payment.razorpay_order_id = (
+            order_id
+        )
+        payment.status = "pending"
+        payment.save(
+            update_fields=[
+                "razorpay_order_id",
+                "status",
+                "updated_at",
+            ]
+        )
+
+        return JsonResponse(
+            {
+                "success": True,
+                "key_id":
+                    razorpay_key_id,
+                "order_id":
+                    order_id,
+                "amount": int(
+                    CITIZEN_PREMIUM_PRICE
+                    * 100
+                ),
+                "currency": "INR",
+                "transaction_id":
+                    payment.id,
+                "plan_name":
+                    "Citizen Premium",
+                "description":
+                    "30 days, 60 AI credits, premium themes",
+            }
+        )
+
+    except razorpay.errors.BadRequestError as error:
+
+        payment.status = "failed"
+        payment.failed_at = (
+            timezone.now()
+        )
+        payment.save(
+            update_fields=[
+                "status",
+                "failed_at",
+                "updated_at",
+            ]
+        )
+
+        print(
+            "CITIZEN PREMIUM ORDER BAD REQUEST:",
+            error,
+        )
+
+        return JsonResponse(
+            {
+                "success": False,
+                "message":
+                    "Razorpay rejected the payment order.",
+            },
+            status=400,
+        )
+
+    except razorpay.errors.ServerError as error:
+
+        payment.status = "failed"
+        payment.failed_at = (
+            timezone.now()
+        )
+        payment.save(
+            update_fields=[
+                "status",
+                "failed_at",
+                "updated_at",
+            ]
+        )
+
+        print(
+            "CITIZEN PREMIUM ORDER SERVER ERROR:",
+            error,
+        )
+
+        return JsonResponse(
+            {
+                "success": False,
+                "message":
+                    "Payment service is temporarily unavailable.",
+            },
+            status=502,
+        )
+
+    except Exception as error:
+
+        payment.status = "failed"
+        payment.failed_at = (
+            timezone.now()
+        )
+        payment.save(
+            update_fields=[
+                "status",
+                "failed_at",
+                "updated_at",
+            ]
+        )
+
+        print(
+            "CITIZEN PREMIUM ORDER ERROR:",
+            error,
+        )
+
+        return JsonResponse(
+            {
+                "success": False,
+                "message":
+                    "Unable to create the premium payment order.",
+            },
+            status=500,
+        )
+
+
+@login_required(login_url="login")
+@require_POST
+def verify_citizen_premium_payment(request):
+    """
+    Citizen Premium becomes active only after server-side verification.
+
+    Browser-provided amount/plan data is never trusted.
+    """
+
+    admin_redirect = _admin_account_redirect(
+        request
+    )
+    if admin_redirect:
+        return admin_redirect
+
+    if WorkerProfile.objects.filter(
+        user=request.user
+    ).exists():
+        return JsonResponse(
+            {
+                "success": False,
+                "message":
+                    "Citizen Premium is for citizen accounts.",
+            },
+            status=403,
+        )
+
+    razorpay_key_id = getattr(
+        settings,
+        "RAZORPAY_KEY_ID",
+        "",
+    )
+
+    razorpay_key_secret = getattr(
+        settings,
+        "RAZORPAY_KEY_SECRET",
+        "",
+    )
+
+    if (
+        not razorpay_key_id
+        or not razorpay_key_secret
+    ):
+        return JsonResponse(
+            {
+                "success": False,
+                "message":
+                    "Payment service is not configured.",
+            },
+            status=503,
+        )
+
+    try:
+        payload = json.loads(
+            request.body.decode(
+                "utf-8"
+            )
+        )
+    except (
+        json.JSONDecodeError,
+        UnicodeDecodeError,
+    ):
+        return JsonResponse(
+            {
+                "success": False,
+                "message":
+                    "Invalid payment verification data.",
+            },
+            status=400,
+        )
+
+    transaction_id = payload.get(
+        "transaction_id"
+    )
+
+    order_id = str(
+        payload.get(
+            "razorpay_order_id",
+            "",
+        )
+    ).strip()
+
+    payment_id = str(
+        payload.get(
+            "razorpay_payment_id",
+            "",
+        )
+    ).strip()
+
+    signature = str(
+        payload.get(
+            "razorpay_signature",
+            "",
+        )
+    ).strip()
+
+    if (
+        not transaction_id
+        or not order_id
+        or not payment_id
+        or not signature
+    ):
+        return JsonResponse(
+            {
+                "success": False,
+                "message":
+                    "Payment verification data is incomplete.",
+            },
+            status=400,
+        )
+
+    try:
+        transaction_id = int(
+            transaction_id
+        )
+    except (
+        TypeError,
+        ValueError,
+    ):
+        return JsonResponse(
+            {
+                "success": False,
+                "message":
+                    "Invalid transaction ID.",
+            },
+            status=400,
+        )
+
+    client = razorpay.Client(
+        auth=(
+            razorpay_key_id,
+            razorpay_key_secret,
+        )
+    )
+
+    try:
+        with transaction.atomic():
+
+            payment = (
+                PaymentTransaction.objects
+                .select_for_update()
+                .select_related(
+                    "user_premium_membership"
+                )
+                .get(
+                    id=transaction_id,
+                    payer=request.user,
+                    payment_for="citizen_premium",
+                )
+            )
+
+            membership = (
+                payment.user_premium_membership
+            )
+
+            if (
+                not membership
+                or membership.user_id
+                != request.user.id
+            ):
+                return JsonResponse(
+                    {
+                        "success": False,
+                        "message":
+                            "Premium membership does not match this payment.",
+                    },
+                    status=400,
+                )
+
+            if payment.status == "paid":
+
+                if (
+                    payment.razorpay_order_id
+                    == order_id
+                    and payment.razorpay_payment_id
+                    == payment_id
+                ):
+                    _activate_citizen_premium(
+                        membership,
+                        payment,
+                    )
+
+                    return JsonResponse(
+                        {
+                            "success": True,
+                            "message":
+                                "Citizen Premium is already active.",
+                            "redirect_url":
+                                "/citizen-premium/",
+                        }
+                    )
+
+                return JsonResponse(
+                    {
+                        "success": False,
+                        "message":
+                            "This payment transaction has already been used.",
+                    },
+                    status=409,
+                )
+
+            if payment.status != "pending":
+                return JsonResponse(
+                    {
+                        "success": False,
+                        "message":
+                            "This payment is not pending verification.",
+                    },
+                    status=409,
+                )
+
+            if (
+                payment.razorpay_order_id
+                != order_id
+            ):
+                return JsonResponse(
+                    {
+                        "success": False,
+                        "message":
+                            "Razorpay order ID does not match.",
+                    },
+                    status=400,
+                )
+
+            client.utility.verify_payment_signature(
+                {
+                    "razorpay_order_id":
+                        order_id,
+                    "razorpay_payment_id":
+                        payment_id,
+                    "razorpay_signature":
+                        signature,
+                }
+            )
+
+            provider_payment = (
+                client.payment.fetch(
+                    payment_id
+                )
+            )
+
+            provider_payment_id = str(
+                provider_payment.get(
+                    "id",
+                    "",
+                )
+            ).strip()
+
+            provider_order_id = str(
+                provider_payment.get(
+                    "order_id",
+                    "",
+                )
+            ).strip()
+
+            provider_currency = str(
+                provider_payment.get(
+                    "currency",
+                    "",
+                )
+            ).strip().upper()
+
+            provider_status = str(
+                provider_payment.get(
+                    "status",
+                    "",
+                )
+            ).strip().lower()
+
+            provider_captured = (
+                provider_payment.get(
+                    "captured",
+                    False,
+                )
+            )
+
+            try:
+                provider_amount = int(
+                    provider_payment.get(
+                        "amount"
+                    )
+                )
+            except (
+                TypeError,
+                ValueError,
+            ):
+                return JsonResponse(
+                    {
+                        "success": False,
+                        "message":
+                            "Razorpay returned an invalid amount.",
+                    },
+                    status=502,
+                )
+
+            expected_amount = int(
+                CITIZEN_PREMIUM_PRICE
+                * 100
+            )
+
+            if (
+                provider_payment_id
+                != payment_id
+            ):
+                return JsonResponse(
+                    {
+                        "success": False,
+                        "message":
+                            "Razorpay payment ID verification failed.",
+                    },
+                    status=400,
+                )
+
+            if (
+                provider_order_id
+                != payment.razorpay_order_id
+            ):
+                return JsonResponse(
+                    {
+                        "success": False,
+                        "message":
+                            "Razorpay payment does not belong to this order.",
+                    },
+                    status=400,
+                )
+
+            if (
+                provider_amount
+                != expected_amount
+            ):
+                return JsonResponse(
+                    {
+                        "success": False,
+                        "message":
+                            "Payment amount verification failed.",
+                    },
+                    status=400,
+                )
+
+            if provider_currency != "INR":
+                return JsonResponse(
+                    {
+                        "success": False,
+                        "message":
+                            "Payment currency verification failed.",
+                    },
+                    status=400,
+                )
+
+            if (
+                provider_status
+                != "captured"
+                or provider_captured
+                is not True
+            ):
+                return JsonResponse(
+                    {
+                        "success": False,
+                        "message":
+                            "Payment has not been captured by Razorpay.",
+                    },
+                    status=409,
+                )
+
+            payment.razorpay_payment_id = (
+                payment_id
+            )
+            payment.status = "paid"
+            payment.paid_at = (
+                timezone.now()
+            )
+            payment.failed_at = None
+
+            payment.save(
+                update_fields=[
+                    "razorpay_payment_id",
+                    "status",
+                    "paid_at",
+                    "failed_at",
+                    "updated_at",
+                ]
+            )
+
+            _activate_citizen_premium(
+                membership,
+                payment,
+            )
+
+            return JsonResponse(
+                {
+                    "success": True,
+                    "message":
+                        "Citizen Premium activated successfully.",
+                    "redirect_url":
+                        "/citizen-premium/",
+                }
+            )
+
+    except PaymentTransaction.DoesNotExist:
+        return JsonResponse(
+            {
+                "success": False,
+                "message":
+                    "Payment transaction was not found.",
+            },
+            status=404,
+        )
+
+    except razorpay.errors.SignatureVerificationError:
+        return JsonResponse(
+            {
+                "success": False,
+                "message":
+                    "Payment signature verification failed.",
+            },
+            status=400,
+        )
+
+    except Exception as error:
+        print(
+            "CITIZEN PREMIUM VERIFY ERROR:",
+            error,
+        )
+
+        return JsonResponse(
+            {
+                "success": False,
+                "message":
+                    "Unable to verify the payment right now.",
+            },
+            status=500,
+        )
+
+
+# =========================================================
+# LOCAL-ONLY CITIZEN PREMIUM TEST CONTROLS
+# =========================================================
+
+@login_required(login_url="login")
+@require_POST
+def activate_local_test_premium(request):
+    """
+    Activate Citizen Premium without Razorpay ONLY on local development.
+
+    This endpoint refuses to run unless:
+    - DEBUG=True
+    - LOCAL_PREMIUM_TEST_ENABLED=True
+    - host is localhost / 127.0.0.1
+    """
+
+    if not _local_premium_test_allowed(
+        request
+    ):
+        return HttpResponse(
+            "Local Premium test activation is disabled.",
+            status=403,
+        )
+
+    admin_redirect = _admin_account_redirect(
+        request
+    )
+    if admin_redirect:
+        return admin_redirect
+
+    if WorkerProfile.objects.filter(
+        user=request.user
+    ).exists():
+        messages.error(
+            request,
+            "Citizen Premium test activation is only for citizen accounts.",
+        )
+        return redirect(
+            "citizen_premium"
+        )
+
+    with transaction.atomic():
+
+        membership, created = (
+            UserPremiumMembership.objects
+            .select_for_update()
+            .get_or_create(
+                user=request.user
+            )
+        )
+
+        profile, profile_created = (
+            UserProfile.objects
+            .select_for_update()
+            .get_or_create(
+                user=request.user
+            )
+        )
+
+        now = timezone.now()
+
+        membership.status = "active"
+        membership.price = (
+            CITIZEN_PREMIUM_PRICE
+        )
+        membership.current_period_start = now
+        membership.current_period_end = (
+            now
+            + timedelta(
+                days=CITIZEN_PREMIUM_DAYS
+            )
+        )
+
+        if not membership.activated_at:
+            membership.activated_at = now
+
+        membership.save(
+            update_fields=[
+                "status",
+                "price",
+                "current_period_start",
+                "current_period_end",
+                "activated_at",
+                "updated_at",
+            ]
+        )
+
+        if not profile.is_premium:
+            profile.is_premium = True
+            profile.save(
+                update_fields=[
+                    "is_premium",
+                    "updated_at",
+                ]
+            )
+
+    messages.success(
+        request,
+        "Local test Premium activated for 30 days. No Razorpay payment was created.",
+    )
+
+    return redirect(
+        "citizen_premium"
+    )
+
+
+@login_required(login_url="login")
+@require_POST
+def reset_local_test_premium(request):
+    """
+    Return the local citizen account to Free mode.
+
+    This is also protected by the same three local-development checks.
+    """
+
+    if not _local_premium_test_allowed(
+        request
+    ):
+        return HttpResponse(
+            "Local Premium test reset is disabled.",
+            status=403,
+        )
+
+    admin_redirect = _admin_account_redirect(
+        request
+    )
+    if admin_redirect:
+        return admin_redirect
+
+    if WorkerProfile.objects.filter(
+        user=request.user
+    ).exists():
+        return redirect(
+            "worker_settings"
+        )
+
+    with transaction.atomic():
+
+        membership, created = (
+            UserPremiumMembership.objects
+            .select_for_update()
+            .get_or_create(
+                user=request.user
+            )
+        )
+
+        profile, profile_created = (
+            UserProfile.objects
+            .select_for_update()
+            .get_or_create(
+                user=request.user
+            )
+        )
+
+        membership.status = "inactive"
+        membership.current_period_start = None
+        membership.current_period_end = None
+
+        membership.save(
+            update_fields=[
+                "status",
+                "current_period_start",
+                "current_period_end",
+                "updated_at",
+            ]
+        )
+
+        if profile.is_premium:
+            profile.is_premium = False
+            profile.save(
+                update_fields=[
+                    "is_premium",
+                    "updated_at",
+                ]
+            )
+
+    messages.success(
+        request,
+        "Local test Premium reset. This account is back on the Free plan.",
+    )
+
+    return redirect(
+        "citizen_premium"
     )
 
 
@@ -621,7 +2399,6 @@ def user_settings(request):
         return admin_redirect
 
     try:
-
         request.user.worker_profile
 
         return redirect(
@@ -631,18 +2408,28 @@ def user_settings(request):
     except WorkerProfile.DoesNotExist:
         pass
 
-    user_profile, created = (
-        UserProfile.objects.get_or_create(
-            user=request.user
+    user_profile, membership, premium_active = (
+        _sync_citizen_premium(
+            request.user
         )
+    )
+
+    ai_status = get_ai_credit_status(
+        request.user
     )
 
     return render(
         request,
         'complaints/User_Folder/user_settings.html',
         {
-            'user_profile': user_profile,
-            'user_is_premium': user_profile.is_premium,
+            'user_profile':
+                user_profile,
+            'user_is_premium':
+                premium_active,
+            'premium_membership':
+                membership,
+            'ai_status':
+                ai_status,
         }
     )
 
@@ -1735,202 +3522,137 @@ def worker_details(request):
 # WORKER PROFILE
 # =========================================================
 
-@login_required(login_url='login')
 def worker_profile(request, worker_id):
 
     admin_redirect = _admin_account_redirect(request)
     if admin_redirect:
         return admin_redirect
 
-    try:
-
-        worker = (
-            WorkerProfile.objects
-            .select_related(
-                'user'
-            )
-            .get(
-                id=worker_id,
-                is_approved=True
-            )
-        )
-
-    except WorkerProfile.DoesNotExist:
-
-        messages.error(
-            request,
-            'Worker profile not found.'
-        )
-
-        return redirect(
-            'worker_details'
-        )
+    worker = get_object_or_404(
+        WorkerProfile.objects.select_related("user"),
+        id=worker_id,
+        is_approved=True,
+    )
 
     is_owner = (
-        request.user.id
-        == worker.user.id
+        request.user.is_authenticated
+        and request.user.pk == worker.user_id
     )
 
-    worker_rating_data = (
-        Rating.objects
-        .filter(
-            complaint__assigned_worker=worker,
-            rating_type='user_to_worker'
-        )
-        .aggregate(
-            average=Avg('stars'),
-            total=Count('id')
-        )
-    )
-
-    worker_average_rating = (
-        worker_rating_data['average']
-    )
-
-    worker_rating_count = (
-        worker_rating_data['total']
-    )
-
-    if request.method == 'POST':
+    # -----------------------------------------------------
+    # Edit profile - owner only
+    # -----------------------------------------------------
+    if request.method == "POST":
 
         if not is_owner:
-
             messages.error(
                 request,
-                'You cannot edit this worker profile.'
+                "You cannot edit this worker profile.",
             )
-
             return redirect(
-                'worker_profile',
-                worker_id=worker.id
+                "worker_profile",
+                worker_id=worker.id,
             )
 
         name = request.POST.get(
-            'name',
-            ''
+            "name",
+            "",
         ).strip()
 
         email = request.POST.get(
-            'email',
-            ''
+            "email",
+            "",
         ).strip()
 
         phone = request.POST.get(
-            'phone',
-            ''
+            "phone",
+            "",
         ).strip()
 
         experience = request.POST.get(
-            'experience',
-            ''
+            "experience",
+            "",
         ).strip()
 
         photo = request.FILES.get(
-            'photo'
+            "photo"
         )
 
         free_avatar = request.POST.get(
-            'free_avatar',
-            ''
+            "free_avatar",
+            "",
         ).strip()
 
-        if (
-            not name
-            or not email
-            or not phone
-            or not experience
-        ):
-
+        if not name or not email or not phone or not experience:
             messages.error(
                 request,
-                'Please fill all required fields.'
+                "Please fill all required fields.",
             )
-
             return redirect(
-                'worker_profile',
-                worker_id=worker.id
+                "worker_profile",
+                worker_id=worker.id,
             )
 
         if (
             User.objects
-            .filter(
-                email=email
-            )
-            .exclude(
-                id=worker.user.id
-            )
+            .filter(email=email)
+            .exclude(id=worker.user_id)
             .exists()
         ):
-
             messages.error(
                 request,
-                'This email is already registered.'
+                "This email is already registered.",
             )
-
             return redirect(
-                'worker_profile',
-                worker_id=worker.id
+                "worker_profile",
+                worker_id=worker.id,
             )
 
-        valid_experience = [
+        valid_experience = {
             choice[0]
-            for choice
-            in WorkerProfile.EXPERIENCE_CHOICES
-        ]
+            for choice in WorkerProfile.EXPERIENCE_CHOICES
+        }
 
         if experience not in valid_experience:
-
             messages.error(
                 request,
-                'Invalid experience selected.'
+                "Invalid experience selected.",
             )
-
             return redirect(
-                'worker_profile',
-                worker_id=worker.id
+                "worker_profile",
+                worker_id=worker.id,
             )
 
         if photo:
 
             if photo.size > 5 * 1024 * 1024:
-
                 messages.error(
                     request,
-                    'Profile photo must be less than 5 MB.'
+                    "Profile photo must be less than 5 MB.",
                 )
-
                 return redirect(
-                    'worker_profile',
-                    worker_id=worker.id
+                    "worker_profile",
+                    worker_id=worker.id,
                 )
 
-            if not photo.content_type.startswith(
-                'image/'
-            ):
-
+            if not photo.content_type.startswith("image/"):
                 messages.error(
                     request,
-                    'Please select a valid image.'
+                    "Please select a valid image.",
                 )
-
                 return redirect(
-                    'worker_profile',
-                    worker_id=worker.id
+                    "worker_profile",
+                    worker_id=worker.id,
                 )
 
             if worker.photo:
+                old_photo = worker.photo.name
 
-                old_photo = (
-                    worker.photo.name
-                )
-
-                if default_storage.exists(
+                if (
                     old_photo
+                    and default_storage.exists(old_photo)
                 ):
-
-                    default_storage.delete(
-                        old_photo
-                    )
+                    default_storage.delete(old_photo)
 
             worker.photo = photo
 
@@ -1938,19 +3660,17 @@ def worker_profile(request, worker_id):
 
             if not _apply_free_profile_avatar(
                 worker,
-                'photo',
+                "photo",
                 free_avatar,
-                f'worker_{worker.id}',
+                f"worker_{worker.id}",
             ):
-
                 messages.error(
                     request,
-                    'Please select a valid free avatar.'
+                    "Please select a valid free avatar.",
                 )
-
                 return redirect(
-                    'worker_profile',
-                    worker_id=worker.id
+                    "worker_profile",
+                    worker_id=worker.id,
                 )
 
         worker.name = name
@@ -1958,33 +3678,403 @@ def worker_profile(request, worker_id):
         worker.experience = experience
 
         worker.user.email = email
-        worker.user.save()
+        worker.user.save(
+            update_fields=["email"]
+        )
 
         worker.save()
 
         messages.success(
             request,
-            'Worker profile updated successfully.'
+            "Worker profile updated successfully.",
         )
 
         return redirect(
-            'worker_profile',
-            worker_id=worker.id
+            "worker_profile",
+            worker_id=worker.id,
         )
+
+    # -----------------------------------------------------
+    # Performance
+    # -----------------------------------------------------
+    assigned_qs = Complaint.objects.filter(
+        assigned_worker=worker
+    )
+
+    jobs_assigned = assigned_qs.count()
+    jobs_completed = assigned_qs.filter(
+        status="Resolved"
+    ).count()
+    jobs_in_progress = assigned_qs.filter(
+        status="In Progress"
+    ).count()
+    jobs_pending = assigned_qs.filter(
+        status="Pending"
+    ).count()
+
+    verified_completed = assigned_qs.filter(
+        status="Resolved",
+        otp_verified=True,
+    ).count()
+
+    verified_rate = (
+        round(
+            (verified_completed / jobs_completed) * 100
+        )
+        if jobs_completed
+        else 0
+    )
+
+    rating_qs = Rating.objects.filter(
+        complaint__assigned_worker=worker,
+        rating_type="user_to_worker",
+    )
+
+    worker_rating_data = rating_qs.aggregate(
+        average=Avg("stars"),
+        total=Count("id"),
+    )
+
+    worker_average_rating = (
+        worker_rating_data["average"]
+        or 0
+    )
+    worker_rating_count = (
+        worker_rating_data["total"]
+        or 0
+    )
+
+    recent_reviews = list(
+        rating_qs
+        .select_related(
+            "rater",
+            "complaint",
+        )
+        .order_by("-created_at")[:4]
+    )
+
+    # -----------------------------------------------------
+    # League / achievements
+    # -----------------------------------------------------
+    worker_league = _find_worker_row(
+        worker,
+        monthly=False,
+    )
+
+    all_achievement_cards = _worker_achievement_cards(
+        worker_league
+    )
+
+    unlocked_achievements = [
+        item
+        for item in all_achievement_cards
+        if item["unlocked"]
+    ]
+
+    # -----------------------------------------------------
+    # Social stats
+    # -----------------------------------------------------
+    followers_count = WorkerFollow.objects.filter(
+        worker=worker
+    ).count()
+
+    following_count = WorkerFollow.objects.filter(
+        follower=worker.user
+    ).count()
+
+    profile_likes_count = WorkerProfileLike.objects.filter(
+        worker=worker
+    ).count()
+
+    is_following = False
+    is_profile_liked = False
+    can_interact = False
+
+    if request.user.is_authenticated:
+
+        can_interact = (
+            request.user.pk != worker.user_id
+            and not request.user.is_staff
+            and not request.user.is_superuser
+        )
+
+        if can_interact:
+            is_following = WorkerFollow.objects.filter(
+                follower=request.user,
+                worker=worker,
+            ).exists()
+
+            is_profile_liked = WorkerProfileLike.objects.filter(
+                user=request.user,
+                worker=worker,
+            ).exists()
+
+    # -----------------------------------------------------
+    # People You May Know - owner view
+    # -----------------------------------------------------
+    suggestions = []
+
+    if is_owner:
+
+        followed_worker_ids = set(
+            WorkerFollow.objects.filter(
+                follower=worker.user
+            ).values_list(
+                "worker_id",
+                flat=True,
+            )
+        )
+
+        candidates = list(
+            WorkerProfile.objects
+            .select_related("user")
+            .filter(
+                is_approved=True
+            )
+            .exclude(
+                id=worker.id
+            )
+            .exclude(
+                id__in=followed_worker_ids
+            )
+        )
+
+        worker_city = (
+            worker.city
+            or ""
+        ).strip().lower()
+
+        worker_skill = (
+            worker.skill_category
+            or ""
+        ).strip().lower()
+
+        candidates.sort(
+            key=lambda item: (
+                0
+                if (
+                    worker_city
+                    and (item.city or "").strip().lower()
+                    == worker_city
+                )
+                else 1,
+                0
+                if (
+                    worker_skill
+                    and (item.skill_category or "").strip().lower()
+                    == worker_skill
+                )
+                else 1,
+                (item.name or item.user.username).lower(),
+            )
+        )
+
+        league_map = {
+            row["worker"].pk: row
+            for row in _worker_rows(monthly=False)
+        }
+
+        for item in candidates[:5]:
+            suggestions.append(
+                {
+                    "worker": item,
+                    "league": league_map.get(
+                        item.pk,
+                        {
+                            "level": _league_level(0),
+                            "xp": 0,
+                            "resolved": 0,
+                            "rating_avg": 0,
+                        },
+                    ),
+                }
+            )
+
+    # -----------------------------------------------------
+    # Recent activity from real complaint status history
+    # -----------------------------------------------------
+    recent_activity = []
+
+    histories = (
+        ComplaintStatusHistory.objects
+        .filter(
+            complaint__assigned_worker=worker
+        )
+        .select_related("complaint")
+        .order_by("-changed_at")[:8]
+    )
+
+    for history in histories:
+
+        if history.new_status == "Resolved":
+            title = "Completed a job"
+            icon = "check"
+        elif history.new_status == "In Progress":
+            title = "Started working on a job"
+            icon = "clock"
+        else:
+            title = "New job activity"
+            icon = "briefcase"
+
+        recent_activity.append(
+            {
+                "title": title,
+                "detail": history.complaint.subject,
+                "date": history.changed_at,
+                "icon": icon,
+            }
+        )
+
+        if len(recent_activity) >= 4:
+            break
 
     return render(
         request,
-        'complaints/Worker_Folder/worker_profile.html',
+        "complaints/Worker_Folder/worker_profile.html",
         {
-            'worker': worker,
-            'is_owner': is_owner,
-            'experience_choices':
+            "worker": worker,
+            "is_owner": is_owner,
+            "experience_choices":
                 WorkerProfile.EXPERIENCE_CHOICES,
-            'worker_average_rating':
+
+            "worker_average_rating":
                 worker_average_rating,
-            'worker_rating_count':
+            "worker_rating_count":
                 worker_rating_count,
-        }
+
+            "jobs_assigned": jobs_assigned,
+            "jobs_completed": jobs_completed,
+            "jobs_in_progress": jobs_in_progress,
+            "jobs_pending": jobs_pending,
+            "verified_completed":
+                verified_completed,
+            "verified_rate":
+                verified_rate,
+
+            "worker_league":
+                worker_league,
+            "unlocked_achievements":
+                unlocked_achievements[:4],
+            "unlocked_achievement_count":
+                len(unlocked_achievements),
+
+            "followers_count":
+                followers_count,
+            "following_count":
+                following_count,
+            "profile_likes_count":
+                profile_likes_count,
+            "is_following":
+                is_following,
+            "is_profile_liked":
+                is_profile_liked,
+            "can_interact":
+                can_interact,
+
+            "suggestions":
+                suggestions,
+            "recent_activity":
+                recent_activity,
+            "recent_reviews":
+                recent_reviews,
+        },
+    )
+
+
+@login_required(login_url="login")
+@require_POST
+def toggle_worker_follow(request, worker_id):
+
+    worker = get_object_or_404(
+        WorkerProfile,
+        id=worker_id,
+        is_approved=True,
+    )
+
+    if request.user.pk == worker.user_id:
+        messages.info(
+            request,
+            "You cannot follow your own worker profile.",
+        )
+        return redirect(
+            "worker_profile",
+            worker_id=worker.id,
+        )
+
+    follow, created = WorkerFollow.objects.get_or_create(
+        follower=request.user,
+        worker=worker,
+    )
+
+    if created:
+        messages.success(
+            request,
+            f"You are now following {worker.name}.",
+        )
+    else:
+        follow.delete()
+        messages.info(
+            request,
+            f"You unfollowed {worker.name}.",
+        )
+
+    next_worker_id = request.POST.get(
+        "next_worker_id",
+        "",
+    ).strip()
+
+    if next_worker_id.isdigit():
+        return redirect(
+            "worker_profile",
+            worker_id=int(next_worker_id),
+        )
+
+    return redirect(
+        "worker_profile",
+        worker_id=worker.id,
+    )
+
+
+@login_required(login_url="login")
+@require_POST
+def toggle_worker_profile_like(request, worker_id):
+
+    worker = get_object_or_404(
+        WorkerProfile,
+        id=worker_id,
+        is_approved=True,
+    )
+
+    if request.user.pk == worker.user_id:
+        messages.info(
+            request,
+            "You cannot like your own worker profile.",
+        )
+        return redirect(
+            "worker_profile",
+            worker_id=worker.id,
+        )
+
+    like, created = WorkerProfileLike.objects.get_or_create(
+        user=request.user,
+        worker=worker,
+    )
+
+    if created:
+        messages.success(
+            request,
+            f"You liked {worker.name}'s profile.",
+        )
+    else:
+        like.delete()
+        messages.info(
+            request,
+            f"You removed your like from {worker.name}'s profile.",
+        )
+
+    return redirect(
+        "worker_profile",
+        worker_id=worker.id,
     )
 
 
@@ -2496,6 +4586,199 @@ def worker_login(request):
     return render(
         request,
         'complaints/Worker_Folder/worker_login.html'
+    )
+
+
+
+
+# =========================================================
+# LOCAL-ONLY WORKER PRO TEST CONTROLS
+# =========================================================
+
+@login_required(login_url='worker_login')
+@require_POST
+def activate_local_test_worker_pro(request):
+    """
+    Activate Worker Pro without Razorpay ONLY on local development.
+
+    This endpoint refuses to run unless:
+    - DEBUG=True
+    - LOCAL_WORKER_PRO_TEST_ENABLED=True
+    - host is localhost / 127.0.0.1
+    """
+
+    if not _local_worker_pro_test_allowed(
+        request
+    ):
+        return HttpResponse(
+            "Local Worker Pro test activation is disabled.",
+            status=403,
+        )
+
+    try:
+        worker = request.user.worker_profile
+
+    except WorkerProfile.DoesNotExist:
+
+        messages.error(
+            request,
+            'Worker access required.'
+        )
+
+        return redirect(
+            'worker_login'
+        )
+
+    if not worker.is_approved:
+
+        messages.error(
+            request,
+            'Approved worker access is required.'
+        )
+
+        return redirect(
+            'worker_login'
+        )
+
+    with transaction.atomic():
+
+        subscription, created = (
+            WorkerSubscription.objects
+            .select_for_update()
+            .get_or_create(
+                worker=worker
+            )
+        )
+
+        now = timezone.now()
+        period_end = (
+            now
+            + timedelta(days=30)
+        )
+
+        subscription.status = 'active'
+
+        if not subscription.started_at:
+            subscription.started_at = now
+
+        subscription.current_period_start = now
+        subscription.current_period_end = period_end
+        subscription.next_billing_at = period_end
+        subscription.cancelled_at = None
+        subscription.cancel_at_period_end = False
+        subscription.last_gateway_status = 'local_test'
+        subscription.last_synced_at = now
+
+        subscription.save(
+            update_fields=[
+                'status',
+                'started_at',
+                'current_period_start',
+                'current_period_end',
+                'next_billing_at',
+                'cancelled_at',
+                'cancel_at_period_end',
+                'last_gateway_status',
+                'last_synced_at',
+                'updated_at',
+            ]
+        )
+
+    messages.success(
+        request,
+        (
+            'Local test Worker Pro activated for 30 days. '
+            'No Razorpay payment or subscription was created.'
+        )
+    )
+
+    return redirect(
+        'worker_dashboard'
+    )
+
+
+@login_required(login_url='worker_login')
+@require_POST
+def reset_local_test_worker_pro(request):
+    """
+    Return the local worker account to Free Worker mode.
+
+    Protected by the same local-development safety checks.
+    """
+
+    if not _local_worker_pro_test_allowed(
+        request
+    ):
+        return HttpResponse(
+            "Local Worker Pro test reset is disabled.",
+            status=403,
+        )
+
+    try:
+        worker = request.user.worker_profile
+
+    except WorkerProfile.DoesNotExist:
+
+        messages.error(
+            request,
+            'Worker access required.'
+        )
+
+        return redirect(
+            'worker_login'
+        )
+
+    if not worker.is_approved:
+
+        messages.error(
+            request,
+            'Approved worker access is required.'
+        )
+
+        return redirect(
+            'worker_login'
+        )
+
+    with transaction.atomic():
+
+        subscription, created = (
+            WorkerSubscription.objects
+            .select_for_update()
+            .get_or_create(
+                worker=worker
+            )
+        )
+
+        subscription.status = 'inactive'
+        subscription.current_period_start = None
+        subscription.current_period_end = None
+        subscription.next_billing_at = None
+        subscription.cancelled_at = None
+        subscription.cancel_at_period_end = False
+        subscription.last_gateway_status = 'local_test_reset'
+        subscription.last_synced_at = timezone.now()
+
+        subscription.save(
+            update_fields=[
+                'status',
+                'current_period_start',
+                'current_period_end',
+                'next_billing_at',
+                'cancelled_at',
+                'cancel_at_period_end',
+                'last_gateway_status',
+                'last_synced_at',
+                'updated_at',
+            ]
+        )
+
+    messages.success(
+        request,
+        'Local test Worker Pro reset. This worker is back on the Free Worker plan.'
+    )
+
+    return redirect(
+        'worker_dashboard'
     )
 
 
@@ -3077,12 +5360,27 @@ def worker_dashboard(request):
                 now <= otp_expiry_time
             )
 
+    worker_subscription, created = (
+        WorkerSubscription.objects
+        .get_or_create(
+            worker=worker
+        )
+    )
+
     return render(
         request,
         'complaints/Worker_Folder/worker_dashboard.html',
         {
             'worker': worker,
             'complaints': complaints,
+            'league': _worker_league_snapshot(worker),
+            'public_worker_rows': _worker_rows(monthly=True),
+            'public_user_rows': _user_rows(monthly=True),
+            'worker_subscription': worker_subscription,
+            'local_worker_pro_test_allowed':
+                _local_worker_pro_test_allowed(
+                    request
+                ),
         }
     )
 
@@ -3906,69 +6204,242 @@ def _sync_worker_subscription_from_razorpay(
     subscription,
     razorpay_subscription,
 ):
-    """Synchronise our WorkerSubscription with a verified Razorpay subscription."""
-    razorpay_status = str(
-        razorpay_subscription.get('status', '')
-    ).lower()
+    """
+    Synchronise local entitlement with Razorpay's verified state.
 
-    customer_id = razorpay_subscription.get('customer_id') or ''
-    plan_id = razorpay_subscription.get('plan_id') or ''
+    Razorpay remains the source of truth for the gateway state.
+    Local cancel_at_period_end preserves already-paid access until
+    current_period_end after the worker disables future renewal.
+    """
+
+    razorpay_status = str(
+        razorpay_subscription.get(
+            'status',
+            ''
+        )
+    ).strip().lower()
+
+    subscription.last_gateway_status = (
+        razorpay_status
+    )
+    subscription.last_synced_at = (
+        timezone.now()
+    )
+
+    customer_id = (
+        razorpay_subscription.get(
+            'customer_id'
+        )
+        or ''
+    )
+
+    plan_id = (
+        razorpay_subscription.get(
+            'plan_id'
+        )
+        or ''
+    )
 
     if customer_id:
-        subscription.razorpay_customer_id = customer_id
+        subscription.razorpay_customer_id = (
+            customer_id
+        )
 
     if plan_id:
-        subscription.razorpay_plan_id = plan_id
+        subscription.razorpay_plan_id = (
+            plan_id
+        )
 
     now = timezone.now()
 
-    # Our ₹49 introductory month starts as soon as Razorpay authenticates
-    # the mandate. The ₹149 plan itself starts on next_billing_at.
-    if razorpay_status in {'authenticated', 'active'}:
+    current_start = (
+        _razorpay_timestamp_to_datetime(
+            razorpay_subscription.get(
+                'current_start'
+            )
+        )
+    )
+
+    current_end = (
+        _razorpay_timestamp_to_datetime(
+            razorpay_subscription.get(
+                'current_end'
+            )
+        )
+    )
+
+    charge_at = (
+        _razorpay_timestamp_to_datetime(
+            razorpay_subscription.get(
+                'charge_at'
+            )
+        )
+    )
+
+    if current_start:
+        subscription.current_period_start = (
+            current_start
+        )
+
+    if current_end:
+        subscription.current_period_end = (
+            current_end
+        )
+
+    if charge_at:
+        subscription.next_billing_at = (
+            charge_at
+        )
+
+    if razorpay_status in {
+        'authenticated',
+        'active',
+    }:
         subscription.status = 'active'
 
         if not subscription.started_at:
             subscription.started_at = now
 
-        current_start = _razorpay_timestamp_to_datetime(
-            razorpay_subscription.get('current_start')
-        )
-        current_end = _razorpay_timestamp_to_datetime(
-            razorpay_subscription.get('current_end')
-        )
-        charge_at = _razorpay_timestamp_to_datetime(
-            razorpay_subscription.get('charge_at')
-        )
+        if not subscription.current_period_start:
+            subscription.current_period_start = (
+                subscription.started_at
+            )
 
-        if current_start:
-            subscription.current_period_start = current_start
-        elif not subscription.current_period_start:
-            subscription.current_period_start = subscription.started_at
-
-        if current_end:
-            subscription.current_period_end = current_end
-        elif (
+        if (
             not subscription.current_period_end
             and subscription.next_billing_at
         ):
-            subscription.current_period_end = subscription.next_billing_at
+            subscription.current_period_end = (
+                subscription.next_billing_at
+            )
 
-        if charge_at:
-            subscription.next_billing_at = charge_at
+        if not subscription.cancel_at_period_end:
+            subscription.cancelled_at = None
 
-    elif razorpay_status in {'created', 'pending', 'halted'}:
+    elif razorpay_status in {
+        'created',
+        'pending',
+        'halted',
+        'paused',
+    }:
         subscription.status = 'pending'
 
     elif razorpay_status == 'cancelled':
-        subscription.status = 'cancelled'
+        if (
+            subscription.cancel_at_period_end
+            and subscription.current_period_end
+            and subscription.current_period_end > now
+        ):
+            # Future renewal is off, but the worker keeps already-paid access.
+            subscription.status = 'active'
+            subscription.next_billing_at = None
+        else:
+            subscription.status = 'cancelled'
 
         if not subscription.cancelled_at:
             subscription.cancelled_at = now
 
-    elif razorpay_status in {'completed', 'expired'}:
+    elif razorpay_status in {
+        'completed',
+        'expired',
+    }:
         subscription.status = 'expired'
+        subscription.next_billing_at = None
+
+    # Once a scheduled cancellation period has ended,
+    # local access must stop even if this request occurs before
+    # a later webhook reaches us.
+    if (
+        subscription.cancel_at_period_end
+        and subscription.current_period_end
+        and subscription.current_period_end <= now
+    ):
+        subscription.status = 'cancelled'
+        subscription.next_billing_at = None
 
     subscription.save()
+
+
+def _worker_subscription_config():
+    return {
+        'key_id': (
+            getattr(
+                settings,
+                'RAZORPAY_KEY_ID',
+                '',
+            )
+            or os.environ.get(
+                'RAZORPAY_KEY_ID',
+                '',
+            )
+        ).strip(),
+        'key_secret': (
+            getattr(
+                settings,
+                'RAZORPAY_KEY_SECRET',
+                '',
+            )
+            or os.environ.get(
+                'RAZORPAY_KEY_SECRET',
+                '',
+            )
+        ).strip(),
+        'plan_id': (
+            getattr(
+                settings,
+                'RAZORPAY_WORKER_PLAN_ID',
+                '',
+            )
+            or os.environ.get(
+                'RAZORPAY_WORKER_PLAN_ID',
+                '',
+            )
+        ).strip(),
+        'webhook_secret': (
+            getattr(
+                settings,
+                'RAZORPAY_WEBHOOK_SECRET',
+                '',
+            )
+            or os.environ.get(
+                'RAZORPAY_WEBHOOK_SECRET',
+                '',
+            )
+        ).strip(),
+    }
+
+
+def _fetch_and_sync_worker_subscription(
+    subscription,
+):
+    config = _worker_subscription_config()
+
+    if (
+        not config['key_id']
+        or not config['key_secret']
+        or not subscription.razorpay_subscription_id
+    ):
+        return None
+
+    client = razorpay.Client(
+        auth=(
+            config['key_id'],
+            config['key_secret'],
+        )
+    )
+
+    gateway_subscription = (
+        client.subscription.fetch(
+            subscription.razorpay_subscription_id
+        )
+    )
+
+    _sync_worker_subscription_from_razorpay(
+        subscription,
+        gateway_subscription,
+    )
+
+    return gateway_subscription
 
 
 # =========================================================
@@ -3980,24 +6451,33 @@ def _sync_worker_subscription_from_razorpay(
 def worker_subscription_payment(request):
 
     try:
-        worker = request.user.worker_profile
+        worker = (
+            request.user.worker_profile
+        )
 
     except WorkerProfile.DoesNotExist:
         messages.error(
             request,
             'Worker access required.'
         )
-        return redirect('worker_login')
+        return redirect(
+            'worker_login'
+        )
 
     if not worker.is_approved:
         messages.error(
             request,
             'Your worker account is not approved.'
         )
-        return redirect('worker_login')
+        return redirect(
+            'worker_login'
+        )
 
-    subscription, created = WorkerSubscription.objects.get_or_create(
-        worker=worker
+    subscription, created = (
+        WorkerSubscription.objects
+        .get_or_create(
+            worker=worker
+        )
     )
 
     if not subscription.terms_accepted:
@@ -4005,78 +6485,113 @@ def worker_subscription_payment(request):
             request,
             'Please accept the Terms & Conditions first.'
         )
-        return redirect('terms_conditions')
+        return redirect(
+            'terms_conditions'
+        )
 
-    razorpay_key_id = getattr(settings, 'RAZORPAY_KEY_ID', '')
-    razorpay_key_secret = getattr(settings, 'RAZORPAY_KEY_SECRET', '')
-    razorpay_plan_id = getattr(settings, 'RAZORPAY_WORKER_PLAN_ID', '')
+    config = (
+        _worker_subscription_config()
+    )
 
-    # Whenever the worker returns to this page, synchronise an existing
-    # Razorpay subscription. This also handles the future-start case where
-    # Razorpay reports "authenticated" after the ₹49 introductory payment.
+    gateway_subscription = None
+    gateway_sync_error = ''
+
     if (
         subscription.razorpay_subscription_id
-        and razorpay_key_id
-        and razorpay_key_secret
+        and config['key_id']
+        and config['key_secret']
     ):
         try:
-            client = razorpay.Client(
-                auth=(razorpay_key_id, razorpay_key_secret)
+            gateway_subscription = (
+                _fetch_and_sync_worker_subscription(
+                    subscription
+                )
             )
-            existing_subscription = client.subscription.fetch(
-                subscription.razorpay_subscription_id
-            )
-            _sync_worker_subscription_from_razorpay(
-                subscription,
-                existing_subscription,
-            )
+
         except Exception as error:
-            print('RAZORPAY SUBSCRIPTION SYNC ERROR:', error)
+            print(
+                'RAZORPAY SUBSCRIPTION SYNC ERROR:',
+                error,
+            )
+            gateway_sync_error = (
+                'Live subscription status could not be refreshed right now.'
+            )
 
     if request.method == 'POST':
 
+        if subscription.is_premium_active:
+            messages.info(
+                request,
+                'Worker Pro is already active for this account.'
+            )
+            return redirect(
+                'worker_subscription_payment'
+            )
+
         if (
-            not razorpay_key_id
-            or not razorpay_key_secret
-            or not razorpay_plan_id
+            not config['key_id']
+            or not config['key_secret']
+            or not config['plan_id']
         ):
             messages.error(
                 request,
-                'Razorpay subscription configuration is missing.'
+                'Worker Pro payment configuration is incomplete.'
             )
-            return redirect('worker_subscription_payment')
+            return redirect(
+                'worker_subscription_payment'
+            )
 
         try:
             client = razorpay.Client(
-                auth=(razorpay_key_id, razorpay_key_secret)
+                auth=(
+                    config['key_id'],
+                    config['key_secret'],
+                )
             )
 
+            # Reuse a still-open Razorpay subscription instead of creating
+            # duplicates when a worker taps the payment button again.
             if subscription.razorpay_subscription_id:
                 try:
-                    existing_subscription = client.subscription.fetch(
-                        subscription.razorpay_subscription_id
+                    existing = (
+                        client.subscription.fetch(
+                            subscription.razorpay_subscription_id
+                        )
                     )
 
                     _sync_worker_subscription_from_razorpay(
                         subscription,
-                        existing_subscription,
+                        existing,
                     )
 
-                    razorpay_status = existing_subscription.get(
-                        'status',
-                        ''
-                    )
-                    short_url = existing_subscription.get('short_url')
+                    existing_status = str(
+                        existing.get(
+                            'status',
+                            ''
+                        )
+                    ).lower()
 
-                    if razorpay_status in {'authenticated', 'active'}:
+                    short_url = (
+                        existing.get(
+                            'short_url'
+                        )
+                        or ''
+                    )
+
+                    if existing_status in {
+                        'authenticated',
+                        'active',
+                    }:
                         messages.success(
                             request,
-                            'Your worker subscription is active.'
+                            'Worker Pro is active.'
                         )
-                        return redirect('worker_dashboard')
+                        return redirect(
+                            'worker_subscription_payment'
+                        )
 
                     if (
-                        razorpay_status
+                        existing_status
                         in {
                             'created',
                             'pending',
@@ -4084,114 +6599,475 @@ def worker_subscription_payment(request):
                         }
                         and short_url
                     ):
-                        return redirect(short_url)
+                        return redirect(
+                            short_url
+                        )
 
                 except Exception as error:
-                    print('RAZORPAY EXISTING SUBSCRIPTION ERROR:', error)
+                    print(
+                        'RAZORPAY EXISTING SUBSCRIPTION ERROR:',
+                        error,
+                    )
 
             now = timezone.now()
-            first_regular_billing_date = add_one_month(now)
+
+            first_regular_billing_date = (
+                add_one_month(
+                    now
+                )
+            )
+
             start_at_timestamp = int(
                 first_regular_billing_date.timestamp()
             )
 
-            razorpay_subscription = client.subscription.create(
-                {
-                    'plan_id': razorpay_plan_id,
-                    'total_count': 12,
-                    'quantity': 1,
-                    'customer_notify': True,
-                    'start_at': start_at_timestamp,
-                    'addons': [
-                        {
-                            'item': {
-                                'name': 'First Month Subscription Fee',
-                                'amount': 4900,
-                                'currency': 'INR',
+            # Existing business model:
+            # ₹49 upfront introductory first period.
+            # ₹149/month recurring plan begins one month later.
+            gateway_subscription = (
+                client.subscription.create(
+                    {
+                        'plan_id':
+                            config['plan_id'],
+                        'total_count':
+                            12,
+                        'quantity':
+                            1,
+                        'customer_notify':
+                            True,
+                        'start_at':
+                            start_at_timestamp,
+                        'addons': [
+                            {
+                                'item': {
+                                    'name':
+                                        'Worker Pro introductory first month',
+                                    'amount':
+                                        4900,
+                                    'currency':
+                                        'INR',
+                                }
                             }
-                        }
-                    ],
-                    'notes': {
-                        'worker_id': str(worker.id),
-                        'worker_name': worker.name,
-                        'django_user_id': str(request.user.id),
-                        'subscription_type': 'worker_monthly',
-                    },
-                }
+                        ],
+                        'notes': {
+                            'worker_id':
+                                str(
+                                    worker.id
+                                ),
+                            'worker_name':
+                                worker.name,
+                            'django_user_id':
+                                str(
+                                    request.user.id
+                                ),
+                            'subscription_type':
+                                'worker_pro_monthly',
+                            'intro_price_inr':
+                                '49',
+                            'regular_price_inr':
+                                '149',
+                        },
+                    }
+                )
             )
 
-            razorpay_subscription_id = razorpay_subscription.get(
-                'id',
-                ''
-            )
-            razorpay_short_url = razorpay_subscription.get(
-                'short_url',
-                ''
-            )
+            subscription_id = str(
+                gateway_subscription.get(
+                    'id',
+                    ''
+                )
+            ).strip()
 
-            if not razorpay_subscription_id:
+            short_url = str(
+                gateway_subscription.get(
+                    'short_url',
+                    ''
+                )
+            ).strip()
+
+            if not subscription_id:
                 messages.error(
                     request,
                     'Razorpay did not return a subscription ID.'
                 )
-                return redirect('worker_subscription_payment')
+                return redirect(
+                    'worker_subscription_payment'
+                )
 
             subscription.razorpay_subscription_id = (
-                razorpay_subscription_id
+                subscription_id
             )
-            subscription.razorpay_plan_id = razorpay_plan_id
+            subscription.razorpay_plan_id = (
+                config['plan_id']
+            )
             subscription.first_month_price = 49
             subscription.monthly_price = 149
             subscription.status = 'pending'
             subscription.started_at = None
             subscription.current_period_start = None
             subscription.current_period_end = None
+            subscription.next_billing_at = (
+                first_regular_billing_date
+            )
             subscription.cancelled_at = None
-            subscription.next_billing_at = first_regular_billing_date
+            subscription.cancel_at_period_end = False
+            subscription.last_gateway_status = str(
+                gateway_subscription.get(
+                    'status',
+                    'created',
+                )
+            ).lower()
+            subscription.last_synced_at = (
+                timezone.now()
+            )
+
             subscription.save()
 
-            if razorpay_short_url:
-                return redirect(razorpay_short_url)
+            if short_url:
+                return redirect(
+                    short_url
+                )
 
-            messages.success(
+            messages.error(
                 request,
-                'Subscription created successfully.'
+                (
+                    'Subscription was created, but Razorpay did not return '
+                    'a payment link. Refresh status before trying again.'
+                )
             )
-            return redirect('worker_subscription_payment')
+
+            return redirect(
+                'worker_subscription_payment'
+            )
 
         except razorpay.errors.BadRequestError as error:
-            print('RAZORPAY BAD REQUEST ERROR:', error)
+            print(
+                'RAZORPAY BAD REQUEST ERROR:',
+                error,
+            )
             messages.error(
                 request,
-                'Razorpay rejected the subscription request. Please check the subscription settings.'
+                (
+                    'Razorpay rejected the Worker Pro request. '
+                    'No Worker Pro access was activated.'
+                )
             )
-            return redirect('worker_subscription_payment')
 
         except razorpay.errors.ServerError as error:
-            print('RAZORPAY SERVER ERROR:', error)
+            print(
+                'RAZORPAY SERVER ERROR:',
+                error,
+            )
             messages.error(
                 request,
-                'Razorpay server is temporarily unavailable. Please try again.'
+                (
+                    'Razorpay is temporarily unavailable. '
+                    'Please try again later.'
+                )
             )
-            return redirect('worker_subscription_payment')
 
         except Exception as error:
-            print('RAZORPAY GENERAL ERROR:', error)
+            print(
+                'RAZORPAY GENERAL ERROR:',
+                error,
+            )
             messages.error(
                 request,
-                'Unable to start subscription payment. Please try again.'
+                (
+                    'Unable to start Worker Pro payment. '
+                    'No access was activated.'
+                )
             )
-            return redirect('worker_subscription_payment')
+
+        return redirect(
+            'worker_subscription_payment'
+        )
 
     return render(
         request,
         'complaints/Worker_Folder/worker_subscription_payment.html',
         {
-            'worker': worker,
-            'subscription': subscription,
-            'first_month_price': 49,
-            'monthly_price': 149,
+            'worker':
+                worker,
+            'subscription':
+                subscription,
+            'first_month_price':
+                49,
+            'monthly_price':
+                149,
+            'gateway_sync_error':
+                gateway_sync_error,
+            'worker_pro_configured':
+                bool(
+                    config['key_id']
+                    and config['key_secret']
+                    and config['plan_id']
+                ),
+            'webhook_configured':
+                bool(
+                    config['webhook_secret']
+                ),
         }
+    )
+
+
+@login_required(login_url='worker_login')
+@require_POST
+def worker_subscription_sync(request):
+
+    try:
+        worker = (
+            request.user.worker_profile
+        )
+
+    except WorkerProfile.DoesNotExist:
+        messages.error(
+            request,
+            'Worker access required.'
+        )
+        return redirect(
+            'worker_login'
+        )
+
+    if not worker.is_approved:
+        messages.error(
+            request,
+            'Approved worker access is required.'
+        )
+        return redirect(
+            'worker_login'
+        )
+
+    subscription, created = (
+        WorkerSubscription.objects
+        .get_or_create(
+            worker=worker
+        )
+    )
+
+    if not subscription.razorpay_subscription_id:
+        messages.info(
+            request,
+            'No Razorpay Worker Pro subscription exists yet.'
+        )
+        return redirect(
+            'worker_subscription_payment'
+        )
+
+    try:
+        _fetch_and_sync_worker_subscription(
+            subscription
+        )
+
+        messages.success(
+            request,
+            'Worker Pro status refreshed securely from Razorpay.'
+        )
+
+    except Exception as error:
+        print(
+            'WORKER SUBSCRIPTION MANUAL SYNC ERROR:',
+            error,
+        )
+        messages.error(
+            request,
+            'Could not refresh the Razorpay subscription right now.'
+        )
+
+    return redirect(
+        'worker_subscription_payment'
+    )
+
+
+@login_required(login_url='worker_login')
+@require_POST
+def worker_subscription_cancel_renewal(request):
+    """
+    Turn off future recurring renewal at the end of the current paid cycle.
+
+    Access remains usable through current_period_end.
+    """
+
+    try:
+        worker = (
+            request.user.worker_profile
+        )
+
+    except WorkerProfile.DoesNotExist:
+        messages.error(
+            request,
+            'Worker access required.'
+        )
+        return redirect(
+            'worker_login'
+        )
+
+    if not worker.is_approved:
+        messages.error(
+            request,
+            'Approved worker access is required.'
+        )
+        return redirect(
+            'worker_login'
+        )
+
+    subscription, created = (
+        WorkerSubscription.objects
+        .get_or_create(
+            worker=worker
+        )
+    )
+
+    if not subscription.razorpay_subscription_id:
+        messages.error(
+            request,
+            'No Razorpay Worker Pro subscription is available to cancel.'
+        )
+        return redirect(
+            'worker_subscription_payment'
+        )
+
+    if subscription.cancel_at_period_end:
+        messages.info(
+            request,
+            'Automatic renewal is already turned off.'
+        )
+        return redirect(
+            'worker_subscription_payment'
+        )
+
+    confirm = (
+        request.POST.get(
+            'confirm_cancel',
+            ''
+        )
+        .strip()
+        .lower()
+    )
+
+    if confirm != 'yes':
+        messages.error(
+            request,
+            'Cancellation confirmation was not received.'
+        )
+        return redirect(
+            'worker_subscription_payment'
+        )
+
+    config = (
+        _worker_subscription_config()
+    )
+
+    if (
+        not config['key_id']
+        or not config['key_secret']
+    ):
+        messages.error(
+            request,
+            'Razorpay configuration is incomplete.'
+        )
+        return redirect(
+            'worker_subscription_payment'
+        )
+
+    try:
+        client = razorpay.Client(
+            auth=(
+                config['key_id'],
+                config['key_secret'],
+            )
+        )
+
+        # Official Razorpay Python SDK supports
+        # cancel_at_cycle_end=True.
+        gateway_subscription = (
+            client.subscription.cancel(
+                subscription.razorpay_subscription_id,
+                {
+                    'cancel_at_cycle_end':
+                        True,
+                },
+            )
+        )
+
+        subscription.cancel_at_period_end = True
+        subscription.cancelled_at = (
+            timezone.now()
+        )
+
+        # Preserve current paid access even if the gateway already reports
+        # the subscription as cancelled after scheduling cycle-end cancellation.
+        gateway_current_end = (
+            _razorpay_timestamp_to_datetime(
+                gateway_subscription.get(
+                    'current_end'
+                )
+            )
+        )
+
+        if gateway_current_end:
+            subscription.current_period_end = (
+                gateway_current_end
+            )
+
+        subscription.next_billing_at = None
+        subscription.last_gateway_status = str(
+            gateway_subscription.get(
+                'status',
+                subscription.last_gateway_status,
+            )
+        ).lower()
+        subscription.last_synced_at = (
+            timezone.now()
+        )
+
+        if (
+            subscription.current_period_end
+            and subscription.current_period_end > timezone.now()
+        ):
+            subscription.status = 'active'
+        else:
+            subscription.status = 'cancelled'
+
+        subscription.save()
+
+        messages.success(
+            request,
+            (
+                'Automatic renewal is turned off. '
+                'Your already-paid Worker Pro access remains available '
+                'until the current period ends.'
+            )
+        )
+
+    except razorpay.errors.BadRequestError as error:
+        print(
+            'RAZORPAY CANCEL BAD REQUEST:',
+            error,
+        )
+        messages.error(
+            request,
+            (
+                'Razorpay could not schedule the cancellation. '
+                'Your subscription was not changed.'
+            )
+        )
+
+    except Exception as error:
+        print(
+            'RAZORPAY CANCEL ERROR:',
+            error,
+        )
+        messages.error(
+            request,
+            (
+                'Unable to turn off renewal right now. '
+                'Your subscription was not changed.'
+            )
+        )
+
+    return redirect(
+        'worker_subscription_payment'
     )
 
 
@@ -4202,12 +7078,11 @@ def worker_subscription_payment(request):
 @csrf_exempt
 @require_POST
 def worker_subscription_webhook(request):
-    webhook_secret = (
-        getattr(settings, 'RAZORPAY_WEBHOOK_SECRET', '')
-        or os.environ.get('RAZORPAY_WEBHOOK_SECRET', '')
-    )
-    razorpay_key_id = getattr(settings, 'RAZORPAY_KEY_ID', '')
-    razorpay_key_secret = getattr(settings, 'RAZORPAY_KEY_SECRET', '')
+    config = _worker_subscription_config()
+
+    webhook_secret = config['webhook_secret']
+    razorpay_key_id = config['key_id']
+    razorpay_key_secret = config['key_secret']
 
     if (
         not webhook_secret
@@ -5511,3 +8386,786 @@ def complaint_chat(request, complaint_id):
                 is_assigned_worker,
         }
     )
+
+# =========================================================
+# COMMUNITY / WORKER LEAGUE
+# =========================================================
+# The league is calculated from existing verified app activity.
+# No new database table is required, so this feature is safe to
+# deploy without an additional migration.
+
+LEAGUE_LEVELS = (
+    ("Bronze", 0, 500),
+    ("Silver", 500, 1000),
+    ("Gold", 1000, 2000),
+    ("Platinum", 2000, 3500),
+    ("Diamond", 3500, None),
+)
+
+
+# =========================================================
+# RESPONSIBLE CITIZEN XP RULES
+# =========================================================
+# Important:
+# - Submitting a complaint gives 0 XP.
+# - Raw complaint quantity gives 0 XP.
+# - Repeated complaints in the same month cannot be used to
+#   continuously farm XP.
+# - XP rewards responsible, verified participation instead.
+#
+# Monthly maximum:
+#   Verified participation       = 10 XP
+#   Helpful feedback given       = 10 XP
+#   Quality report bonus         =  5 XP
+#   Positive worker feedback     = 10 XP
+#   Responsible-month bonus      = 10 XP
+#   ------------------------------------
+#   Maximum                      = 45 XP / month
+#
+# Lifetime XP is the sum of each month's capped score.
+
+USER_XP_VERIFIED_MONTHLY = 10
+USER_XP_FEEDBACK_EACH = 5
+USER_XP_FEEDBACK_MONTHLY_CAP = 10
+USER_XP_QUALITY_REPORT_MONTHLY = 5
+USER_XP_POSITIVE_WORKER_RATING_EACH = 5
+USER_XP_POSITIVE_WORKER_RATING_MONTHLY_CAP = 10
+USER_XP_RESPONSIBLE_MONTH_BONUS = 10
+
+USER_QUALITY_DESCRIPTION_MIN_LENGTH = 40
+
+
+def _league_level(xp):
+    xp = max(int(xp or 0), 0)
+
+    for name, floor, ceiling in LEAGUE_LEVELS:
+
+        if ceiling is None or xp < ceiling:
+
+            next_xp = ceiling
+
+            progress = (
+                100
+                if ceiling is None
+                else int(
+                    (
+                        (xp - floor)
+                        / max(
+                            ceiling - floor,
+                            1,
+                        )
+                    )
+                    * 100
+                )
+            )
+
+            return {
+                "name": name,
+                "floor": floor,
+                "next_xp": next_xp,
+                "progress": max(
+                    0,
+                    min(
+                        progress,
+                        100,
+                    ),
+                ),
+                "xp_left": (
+                    0
+                    if next_xp is None
+                    else max(
+                        next_xp - xp,
+                        0,
+                    )
+                ),
+            }
+
+    return {
+        "name": "Diamond",
+        "floor": 3500,
+        "next_xp": None,
+        "progress": 100,
+        "xp_left": 0,
+    }
+
+
+def _month_start():
+    now = timezone.localtime(
+        timezone.now()
+    )
+
+    return now.replace(
+        day=1,
+        hour=0,
+        minute=0,
+        second=0,
+        microsecond=0,
+    )
+
+
+def _month_key(dt):
+    local_dt = timezone.localtime(dt)
+
+    return (
+        local_dt.year,
+        local_dt.month,
+    )
+
+
+def _empty_user_month():
+    return {
+        "resolved": 0,
+        "verified": 0,
+        "ratings": 0,
+        "detailed": 0,
+        "positive_worker_ratings": 0,
+    }
+
+
+def _score_user_month(data):
+    """
+    Score one calendar month.
+
+    Complaint count itself never earns XP.
+    """
+
+    verified_points = (
+        USER_XP_VERIFIED_MONTHLY
+        if data["verified"] > 0
+        else 0
+    )
+
+    feedback_points = min(
+        data["ratings"]
+        * USER_XP_FEEDBACK_EACH,
+        USER_XP_FEEDBACK_MONTHLY_CAP,
+    )
+
+    quality_points = (
+        USER_XP_QUALITY_REPORT_MONTHLY
+        if data["detailed"] > 0
+        else 0
+    )
+
+    positive_worker_rating_points = min(
+        data["positive_worker_ratings"]
+        * USER_XP_POSITIVE_WORKER_RATING_EACH,
+        USER_XP_POSITIVE_WORKER_RATING_MONTHLY_CAP,
+    )
+
+    responsible_month = (
+        data["verified"] > 0
+        and data["ratings"] > 0
+        and data["positive_worker_ratings"] > 0
+    )
+
+    responsible_bonus = (
+        USER_XP_RESPONSIBLE_MONTH_BONUS
+        if responsible_month
+        else 0
+    )
+
+    total = (
+        verified_points
+        + feedback_points
+        + quality_points
+        + positive_worker_rating_points
+        + responsible_bonus
+    )
+
+    return {
+        "xp": total,
+        "verified_points": verified_points,
+        "feedback_points": feedback_points,
+        "quality_points": quality_points,
+        "positive_worker_rating_points":
+            positive_worker_rating_points,
+        "responsible_bonus": responsible_bonus,
+        "responsible_month": responsible_month,
+    }
+
+
+def _user_participation_summary(user):
+    """
+    Build monthly responsible-participation buckets for one user.
+
+    Resolution month comes from ComplaintStatusHistory where available.
+    Existing/legacy resolved complaints fall back to Complaint.updated_at.
+    """
+
+    buckets = {}
+
+    def bucket_for(dt):
+        key = _month_key(dt)
+
+        if key not in buckets:
+            buckets[key] = _empty_user_month()
+
+        return buckets[key]
+
+    # -----------------------------------------------------
+    # Resolved / verified / quality reports
+    # -----------------------------------------------------
+
+    resolved_complaints = list(
+        Complaint.objects
+        .filter(
+            user=user,
+            status="Resolved",
+        )
+        .only(
+            "id",
+            "photo",
+            "latitude",
+            "longitude",
+            "description",
+            "otp_verified",
+            "updated_at",
+        )
+    )
+
+    resolution_dates = {}
+
+    histories = (
+        ComplaintStatusHistory.objects
+        .filter(
+            complaint__user=user,
+            new_status="Resolved",
+        )
+        .values(
+            "complaint_id",
+            "changed_at",
+        )
+        .order_by(
+            "complaint_id",
+            "-changed_at",
+        )
+    )
+
+    for item in histories:
+
+        complaint_id = item["complaint_id"]
+
+        if complaint_id not in resolution_dates:
+            resolution_dates[complaint_id] = item["changed_at"]
+
+    for complaint in resolved_complaints:
+
+        resolved_at = (
+            resolution_dates.get(
+                complaint.id
+            )
+            or complaint.updated_at
+        )
+
+        month = bucket_for(
+            resolved_at
+        )
+
+        # This count is shown as a stat only.
+        # It does NOT add XP by itself.
+        month["resolved"] += 1
+
+        if complaint.otp_verified:
+            month["verified"] += 1
+
+        description = (
+            complaint.description
+            or ""
+        ).strip()
+
+        is_quality_report = (
+            bool(complaint.photo)
+            and complaint.latitude is not None
+            and complaint.longitude is not None
+            and len(description)
+            >= USER_QUALITY_DESCRIPTION_MIN_LENGTH
+        )
+
+        if is_quality_report:
+            month["detailed"] += 1
+
+    # -----------------------------------------------------
+    # Helpful feedback GIVEN to workers
+    # -----------------------------------------------------
+
+    given_ratings = (
+        Rating.objects
+        .filter(
+            rater=user,
+            rating_type="user_to_worker",
+            complaint__status="Resolved",
+        )
+        .only(
+            "created_at",
+        )
+    )
+
+    for rating in given_ratings:
+        bucket_for(
+            rating.created_at
+        )["ratings"] += 1
+
+    # -----------------------------------------------------
+    # Positive feedback RECEIVED from workers
+    # -----------------------------------------------------
+    # A 4- or 5-star worker_to_user rating is treated as a
+    # positive trust signal. Users cannot directly award this
+    # score to themselves.
+
+    positive_worker_ratings = (
+        Rating.objects
+        .filter(
+            complaint__user=user,
+            rating_type="worker_to_user",
+            stars__gte=4,
+        )
+        .only(
+            "created_at",
+        )
+    )
+
+    for rating in positive_worker_ratings:
+        bucket_for(
+            rating.created_at
+        )["positive_worker_ratings"] += 1
+
+    # -----------------------------------------------------
+    # Score each month after caps are applied.
+    # -----------------------------------------------------
+
+    for data in buckets.values():
+        data.update(
+            _score_user_month(
+                data
+            )
+        )
+
+    return buckets
+
+
+def _user_rows(monthly=False):
+
+    current_month_key = _month_key(
+        timezone.now()
+    )
+
+    users = User.objects.filter(
+        worker_profile__isnull=True,
+        is_staff=False,
+        is_superuser=False,
+    )
+
+    rows = []
+
+    for user in users.select_related(
+        "user_profile"
+    ):
+
+        buckets = _user_participation_summary(
+            user
+        )
+
+        if monthly:
+
+            selected = buckets.get(
+                current_month_key,
+                _empty_user_month(),
+            ).copy()
+
+            if "xp" not in selected:
+                selected.update(
+                    _score_user_month(
+                        selected
+                    )
+                )
+
+            xp = selected["xp"]
+            resolved_count = selected["resolved"]
+            rating_count = selected["ratings"]
+            detailed_count = selected["detailed"]
+            verified_count = selected["verified"]
+            positive_worker_rating_count = (
+                selected[
+                    "positive_worker_ratings"
+                ]
+            )
+            responsible_months = (
+                1
+                if selected.get(
+                    "responsible_month"
+                )
+                else 0
+            )
+
+        else:
+
+            xp = sum(
+                data.get(
+                    "xp",
+                    0,
+                )
+                for data in buckets.values()
+            )
+
+            resolved_count = sum(
+                data["resolved"]
+                for data in buckets.values()
+            )
+
+            rating_count = sum(
+                data["ratings"]
+                for data in buckets.values()
+            )
+
+            detailed_count = sum(
+                data["detailed"]
+                for data in buckets.values()
+            )
+
+            verified_count = sum(
+                data["verified"]
+                for data in buckets.values()
+            )
+
+            positive_worker_rating_count = sum(
+                data["positive_worker_ratings"]
+                for data in buckets.values()
+            )
+
+            responsible_months = sum(
+                1
+                for data in buckets.values()
+                if data.get(
+                    "responsible_month"
+                )
+            )
+
+        rows.append(
+            {
+                "user": user,
+                "name": (
+                    user.get_full_name()
+                    or user.username
+                ),
+                "xp": xp,
+
+                # Informational stats only.
+                "resolved": resolved_count,
+                "ratings": rating_count,
+                "detailed": detailed_count,
+                "verified": verified_count,
+
+                # Responsible participation signals.
+                "positive_worker_ratings":
+                    positive_worker_rating_count,
+                "responsible_months":
+                    responsible_months,
+            }
+        )
+
+    # Tie-breakers also prioritise positive participation,
+    # not complaint quantity.
+    rows.sort(
+        key=lambda item: (
+            -item["xp"],
+            -item[
+                "positive_worker_ratings"
+            ],
+            -item["ratings"],
+            item["name"].lower(),
+        )
+    )
+
+    for index, row in enumerate(
+        rows,
+        1,
+    ):
+        row["rank"] = index
+        row["level"] = _league_level(
+            row["xp"]
+        )
+
+    return rows
+
+
+def _worker_rows(monthly=False):
+    start = _month_start() if monthly else None
+    workers = WorkerProfile.objects.filter(is_approved=True).select_related("user")
+    rows = []
+    for worker in workers:
+        resolved = Complaint.objects.filter(assigned_worker=worker, status="Resolved")
+        ratings = Rating.objects.filter(complaint__assigned_worker=worker, rating_type="user_to_worker")
+        if start:
+            resolved = resolved.filter(updated_at__gte=start)
+            ratings = ratings.filter(created_at__gte=start)
+        resolved_count = resolved.count()
+        verified_count = resolved.filter(otp_verified=True).count()
+        five_star_count = ratings.filter(stars=5).count()
+        rating_data = ratings.aggregate(avg=Avg("stars"), total=Count("id"))
+        xp = resolved_count * 10 + verified_count * 2 + five_star_count * 5
+        rows.append({
+            "worker": worker,
+            "name": worker.name or worker.user.username,
+            "xp": xp,
+            "resolved": resolved_count,
+            "verified": verified_count,
+            "five_star": five_star_count,
+            "rating_avg": round(rating_data["avg"] or 0, 1),
+            "rating_count": rating_data["total"] or 0,
+        })
+    rows.sort(key=lambda item: (-item["xp"], -item["rating_avg"], item["name"].lower()))
+    for index, row in enumerate(rows, 1):
+        row["rank"] = index
+        row["level"] = _league_level(row["xp"])
+    return rows
+
+
+def _find_user_row(user, monthly=False):
+    rows = _user_rows(monthly=monthly)
+    row = next((item for item in rows if item["user"].pk == user.pk), None)
+    return row or {
+        "user": user,
+        "name": user.get_full_name() or user.username,
+        "xp": 0,
+        "resolved": 0,
+        "ratings": 0,
+        "detailed": 0,
+        "verified": 0,
+        "positive_worker_ratings": 0,
+        "responsible_months": 0,
+        "rank": len(rows) + 1,
+        "level": _league_level(0),
+    }
+
+
+def _find_worker_row(worker, monthly=False):
+    rows = _worker_rows(monthly=monthly)
+    row = next((item for item in rows if item["worker"].pk == worker.pk), None)
+    return row or {"worker": worker, "name": worker.name, "xp": 0, "resolved": 0, "verified": 0, "five_star": 0, "rating_avg": 0, "rating_count": 0, "rank": len(rows) + 1, "level": _league_level(0)}
+
+
+def _user_league_snapshot(user):
+    return _find_user_row(user, monthly=True)
+
+
+def _worker_league_snapshot(worker):
+    return _find_worker_row(worker, monthly=True)
+
+
+def _user_activity_snapshot(user):
+    qs = Complaint.objects.filter(user=user)
+    return {
+        "total": qs.count(),
+        "pending": qs.filter(status="Pending").count(),
+        "in_progress": qs.filter(status="In Progress").count(),
+        "resolved": qs.filter(status="Resolved").count(),
+    }
+
+
+def _user_achievement_cards(row):
+    return [
+        {
+            "title": "First Verified Resolution",
+            "detail": "Complete your first OTP-verified resolution",
+            "icon": "✓",
+            "unlocked": row["verified"] >= 1,
+        },
+        {
+            "title": "Helpful Citizen",
+            "detail": "Give useful feedback on 5 completed services",
+            "icon": "★",
+            "unlocked": row["ratings"] >= 5,
+        },
+        {
+            "title": "Trusted Citizen",
+            "detail": "Receive 5 positive ratings from workers",
+            "icon": "♥",
+            "unlocked": row["positive_worker_ratings"] >= 5,
+        },
+        {
+            "title": "Detailed Reporter",
+            "detail": "Create 5 quality reports with photo, location and useful details",
+            "icon": "▣",
+            "unlocked": row["detailed"] >= 5,
+        },
+        {
+            "title": "Responsible Regular",
+            "detail": "Complete 3 balanced responsible-participation months",
+            "icon": "◆",
+            "unlocked": row["responsible_months"] >= 3,
+        },
+        {
+            "title": "Community Role Model",
+            "detail": "Complete 6 balanced responsible-participation months",
+            "icon": "✦",
+            "unlocked": row["responsible_months"] >= 6,
+        },
+        {
+            "title": "Community Champion",
+            "detail": "Reach Gold Citizen league",
+            "icon": "♛",
+            "unlocked": row["xp"] >= 1000,
+        },
+        {
+            "title": "City Care Leader",
+            "detail": "Reach Platinum Citizen league",
+            "icon": "◇",
+            "unlocked": row["xp"] >= 2000,
+        },
+        {
+            "title": "Top Supporter",
+            "detail": "Reach Diamond Citizen league",
+            "icon": "♢",
+            "unlocked": row["xp"] >= 3500,
+        },
+    ]
+
+
+def _worker_achievement_cards(row):
+    return [
+        {"title": "First 10 Jobs", "detail": "Complete 10 resolved jobs", "icon": "10", "unlocked": row["resolved"] >= 10},
+        {"title": "50 Jobs", "detail": "Complete 50 resolved jobs", "icon": "50", "unlocked": row["resolved"] >= 50},
+        {"title": "100 Jobs", "detail": "Complete 100 resolved jobs", "icon": "100", "unlocked": row["resolved"] >= 100},
+        {"title": "5-Star Pro", "detail": "Receive 10 five-star ratings", "icon": "★", "unlocked": row["five_star"] >= 10},
+        {"title": "Verified Finisher", "detail": "Complete 25 OTP-verified jobs", "icon": "✓", "unlocked": row["verified"] >= 25},
+        {"title": "Gold Worker", "detail": "Reach Gold league", "icon": "G", "unlocked": row["xp"] >= 1000},
+        {"title": "Platinum Worker", "detail": "Reach Platinum league", "icon": "P", "unlocked": row["xp"] >= 2000},
+        {"title": "City Champion", "detail": "Reach Diamond league", "icon": "♛", "unlocked": row["xp"] >= 3500},
+        {"title": "Quality Expert", "detail": "Maintain 4.8+ rating with 20 ratings", "icon": "✦", "unlocked": row["rating_count"] >= 20 and row["rating_avg"] >= 4.8},
+    ]
+
+
+
+# =========================================================
+# PUBLIC LEADERBOARD
+# =========================================================
+
+def public_leaderboard(request):
+    """
+    Public monthly leaderboard.
+
+    Safe public fields only:
+    rank, display name, league level, XP, resolved count,
+    ratings / verified jobs and worker rating statistics.
+    """
+    user_rows = _user_rows(monthly=True)[:100]
+    worker_rows = _worker_rows(monthly=True)[:100]
+
+    viewer_user_id = None
+    viewer_worker_id = None
+    is_worker_viewer = False
+
+    if request.user.is_authenticated:
+        viewer_user_id = request.user.pk
+
+        try:
+            viewer_worker = request.user.worker_profile
+            viewer_worker_id = viewer_worker.pk
+            is_worker_viewer = True
+        except WorkerProfile.DoesNotExist:
+            pass
+
+    return render(
+        request,
+        "complaints/public_leaderboard.html",
+        {
+            "user_rows": user_rows,
+            "worker_rows": worker_rows,
+            "viewer_user_id": viewer_user_id,
+            "viewer_worker_id": viewer_worker_id,
+            "is_worker_viewer": is_worker_viewer,
+            "user_count": len(user_rows),
+            "worker_count": len(worker_rows),
+        },
+    )
+
+
+def user_leaderboard(request):
+    """Backward-compatible route for the old user leaderboard URL."""
+    return redirect("public_leaderboard")
+
+
+def worker_leaderboard(request):
+    """Backward-compatible route for the old worker leaderboard URL."""
+    return redirect("public_leaderboard")
+
+
+
+@login_required(login_url="login")
+def user_achievements(request):
+    admin_redirect = _admin_account_redirect(request)
+    if admin_redirect:
+        return admin_redirect
+
+    try:
+        request.user.worker_profile
+        return redirect("worker_achievements")
+    except WorkerProfile.DoesNotExist:
+        pass
+
+    me = _find_user_row(request.user, monthly=False)
+
+    return render(
+        request,
+        "complaints/User_Folder/user_achievements.html",
+        {
+            "me": me,
+            "achievements": _user_achievement_cards(me),
+        },
+    )
+
+
+@login_required(login_url="login")
+def user_rewards(request):
+    admin_redirect = _admin_account_redirect(request)
+    if admin_redirect:
+        return admin_redirect
+
+    try:
+        request.user.worker_profile
+        return redirect("worker_rewards")
+    except WorkerProfile.DoesNotExist:
+        pass
+
+    me = _find_user_row(request.user, monthly=False)
+
+    return render(
+        request,
+        "complaints/User_Folder/user_rewards.html",
+        {
+            "me": me,
+        },
+    )
+
+
+def _current_worker_or_redirect(request):
+    try:
+        worker = request.user.worker_profile
+    except WorkerProfile.DoesNotExist:
+        return None
+
+    if not worker.is_approved:
+        return None
+
+    return worker
+
+
+@login_required(login_url="worker_login")
+def worker_achievements(request):
+    worker = _current_worker_or_redirect(request)
+    if not worker:
+        messages.error(request, "Approved worker access required.")
+        return redirect("worker_login")
+    me = _find_worker_row(worker, monthly=False)
+    return render(request, "complaints/Worker_Folder/worker_achievements.html", {"me": me, "worker": worker, "achievements": _worker_achievement_cards(me)})
+
+
+@login_required(login_url="worker_login")
+def worker_rewards(request):
+    worker = _current_worker_or_redirect(request)
+    if not worker:
+        messages.error(request, "Approved worker access required.")
+        return redirect("worker_login")
+    me = _find_worker_row(worker, monthly=False)
+    return render(request, "complaints/Worker_Folder/worker_rewards.html", {"me": me, "worker": worker})

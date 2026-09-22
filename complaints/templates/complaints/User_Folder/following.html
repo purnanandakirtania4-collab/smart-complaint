@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Following | Smart Complaint</title>
+    {% include 'complaints/base_style.html' %}
+    <style>
+      .network-page {
+        width: min(900px, calc(100% - 28px));
+        margin: 0 auto;
+        padding: 88px 0 42px;
+      }
+      
+      .network-back {
+        display: inline-flex;
+        margin-bottom: 14px;
+        color: #bfdbfe;
+        font-size: 13px;
+        font-weight: 900;
+        text-decoration: none;
+      }
+      
+      .network-hero {
+        padding: 24px;
+        border: 1px solid rgba(129, 140, 248, 0.28);
+        border-radius: 22px;
+        background: linear-gradient(135deg, rgba(37, 99, 235, 0.92), rgba(91, 33, 182, 0.88));
+        color: #ffffff;
+        box-shadow: 0 20px 52px rgba(2, 6, 23, 0.24);
+      }
+      
+      .network-hero h1 {
+        margin: 0;
+        color: #ffffff;
+        font-size: 29px;
+      }
+      
+      .network-hero p {
+        margin: 7px 0 0;
+        color: #dbeafe;
+        line-height: 1.55;
+      }
+      
+      .network-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 17px;
+      }
+      
+      .network-person {
+        display: grid;
+        grid-template-columns: 58px minmax(0, 1fr);
+        gap: 12px;
+        align-items: center;
+        padding: 15px;
+        border: 1px solid rgba(148, 163, 184, 0.23);
+        border-radius: 17px;
+        background: rgba(15, 45, 82, 0.68);
+        color: #ffffff;
+        box-shadow: 0 12px 30px rgba(2, 6, 23, 0.14);
+      }
+      
+      .network-avatar {
+        width: 56px;
+        height: 56px;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        border-radius: 50%;
+        background: #dbeafe;
+        color: #1d4ed8;
+        font-size: 18px;
+        font-weight: 950;
+      }
+      
+      .network-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      
+      .network-main {
+        min-width: 0;
+      }
+      
+      .network-name {
+        display: block;
+        overflow: hidden;
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 950;
+        text-decoration: none;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      
+      .network-meta {
+        margin-top: 4px;
+        color: #94a3b8;
+        font-size: 10px;
+        line-height: 1.45;
+      }
+      
+      .network-actions {
+        grid-column: 1 / -1;
+        display: flex;
+        gap: 8px;
+      }
+      
+      .network-btn {
+        min-height: 36px;
+        flex: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid rgba(255, 255, 255, 0.11);
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.07);
+        color: #ffffff;
+        cursor: pointer;
+        font: inherit;
+        font-size: 11px;
+        font-weight: 900;
+        text-decoration: none;
+      }
+      
+      .network-btn.primary {
+        border: 0;
+        background: linear-gradient(135deg, #2563eb, #7c3aed);
+      }
+      
+      .network-empty {
+        margin-top: 17px;
+        padding: 28px;
+        border: 1px solid rgba(148, 163, 184, 0.22);
+        border-radius: 17px;
+        background: rgba(15, 45, 82, 0.65);
+        color: #94a3b8;
+        text-align: center;
+      }
+      
+      @media (max-width: 700px) {
+        .network-grid {
+          grid-template-columns: 1fr;
+        }
+      
+        .network-hero h1 {
+          font-size: 24px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    {% include 'complaints/User_Folder/navbar.html' %}
+
+    <main class="network-page">
+      <a class="network-back" href="{% url 'profile' %}">← My Profile</a>
+
+      <section class="network-hero">
+        <h1>Following</h1>
+        <p>Community members whose civic progress you are following.</p>
+      </section>
+
+      {% if people %}
+        <div class="network-grid">
+          {% for item in people %}
+            <article class="network-person">
+              <a class="network-avatar" href="{% url 'public_user_profile' item.user.username %}">
+                {% if item.profile and item.profile.photo %}
+                  <img src="{{ item.profile.photo.url }}" alt="{{ item.user.username }}" />
+                {% else %}
+                  {{ item.user.username|first|upper }}
+                {% endif %}
+              </a>
+
+              <div class="network-main">
+                <a class="network-name" href="{% url 'public_user_profile' item.user.username %}">{{ item.user.get_full_name|default:item.user.username }}</a>
+
+                <div class="network-meta">{{ item.league.level.name }} Citizen · {{ item.league.xp }} XP · {{ item.league.resolved }} resolved</div>
+              </div>
+
+              <div class="network-actions">
+                <a class="network-btn" href="{% url 'public_user_profile' item.user.username %}">View Profile</a>
+
+                <form style="flex:1;display:flex;" method="post" action="{% url 'toggle_user_follow' item.user.username %}">
+                  {% csrf_token %}
+                  <input type="hidden" name="source" value="following" />
+
+                  <button class="network-btn primary" type="submit">Following</button>
+                </form>
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="network-empty">You are not following anyone yet.</div>
+      {% endif %}
+    </main>
+  </body>
+</html>

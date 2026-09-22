@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Public Leaderboard | Smart Complaint</title>
+
+    {% include 'complaints/base_style.html' %}
+
+    <style>
+      .pl-page {
+        width: min(980px, calc(100% - 28px));
+        margin: 0 auto;
+        padding: 88px 0 42px;
+      }
+      
+      .pl-topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+      
+      .pl-back,
+      .pl-login {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 42px;
+        padding: 0 14px;
+        border: 1px solid rgba(148, 163, 184, 0.28);
+        border-radius: 12px;
+        background: rgba(15, 45, 82, 0.62);
+        color: #ffffff;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 900;
+        backdrop-filter: blur(14px);
+      }
+      
+      .pl-top-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      
+      .pl-hero {
+        position: relative;
+        overflow: hidden;
+        padding: 26px;
+        border: 1px solid rgba(129, 140, 248, 0.3);
+        border-radius: 24px;
+        background: linear-gradient(135deg, rgba(29, 78, 216, 0.95), rgba(91, 33, 182, 0.9));
+        color: #ffffff;
+        box-shadow: 0 24px 60px rgba(2, 6, 23, 0.28);
+      }
+      
+      .pl-hero::after {
+        content: '';
+        position: absolute;
+        width: 260px;
+        height: 260px;
+        right: -90px;
+        top: -135px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.09);
+        pointer-events: none;
+      }
+      
+      .pl-hero-icon {
+        position: relative;
+        z-index: 1;
+        width: 62px;
+        height: 62px;
+        display: grid;
+        place-items: center;
+        margin-bottom: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.12);
+      }
+      
+      .pl-hero-icon svg {
+        width: 31px;
+        height: 31px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      
+      .pl-hero h1 {
+        position: relative;
+        z-index: 1;
+        margin: 0;
+        color: #ffffff;
+        font-size: 32px;
+        font-weight: 950;
+      }
+      
+      .pl-hero p {
+        position: relative;
+        z-index: 1;
+        max-width: 720px;
+        margin: 9px 0 0;
+        color: #e0e7ff;
+        line-height: 1.6;
+      }
+      
+      .pl-summary {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 18px;
+      }
+      
+      .pl-summary span {
+        display: inline-flex;
+        align-items: center;
+        min-height: 34px;
+        padding: 0 12px;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.1);
+        color: #ffffff;
+        font-size: 12px;
+        font-weight: 900;
+      }
+      
+      .pl-tabs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin: 18px 0 14px;
+        padding: 7px;
+        border: 1px solid rgba(148, 163, 184, 0.23);
+        border-radius: 16px;
+        background: rgba(15, 45, 82, 0.58);
+        backdrop-filter: blur(16px);
+      }
+      
+      .pl-tab {
+        min-height: 44px;
+        border: 0;
+        border-radius: 11px;
+        background: transparent;
+        color: #cbd5e1;
+        cursor: pointer;
+        font: inherit;
+        font-weight: 900;
+      }
+      
+      .pl-tab.is-active {
+        background: linear-gradient(135deg, #2563eb, #7c3aed);
+        color: #ffffff;
+        box-shadow: 0 10px 24px rgba(37, 99, 235, 0.22);
+      }
+      
+      .pl-panel {
+        display: none;
+      }
+      
+      .pl-panel.is-active {
+        display: block;
+      }
+      
+      .pl-board {
+        overflow: hidden;
+        border: 1px solid rgba(148, 163, 184, 0.24);
+        border-radius: 20px;
+        background: rgba(15, 45, 82, 0.66);
+        box-shadow: 0 18px 46px rgba(2, 6, 23, 0.2);
+        backdrop-filter: blur(18px);
+      }
+      
+      .pl-board-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 18px 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      
+      .pl-board-head h2 {
+        margin: 0;
+        color: #ffffff;
+        font-size: 20px;
+      }
+      
+      .pl-board-head span {
+        color: #94a3b8;
+        font-size: 12px;
+        font-weight: 800;
+      }
+      
+      .pl-list {
+        display: grid;
+        gap: 0;
+      }
+      
+      .pl-row {
+        display: grid;
+        grid-template-columns: 64px minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 14px;
+        min-height: 78px;
+        padding: 13px 18px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+      }
+      
+      .pl-row:last-child {
+        border-bottom: 0;
+      }
+      
+      .pl-row.is-you {
+        background: linear-gradient(90deg, rgba(16, 185, 129, 0.18), rgba(16, 185, 129, 0.05));
+      }
+      
+      .pl-rank {
+        width: 46px;
+        height: 46px;
+        display: grid;
+        place-items: center;
+        border-radius: 15px;
+        background: rgba(255, 255, 255, 0.09);
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 950;
+      }
+      
+      .pl-row:nth-child(1) .pl-rank {
+        background: linear-gradient(135deg, #facc15, #f59e0b);
+        color: #422006;
+      }
+      
+      .pl-row:nth-child(2) .pl-rank {
+        background: linear-gradient(135deg, #e2e8f0, #94a3b8);
+        color: #0f172a;
+      }
+      
+      .pl-row:nth-child(3) .pl-rank {
+        background: linear-gradient(135deg, #fdba74, #c2410c);
+        color: #431407;
+      }
+      
+      .pl-main {
+        min-width: 0;
+      }
+      
+      .pl-name-line {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 7px;
+      }
+      
+      .pl-name {
+        color: #ffffff;
+        font-size: 15px;
+        font-weight: 950;
+        overflow-wrap: anywhere;
+      }
+      
+      .pl-you {
+        padding: 3px 7px;
+        border-radius: 999px;
+        background: rgba(16, 185, 129, 0.2);
+        color: #6ee7b7;
+        font-size: 9px;
+        font-weight: 950;
+        text-transform: uppercase;
+      }
+      
+      .pl-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+        margin-top: 5px;
+        color: #94a3b8;
+        font-size: 11px;
+      }
+      
+      .pl-level {
+        color: #c4b5fd;
+        font-weight: 900;
+      }
+      
+      .pl-score {
+        text-align: right;
+      }
+      
+      .pl-score strong {
+        display: block;
+        color: #fde047;
+        font-size: 16px;
+        font-weight: 950;
+        white-space: nowrap;
+      }
+      
+      .pl-score small {
+        display: block;
+        margin-top: 4px;
+        color: #94a3b8;
+        font-size: 10px;
+        white-space: nowrap;
+      }
+      
+      .pl-empty {
+        padding: 34px 18px;
+        color: #94a3b8;
+        text-align: center;
+      }
+      
+      .pl-note {
+        margin-top: 14px;
+        padding: 15px 17px;
+        border: 1px solid rgba(148, 163, 184, 0.22);
+        border-radius: 15px;
+        background: rgba(15, 45, 82, 0.54);
+        color: #cbd5e1;
+        font-size: 12px;
+        line-height: 1.6;
+      }
+      
+      @media (max-width: 650px) {
+        .pl-page {
+          width: min(100% - 20px, 980px);
+          padding-top: 76px;
+        }
+      
+        .pl-topbar {
+          align-items: flex-start;
+        }
+      
+        .pl-hero {
+          padding: 21px 18px;
+        }
+      
+        .pl-hero h1 {
+          font-size: 27px;
+        }
+      
+        .pl-row {
+          grid-template-columns: 50px minmax(0, 1fr) auto;
+          gap: 10px;
+          padding: 12px;
+        }
+      
+        .pl-rank {
+          width: 42px;
+          height: 42px;
+          border-radius: 13px;
+        }
+      
+        .pl-score strong {
+          font-size: 14px;
+        }
+      }
+      
+      @media (max-width: 460px) {
+        .pl-topbar {
+          flex-direction: column;
+        }
+      
+        .pl-top-actions,
+        .pl-login,
+        .pl-back {
+          width: 100%;
+        }
+      
+        .pl-login,
+        .pl-back {
+          box-sizing: border-box;
+        }
+      
+        .pl-row {
+          grid-template-columns: 44px minmax(0, 1fr);
+        }
+      
+        .pl-score {
+          grid-column: 2;
+          text-align: left;
+          margin-top: -4px;
+        }
+      
+        .pl-score strong,
+        .pl-score small {
+          display: inline;
+        }
+      
+        .pl-score small {
+          margin-left: 6px;
+        }
+      }
+    </style>
+  </head>
+
+  <body class="public-leaderboard-page">
+    <main class="pl-page">
+      <div class="pl-topbar">
+        {% if request.user.is_authenticated %}
+          {% if is_worker_viewer %}
+            <a class="pl-back" href="{% url 'worker_dashboard' %}">Back to Worker Dashboard</a>
+          {% else %}
+            <a class="pl-back" href="{% url 'home' %}">Back to Home</a>
+          {% endif %}
+        {% else %}
+          <a class="pl-back" href="{% url 'login' %}">Smart Complaint</a>
+        {% endif %}
+
+        <div class="pl-top-actions">
+          {% if not request.user.is_authenticated %}
+            <a class="pl-login" href="{% url 'login' %}">User Login</a>
+            <a class="pl-login" href="{% url 'worker_login' %}">Worker Login</a>
+          {% endif %}
+        </div>
+      </div>
+
+      <section class="pl-hero">
+        <div class="pl-hero-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path d="M8 21h8"></path>
+            <path d="M12 17v4"></path>
+            <path d="M7 4h10v4a5 5 0 0 1-10 0V4Z"></path>
+            <path d="M7 6H4v1a4 4 0 0 0 4 4"></path>
+            <path d="M17 6h3v1a4 4 0 0 1-4 4"></path>
+          </svg>
+        </div>
+
+        <h1>Smart Complaint Public Leaderboard</h1>
+
+        <p>Monthly competition for approved workers and responsible community users. Citizen XP does not reward complaint quantity. It rewards verified participation, useful feedback, quality reporting and positive worker feedback.</p>
+
+        <div class="pl-summary">
+          <span>{{ worker_count }} Workers Ranked</span>
+          <span>{{ user_count }} Citizens Ranked</span>
+          <span>Monthly Ranking</span>
+        </div>
+      </section>
+
+      <div class="pl-tabs" role="tablist" aria-label="Leaderboard type">
+        <button class="pl-tab is-active" type="button" data-pl-tab="workers" aria-selected="true">Worker League</button>
+
+        <button class="pl-tab" type="button" data-pl-tab="users" aria-selected="false">Community League</button>
+      </div>
+
+      <section class="pl-panel is-active" data-pl-panel="workers">
+        <div class="pl-board">
+          <div class="pl-board-head">
+            <h2>Worker League</h2>
+            <span>Approved workers only</span>
+          </div>
+
+          <div class="pl-list">
+            {% for row in worker_rows %}
+              <div class="pl-row {% if viewer_worker_id == row.worker.id %}is-you{% endif %}">
+                <div class="pl-rank">#{{ row.rank }}</div>
+
+                <div class="pl-main">
+                  <div class="pl-name-line">
+                    <span class="pl-name">{{ row.name }}</span>
+
+                    {% if viewer_worker_id == row.worker.id %}
+                      <span class="pl-you">You</span>
+                    {% endif %}
+                  </div>
+
+                  <div class="pl-meta">
+                    <span class="pl-level">{{ row.level.name }} Worker</span>
+                    <span>{{ row.resolved }} resolved</span>
+                    <span>{{ row.verified }} verified</span>
+                    <span>{{ row.rating_avg }} rating</span>
+                  </div>
+                </div>
+
+                <div class="pl-score">
+                  <strong>{{ row.xp }} XP</strong>
+                  <small>{{ row.five_star }} five-star</small>
+                </div>
+              </div>
+            {% empty %}
+              <div class="pl-empty">No approved worker ranking is available yet.</div>
+            {% endfor %}
+          </div>
+        </div>
+      </section>
+
+      <section class="pl-panel" data-pl-panel="users">
+        <div class="pl-board">
+          <div class="pl-board-head">
+            <h2>Community League</h2>
+            <span>Complaint count does not earn XP</span>
+          </div>
+
+          <div class="pl-list">
+            {% for row in user_rows %}
+              <div class="pl-row {% if viewer_user_id == row.user.id and not is_worker_viewer %}is-you{% endif %}">
+                <div class="pl-rank">#{{ row.rank }}</div>
+
+                <div class="pl-main">
+                  <div class="pl-name-line">
+                    <span class="pl-name">{{ row.name }}</span>
+
+                    {% if viewer_user_id == row.user.id and not is_worker_viewer %}
+                      <span class="pl-you">You</span>
+                    {% endif %}
+                  </div>
+
+                  <div class="pl-meta">
+                    <span class="pl-level">{{ row.level.name }} Citizen</span>
+                    <span>{{ row.ratings }} feedback given</span>
+                    <span>{{ row.positive_worker_ratings }} positive worker ratings</span>
+                    <span>{{ row.verified }} verified participation</span>
+                  </div>
+                </div>
+
+                <div class="pl-score">
+                  <strong>{{ row.xp }} XP</strong>
+                  <small>{{ row.responsible_months }} responsible months</small>
+                </div>
+              </div>
+            {% empty %}
+              <div class="pl-empty">No community ranking is available yet.</div>
+            {% endfor %}
+          </div>
+        </div>
+      </section>
+
+      <div class="pl-note">Only leaderboard-safe information is displayed publicly. Email addresses, phone numbers, addresses, Aadhaar details and payment information are never shown on this page.</div>
+    </main>
+
+    <script>
+      ;(function () {
+        'use strict'
+      
+        const tabs = document.querySelectorAll('[data-pl-tab]')
+        const panels = document.querySelectorAll('[data-pl-panel]')
+      
+        function activate(name) {
+          tabs.forEach(function (tab) {
+            const active = tab.dataset.plTab === name
+            tab.classList.toggle('is-active', active)
+            tab.setAttribute('aria-selected', active ? 'true' : 'false')
+          })
+      
+          panels.forEach(function (panel) {
+            panel.classList.toggle('is-active', panel.dataset.plPanel === name)
+          })
+        }
+      
+        tabs.forEach(function (tab) {
+          tab.addEventListener('click', function () {
+            activate(tab.dataset.plTab)
+          })
+        })
+      })()
+    </script>
+  </body>
+</html>

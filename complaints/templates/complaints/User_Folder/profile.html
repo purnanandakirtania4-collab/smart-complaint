@@ -329,6 +329,287 @@
 
         @media(max-width:480px){.avatar-grid{grid-template-columns:repeat(4,1fr);gap:8px}.avatar-modal{padding:14px}}
 
+
+        /* =====================================================
+           COMMUNITY PROFILE / SOCIAL
+        ===================================================== */
+        .social-summary {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 10px;
+            margin: 22px 0;
+        }
+
+        .social-stat {
+            min-width: 0;
+            padding: 14px 10px;
+            border: 1px solid rgba(148, 163, 184, 0.24);
+            border-radius: 14px;
+            background: rgba(37, 99, 235, 0.06);
+            text-align: center;
+        }
+
+        .social-stat strong {
+            display: block;
+            color: #1d4ed8;
+            font-size: 19px;
+            font-weight: 950;
+        }
+
+        .social-stat span {
+            display: block;
+            margin-top: 4px;
+            color: #64748b;
+            font-size: 10px;
+            font-weight: 800;
+        }
+
+        .social-stat-link {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .league-strip {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            gap: 13px;
+            margin: 0 0 18px;
+            padding: 15px;
+            border: 1px solid rgba(99, 102, 241, 0.25);
+            border-radius: 16px;
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(37, 99, 235, 0.10),
+                    rgba(124, 58, 237, 0.09)
+                );
+        }
+
+        .league-badge {
+            width: 48px;
+            height: 48px;
+            display: grid;
+            place-items: center;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            color: #ffffff;
+            font-weight: 950;
+        }
+
+        .league-info strong {
+            display: block;
+            color: #172554;
+            font-size: 15px;
+        }
+
+        .league-info small {
+            color: #64748b;
+        }
+
+        .league-xp {
+            color: #7c3aed;
+            font-size: 15px;
+            font-weight: 950;
+            white-space: nowrap;
+        }
+
+        .profile-social-actions {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 9px;
+            margin-bottom: 22px;
+        }
+
+        .profile-social-action {
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 12px;
+            border: 1px solid rgba(99, 102, 241, 0.20);
+            border-radius: 12px;
+            background: rgba(37, 99, 235, 0.07);
+            color: #1d4ed8;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 900;
+        }
+
+        .profile-community-section {
+            margin: 26px 0 4px;
+            padding-top: 24px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .profile-community-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 13px;
+        }
+
+        .profile-community-head h2 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .profile-community-head a {
+            color: #2563eb;
+            font-size: 12px;
+            font-weight: 900;
+            text-decoration: none;
+        }
+
+        .people-preview {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .person-preview {
+            display: grid;
+            grid-template-columns: 48px minmax(0, 1fr);
+            gap: 10px;
+            align-items: center;
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            background: #f8fafc;
+        }
+
+        .person-avatar {
+            width: 46px;
+            height: 46px;
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+            border-radius: 50%;
+            background: #dbeafe;
+            color: #1d4ed8;
+            font-weight: 950;
+        }
+
+        .person-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .person-main {
+            min-width: 0;
+        }
+
+        .person-name {
+            display: block;
+            overflow: hidden;
+            color: #172554;
+            font-size: 12px;
+            font-weight: 950;
+            text-decoration: none;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .person-meta {
+            margin-top: 3px;
+            color: #64748b;
+            font-size: 10px;
+        }
+
+        .person-follow-form {
+            grid-column: 1 / -1;
+        }
+
+        .person-follow-btn {
+            width: 100%;
+            min-height: 34px;
+            border: 0;
+            border-radius: 9px;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            color: #ffffff;
+            cursor: pointer;
+            font: inherit;
+            font-size: 11px;
+            font-weight: 900;
+        }
+
+        .achievement-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .achievement-mini {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 8px 10px;
+            border: 1px solid rgba(245, 158, 11, 0.24);
+            border-radius: 999px;
+            background: rgba(245, 158, 11, 0.08);
+            color: #92400e;
+            font-size: 10px;
+            font-weight: 900;
+        }
+
+        body.sc-theme-dark .social-stat,
+        body.sc-theme-dark .league-strip,
+        body.sc-theme-dark .person-preview {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: #334155;
+        }
+
+        body.sc-theme-dark .social-stat strong,
+        body.sc-theme-dark .league-info strong,
+        body.sc-theme-dark .person-name {
+            color: #f8fafc;
+        }
+
+        body.sc-theme-dark .social-stat span,
+        body.sc-theme-dark .league-info small,
+        body.sc-theme-dark .person-meta {
+            color: #cbd5e1;
+        }
+
+        body.sc-theme-glass .social-stat,
+        body.sc-theme-glass .league-strip,
+        body.sc-theme-glass .person-preview {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(191, 219, 254, 0.24);
+        }
+
+        body.sc-theme-glass .social-stat strong,
+        body.sc-theme-glass .league-info strong,
+        body.sc-theme-glass .person-name {
+            color: #ffffff;
+        }
+
+        body.sc-theme-glass .social-stat span,
+        body.sc-theme-glass .league-info small,
+        body.sc-theme-glass .person-meta {
+            color: rgba(219, 234, 254, 0.76);
+        }
+
+        @media (max-width: 700px) {
+            .social-summary {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .social-stat:first-child {
+                grid-column: 1 / -1;
+            }
+
+            .profile-social-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .people-preview {
+                grid-template-columns: 1fr;
+            }
+        }
+
 </style>
 </head>
 
@@ -394,6 +675,78 @@
                 </div>
             </div>
 
+
+            <!-- =================================================
+                 COMMUNITY PROFILE
+            ================================================== -->
+            <div class="social-summary">
+                <div class="social-stat">
+                    <strong>{{ league.level.name }}</strong>
+                    <span>Citizen League</span>
+                </div>
+
+                <div class="social-stat">
+                    <strong>{{ league.xp }}</strong>
+                    <span>Lifetime XP</span>
+                </div>
+
+                <div class="social-stat">
+                    <strong>{{ league.resolved }}</strong>
+                    <span>Resolved</span>
+                </div>
+
+                <a class="social-stat social-stat-link" href="{% url 'user_followers' %}">
+                    <strong>{{ followers_count }}</strong>
+                    <span>Followers</span>
+                </a>
+
+                <a class="social-stat social-stat-link" href="{% url 'user_following' %}">
+                    <strong>{{ following_count }}</strong>
+                    <span>Following</span>
+                </a>
+            </div>
+
+            <div class="league-strip">
+                <div class="league-badge">
+                    {{ league.level.name|first }}
+                </div>
+
+                <div class="league-info">
+                    <strong>{{ league.level.name }} Citizen</strong>
+                    <small>
+                        {{ network_count }} people in your network ·
+                        {{ unlocked_achievement_count }} achievements
+                    </small>
+                </div>
+
+                <div class="league-xp">
+                    {{ league.xp }} XP
+                </div>
+            </div>
+
+            <div class="profile-social-actions">
+                <a
+                    class="profile-social-action"
+                    href="{% url 'public_user_profile' profile_user.username %}"
+                >
+                    View Public Profile
+                </a>
+
+                <a
+                    class="profile-social-action"
+                    href="{% url 'people_you_may_know' %}"
+                >
+                    People You May Know
+                </a>
+
+                <a
+                    class="profile-social-action"
+                    href="{% url 'user_achievements' %}"
+                >
+                    Achievements
+                </a>
+            </div>
+
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
 <input id="galleryPhotoInput" class="hidden-photo-input" type="file" name="photo" accept="image/*">
@@ -446,6 +799,102 @@
                     Save Profile
                 </button>
             </form>
+
+
+            <section class="profile-community-section">
+                <div class="profile-community-head">
+                    <h2>People You May Know</h2>
+
+                    <a href="{% url 'people_you_may_know' %}">
+                        View All
+                    </a>
+                </div>
+
+                <div class="people-preview">
+                    {% for item in suggestions %}
+                        <div class="person-preview">
+                            <a
+                                class="person-avatar"
+                                href="{% url 'public_user_profile' item.user.username %}"
+                                aria-label="Open {{ item.user.username }} profile"
+                            >
+                                {% if item.profile.photo %}
+                                    <img
+                                        src="{{ item.profile.photo.url }}"
+                                        alt="{{ item.user.username }}"
+                                    >
+                                {% else %}
+                                    {{ item.user.username|first|upper }}
+                                {% endif %}
+                            </a>
+
+                            <div class="person-main">
+                                <a
+                                    class="person-name"
+                                    href="{% url 'public_user_profile' item.user.username %}"
+                                >
+                                    {{ item.user.get_full_name|default:item.user.username }}
+                                </a>
+
+                                <div class="person-meta">
+                                    {{ item.league.level.name }} Citizen
+                                    · {{ item.league.xp }} XP
+                                    {% if item.profile.city %}
+                                        · {{ item.profile.city }}
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <form
+                                class="person-follow-form"
+                                method="post"
+                                action="{% url 'toggle_user_follow' item.user.username %}"
+                            >
+                                {% csrf_token %}
+                                <input
+                                    type="hidden"
+                                    name="source"
+                                    value="profile"
+                                >
+
+                                <button
+                                    class="person-follow-btn"
+                                    type="submit"
+                                >
+                                    Follow
+                                </button>
+                            </form>
+                        </div>
+                    {% empty %}
+                        <div class="muted">
+                            You are already connected with everyone available right now.
+                        </div>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <section class="profile-community-section">
+                <div class="profile-community-head">
+                    <h2>Achievements</h2>
+
+                    <a href="{% url 'user_achievements' %}">
+                        View All
+                    </a>
+                </div>
+
+                <div class="achievement-preview">
+                    {% for item in unlocked_achievements %}
+                        <span class="achievement-mini">
+                            <span>{{ item.icon }}</span>
+                            {{ item.title }}
+                        </span>
+                    {% empty %}
+                        <span class="muted">
+                            Complete your first verified resolution to unlock a badge.
+                        </span>
+                    {% endfor %}
+                </div>
+            </section>
 
             <div class="actions">
                 <a class="btn btn-dark icon-btn" href="{% url 'home' %}">Home</a>

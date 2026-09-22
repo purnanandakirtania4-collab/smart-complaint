@@ -1,1408 +1,2048 @@
 <!DOCTYPE html>
 {% load static %}
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1"
-    >
-
-    <title>
-        {{ worker.name }} | Worker Profile
-    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ worker.name }} | Worker Profile</title>
 
     {% include "complaints/base_style.html" %}
 
     <style>
-
-        .ui-icon {
-            width: 21px;
-            height: 21px;
-            display: inline-block;
-            vertical-align: middle;
-            fill: none;
-            stroke: currentColor;
-            stroke-width: 2;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            flex-shrink: 0;
-        }
-        .icon-inline {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .status-dot {
-            width: 9px;
-            height: 9px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 6px;
-            vertical-align: middle;
-            background: #16a34a;
+        :root {
+            --wp-blue: #2563eb;
+            --wp-indigo: #4f46e5;
+            --wp-purple: #7c3aed;
+            --wp-green: #16a34a;
+            --wp-amber: #f59e0b;
+            --wp-red: #ef4444;
+            --wp-ink: #172554;
+            --wp-muted: #64748b;
+            --wp-line: #dbe4f0;
+            --wp-card: #ffffff;
+            --wp-soft: #f8fafc;
         }
 
-        .avatar { color:#1d4ed8; }
-        .avatar .ui-icon { width:48px; height:48px; }
-        .badge { display:inline-flex; align-items:center; }
-        .edit-section h2,
-        .photo-upload .label { display:flex; align-items:center; gap:8px; }
-        .rating-stars .ui-icon { width:28px;height:28px; }
-        .icon-btn { display:inline-flex !important; align-items:center; justify-content:center; gap:8px; }
-
-
-        .profile {
-            max-width: 800px;
-            margin: 35px auto;
-            padding: 35px;
+        * {
+            box-sizing: border-box;
         }
 
-        .head {
-            text-align: center;
+        .wp-page {
+            width: min(1180px, calc(100% - 28px));
+            margin: 0 auto;
+            padding: 88px 0 42px;
         }
 
-        .avatar {
-            width: 120px;
+        .wp-message {
+            margin-bottom: 14px;
+            padding: 12px 14px;
+            border: 1px solid #bfdbfe;
+            border-radius: 12px;
+            background: #eff6ff;
+            color: #1e40af;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .wp-profile-hero {
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(148, 163, 184, 0.26);
+            border-radius: 24px;
+            background: var(--wp-card);
+            box-shadow: 0 22px 55px rgba(15, 23, 42, 0.12);
+        }
+
+        .wp-cover {
+            position: relative;
+            min-height: 180px;
+            overflow: hidden;
+            background:
+                radial-gradient(
+                    circle at 72% 32%,
+                    rgba(74, 222, 128, 0.28),
+                    transparent 25%
+                ),
+                radial-gradient(
+                    circle at 22% 36%,
+                    rgba(96, 165, 250, 0.36),
+                    transparent 28%
+                ),
+                linear-gradient(
+                    135deg,
+                    #0f3f7e,
+                    #1d4ed8 50%,
+                    #15803d
+                );
+        }
+
+        .wp-cover::before,
+        .wp-cover::after {
+            content: "";
+            position: absolute;
+            bottom: -40px;
+            width: 340px;
             height: 120px;
-            border-radius: 50%;
-            background: #dbeafe;
+            border-radius: 50% 50% 0 0;
+            background: rgba(255, 255, 255, 0.10);
+        }
+
+        .wp-cover::before {
+            left: 12%;
+            transform: rotate(4deg);
+        }
+
+        .wp-cover::after {
+            right: 6%;
+            transform: rotate(-5deg);
+        }
+
+        .wp-cover-text {
+            position: absolute;
+            top: 24px;
+            right: 26px;
+            z-index: 2;
+            max-width: 230px;
+            padding: 13px 15px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 14px;
+            background: rgba(15, 23, 42, 0.30);
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 900;
+            line-height: 1.5;
+            backdrop-filter: blur(12px);
+        }
+
+        .wp-identity {
+            position: relative;
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr) auto;
+            gap: 18px;
+            align-items: end;
+            padding: 0 24px 20px;
+            margin-top: -55px;
+        }
+
+        .wp-avatar-wrap {
+            position: relative;
+            z-index: 3;
+        }
+
+        .wp-avatar {
+            width: 122px;
+            height: 122px;
             display: grid;
             place-items: center;
-            font-size: 50px;
-            margin: auto;
             overflow: hidden;
-            border: 4px solid #eff6ff;
+            border: 5px solid #ffffff;
+            border-radius: 50%;
+            background: #dbeafe;
+            color: #1d4ed8;
+            font-size: 36px;
+            font-weight: 950;
+            box-shadow: 0 14px 34px rgba(15, 23, 42, 0.20);
         }
 
-        .avatar img {
+        .wp-avatar img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
 
-        .head h1 {
-            margin: 15px 0 5px;
+        .wp-online-dot {
+            position: absolute;
+            right: 8px;
+            bottom: 10px;
+            width: 24px;
+            height: 24px;
+            border: 4px solid #ffffff;
+            border-radius: 50%;
+            background: #22c55e;
         }
 
-        .worker-id {
-            color: #2563eb;
-            font-weight: 800;
+        .wp-identity-main {
+            min-width: 0;
+            padding-bottom: 6px;
         }
 
-        .badge {
-            display: inline-block;
-            background: #dcfce7;
-            color: #166534;
-            padding: 7px 13px;
-            border-radius: 20px;
-            font-weight: 800;
+        .wp-name-line {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 7px;
+        }
+
+        .wp-name {
+            margin: 0;
+            color: var(--wp-ink);
+            font-size: 29px;
+            font-weight: 950;
+        }
+
+        .wp-verified {
+            width: 24px;
+            height: 24px;
+            display: inline-grid;
+            place-items: center;
+            border-radius: 50%;
+            background: var(--wp-blue);
+            color: #ffffff;
             font-size: 13px;
-            margin-top: 12px;
+            font-weight: 950;
         }
 
+        .wp-role {
+            margin-top: 4px;
+            color: #475569;
+            font-size: 13px;
+            font-weight: 800;
+        }
 
-        /* =====================================================
-           WORKER RATING
-        ===================================================== */
+        .wp-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px 15px;
+            margin-top: 8px;
+            color: var(--wp-muted);
+            font-size: 12px;
+        }
 
-        .rating-card {
-            margin: 22px auto 5px;
-            max-width: 420px;
-            padding: 18px;
-            border-radius: 15px;
-            background: #fffbeb;
-            border: 1px solid #fde68a;
+        .wp-tagline {
+            margin-top: 9px;
+            color: #475569;
+            font-size: 12px;
+            line-height: 1.55;
+        }
+
+        .wp-owner-actions,
+        .wp-viewer-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding-bottom: 8px;
+        }
+
+        .wp-btn {
+            min-height: 42px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            padding: 0 15px;
+            border: 1px solid #dbe4f0;
+            border-radius: 11px;
+            background: #ffffff;
+            color: #334155;
+            cursor: pointer;
+            font: inherit;
+            font-size: 12px;
+            font-weight: 900;
+            text-decoration: none;
+            transition: 0.2s ease;
+        }
+
+        .wp-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .wp-btn.primary {
+            border: 0;
+            background: linear-gradient(
+                135deg,
+                var(--wp-blue),
+                var(--wp-purple)
+            );
+            color: #ffffff;
+            box-shadow: 0 10px 22px rgba(79, 70, 229, 0.22);
+        }
+
+        .wp-btn.liked {
+            border-color: #fecdd3;
+            background: #fff1f2;
+            color: #e11d48;
+        }
+
+        .wp-stat-strip {
+            display: grid;
+            grid-template-columns: repeat(6, minmax(0, 1fr));
+            gap: 0;
+            margin: 0 20px 20px;
+            overflow: hidden;
+            border: 1px solid var(--wp-line);
+            border-radius: 17px;
+            background: #ffffff;
+        }
+
+        .wp-top-stat {
+            min-width: 0;
+            padding: 15px 10px;
+            border-right: 1px solid var(--wp-line);
             text-align: center;
         }
 
-        .rating-stars {
-            color: #f59e0b;
-            font-size: 28px;
-            letter-spacing: 2px;
+        .wp-top-stat:last-child {
+            border-right: 0;
         }
 
-        .rating-number {
-            margin-top: 7px;
+        .wp-top-stat strong {
+            display: block;
+            color: var(--wp-ink);
             font-size: 19px;
-            font-weight: 800;
-            color: #1e293b;
+            font-weight: 950;
         }
 
-        .rating-count {
+        .wp-top-stat span {
+            display: block;
             margin-top: 4px;
-            font-size: 13px;
-            color: #64748b;
-        }
-
-
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 14px;
-            margin: 28px 0;
-        }
-
-        .box {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            padding: 18px;
-            border-radius: 13px;
-        }
-
-        .box-label {
-            font-size: 12px;
-            color: #64748b;
-            text-transform: uppercase;
-        }
-
-        .value {
+            color: var(--wp-muted);
+            font-size: 10px;
             font-weight: 800;
+        }
+
+        .wp-dashboard {
+            display: grid;
+            grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.82fr) 300px;
+            gap: 16px;
+            margin-top: 18px;
+            align-items: start;
+        }
+
+        .wp-col {
+            display: grid;
+            gap: 16px;
+            min-width: 0;
+        }
+
+        .wp-card {
+            overflow: hidden;
+            border: 1px solid var(--wp-line);
+            border-radius: 18px;
+            background: var(--wp-card);
+            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.07);
+        }
+
+        .wp-card-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 16px 17px 10px;
+        }
+
+        .wp-card-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0;
+            color: var(--wp-ink);
+            font-size: 17px;
+            font-weight: 950;
+        }
+
+        .wp-card-link {
+            color: var(--wp-blue);
+            font-size: 11px;
+            font-weight: 900;
+            text-decoration: none;
+        }
+
+        .wp-card-body {
+            padding: 10px 17px 17px;
+        }
+
+        .wp-about-grid {
+            display: grid;
+            grid-template-columns: 130px minmax(0, 1fr);
+            gap: 11px;
+            font-size: 12px;
+        }
+
+        .wp-about-label {
+            color: var(--wp-muted);
+        }
+
+        .wp-about-value {
+            color: #334155;
+            font-weight: 800;
+            overflow-wrap: anywhere;
+        }
+
+        .wp-level-layout {
+            display: grid;
+            grid-template-columns: 1fr 100px;
+            gap: 13px;
+            align-items: center;
+        }
+
+        .wp-level-medal {
+            width: 86px;
+            height: 86px;
+            display: grid;
+            place-items: center;
+            margin: 0 auto 8px;
+            border: 6px solid #fde68a;
+            border-radius: 50%;
+            background: linear-gradient(
+                145deg,
+                #fbbf24,
+                #f59e0b
+            );
+            color: #78350f;
+            font-size: 28px;
+            font-weight: 950;
+            box-shadow: 0 10px 25px rgba(245, 158, 11, 0.24);
+        }
+
+        .wp-level-name {
+            color: var(--wp-ink);
+            text-align: center;
+            font-size: 18px;
+            font-weight: 950;
+        }
+
+        .wp-level-xp {
+            margin-top: 8px;
+            color: var(--wp-ink);
+            font-size: 18px;
+            font-weight: 950;
+        }
+
+        .wp-progress {
+            height: 10px;
+            margin-top: 8px;
+            overflow: hidden;
+            border-radius: 999px;
+            background: #e2e8f0;
+        }
+
+        .wp-progress span {
+            display: block;
+            width: var(--progress, 0%);
+            height: 100%;
+            border-radius: inherit;
+            background: linear-gradient(
+                90deg,
+                #fbbf24,
+                #f59e0b
+            );
+        }
+
+        .wp-next-level {
+            min-height: 140px;
+            display: grid;
+            place-items: center;
+            align-content: center;
+            padding: 10px;
+            border: 1px solid #dbeafe;
+            border-radius: 13px;
+            background: #eff6ff;
+            color: #1e3a8a;
+            text-align: center;
+            font-size: 10px;
+            font-weight: 800;
+        }
+
+        .wp-next-level strong {
+            display: block;
             margin-top: 6px;
-            word-break: break-word;
+            font-size: 13px;
         }
 
-        .edit-section {
-            margin-top: 30px;
-            border-top: 1px solid #e2e8f0;
-            padding-top: 25px;
+        .wp-achievements {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 10px;
         }
 
-        .edit-section h2 {
-            margin-bottom: 18px;
+        .wp-achievement {
+            text-align: center;
         }
 
-        .form-grid {
+        .wp-achievement-icon {
+            width: 58px;
+            height: 58px;
+            display: grid;
+            place-items: center;
+            margin: 0 auto 7px;
+            border: 5px solid #bfdbfe;
+            border-radius: 18px;
+            background: linear-gradient(
+                145deg,
+                #60a5fa,
+                #2563eb
+            );
+            color: #ffffff;
+            font-size: 17px;
+            font-weight: 950;
+            box-shadow: 0 8px 18px rgba(37, 99, 235, 0.18);
+        }
+
+        .wp-achievement:nth-child(2) .wp-achievement-icon {
+            border-color: #fde68a;
+            background: linear-gradient(
+                145deg,
+                #fbbf24,
+                #f59e0b
+            );
+        }
+
+        .wp-achievement:nth-child(3) .wp-achievement-icon {
+            border-color: #ddd6fe;
+            background: linear-gradient(
+                145deg,
+                #8b5cf6,
+                #4f46e5
+            );
+        }
+
+        .wp-achievement:nth-child(4) .wp-achievement-icon {
+            border-color: #bbf7d0;
+            background: linear-gradient(
+                145deg,
+                #22c55e,
+                #15803d
+            );
+        }
+
+        .wp-achievement strong {
+            display: block;
+            color: #334155;
+            font-size: 10px;
+            line-height: 1.35;
+        }
+
+        .wp-performance-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .wp-performance-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            color: #475569;
+            font-size: 12px;
+        }
+
+        .wp-performance-row strong {
+            color: var(--wp-ink);
+        }
+
+        .wp-social-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+        .wp-social-stat {
+            padding: 13px 8px;
+            border-radius: 13px;
+            text-align: center;
+        }
+
+        .wp-social-stat:nth-child(1) {
+            background: #eff6ff;
+            color: #1d4ed8;
+        }
+
+        .wp-social-stat:nth-child(2) {
+            background: #ecfdf5;
+            color: #047857;
+        }
+
+        .wp-social-stat:nth-child(3) {
+            background: #fff1f2;
+            color: #e11d48;
+        }
+
+        .wp-social-stat strong {
+            display: block;
+            font-size: 18px;
+            font-weight: 950;
+        }
+
+        .wp-social-stat span {
+            display: block;
+            margin-top: 4px;
+            font-size: 9px;
+            font-weight: 850;
+        }
+
+        .wp-people-list,
+        .wp-review-list,
+        .wp-activity-list {
+            display: grid;
+        }
+
+        .wp-person,
+        .wp-review,
+        .wp-activity {
+            display: grid;
+            grid-template-columns: 46px minmax(0, 1fr) auto;
+            gap: 10px;
+            align-items: center;
+            padding: 11px 0;
+            border-bottom: 1px solid #edf2f7;
+        }
+
+        .wp-person:last-child,
+        .wp-review:last-child,
+        .wp-activity:last-child {
+            border-bottom: 0;
+        }
+
+        .wp-mini-avatar {
+            width: 44px;
+            height: 44px;
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+            border-radius: 50%;
+            background: #dbeafe;
+            color: #1d4ed8;
+            font-size: 14px;
+            font-weight: 950;
+        }
+
+        .wp-mini-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .wp-person-name,
+        .wp-review-name {
+            display: block;
+            overflow: hidden;
+            color: var(--wp-ink);
+            font-size: 11px;
+            font-weight: 950;
+            text-decoration: none;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .wp-person-meta,
+        .wp-review-meta,
+        .wp-activity-meta {
+            margin-top: 3px;
+            color: var(--wp-muted);
+            font-size: 9px;
+            line-height: 1.4;
+        }
+
+        .wp-follow-btn {
+            min-height: 32px;
+            padding: 0 10px;
+            border: 0;
+            border-radius: 9px;
+            background: linear-gradient(
+                135deg,
+                var(--wp-blue),
+                var(--wp-purple)
+            );
+            color: #ffffff;
+            cursor: pointer;
+            font: inherit;
+            font-size: 9px;
+            font-weight: 900;
+        }
+
+        .wp-stars {
+            color: var(--wp-amber);
+            font-size: 11px;
+            font-weight: 950;
+            white-space: nowrap;
+        }
+
+        .wp-activity-icon {
+            width: 40px;
+            height: 40px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            background: #ecfdf5;
+            color: #15803d;
+            font-weight: 950;
+        }
+
+        .wp-activity-title {
+            color: var(--wp-ink);
+            font-size: 11px;
+            font-weight: 900;
+        }
+
+        .wp-activity-date {
+            color: var(--wp-muted);
+            font-size: 9px;
+            white-space: nowrap;
+        }
+
+        .wp-worker-info {
+            display: grid;
+            gap: 10px;
+        }
+
+        .wp-worker-info-row {
+            display: grid;
+            grid-template-columns: 92px minmax(0, 1fr);
+            gap: 10px;
+            font-size: 11px;
+        }
+
+        .wp-worker-info-row span {
+            color: var(--wp-muted);
+        }
+
+        .wp-worker-info-row strong {
+            color: #334155;
+            overflow-wrap: anywhere;
+        }
+
+        .wp-quick-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            gap: 8px;
         }
 
-        .full {
+        .wp-quick {
+            min-height: 54px;
+            display: grid;
+            place-items: center;
+            padding: 8px;
+            border: 1px solid #e2e8f0;
+            border-radius: 11px;
+            background: #f8fafc;
+            color: #334155;
+            font-size: 9px;
+            font-weight: 900;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .wp-empty {
+            padding: 15px 0;
+            color: var(--wp-muted);
+            font-size: 11px;
+            line-height: 1.55;
+        }
+
+        /* EDIT MODAL */
+        .wp-modal-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+            background: rgba(2, 6, 23, 0.72);
+        }
+
+        .wp-modal-backdrop.is-open {
+            display: flex;
+        }
+
+        .wp-modal {
+            width: min(620px, 100%);
+            max-height: 88vh;
+            overflow: auto;
+            border-radius: 20px;
+            background: #ffffff;
+            box-shadow: 0 28px 80px rgba(2, 6, 23, 0.36);
+        }
+
+        .wp-modal-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 18px 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .wp-modal-head h2 {
+            margin: 0;
+            color: var(--wp-ink);
+            font-size: 20px;
+        }
+
+        .wp-modal-close {
+            width: 38px;
+            height: 38px;
+            border: 0;
+            border-radius: 50%;
+            background: #f1f5f9;
+            color: #334155;
+            cursor: pointer;
+            font-size: 22px;
+        }
+
+        .wp-edit-form {
+            padding: 18px 20px 20px;
+        }
+
+        .wp-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 13px;
+        }
+
+        .wp-field {
+            display: grid;
+            gap: 6px;
+        }
+
+        .wp-field.full {
             grid-column: 1 / -1;
         }
 
-        .readonly {
-            background: #f1f5f9;
-            cursor: not-allowed;
+        .wp-field label {
+            color: #475569;
+            font-size: 11px;
+            font-weight: 900;
         }
 
-        .photo-upload {
-            padding: 16px;
-            background: #f8fafc;
-            border-radius: 13px;
-            border: 1px solid #e2e8f0;
-            margin-bottom: 18px;
+        .wp-field input,
+        .wp-field select {
+            width: 100%;
+            min-height: 44px;
+            padding: 0 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            background: #ffffff;
+            color: #0f172a;
+            font: inherit;
         }
 
-        .actions {
+        .wp-photo-actions {
             display: flex;
-            justify-content: center;
-            gap: 10px;
             flex-wrap: wrap;
-            margin-top: 25px;
+            gap: 8px;
         }
 
-        .message {
-            margin-bottom: 20px;
+        .wp-small-btn {
+            min-height: 38px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 9px;
+            background: #f8fafc;
+            color: #334155;
+            cursor: pointer;
+            font: inherit;
+            font-size: 10px;
+            font-weight: 900;
         }
 
-        @media(max-width: 650px) {
+        .wp-avatar-picker {
+            display: none;
+            grid-template-columns: repeat(8, minmax(0, 1fr));
+            gap: 8px;
+            margin-top: 10px;
+        }
 
-            .profile {
-                padding: 25px 18px;
+        .wp-avatar-picker.is-open {
+            display: grid;
+        }
+
+        .wp-avatar-choice {
+            padding: 3px;
+            border: 2px solid transparent;
+            border-radius: 10px;
+            background: #eff6ff;
+            cursor: pointer;
+        }
+
+        .wp-avatar-choice.is-selected {
+            border-color: #2563eb;
+        }
+
+        .wp-avatar-choice img {
+            display: block;
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .wp-form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 17px;
+        }
+
+        /* THEME SUPPORT */
+        body.worker-theme-dark .wp-profile-hero,
+        body.worker-theme-dark .wp-card,
+        body.worker-theme-dark .wp-modal {
+            background: #172033;
+            border-color: #334155;
+        }
+
+        body.worker-theme-dark .wp-name,
+        body.worker-theme-dark .wp-card-title,
+        body.worker-theme-dark .wp-about-value,
+        body.worker-theme-dark .wp-level-name,
+        body.worker-theme-dark .wp-level-xp,
+        body.worker-theme-dark .wp-performance-row strong,
+        body.worker-theme-dark .wp-person-name,
+        body.worker-theme-dark .wp-review-name,
+        body.worker-theme-dark .wp-activity-title,
+        body.worker-theme-dark .wp-worker-info-row strong,
+        body.worker-theme-dark .wp-top-stat strong,
+        body.worker-theme-dark .wp-modal-head h2 {
+            color: #f8fafc;
+        }
+
+        body.worker-theme-dark .wp-role,
+        body.worker-theme-dark .wp-meta,
+        body.worker-theme-dark .wp-tagline,
+        body.worker-theme-dark .wp-about-label,
+        body.worker-theme-dark .wp-performance-row,
+        body.worker-theme-dark .wp-worker-info-row span {
+            color: #cbd5e1;
+        }
+
+        body.worker-theme-dark .wp-stat-strip,
+        body.worker-theme-dark .wp-top-stat,
+        body.worker-theme-dark .wp-next-level,
+        body.worker-theme-dark .wp-social-stat,
+        body.worker-theme-dark .wp-quick,
+        body.worker-theme-dark .wp-field input,
+        body.worker-theme-dark .wp-field select {
+            background: #1e293b;
+            border-color: #334155;
+            color: #f8fafc;
+        }
+
+        body.worker-theme-glass .wp-profile-hero,
+        body.worker-theme-glass .wp-card,
+        body.worker-theme-glass .wp-modal {
+            background: rgba(15, 23, 42, 0.74);
+            border-color: rgba(191, 219, 254, 0.20);
+            backdrop-filter: blur(20px);
+        }
+
+        body.worker-theme-glass .wp-name,
+        body.worker-theme-glass .wp-card-title,
+        body.worker-theme-glass .wp-about-value,
+        body.worker-theme-glass .wp-level-name,
+        body.worker-theme-glass .wp-level-xp,
+        body.worker-theme-glass .wp-performance-row strong,
+        body.worker-theme-glass .wp-person-name,
+        body.worker-theme-glass .wp-review-name,
+        body.worker-theme-glass .wp-activity-title,
+        body.worker-theme-glass .wp-worker-info-row strong,
+        body.worker-theme-glass .wp-top-stat strong,
+        body.worker-theme-glass .wp-modal-head h2 {
+            color: #ffffff;
+        }
+
+        body.worker-theme-glass .wp-role,
+        body.worker-theme-glass .wp-meta,
+        body.worker-theme-glass .wp-tagline,
+        body.worker-theme-glass .wp-about-label,
+        body.worker-theme-glass .wp-performance-row,
+        body.worker-theme-glass .wp-worker-info-row span {
+            color: rgba(219, 234, 254, 0.78);
+        }
+
+        body.worker-theme-glass .wp-stat-strip,
+        body.worker-theme-glass .wp-top-stat,
+        body.worker-theme-glass .wp-next-level,
+        body.worker-theme-glass .wp-social-stat,
+        body.worker-theme-glass .wp-quick,
+        body.worker-theme-glass .wp-field input,
+        body.worker-theme-glass .wp-field select {
+            background: rgba(255, 255, 255, 0.07);
+            border-color: rgba(191, 219, 254, 0.16);
+            color: #ffffff;
+        }
+
+        @media (max-width: 1080px) {
+            .wp-dashboard {
+                grid-template-columns: minmax(0, 1fr) 320px;
             }
 
-            .grid,
-            .form-grid {
+            .wp-dashboard > .wp-col:last-child {
+                grid-column: 1 / -1;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 820px) {
+            .wp-stat-strip {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .wp-top-stat:nth-child(3) {
+                border-right: 0;
+            }
+
+            .wp-dashboard {
                 grid-template-columns: 1fr;
             }
 
-            .full {
+            .wp-dashboard > .wp-col:last-child {
+                grid-column: auto;
+                grid-template-columns: 1fr;
+            }
+
+            .wp-identity {
+                grid-template-columns: auto 1fr;
+            }
+
+            .wp-owner-actions,
+            .wp-viewer-actions {
+                grid-column: 1 / -1;
+            }
+        }
+
+        @media (max-width: 620px) {
+            .wp-page {
+                width: min(100% - 18px, 1180px);
+                padding-top: 76px;
+            }
+
+            .wp-cover {
+                min-height: 145px;
+            }
+
+            .wp-cover-text {
+                display: none;
+            }
+
+            .wp-identity {
+                grid-template-columns: 1fr;
+                justify-items: center;
+                margin-top: -52px;
+                padding: 0 16px 18px;
+                text-align: center;
+            }
+
+            .wp-identity-main {
+                display: grid;
+                justify-items: center;
+            }
+
+            .wp-meta,
+            .wp-owner-actions,
+            .wp-viewer-actions {
+                justify-content: center;
+            }
+
+            .wp-name {
+                font-size: 24px;
+            }
+
+            .wp-avatar {
+                width: 108px;
+                height: 108px;
+            }
+
+            .wp-stat-strip {
+                grid-template-columns: repeat(2, 1fr);
+                margin: 0 12px 14px;
+            }
+
+            .wp-top-stat {
+                border-bottom: 1px solid var(--wp-line);
+            }
+
+            .wp-top-stat:nth-child(2n) {
+                border-right: 0;
+            }
+
+            .wp-achievements {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .wp-level-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .wp-next-level {
+                min-height: 90px;
+            }
+
+            .wp-form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .wp-field.full {
                 grid-column: auto;
             }
 
+            .wp-avatar-picker {
+                grid-template-columns: repeat(5, 1fr);
+            }
         }
-
-    
-
-/* =====================================================
-   NEW LIGHT / DARK / GLASS THEME SUPPORT
-===================================================== */
-
-body.worker-theme-glass .theme-glass-surface,
-body.worker-theme-glass .profile,
-body.worker-theme-glass .box,
-body.worker-theme-glass .settings-card,
-body.worker-theme-glass .modal-card,
-body.worker-theme-glass .payment-card,
-body.worker-theme-glass .terms-card {
-    background:
-        linear-gradient(
-            135deg,
-            rgba(96, 165, 250, 0.13),
-            rgba(255, 255, 255, 0.075),
-            rgba(99, 102, 241, 0.08)
-        ) !important;
-    border: 1px solid rgba(191, 219, 254, 0.27) !important;
-    color: #ffffff !important;
-    box-shadow:
-        0 26px 65px rgba(2, 6, 23, 0.30),
-        inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
-    backdrop-filter: blur(25px);
-    -webkit-backdrop-filter: blur(25px);
-}
-
-body.worker-theme-glass h1,
-body.worker-theme-glass h2,
-body.worker-theme-glass h3,
-body.worker-theme-glass .value,
-body.worker-theme-glass .worker-name,
-body.worker-theme-glass .settings-text h3,
-body.worker-theme-glass .modal-header h2,
-body.worker-theme-glass .modal-label,
-body.worker-theme-glass .header h1,
-body.worker-theme-glass .rule h3 {
-    color: #ffffff !important;
-}
-
-body.worker-theme-glass .box,
-body.worker-theme-glass .photo-upload,
-body.worker-theme-glass .notice,
-body.worker-theme-glass .privacy,
-body.worker-theme-glass .worker-box,
-body.worker-theme-glass .plan-box,
-body.worker-theme-glass .today-box,
-body.worker-theme-glass .security,
-body.worker-theme-glass .rule,
-body.worker-theme-glass .important,
-body.worker-theme-glass .availability-box,
-body.worker-theme-glass .modal-note {
-    background:
-        linear-gradient(
-            135deg,
-            rgba(255, 255, 255, 0.11),
-            rgba(59, 130, 246, 0.055)
-        ) !important;
-    border-color: rgba(191, 219, 254, 0.25) !important;
-    color: rgba(255, 255, 255, 0.90) !important;
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-}
-
-body.worker-theme-glass .box-label,
-body.worker-theme-glass .rating-count,
-body.worker-theme-glass .file-help,
-body.worker-theme-glass .settings-text p,
-body.worker-theme-glass .header p,
-body.worker-theme-glass .worker-label,
-body.worker-theme-glass .worker-id,
-body.worker-theme-glass .small-label,
-body.worker-theme-glass .first-text,
-body.worker-theme-glass .per-month,
-body.worker-theme-glass .autopay-text,
-body.worker-theme-glass .today-label,
-body.worker-theme-glass .rule p {
-    color: rgba(219, 234, 254, 0.76) !important;
-}
-
-body.worker-theme-glass .avatar,
-body.worker-theme-glass .icon,
-body.worker-theme-glass .header-icon,
-body.worker-theme-glass .payment-icon,
-body.worker-theme-glass .settings-icon {
-    background: rgba(255, 255, 255, 0.12) !important;
-    border-color: rgba(255, 255, 255, 0.25) !important;
-    color: #ffffff !important;
-}
-
-body.worker-theme-glass .rating-card {
-    background: rgba(245, 158, 11, 0.12) !important;
-    border-color: rgba(253, 230, 138, 0.28) !important;
-}
-
-body.worker-theme-glass .rating-number {
-    color: #ffffff !important;
-}
-
-body.worker-theme-glass .worker-id,
-body.worker-theme-glass .back-link,
-body.worker-theme-glass .worker-id,
-body.worker-theme-glass .plan-title {
-    color: #bfdbfe !important;
-}
-
-body.worker-theme-glass .modal-input,
-body.worker-theme-glass .modal-select,
-body.worker-theme-glass .modal-textarea {
-    background: rgba(255, 255, 255, 0.09) !important;
-    border-color: rgba(255, 255, 255, 0.20) !important;
-    color: #ffffff !important;
-}
-
-body.worker-theme-glass .modal-select option {
-    background: #0f172a;
-    color: #ffffff;
-}
-
-body.worker-theme-glass .settings-item {
-    border-color: rgba(191, 219, 254, 0.15) !important;
-}
-
-body.worker-theme-glass .settings-action,
-body.worker-theme-glass .pay-button,
-body.worker-theme-glass .back-button {
-    background:
-        linear-gradient(
-            135deg,
-            rgba(var(--app-primary-rgb), 0.95),
-            rgba(var(--app-secondary-rgb), 0.88)
-        ) !important;
-    border: 1px solid rgba(255, 255, 255, 0.20) !important;
-    color: #ffffff !important;
-    box-shadow: 0 9px 24px rgba(var(--app-primary-rgb), 0.24);
-}
-
-body.worker-theme-glass .subscription-action {
-    background: linear-gradient(135deg, #16a34a, #15803d) !important;
-}
-
-body.worker-theme-glass .danger-action,
-body.worker-theme-glass .modal-delete {
-    background: linear-gradient(135deg, #dc2626, #b91c1c) !important;
-}
-
-body.worker-theme-glass .test-badge,
-body.worker-theme-glass .discount {
-    box-shadow: 0 5px 15px rgba(2, 6, 23, 0.12);
-}
-
-body.worker-theme-glass .first-price,
-body.worker-theme-glass .today-price {
-    color: #86efac !important;
-}
-
-body.worker-theme-glass .new-price {
-    color: #bfdbfe !important;
-}
-
-body.worker-theme-glass .old-price {
-    color: rgba(219, 234, 254, 0.55) !important;
-}
-
-body.worker-theme-glass .notice {
-    border-left-color: #f59e0b !important;
-}
-
-body.worker-theme-glass .important {
-    border-left-color: #f97316 !important;
-}
-
-body.worker-theme-dark .theme-glass-surface,
-body.worker-theme-dark .profile,
-body.worker-theme-dark .box,
-body.worker-theme-dark .settings-card,
-body.worker-theme-dark .modal-card,
-body.worker-theme-dark .payment-card,
-body.worker-theme-dark .terms-card {
-    background: #1e293b !important;
-    color: #e2e8f0 !important;
-    border-color: #334155 !important;
-}
-
-body.worker-theme-glass .edit-section {
-    border-color: rgba(191, 219, 254, 0.16) !important;
-}
-
-
-        /* ADVANCED PROFILE PHOTO */
-        .avatar-editor{position:relative;width:132px;height:132px;margin:auto}
-        .avatar-editor .avatar{width:120px;height:120px;margin:auto}
-        .avatar-camera{position:absolute;right:0;bottom:6px;width:42px;height:42px;border:3px solid #fff;border-radius:50%;background:linear-gradient(135deg,#0ea5e9,#2563eb);color:#fff;display:grid;place-items:center;cursor:pointer;box-shadow:0 8px 22px rgba(37,99,235,.35);z-index:4}
-        .avatar-camera .ui-icon{width:21px;height:21px}
-        .photo-menu{display:none;width:min(330px,calc(100vw - 48px));margin:14px auto 0;overflow:hidden;text-align:left;border:1px solid rgba(148,163,184,.35);border-radius:16px;background:#fff;box-shadow:0 18px 45px rgba(15,23,42,.2)}
-        .photo-menu.open{display:block}
-        .photo-menu-title{padding:14px 16px;font-size:15px;font-weight:900;border-bottom:1px solid #e2e8f0}
-        .photo-menu-item{width:100%;border:0;border-bottom:1px solid #eef2f7;background:transparent;color:inherit;padding:13px 16px;display:flex;align-items:center;gap:11px;font:inherit;cursor:pointer;text-align:left}
-        .photo-menu-item:last-child{border-bottom:0}.photo-menu-item:hover{background:rgba(59,130,246,.08)}
-        .photo-menu-item .ui-icon{width:20px;height:20px}.premium-mark{margin-left:auto;padding:3px 8px;border-radius:999px;background:#f59e0b;color:#fff;font-size:10px;font-weight:900}
-        .hidden-photo-input{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important}
-        .photo-preview-note{display:none;margin:12px auto 0;max-width:330px;padding:10px 12px;border-radius:11px;background:rgba(37,99,235,.09);font-size:12px;line-height:1.45}
-        .photo-preview-note.show{display:block}
-        body.sc-theme-dark .photo-menu,body.worker-theme-dark .photo-menu{background:#172033;border-color:#334155;color:#f8fafc}
-        body.sc-theme-glass .photo-menu,body.worker-theme-glass .photo-menu{background:rgba(15,23,42,.88);border-color:rgba(191,219,254,.25);color:#fff;backdrop-filter:blur(22px)}
-
-
-        /* FREE AVATAR PICKER */
-        .avatar-modal-backdrop{
-            display:none;position:fixed;inset:0;z-index:9998;
-            background:rgba(2,6,23,.72);padding:18px;
-            align-items:center;justify-content:center;
-        }
-        .avatar-modal-backdrop.open{display:flex}
-        .avatar-modal{
-            width:min(520px,100%);max-height:82vh;overflow:auto;
-            border:1px solid rgba(148,163,184,.32);border-radius:22px;
-            background:#fff;color:#0f172a;padding:18px;
-            box-shadow:0 28px 80px rgba(2,6,23,.45);
-        }
-        .avatar-modal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
-        .avatar-modal-head h3{margin:0;font-size:19px}
-        .avatar-modal-close{
-            width:38px;height:38px;border:0;border-radius:50%;cursor:pointer;
-            background:#e2e8f0;color:#0f172a;font-size:22px;line-height:1;
-        }
-        .avatar-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-        .avatar-choice{
-            border:2px solid transparent;border-radius:18px;padding:7px;
-            background:rgba(59,130,246,.07);cursor:pointer;transition:.18s ease;
-        }
-        .avatar-choice:hover,.avatar-choice.selected{
-            border-color:#38bdf8;transform:translateY(-2px);
-            box-shadow:0 8px 20px rgba(14,165,233,.20);
-        }
-        .avatar-choice img{display:block;width:100%;aspect-ratio:1;border-radius:14px;object-fit:cover}
-        .avatar-modal-note{margin:14px 2px 0;font-size:12px;opacity:.72;line-height:1.5}
-        body.sc-theme-dark .avatar-modal,body.worker-theme-dark .avatar-modal,
-        body.sc-theme-glass .avatar-modal,body.worker-theme-glass .avatar-modal{
-            background:#111c31;color:#f8fafc;border-color:#334155;
-        }
-        body.sc-theme-dark .avatar-modal-close,body.worker-theme-dark .avatar-modal-close,
-        body.sc-theme-glass .avatar-modal-close,body.worker-theme-glass .avatar-modal-close{
-            background:#263550;color:#fff;
-        }
-
-        .premium-avatar-choice{
-            position:relative;
-            border:1px solid rgba(245,158,11,.42);
-            background:rgba(245,158,11,.06);
-            border-radius:16px;
-            padding:6px;
-            cursor:pointer;
-            transition:.18s ease;
-        }
-        .premium-avatar-choice:hover{
-            transform:translateY(-2px);
-            border-color:#f59e0b;
-            box-shadow:0 10px 24px rgba(245,158,11,.18);
-        }
-        .premium-avatar-choice img{
-            display:block;
-            width:100%;
-            aspect-ratio:1;
-            border-radius:14px;
-            object-fit:cover;
-        }
-        .premium-crown{
-            position:absolute;
-            top:9px;
-            left:9px;
-            width:26px;
-            height:26px;
-            border-radius:9px;
-            display:grid;
-            place-items:center;
-            background:rgba(8,18,38,.88);
-            color:#fbbf24;
-            font-size:15px;
-            box-shadow:0 4px 12px rgba(0,0,0,.28);
-        }
-        .premium-avatar-title{
-            display:flex;
-            align-items:center;
-            gap:8px;
-        }
-        .premium-avatar-title .gold{color:#f59e0b}
-        .premium-upgrade-box{
-            margin-top:14px;
-            padding:13px 14px;
-            border:1px solid rgba(245,158,11,.35);
-            border-radius:14px;
-            background:rgba(245,158,11,.08);
-            font-size:12px;
-            line-height:1.55;
-        }
-
-        @media(max-width:480px){.avatar-grid{grid-template-columns:repeat(4,1fr);gap:8px}.avatar-modal{padding:14px}}
-
-</style>
-
+    </style>
 </head>
-
 
 <body{% if is_owner %} class="worker-page"{% endif %}>
 
-{% if is_owner %}
-    {% include "complaints/Worker_Folder/worker_navbar.html" %}
-{% else %}
-    {% include "complaints/User_Folder/navbar.html" %}
-{% endif %}
+    {% if is_owner %}
+        {% include "complaints/Worker_Folder/worker_navbar.html" %}
+    {% else %}
+        {% if request.user.is_authenticated %}
+            {% if request.user.worker_profile %}
+                {% include "complaints/Worker_Folder/worker_navbar.html" %}
+            {% else %}
+                {% include "complaints/User_Folder/navbar.html" %}
+            {% endif %}
+        {% else %}
+            {% include "complaints/User_Folder/navbar.html" %}
+        {% endif %}
+    {% endif %}
 
-<main class="page">
-
-    <div class="card profile">
-
+    <main class="wp-page">
 
         {% if messages %}
-
             {% for message in messages %}
-
-                <div class="message">
+                <div class="wp-message">
                     {{ message }}
                 </div>
-
             {% endfor %}
-
         {% endif %}
 
+        <!-- =================================================
+             HERO / IDENTITY
+        ================================================== -->
+        <section class="wp-profile-hero">
 
-        <div class="head">
-{% if is_owner %}
-                <div class="avatar-editor">
-                    <div class="avatar" id="profileAvatar">
-                        {% if worker.photo %}<img src="{{ worker.photo.url }}" alt="Profile Photo">
-                        {% else %}<svg class="ui-icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"></circle><path d="M4.5 21a7.5 7.5 0 0 1 15 0"></path></svg>{% endif %}
-                    </div>
-                    <button class="avatar-camera" type="button" id="photoMenuButton" aria-label="Change profile photo"><svg class="ui-icon" viewBox="0 0 24 24"><path d="M4 7h3l2-3h6l2 3h3a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z"></path><circle cx="12" cy="13" r="4"></circle></svg></button>
+            <div class="wp-cover">
+                <div class="wp-cover-text">
+                    Clean city. Safe city. Better service through verified community work.
                 </div>
-                <div class="photo-menu" id="photoMenu">
-                    <div class="photo-menu-title">Change Profile Photo</div>
-                    <button type="button" class="photo-menu-item" data-a="camera">📷 Take Photo</button>
-                    <button type="button" class="photo-menu-item" data-a="gallery">🖼️ Choose from Gallery</button>
-                    <button type="button" class="photo-menu-item" data-a="avatar">🙂 Choose Free Avatar</button>
-                    <button type="button" class="photo-menu-item" data-a="premium">👑 Premium Avatars <span class="premium-mark">PRO</span></button>
-                </div>
-                <div class="photo-preview-note" id="photoPreviewNote"></div>
-{% else %}<div class="avatar">{% if worker.photo %}<img src="{{ worker.photo.url }}" alt="{{ worker.name }}">{% else %}<svg class="ui-icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"></circle><path d="M5 21v-2a7 7 0 0 1 14 0v2"></path></svg>{% endif %}</div>{% endif %}
-
-
-            <h1>
-                {{ worker.name }}
-            </h1>
-
-
-            <div class="worker-id">
-                {{ worker.worker_id }}
             </div>
 
+            <div class="wp-identity">
 
-            {% if worker.is_approved %}
+                <div class="wp-avatar-wrap">
+                    <div class="wp-avatar">
+                        {% if worker.photo %}
+                            <img src="{{ worker.photo.url }}" alt="{{ worker.name }}">
+                        {% else %}
+                            {{ worker.name|first|upper }}
+                        {% endif %}
+                    </div>
 
-                <div class="badge">
-                    <span class="status-dot"></span>Approved Worker
+                    <span class="wp-online-dot"></span>
                 </div>
 
-            {% endif %}
+                <div class="wp-identity-main">
+                    <div class="wp-name-line">
+                        <h1 class="wp-name">{{ worker.name }}</h1>
 
-
-            <!-- =============================================
-                 AVERAGE WORKER RATING
-            ============================================== -->
-
-            <div class="rating-card">
-
-                {% if worker_rating_count > 0 %}
-
-                    <div class="rating-stars">
-                        <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3l-5.6 2.9 1.1-6.2L3 9.6l6.2-.9L12 3z"></path></svg>
+                        {% if worker.is_approved %}
+                            <span class="wp-verified" title="Verified Worker">✓</span>
+                        {% endif %}
                     </div>
 
-                    <div class="rating-number">
-                        {{ worker_average_rating|floatformat:1 }} / 5
+                    <div class="wp-role">
+                        {{ worker.get_skill_category_display }}
+                        · Smart Complaint Verified Worker
                     </div>
 
-                    <div class="rating-count">
-
-                        {{ worker_rating_count }}
-
-                        {% if worker_rating_count == 1 %}
-                            Rating
-                        {% else %}
-                            Ratings
+                    <div class="wp-meta">
+                        {% if worker.city or worker.area %}
+                            <span>
+                                📍
+                                {% if worker.area %}{{ worker.area }}{% endif %}
+                                {% if worker.area and worker.city %}, {% endif %}
+                                {% if worker.city %}{{ worker.city }}{% endif %}
+                            </span>
                         {% endif %}
 
+                        <span>
+                            📅 Joined {{ worker.created_at|date:"M Y" }}
+                        </span>
+
+                        <span>
+                            🪪 {{ worker.worker_id }}
+                        </span>
                     </div>
 
+                    <div class="wp-tagline">
+                        Helping resolve community issues with verified completion and accountable service.
+                    </div>
+                </div>
+
+                {% if is_owner %}
+                    <div class="wp-owner-actions">
+                        <button
+                            class="wp-btn primary"
+                            type="button"
+                            id="openEditProfile"
+                        >
+                            Edit Profile
+                        </button>
+                    </div>
                 {% else %}
+                    <div class="wp-viewer-actions">
+                        {% if request.user.is_authenticated and can_interact %}
+                            <form
+                                method="post"
+                                action="{% url 'toggle_worker_follow' worker.id %}"
+                            >
+                                {% csrf_token %}
 
-                    <div class="rating-stars">
-                        ☆
+                                <button class="wp-btn primary" type="submit">
+                                    {% if is_following %}
+                                        Following
+                                    {% else %}
+                                        Follow
+                                    {% endif %}
+                                </button>
+                            </form>
+
+                            <form
+                                method="post"
+                                action="{% url 'toggle_worker_profile_like' worker.id %}"
+                            >
+                                {% csrf_token %}
+
+                                <button
+                                    class="wp-btn {% if is_profile_liked %}liked{% endif %}"
+                                    type="submit"
+                                >
+                                    {% if is_profile_liked %}
+                                        ♥ Liked
+                                    {% else %}
+                                        ♡ Like Profile
+                                    {% endif %}
+                                </button>
+                            </form>
+                        {% elif not request.user.is_authenticated %}
+                            <a class="wp-btn primary" href="{% url 'login' %}">
+                                Login to Follow
+                            </a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="wp-stat-strip">
+                <div class="wp-top-stat">
+                    <strong>{{ jobs_assigned }}</strong>
+                    <span>Jobs Assigned</span>
+                </div>
+
+                <div class="wp-top-stat">
+                    <strong>{{ jobs_completed }}</strong>
+                    <span>Jobs Completed</span>
+                </div>
+
+                <div class="wp-top-stat">
+                    <strong>{{ jobs_in_progress }}</strong>
+                    <span>In Progress</span>
+                </div>
+
+                <div class="wp-top-stat">
+                    <strong>
+                        {% if worker_rating_count %}
+                            {{ worker_average_rating|floatformat:1 }}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </strong>
+                    <span>Average Rating</span>
+                </div>
+
+                <div class="wp-top-stat">
+                    <strong>{{ followers_count }}</strong>
+                    <span>Followers</span>
+                </div>
+
+                <div class="wp-top-stat">
+                    <strong>{{ following_count }}</strong>
+                    <span>Following</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- =================================================
+             PROFILE DASHBOARD
+        ================================================== -->
+        <div class="wp-dashboard">
+
+            <!-- LEFT COLUMN -->
+            <div class="wp-col">
+
+                <section class="wp-card">
+                    <div class="wp-card-head">
+                        <h2 class="wp-card-title">
+                            👤 About Me
+                        </h2>
+
+                        {% if is_owner %}
+                            <button
+                                class="wp-btn"
+                                type="button"
+                                data-open-edit
+                            >
+                                Edit
+                            </button>
+                        {% endif %}
                     </div>
 
-                    <div class="rating-number">
-                        No Rating Yet
+                    <div class="wp-card-body">
+                        <div class="wp-about-grid">
+                            <div class="wp-about-label">Name</div>
+                            <div class="wp-about-value">{{ worker.name }}</div>
+
+                            <div class="wp-about-label">Role</div>
+                            <div class="wp-about-value">{{ worker.get_skill_category_display }}</div>
+
+                            <div class="wp-about-label">Experience</div>
+                            <div class="wp-about-value">{{ worker.experience }}</div>
+
+                            <div class="wp-about-label">Location</div>
+                            <div class="wp-about-value">
+                                {% if worker.area or worker.city %}
+                                    {% if worker.area %}{{ worker.area }}{% endif %}
+                                    {% if worker.area and worker.city %}, {% endif %}
+                                    {% if worker.city %}{{ worker.city }}{% endif %}
+                                {% else %}
+                                    Not added
+                                {% endif %}
+                            </div>
+
+                            <div class="wp-about-label">Member Since</div>
+                            <div class="wp-about-value">{{ worker.created_at|date:"M Y" }}</div>
+
+                            <div class="wp-about-label">Verification</div>
+                            <div class="wp-about-value">{{ worker.verification_status }}</div>
+
+                            {% if is_owner %}
+                                <div class="wp-about-label">Email</div>
+                                <div class="wp-about-value">{{ worker.user.email }}</div>
+
+                                <div class="wp-about-label">Phone</div>
+                                <div class="wp-about-value">{{ worker.phone }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </section>
+
+                <section class="wp-card">
+                    <div class="wp-card-head">
+                        <h2 class="wp-card-title">
+                            🏆 Achievements
+                        </h2>
+
+                        {% if is_owner %}
+                            <a
+                                class="wp-card-link"
+                                href="{% url 'worker_achievements' %}"
+                            >
+                                View All
+                            </a>
+                        {% endif %}
                     </div>
 
-                    <div class="rating-count">
-                        Ratings will appear after completed jobs.
+                    <div class="wp-card-body">
+                        {% if unlocked_achievements %}
+                            <div class="wp-achievements">
+                                {% for item in unlocked_achievements %}
+                                    <div class="wp-achievement">
+                                        <div class="wp-achievement-icon">
+                                            {{ item.icon }}
+                                        </div>
+
+                                        <strong>{{ item.title }}</strong>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="wp-empty">
+                                Achievements will unlock as verified jobs and ratings increase.
+                            </div>
+                        {% endif %}
+                    </div>
+                </section>
+
+                <section class="wp-card">
+                    <div class="wp-card-head">
+                        <h2 class="wp-card-title">
+                            🕘 Recent Activity
+                        </h2>
                     </div>
 
+                    <div class="wp-card-body">
+                        {% if recent_activity %}
+                            <div class="wp-activity-list">
+                                {% for item in recent_activity %}
+                                    <div class="wp-activity">
+                                        <div class="wp-activity-icon">
+                                            {% if item.icon == "check" %}
+                                                ✓
+                                            {% elif item.icon == "clock" %}
+                                                ◷
+                                            {% else %}
+                                                ▣
+                                            {% endif %}
+                                        </div>
+
+                                        <div>
+                                            <div class="wp-activity-title">
+                                                {{ item.title }}
+                                            </div>
+
+                                            <div class="wp-activity-meta">
+                                                {{ item.detail }}
+                                            </div>
+                                        </div>
+
+                                        <div class="wp-activity-date">
+                                            {{ item.date|timesince }} ago
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="wp-empty">
+                                No recent worker activity yet.
+                            </div>
+                        {% endif %}
+                    </div>
+                </section>
+            </div>
+
+            <!-- CENTER COLUMN -->
+            <div class="wp-col">
+
+                <section class="wp-card">
+                    <div class="wp-card-head">
+                        <h2 class="wp-card-title">
+                            🏆 Worker Level & XP
+                        </h2>
+                    </div>
+
+                    <div class="wp-card-body">
+                        <div class="wp-level-layout">
+                            <div>
+                                <div class="wp-level-medal">
+                                    {{ worker_league.level.name|first }}
+                                </div>
+
+                                <div class="wp-level-name">
+                                    {{ worker_league.level.name }} Worker
+                                </div>
+
+                                <div class="wp-level-xp">
+                                    {{ worker_league.xp }} XP
+                                </div>
+
+                                <div
+                                    class="wp-progress"
+                                    style="--progress: {{ worker_league.level.progress }}%;"
+                                >
+                                    <span></span>
+                                </div>
+
+                                <div class="wp-person-meta" style="margin-top:7px;">
+                                    {% if worker_league.level.next_xp %}
+                                        {{ worker_league.level.xp_left }} XP to next level
+                                    {% else %}
+                                        Highest worker league reached
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="wp-next-level">
+                                Next Level
+
+                                <strong>
+                                    {% if worker_league.level.next_xp %}
+                                        {{ worker_league.level.next_xp }} XP
+                                    {% else %}
+                                        Diamond
+                                    {% endif %}
+                                </strong>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="wp-card">
+                    <div class="wp-card-head">
+                        <h2 class="wp-card-title">
+                            📊 Performance Stats
+                        </h2>
+                    </div>
+
+                    <div class="wp-card-body">
+                        <div class="wp-performance-list">
+                            <div class="wp-performance-row">
+                                <span>Jobs Assigned</span>
+                                <strong>{{ jobs_assigned }}</strong>
+                            </div>
+
+                            <div class="wp-performance-row">
+                                <span>Jobs Completed</span>
+                                <strong>{{ jobs_completed }}</strong>
+                            </div>
+
+                            <div class="wp-performance-row">
+                                <span>In Progress</span>
+                                <strong>{{ jobs_in_progress }}</strong>
+                            </div>
+
+                            <div class="wp-performance-row">
+                                <span>Pending</span>
+                                <strong>{{ jobs_pending }}</strong>
+                            </div>
+
+                            <div class="wp-performance-row">
+                                <span>Average Rating</span>
+                                <strong>
+                                    {% if worker_rating_count %}
+                                        {{ worker_average_rating|floatformat:1 }}/5
+                                    {% else %}
+                                        —
+                                    {% endif %}
+                                </strong>
+                            </div>
+
+                            <div class="wp-performance-row">
+                                <span>OTP Verified Completion</span>
+                                <strong>{{ verified_rate }}%</strong>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="wp-card">
+                    <div class="wp-card-head">
+                        <h2 class="wp-card-title">
+                            ⭐ Recent Reviews
+                        </h2>
+                    </div>
+
+                    <div class="wp-card-body">
+                        {% if recent_reviews %}
+                            <div class="wp-review-list">
+                                {% for review in recent_reviews %}
+                                    <div class="wp-review">
+                                        <div class="wp-mini-avatar">
+                                            {{ review.rater.username|first|upper }}
+                                        </div>
+
+                                        <div>
+                                            <div class="wp-review-name">
+                                                {{ review.rater.get_full_name|default:review.rater.username }}
+                                            </div>
+
+                                            <div class="wp-review-meta">
+                                                {% if review.problem %}
+                                                    {{ review.problem|truncatechars:70 }}
+                                                {% else %}
+                                                    Rated completed work on {{ review.complaint.subject|truncatechars:35 }}
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <div class="wp-stars">
+                                                ★ {{ review.stars|floatformat:1 }}
+                                            </div>
+
+                                            <div class="wp-review-meta">
+                                                {{ review.created_at|timesince }} ago
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="wp-empty">
+                                Reviews will appear after users rate completed jobs.
+                            </div>
+                        {% endif %}
+                    </div>
+                </section>
+            </div>
+
+            <!-- RIGHT COLUMN -->
+            <div class="wp-col">
+
+                <section class="wp-card">
+                    <div class="wp-card-head">
+                        <h2 class="wp-card-title">
+                            👥 Social Stats
+                        </h2>
+                    </div>
+
+                    <div class="wp-card-body">
+                        <div class="wp-social-grid">
+                            <div class="wp-social-stat">
+                                <strong>{{ followers_count }}</strong>
+                                <span>Followers</span>
+                            </div>
+
+                            <div class="wp-social-stat">
+                                <strong>{{ following_count }}</strong>
+                                <span>Following</span>
+                            </div>
+
+                            <div class="wp-social-stat">
+                                <strong>{{ profile_likes_count }}</strong>
+                                <span>Profile Likes</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {% if is_owner %}
+                    <section class="wp-card">
+                        <div class="wp-card-head">
+                            <h2 class="wp-card-title">
+                                👥 People You May Know
+                            </h2>
+                        </div>
+
+                        <div class="wp-card-body">
+                            {% if suggestions %}
+                                <div class="wp-people-list">
+                                    {% for item in suggestions %}
+                                        <div class="wp-person">
+                                            <a
+                                                class="wp-mini-avatar"
+                                                href="{% url 'worker_profile' item.worker.id %}"
+                                            >
+                                                {% if item.worker.photo %}
+                                                    <img
+                                                        src="{{ item.worker.photo.url }}"
+                                                        alt="{{ item.worker.name }}"
+                                                    >
+                                                {% else %}
+                                                    {{ item.worker.name|first|upper }}
+                                                {% endif %}
+                                            </a>
+
+                                            <div>
+                                                <a
+                                                    class="wp-person-name"
+                                                    href="{% url 'worker_profile' item.worker.id %}"
+                                                >
+                                                    {{ item.worker.name }}
+                                                </a>
+
+                                                <div class="wp-person-meta">
+                                                    {{ item.worker.get_skill_category_display }}
+                                                    {% if item.worker.city %}
+                                                        · {{ item.worker.city }}
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+
+                                            <form
+                                                method="post"
+                                                action="{% url 'toggle_worker_follow' item.worker.id %}"
+                                            >
+                                                {% csrf_token %}
+                                                <input
+                                                    type="hidden"
+                                                    name="next_worker_id"
+                                                    value="{{ worker.id }}"
+                                                >
+
+                                                <button
+                                                    class="wp-follow-btn"
+                                                    type="submit"
+                                                >
+                                                    Follow
+                                                </button>
+                                            </form>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="wp-empty">
+                                    No new worker suggestions right now.
+                                </div>
+                            {% endif %}
+                        </div>
+                    </section>
                 {% endif %}
 
-            </div>
+                <section class="wp-card">
+                    <div class="wp-card-head">
+                        <h2 class="wp-card-title">
+                            🪪 Worker Information
+                        </h2>
+                    </div>
 
+                    <div class="wp-card-body">
+                        <div class="wp-worker-info">
+                            <div class="wp-worker-info-row">
+                                <span>Worker ID</span>
+                                <strong>{{ worker.worker_id }}</strong>
+                            </div>
+
+                            <div class="wp-worker-info-row">
+                                <span>Category</span>
+                                <strong>{{ worker.get_skill_category_display }}</strong>
+                            </div>
+
+                            <div class="wp-worker-info-row">
+                                <span>Experience</span>
+                                <strong>{{ worker.experience }}</strong>
+                            </div>
+
+                            <div class="wp-worker-info-row">
+                                <span>Work Area</span>
+                                <strong>
+                                    {% if worker.area %}
+                                        {{ worker.area }}
+                                    {% else %}
+                                        Not added
+                                    {% endif %}
+                                </strong>
+                            </div>
+
+                            <div class="wp-worker-info-row">
+                                <span>City</span>
+                                <strong>
+                                    {% if worker.city %}
+                                        {{ worker.city }}
+                                    {% else %}
+                                        Not added
+                                    {% endif %}
+                                </strong>
+                            </div>
+
+                            <div class="wp-worker-info-row">
+                                <span>Joined On</span>
+                                <strong>{{ worker.created_at|date:"M Y" }}</strong>
+                            </div>
+
+                            <div class="wp-worker-info-row">
+                                <span>Verification</span>
+                                <strong>
+                                    {% if worker.is_approved %}
+                                        ✓ Verified Worker
+                                    {% else %}
+                                        {{ worker.verification_status }}
+                                    {% endif %}
+                                </strong>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {% if is_owner %}
+                    <section class="wp-card">
+                        <div class="wp-card-head">
+                            <h2 class="wp-card-title">
+                                ⚡ Quick Actions
+                            </h2>
+                        </div>
+
+                        <div class="wp-card-body">
+                            <div class="wp-quick-grid">
+                                <a class="wp-quick" href="{% url 'worker_dashboard' %}">
+                                    View My Jobs
+                                </a>
+
+                                <a class="wp-quick" href="{% url 'public_leaderboard' %}">
+                                    Leaderboard
+                                </a>
+
+                                <a class="wp-quick" href="{% url 'worker_rewards' %}">
+                                    My Rewards
+                                </a>
+
+                                <a class="wp-quick" href="{% url 'worker_settings' %}">
+                                    Settings
+                                </a>
+                            </div>
+                        </div>
+                    </section>
+                {% endif %}
+            </div>
         </div>
+    </main>
 
+    <!-- =====================================================
+         EDIT PROFILE MODAL - OWNER ONLY
+    ====================================================== -->
+    {% if is_owner %}
+        <div class="wp-modal-backdrop" id="editProfileModal">
+            <div
+                class="wp-modal"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="editProfileTitle"
+            >
+                <div class="wp-modal-head">
+                    <h2 id="editProfileTitle">Edit Worker Profile</h2>
 
-        <div class="grid">
-
-
-            <div class="box">
-
-                <div class="box-label">
-                    Username
+                    <button
+                        class="wp-modal-close"
+                        type="button"
+                        id="closeEditProfile"
+                        aria-label="Close"
+                    >
+                        ×
+                    </button>
                 </div>
-
-                <div class="value">
-                    @{{ worker.user.username }}
-                </div>
-
-            </div>
-
-
-            <div class="box">
-
-                <div class="box-label">
-                    Experience
-                </div>
-
-                <div class="value">
-                    {{ worker.experience }}
-                </div>
-
-            </div>
-
-
-            <div class="box">
-
-                <div class="box-label">
-                    Phone
-                </div>
-
-                <div class="value">
-                    {{ worker.phone }}
-                </div>
-
-            </div>
-
-
-            <div class="box">
-
-                <div class="box-label">
-                    Email
-                </div>
-
-                <div class="value">
-                    {{ worker.user.email }}
-                </div>
-
-            </div>
-
-
-            <div class="box">
-
-                <div class="box-label">
-                    Joined
-                </div>
-
-                <div class="value">
-                    {{ worker.created_at|date:"d M Y" }}
-                </div>
-
-            </div>
-
-
-            <div class="box">
-
-                <div class="box-label">
-                    Worker Status
-                </div>
-
-                <div class="value">
-
-                    {% if worker.is_approved %}
-                        Approved
-                    {% else %}
-                        Not Approved
-                    {% endif %}
-
-                </div>
-
-            </div>
-
-
-        </div>
-
-
-        {% if is_owner %}
-
-            <div class="edit-section">
-
-                <h2>
-                    <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4z"></path></svg> Edit My Worker Profile
-                </h2>
-
 
                 <form
+                    class="wp-edit-form"
                     method="post"
                     enctype="multipart/form-data"
                 >
-
                     {% csrf_token %}
-<input id="galleryPhotoInput" class="hidden-photo-input" type="file" name="photo" accept="image/*">
-<input id="freeAvatarInput" type="hidden" name="free_avatar" value="">
-<input id="cameraPhotoInput" class="hidden-photo-input" type="file" accept="image/*" capture="environment">
-<div class="form-grid">
 
+                    <input
+                        type="hidden"
+                        name="free_avatar"
+                        id="freeAvatarInput"
+                        value=""
+                    >
 
-                        <div class="form-group">
-
-                            <label class="label">
-                                Worker ID
-                            </label>
-
-                            <input
-                                class="input readonly"
-                                value="{{ worker.worker_id }}"
-                                readonly
-                            >
-
-                        </div>
-
-
-                        <div class="form-group">
-
-                            <label class="label">
-                                Username
-                            </label>
+                    <div class="wp-form-grid">
+                        <div class="wp-field">
+                            <label for="id_name">Name</label>
 
                             <input
-                                class="input readonly"
-                                value="{{ worker.user.username }}"
-                                readonly
-                            >
-
-                        </div>
-
-
-                        <div class="form-group">
-
-                            <label class="label">
-                                Name
-                            </label>
-
-                            <input
-                                class="input"
+                                id="id_name"
                                 type="text"
                                 name="name"
                                 value="{{ worker.name }}"
                                 required
                             >
-
                         </div>
 
-
-                        <div class="form-group">
-
-                            <label class="label">
-                                Email
-                            </label>
+                        <div class="wp-field">
+                            <label for="id_email">Email</label>
 
                             <input
-                                class="input"
+                                id="id_email"
                                 type="email"
                                 name="email"
                                 value="{{ worker.user.email }}"
                                 required
                             >
-
                         </div>
 
-
-                        <div class="form-group">
-
-                            <label class="label">
-                                Phone Number
-                            </label>
+                        <div class="wp-field">
+                            <label for="id_phone">Phone</label>
 
                             <input
-                                class="input"
-                                type="tel"
+                                id="id_phone"
+                                type="text"
                                 name="phone"
-                                maxlength="15"
                                 value="{{ worker.phone }}"
+                                maxlength="15"
                                 required
                             >
-
                         </div>
 
-
-                        <div class="form-group">
-
-                            <label class="label">
-                                Experience
-                            </label>
+                        <div class="wp-field">
+                            <label for="id_experience">Experience</label>
 
                             <select
-                                class="input"
+                                id="id_experience"
                                 name="experience"
                                 required
                             >
-
                                 {% for value, label in experience_choices %}
-
                                     <option
                                         value="{{ value }}"
-                                        {% if worker.experience == value %}
-                                            selected
-                                        {% endif %}
+                                        {% if worker.experience == value %}selected{% endif %}
                                     >
                                         {{ label }}
                                     </option>
-
                                 {% endfor %}
-
                             </select>
-
                         </div>
 
+                        <div class="wp-field full">
+                            <label>Profile Photo</label>
 
+                            <div class="wp-photo-actions">
+                                <label
+                                    class="wp-small-btn"
+                                    for="id_photo"
+                                >
+                                    Upload Photo
+                                </label>
+
+                                <button
+                                    class="wp-small-btn"
+                                    type="button"
+                                    id="toggleAvatarPicker"
+                                >
+                                    Choose Free Avatar
+                                </button>
+
+                                <a
+                                    class="wp-small-btn"
+                                    href="{% url 'worker_settings' %}"
+                                >
+                                    Premium Avatars
+                                </a>
+                            </div>
+
+                            <input
+                                id="id_photo"
+                                type="file"
+                                name="photo"
+                                accept="image/*"
+                                style="display:none;"
+                            >
+
+                            <div
+                                class="wp-avatar-picker"
+                                id="avatarPicker"
+                            ></div>
+                        </div>
                     </div>
 
+                    <div class="wp-form-actions">
+                        <button
+                            class="wp-btn"
+                            type="button"
+                            id="cancelEditProfile"
+                        >
+                            Cancel
+                        </button>
 
-                    <button
-                        type="submit"
-                        class="btn btn-primary"
-                        style="
-                            width:100%;
-                            margin-top:18px;
-                        "
-                    >
-                        <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h12l2 2v16H5z"></path><path d="M8 3v6h8V3"></path><path d="M8 21v-7h8v7"></path></svg> Save Worker Profile
-                    </button>
-
+                        <button
+                            class="wp-btn primary"
+                            type="submit"
+                        >
+                            Save Changes
+                        </button>
+                    </div>
                 </form>
-
             </div>
-
-        {% endif %}
-
-
-        <div class="actions">
-
-            {% if is_owner %}
-
-                <a
-                    class="btn btn-dark"
-                    href="{% url 'worker_dashboard' %}"
-                >
-                    ← Dashboard
-                </a>
-
-            {% else %}
-
-                <a
-                    class="btn btn-primary"
-                    href="{% url 'submit_complaint' %}"
-                >
-                    <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5h6"></path><path d="M9 3h6a2 2 0 0 1 2 2v1h2a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h2V5a2 2 0 0 1 2-2z"></path></svg> Submit Complaint
-                </a>
-
-                <a
-                    class="btn btn-dark"
-                    href="{% url 'worker_details' %}"
-                >
-                    ← Workers
-                </a>
-
-            {% endif %}
-
         </div>
+    {% endif %}
 
+    <script>
+        (function () {
+            "use strict";
 
-    </div>
+            const modal = document.getElementById("editProfileModal");
 
-</main>
+            if (!modal) return;
 
+            const openMain = document.getElementById("openEditProfile");
+            const openButtons = document.querySelectorAll("[data-open-edit]");
+            const closeBtn = document.getElementById("closeEditProfile");
+            const cancelBtn = document.getElementById("cancelEditProfile");
+            const pickerBtn = document.getElementById("toggleAvatarPicker");
+            const picker = document.getElementById("avatarPicker");
+            const avatarInput = document.getElementById("freeAvatarInput");
+            const photoInput = document.getElementById("id_photo");
 
-
-<div class="avatar-modal-backdrop" id="freeAvatarModal" aria-hidden="true">
-    <div class="avatar-modal" role="dialog" aria-modal="true" aria-labelledby="freeAvatarTitle">
-        <div class="avatar-modal-head">
-            <h3 id="freeAvatarTitle">Choose Free Avatar</h3>
-            <button type="button" class="avatar-modal-close" id="freeAvatarClose" aria-label="Close">×</button>
-        </div>
-        <div class="avatar-grid">
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_01">
-                <img src="{% static 'complaints/avatars/free/avatar_01.png' %}" alt="Free avatar 1">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_02">
-                <img src="{% static 'complaints/avatars/free/avatar_02.png' %}" alt="Free avatar 2">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_03">
-                <img src="{% static 'complaints/avatars/free/avatar_03.png' %}" alt="Free avatar 3">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_04">
-                <img src="{% static 'complaints/avatars/free/avatar_04.png' %}" alt="Free avatar 4">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_05">
-                <img src="{% static 'complaints/avatars/free/avatar_05.png' %}" alt="Free avatar 5">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_06">
-                <img src="{% static 'complaints/avatars/free/avatar_06.png' %}" alt="Free avatar 6">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_07">
-                <img src="{% static 'complaints/avatars/free/avatar_07.png' %}" alt="Free avatar 7">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_08">
-                <img src="{% static 'complaints/avatars/free/avatar_08.png' %}" alt="Free avatar 8">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_09">
-                <img src="{% static 'complaints/avatars/free/avatar_09.png' %}" alt="Free avatar 9">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_10">
-                <img src="{% static 'complaints/avatars/free/avatar_10.png' %}" alt="Free avatar 10">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_11">
-                <img src="{% static 'complaints/avatars/free/avatar_11.png' %}" alt="Free avatar 11">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_12">
-                <img src="{% static 'complaints/avatars/free/avatar_12.png' %}" alt="Free avatar 12">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_13">
-                <img src="{% static 'complaints/avatars/free/avatar_13.png' %}" alt="Free avatar 13">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_14">
-                <img src="{% static 'complaints/avatars/free/avatar_14.png' %}" alt="Free avatar 14">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_15">
-                <img src="{% static 'complaints/avatars/free/avatar_15.png' %}" alt="Free avatar 15">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_16">
-                <img src="{% static 'complaints/avatars/free/avatar_16.png' %}" alt="Free avatar 16">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_17">
-                <img src="{% static 'complaints/avatars/free/avatar_17.png' %}" alt="Free avatar 17">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_18">
-                <img src="{% static 'complaints/avatars/free/avatar_18.png' %}" alt="Free avatar 18">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_19">
-                <img src="{% static 'complaints/avatars/free/avatar_19.png' %}" alt="Free avatar 19">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_20">
-                <img src="{% static 'complaints/avatars/free/avatar_20.png' %}" alt="Free avatar 20">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_21">
-                <img src="{% static 'complaints/avatars/free/avatar_21.png' %}" alt="Free avatar 21">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_22">
-                <img src="{% static 'complaints/avatars/free/avatar_22.png' %}" alt="Free avatar 22">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_23">
-                <img src="{% static 'complaints/avatars/free/avatar_23.png' %}" alt="Free avatar 23">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_24">
-                <img src="{% static 'complaints/avatars/free/avatar_24.png' %}" alt="Free avatar 24">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_25">
-                <img src="{% static 'complaints/avatars/free/avatar_25.png' %}" alt="Free avatar 25">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_26">
-                <img src="{% static 'complaints/avatars/free/avatar_26.png' %}" alt="Free avatar 26">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_27">
-                <img src="{% static 'complaints/avatars/free/avatar_27.png' %}" alt="Free avatar 27">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_28">
-                <img src="{% static 'complaints/avatars/free/avatar_28.png' %}" alt="Free avatar 28">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_29">
-                <img src="{% static 'complaints/avatars/free/avatar_29.png' %}" alt="Free avatar 29">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_30">
-                <img src="{% static 'complaints/avatars/free/avatar_30.png' %}" alt="Free avatar 30">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_31">
-                <img src="{% static 'complaints/avatars/free/avatar_31.png' %}" alt="Free avatar 31">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_32">
-                <img src="{% static 'complaints/avatars/free/avatar_32.png' %}" alt="Free avatar 32">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_33">
-                <img src="{% static 'complaints/avatars/free/avatar_33.png' %}" alt="Free avatar 33">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_34">
-                <img src="{% static 'complaints/avatars/free/avatar_34.png' %}" alt="Free avatar 34">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_35">
-                <img src="{% static 'complaints/avatars/free/avatar_35.png' %}" alt="Free avatar 35">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_36">
-                <img src="{% static 'complaints/avatars/free/avatar_36.png' %}" alt="Free avatar 36">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_37">
-                <img src="{% static 'complaints/avatars/free/avatar_37.png' %}" alt="Free avatar 37">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_38">
-                <img src="{% static 'complaints/avatars/free/avatar_38.png' %}" alt="Free avatar 38">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_39">
-                <img src="{% static 'complaints/avatars/free/avatar_39.png' %}" alt="Free avatar 39">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_40">
-                <img src="{% static 'complaints/avatars/free/avatar_40.png' %}" alt="Free avatar 40">
-            </button>
-        </div>
-        <p class="avatar-modal-note">Select an avatar, then tap Save Profile to apply it permanently.</p>
-    </div>
-</div>
-
-
-<div class="avatar-modal-backdrop" id="premiumAvatarModal" aria-hidden="true">
-    <div class="avatar-modal" role="dialog" aria-modal="true" aria-labelledby="premiumAvatarTitle">
-        <div class="avatar-modal-head">
-            <h3 id="premiumAvatarTitle" class="premium-avatar-title">👑 Choose <span class="gold">Premium Avatar</span></h3>
-            <button type="button" class="avatar-modal-close" id="premiumAvatarClose" aria-label="Close">×</button>
-        </div>
-        <div class="avatar-grid">
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_01" aria-label="Premium avatar 1">
-                <span class="premium-crown">👑</span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_01.png' %}" alt="Premium avatar 1">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_02" aria-label="Premium avatar 2">
-                <span class="premium-crown">👑</span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_02.png' %}" alt="Premium avatar 2">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_03" aria-label="Premium avatar 3">
-                <span class="premium-crown">👑</span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_03.png' %}" alt="Premium avatar 3">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_04" aria-label="Premium avatar 4">
-                <span class="premium-crown">👑</span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_04.png' %}" alt="Premium avatar 4">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_05" aria-label="Premium avatar 5">
-                <span class="premium-crown">👑</span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_05.png' %}" alt="Premium avatar 5">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_06" aria-label="Premium avatar 6">
-                <span class="premium-crown">👑</span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_06.png' %}" alt="Premium avatar 6">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_07" aria-label="Premium avatar 7">
-                <span class="premium-crown">👑</span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_07.png' %}" alt="Premium avatar 7">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_08" aria-label="Premium avatar 8">
-                <span class="premium-crown">👑</span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_08.png' %}" alt="Premium avatar 8">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_09" aria-label="Premium avatar 9">
-                <span class="premium-crown">👑</span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_09.png' %}" alt="Premium avatar 9">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_10" aria-label="Premium avatar 10">
-                <span class="premium-crown">👑</span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_10.png' %}" alt="Premium avatar 10">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_11" aria-label="Premium avatar 11">
-                <span class="premium-crown">👑</span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_11.png' %}" alt="Premium avatar 11">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_12" aria-label="Premium avatar 12">
-                <span class="premium-crown">👑</span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_12.png' %}" alt="Premium avatar 12">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_13" aria-label="Premium avatar 13">
-                <span class="premium-crown">👑</span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_13.png' %}" alt="Premium avatar 13">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_14" aria-label="Premium avatar 14">
-                <span class="premium-crown">👑</span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_14.png' %}" alt="Premium avatar 14">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_15" aria-label="Premium avatar 15">
-                <span class="premium-crown">👑</span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_15.png' %}" alt="Premium avatar 15">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_16" aria-label="Premium avatar 16">
-                <span class="premium-crown">👑</span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_16.png' %}" alt="Premium avatar 16">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_17" aria-label="Premium avatar 17">
-                <span class="premium-crown">👑</span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_17.png' %}" alt="Premium avatar 17">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_18" aria-label="Premium avatar 18">
-                <span class="premium-crown">👑</span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_18.png' %}" alt="Premium avatar 18">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_19" aria-label="Premium avatar 19">
-                <span class="premium-crown">👑</span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_19.png' %}" alt="Premium avatar 19">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_20" aria-label="Premium avatar 20">
-                <span class="premium-crown">👑</span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_20.png' %}" alt="Premium avatar 20">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_21" aria-label="Premium avatar 21">
-                <span class="premium-crown">👑</span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_21.png' %}" alt="Premium avatar 21">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_22" aria-label="Premium avatar 22">
-                <span class="premium-crown">👑</span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_22.png' %}" alt="Premium avatar 22">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_23" aria-label="Premium avatar 23">
-                <span class="premium-crown">👑</span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_23.png' %}" alt="Premium avatar 23">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_24" aria-label="Premium avatar 24">
-                <span class="premium-crown">👑</span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_24.png' %}" alt="Premium avatar 24">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_25" aria-label="Premium avatar 25">
-                <span class="premium-crown">👑</span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_25.png' %}" alt="Premium avatar 25">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_26" aria-label="Premium avatar 26">
-                <span class="premium-crown">👑</span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_26.png' %}" alt="Premium avatar 26">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_27" aria-label="Premium avatar 27">
-                <span class="premium-crown">👑</span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_27.png' %}" alt="Premium avatar 27">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_28" aria-label="Premium avatar 28">
-                <span class="premium-crown">👑</span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_28.png' %}" alt="Premium avatar 28">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_29" aria-label="Premium avatar 29">
-                <span class="premium-crown">👑</span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_29.png' %}" alt="Premium avatar 29">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_30" aria-label="Premium avatar 30">
-                <span class="premium-crown">👑</span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_30.png' %}" alt="Premium avatar 30">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_31" aria-label="Premium avatar 31">
-                <span class="premium-crown">👑</span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_31.png' %}" alt="Premium avatar 31">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_32" aria-label="Premium avatar 32">
-                <span class="premium-crown">👑</span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_32.png' %}" alt="Premium avatar 32">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_33" aria-label="Premium avatar 33">
-                <span class="premium-crown">👑</span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_33.png' %}" alt="Premium avatar 33">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_34" aria-label="Premium avatar 34">
-                <span class="premium-crown">👑</span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_34.png' %}" alt="Premium avatar 34">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_35" aria-label="Premium avatar 35">
-                <span class="premium-crown">👑</span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_35.png' %}" alt="Premium avatar 35">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_36" aria-label="Premium avatar 36">
-                <span class="premium-crown">👑</span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_36.png' %}" alt="Premium avatar 36">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_37" aria-label="Premium avatar 37">
-                <span class="premium-crown">👑</span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_37.png' %}" alt="Premium avatar 37">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_38" aria-label="Premium avatar 38">
-                <span class="premium-crown">👑</span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_38.png' %}" alt="Premium avatar 38">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_39" aria-label="Premium avatar 39">
-                <span class="premium-crown">👑</span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_39.png' %}" alt="Premium avatar 39">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_40" aria-label="Premium avatar 40">
-                <span class="premium-crown">👑</span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_40.png' %}" alt="Premium avatar 40">
-            </button>
-        </div>
-        <div class="premium-upgrade-box">
-            👑 Premium collection preview. Premium avatar selection will unlock with the Premium membership system.
-        </div>
-    </div>
-</div>
-
-<script>
-(function(){
-    const menuButton = document.getElementById('photoMenuButton');
-    const menu = document.getElementById('photoMenu');
-    const galleryInput = document.getElementById('galleryPhotoInput');
-    const cameraInput = document.getElementById('cameraPhotoInput');
-    const avatarInput = document.getElementById('freeAvatarInput');
-    const avatarPreview = document.getElementById('profileAvatar');
-    const noteBox = document.getElementById('photoPreviewNote');
-    const modal = document.getElementById('freeAvatarModal');
-    const modalClose = document.getElementById('freeAvatarClose');
-    const premiumModal = document.getElementById('premiumAvatarModal');
-    const premiumModalClose = document.getElementById('premiumAvatarClose');
-
-    if (!menuButton || !menu || !galleryInput || !avatarPreview) return;
-
-    function showNote(text){
-        if (!noteBox) return;
-        noteBox.textContent = text;
-        noteBox.classList.add('show');
-    }
-
-    function previewFile(file){
-        if (!file) return;
-
-        if (!file.type.startsWith('image/')){
-            showNote('Please choose an image file.');
-            return;
-        }
-
-        if (file.size > 5 * 1024 * 1024){
-            showNote('Maximum photo size is 5 MB.');
-            return;
-        }
-
-        if (avatarInput) avatarInput.value = '';
-
-        const reader = new FileReader();
-        reader.onload = function(event){
-            avatarPreview.innerHTML =
-                '<img src="' + event.target.result + '" alt="Profile photo preview">';
-            showNote('Photo selected. Save Profile to apply it.');
-        };
-        reader.readAsDataURL(file);
-    }
-
-    function openAvatarModal(){
-        if (!modal) return;
-        modal.classList.add('open');
-        modal.setAttribute('aria-hidden', 'false');
-        menu.classList.remove('open');
-    }
-
-    function closeAvatarModal(){
-        if (!modal) return;
-        modal.classList.remove('open');
-        modal.setAttribute('aria-hidden', 'true');
-    }
-    function openPremiumAvatarModal(){
-        if (!premiumModal) return;
-        premiumModal.classList.add('open');
-        premiumModal.setAttribute('aria-hidden', 'false');
-        menu.classList.remove('open');
-    }
-
-    function closePremiumAvatarModal(){
-        if (!premiumModal) return;
-        premiumModal.classList.remove('open');
-        premiumModal.setAttribute('aria-hidden', 'true');
-    }
-
-    menuButton.addEventListener('click', function(){
-        menu.classList.toggle('open');
-    });
-
-    menu.querySelectorAll('[data-a]').forEach(function(button){
-        button.addEventListener('click', function(){
-            const action = button.dataset.a;
-
-            if (action === 'gallery'){
-                galleryInput.removeAttribute('capture');
-                galleryInput.click();
-                menu.classList.remove('open');
+            function openModal() {
+                modal.classList.add("is-open");
+                document.body.style.overflow = "hidden";
             }
 
-            if (action === 'camera'){
-                if (cameraInput) cameraInput.click();
-                menu.classList.remove('open');
+            function closeModal() {
+                modal.classList.remove("is-open");
+                document.body.style.overflow = "";
             }
 
-            if (action === 'avatar'){
-                openAvatarModal();
+            if (openMain) {
+                openMain.addEventListener("click", openModal);
             }
 
-            if (action === 'premium'){
-                openPremiumAvatarModal();
-            }
-        });
-    });
-
-    galleryInput.addEventListener('change', function(){
-        previewFile(galleryInput.files[0]);
-    });
-
-    if (cameraInput){
-        cameraInput.addEventListener('change', function(){
-            if (!cameraInput.files[0]) return;
-
-            try{
-                const transfer = new DataTransfer();
-                transfer.items.add(cameraInput.files[0]);
-                galleryInput.files = transfer.files;
-            }catch(error){
-                // Some WebViews do not allow assigning FileList.
-            }
-
-            previewFile(cameraInput.files[0]);
-        });
-    }
-
-    if (modalClose) modalClose.addEventListener('click', closeAvatarModal);
-
-    if (premiumModalClose) premiumModalClose.addEventListener('click', closePremiumAvatarModal);
-
-    if (premiumModal){
-        premiumModal.addEventListener('click', function(event){
-            if (event.target === premiumModal) closePremiumAvatarModal();
-        });
-
-        premiumModal.querySelectorAll('.premium-avatar-choice').forEach(function(choice){
-            choice.addEventListener('click', function(){
-                showNote('👑 This avatar is Premium. Premium membership unlock will be connected in the Premium phase.');
+            openButtons.forEach(function (button) {
+                button.addEventListener("click", openModal);
             });
-        });
-    }
 
+            if (closeBtn) {
+                closeBtn.addEventListener("click", closeModal);
+            }
 
-    if (modal){
-        modal.addEventListener('click', function(event){
-            if (event.target === modal) closeAvatarModal();
-        });
+            if (cancelBtn) {
+                cancelBtn.addEventListener("click", closeModal);
+            }
 
-        modal.querySelectorAll('.avatar-choice').forEach(function(choice){
-            choice.addEventListener('click', function(){
-                const avatarId = choice.dataset.avatarId;
-                const image = choice.querySelector('img');
+            modal.addEventListener("click", function (event) {
+                if (event.target === modal) {
+                    closeModal();
+                }
+            });
 
-                modal.querySelectorAll('.avatar-choice').forEach(function(item){
-                    item.classList.remove('selected');
+            document.addEventListener("keydown", function (event) {
+                if (event.key === "Escape") {
+                    closeModal();
+                }
+            });
+
+            if (pickerBtn && picker && avatarInput) {
+                const staticPrefix =
+                    "{% static 'complaints/avatars/free/' %}";
+
+                for (let i = 1; i <= 40; i += 1) {
+                    const number = String(i).padStart(2, "0");
+                    const id = "avatar_" + number;
+
+                    const button = document.createElement("button");
+                    button.type = "button";
+                    button.className = "wp-avatar-choice";
+                    button.dataset.avatarId = id;
+
+                    const image = document.createElement("img");
+                    image.src = staticPrefix + id + ".png";
+                    image.alt = "Free avatar " + number;
+
+                    button.appendChild(image);
+
+                    button.addEventListener("click", function () {
+                        picker
+                            .querySelectorAll(".wp-avatar-choice")
+                            .forEach(function (item) {
+                                item.classList.remove("is-selected");
+                            });
+
+                        button.classList.add("is-selected");
+                        avatarInput.value = id;
+
+                        if (photoInput) {
+                            photoInput.value = "";
+                        }
+                    });
+
+                    picker.appendChild(button);
+                }
+
+                pickerBtn.addEventListener("click", function () {
+                    picker.classList.toggle("is-open");
                 });
-                choice.classList.add('selected');
+            }
 
-                if (avatarInput) avatarInput.value = avatarId;
-                galleryInput.value = '';
-                if (cameraInput) cameraInput.value = '';
+            if (photoInput && avatarInput) {
+                photoInput.addEventListener("change", function () {
+                    if (photoInput.files.length) {
+                        avatarInput.value = "";
 
-                avatarPreview.innerHTML =
-                    '<img src="' + image.src + '" alt="Selected free avatar">';
-
-                showNote('Free avatar selected. Save Profile to apply it.');
-                closeAvatarModal();
-            });
-        });
-    }
-})();
-</script>
-
+                        if (picker) {
+                            picker
+                                .querySelectorAll(".wp-avatar-choice")
+                                .forEach(function (item) {
+                                    item.classList.remove("is-selected");
+                                });
+                        }
+                    }
+                });
+            }
+        })();
+    </script>
 </body>
-
 </html>
