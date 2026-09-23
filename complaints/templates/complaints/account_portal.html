@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Welcome | Smart Complaint</title>
+
+    {% include 'complaints/base_style.html' %}
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      
+      html,
+      body {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+      }
+      
+      :root {
+        --ap-navy: #102457;
+        --ap-text: #17233f;
+        --ap-muted: #65758f;
+        --ap-line: #d8e5f4;
+        --ap-blue: #1d7df2;
+        --ap-sky: #2aa9f6;
+        --ap-purple: #7257e8;
+        --ap-purple-2: #9b7df2;
+        --ap-green: #0aa874;
+        --ap-green-2: #18bb83;
+        --ap-orange: #ed8c22;
+        --ap-orange-2: #f7b34d;
+      }
+      
+      .ap-page {
+        width: min(1160px, calc(100% - 16px));
+        margin: 0 auto;
+        padding: calc(12px + env(safe-area-inset-top, 0px)) 0 calc(38px + env(safe-area-inset-bottom, 0px));
+      }
+      
+      .ap-topbar {
+        position: sticky;
+        top: 6px;
+        z-index: 80;
+        width: min(1160px, calc(100% - 16px));
+        min-height: 66px;
+        margin: calc(6px + env(safe-area-inset-top, 0px)) auto 14px;
+        padding: 10px 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        border: 1px solid var(--ap-line);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.97);
+        box-shadow: 0 12px 32px rgba(31, 70, 126, 0.11);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+      }
+      
+      .ap-brand {
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        gap: 11px;
+      }
+      
+      .ap-brand-icon {
+        width: 43px;
+        height: 43px;
+        flex: 0 0 43px;
+        display: grid;
+        place-items: center;
+        border-radius: 13px;
+        color: #fff;
+        background: linear-gradient(135deg, var(--ap-blue), var(--ap-sky));
+        box-shadow: 0 9px 22px rgba(29, 125, 242, 0.23);
+      }
+      
+      .ap-icon {
+        width: 21px;
+        height: 21px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      
+      .ap-brand h1 {
+        margin: 0;
+        color: var(--ap-navy);
+        font-size: 18px;
+        line-height: 1.15;
+        font-weight: 950;
+      }
+      
+      .ap-brand p {
+        margin: 3px 0 0;
+        color: #687892;
+        font-size: 10px;
+      }
+      
+      .ap-secure {
+        min-height: 38px;
+        padding: 7px 10px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        border: 1px solid #d4e7fb;
+        border-radius: 999px;
+        background: #f2f8ff;
+        color: #2d5d96;
+        font-size: 10px;
+        font-weight: 900;
+        white-space: nowrap;
+      }
+      
+      .ap-secure .ap-icon {
+        width: 16px;
+        height: 16px;
+      }
+      
+      .ap-hero {
+        position: relative;
+        overflow: hidden;
+        padding: 25px;
+        border: 1px solid var(--ap-line);
+        border-radius: 23px;
+        background: radial-gradient(circle at 88% 18%, rgba(42, 169, 246, 0.16), transparent 30%), radial-gradient(circle at 18% 110%, rgba(114, 87, 232, 0.1), transparent 35%), rgba(255, 255, 255, 0.97);
+        box-shadow: 0 18px 44px rgba(31, 68, 122, 0.1);
+      }
+      
+      .ap-kicker {
+        width: fit-content;
+        margin-bottom: 11px;
+        padding: 6px 9px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border: 1px solid #cfe4fb;
+        border-radius: 999px;
+        background: #f1f8ff;
+        color: #2c619e;
+        font-size: 9px;
+        font-weight: 950;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+      }
+      
+      .ap-kicker .ap-icon {
+        width: 15px;
+        height: 15px;
+      }
+      
+      .ap-hero h2 {
+        max-width: 800px;
+        margin: 0;
+        color: var(--ap-navy);
+        font-size: clamp(28px, 5vw, 47px);
+        line-height: 1.04;
+        letter-spacing: -0.035em;
+        font-weight: 950;
+      }
+      
+      .ap-hero > p {
+        max-width: 770px;
+        margin: 12px 0 0;
+        color: var(--ap-muted);
+        font-size: 13px;
+        line-height: 1.65;
+      }
+      
+      .ap-section-head {
+        margin: 22px 0 12px;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      
+      .ap-section-head h3 {
+        margin: 0;
+        color: var(--ap-navy);
+        font-size: 20px;
+        font-weight: 950;
+      }
+      
+      .ap-section-head p {
+        margin: 4px 0 0;
+        color: var(--ap-muted);
+        font-size: 11px;
+        line-height: 1.5;
+      }
+      
+      .ap-role-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+      
+      .ap-role {
+        position: relative;
+        min-width: 0;
+        min-height: 320px;
+        padding: 19px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        overflow: hidden;
+        border: 1px solid var(--ap-line);
+        border-radius: 19px;
+        background: rgba(255, 255, 255, 0.98);
+        box-shadow: 0 13px 32px rgba(31, 68, 122, 0.075);
+      }
+      
+      .ap-role::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+      }
+      
+      .ap-role.citizen {
+        background: radial-gradient(circle at 92% 5%, rgba(29, 125, 242, 0.13), transparent 34%), #fbfdff;
+      }
+      
+      .ap-role.citizen::before {
+        background: linear-gradient(90deg, var(--ap-blue), var(--ap-sky));
+      }
+      
+      .ap-role.worker {
+        background: radial-gradient(circle at 92% 5%, rgba(114, 87, 232, 0.13), transparent 34%), #fdfcff;
+      }
+      
+      .ap-role.worker::before {
+        background: linear-gradient(90deg, var(--ap-purple), var(--ap-purple-2));
+      }
+      
+      .ap-role.company {
+        background: radial-gradient(circle at 92% 5%, rgba(10, 168, 116, 0.13), transparent 34%), #fbfffd;
+      }
+      
+      .ap-role.company::before {
+        background: linear-gradient(90deg, var(--ap-green), var(--ap-green-2));
+      }
+      
+      .ap-role.shop {
+        background: radial-gradient(circle at 92% 5%, rgba(237, 140, 34, 0.14), transparent 34%), #fffdf9;
+      }
+      
+      .ap-role.shop::before {
+        background: linear-gradient(90deg, var(--ap-orange), var(--ap-orange-2));
+      }
+      
+      .ap-role-icon {
+        width: 52px;
+        height: 52px;
+        display: grid;
+        place-items: center;
+        border-radius: 15px;
+        color: #fff;
+        box-shadow: 0 10px 22px rgba(22, 67, 120, 0.14);
+      }
+      
+      .citizen .ap-role-icon {
+        background: linear-gradient(135deg, var(--ap-blue), var(--ap-sky));
+      }
+      
+      .worker .ap-role-icon {
+        background: linear-gradient(135deg, var(--ap-purple), var(--ap-purple-2));
+      }
+      
+      .company .ap-role-icon {
+        background: linear-gradient(135deg, var(--ap-green), var(--ap-green-2));
+      }
+      
+      .shop .ap-role-icon {
+        background: linear-gradient(135deg, var(--ap-orange), var(--ap-orange-2));
+      }
+      
+      .ap-role h4 {
+        margin: 14px 0 6px;
+        color: var(--ap-navy);
+        font-size: 22px;
+        font-weight: 950;
+      }
+      
+      .ap-role-copy {
+        margin: 0;
+        color: #61728e;
+        font-size: 12px;
+        line-height: 1.6;
+      }
+      
+      .ap-role-points {
+        display: grid;
+        gap: 7px;
+        margin-top: 14px;
+      }
+      
+      .ap-point {
+        display: flex;
+        align-items: flex-start;
+        gap: 7px;
+        color: #425775;
+        font-size: 10px;
+        line-height: 1.45;
+      }
+      
+      .ap-point .ap-icon {
+        width: 15px;
+        height: 15px;
+        flex: 0 0 15px;
+        margin-top: 1px;
+      }
+      
+      .citizen .ap-point .ap-icon {
+        color: var(--ap-blue);
+      }
+      .worker .ap-point .ap-icon {
+        color: var(--ap-purple);
+      }
+      .company .ap-point .ap-icon {
+        color: var(--ap-green);
+      }
+      .shop .ap-point .ap-icon {
+        color: var(--ap-orange);
+      }
+      
+      .ap-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 9px;
+        margin-top: 18px;
+      }
+      
+      .ap-btn {
+        min-height: 44px;
+        padding: 9px 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        border-radius: 11px;
+        font-size: 11px;
+        font-weight: 950;
+        text-align: center;
+        text-decoration: none;
+        transition: transform 0.16s ease, box-shadow 0.16s ease;
+      }
+      
+      .ap-btn:active {
+        transform: scale(0.985);
+      }
+      
+      .ap-btn.primary {
+        color: #fff;
+      }
+      
+      .citizen .ap-btn.primary {
+        background: linear-gradient(135deg, var(--ap-blue), var(--ap-sky));
+        box-shadow: 0 9px 20px rgba(29, 125, 242, 0.17);
+      }
+      
+      .worker .ap-btn.primary {
+        background: linear-gradient(135deg, var(--ap-purple), var(--ap-purple-2));
+        box-shadow: 0 9px 20px rgba(114, 87, 232, 0.17);
+      }
+      
+      .company .ap-btn.primary {
+        background: linear-gradient(135deg, var(--ap-green), var(--ap-green-2));
+        box-shadow: 0 9px 20px rgba(10, 168, 116, 0.17);
+      }
+      
+      .shop .ap-btn.primary {
+        background: linear-gradient(135deg, var(--ap-orange), var(--ap-orange-2));
+        box-shadow: 0 9px 20px rgba(237, 140, 34, 0.17);
+      }
+      
+      .ap-btn.secondary {
+        border: 1px solid #cedced;
+        background: #fff;
+        color: var(--ap-navy);
+      }
+      
+      .ap-trust-strip {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 9px;
+        margin-top: 14px;
+      }
+      
+      .ap-trust {
+        padding: 12px;
+        border: 1px solid #d9e5f3;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.93);
+      }
+      
+      .ap-trust .ap-icon {
+        color: var(--ap-blue);
+      }
+      
+      .ap-trust strong {
+        display: block;
+        margin-top: 7px;
+        color: #1d385f;
+        font-size: 11px;
+        font-weight: 950;
+      }
+      
+      .ap-trust small {
+        display: block;
+        margin-top: 4px;
+        color: #6b7c96;
+        font-size: 9px;
+        line-height: 1.45;
+      }
+      
+      @media (max-width: 800px) {
+        .ap-role-grid {
+          grid-template-columns: 1fr;
+        }
+      
+        .ap-trust-strip {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+      
+      @media (max-width: 600px) {
+        .ap-page,
+        .ap-topbar {
+          width: min(100% - 14px, 1160px);
+        }
+      
+        .ap-page {
+          padding-top: 7px;
+        }
+      
+        .ap-topbar {
+          top: 5px;
+          min-height: 60px;
+          margin-top: calc(5px + env(safe-area-inset-top, 0px));
+          border-radius: 15px;
+        }
+      
+        .ap-brand-icon {
+          width: 38px;
+          height: 38px;
+          flex-basis: 38px;
+        }
+      
+        .ap-brand h1 {
+          font-size: 15px;
+        }
+      
+        .ap-brand p {
+          font-size: 9px;
+        }
+      
+        .ap-secure span {
+          display: none;
+        }
+      
+        .ap-secure {
+          width: 38px;
+          min-height: 38px;
+          padding: 0;
+          border-radius: 11px;
+        }
+      
+        .ap-hero {
+          padding: 18px;
+          border-radius: 18px;
+        }
+      
+        .ap-hero h2 {
+          font-size: 29px;
+        }
+      
+        .ap-section-head {
+          margin-top: 18px;
+        }
+      
+        .ap-role {
+          min-height: 0;
+          padding: 16px;
+          border-radius: 17px;
+        }
+      
+        .ap-actions {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      
+      @media (max-width: 390px) {
+        .ap-brand p {
+          display: none;
+        }
+      
+        .ap-actions,
+        .ap-trust-strip {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="ap-topbar">
+      <div class="ap-brand">
+        <div class="ap-brand-icon">
+          <svg class="ap-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 21V7l8-4 8 4v14"></path>
+            <path d="M8 10h2M14 10h2M9 21v-4h6v4"></path>
+          </svg>
+        </div>
+
+        <div>
+          <h1>Smart Complaint</h1>
+          <p>Complaints, work opportunities and trusted hiring in one app.</p>
+        </div>
+      </div>
+
+      <div class="ap-secure">
+        <svg class="ap-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 3 20 6v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6Z"></path>
+          <path d="m8.5 12 2.2 2.2L15.8 9"></path>
+        </svg>
+        <span>Choose your account</span>
+      </div>
+    </header>
+
+    <main class="ap-page">
+      <section class="ap-hero">
+        <div class="ap-kicker">
+          <svg class="ap-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 3 20 6v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6Z"></path>
+          </svg>One Smart Complaint App
+        </div>
+
+        <h2>How do you want to use Smart Complaint?</h2>
+
+        <p>Choose the account that matches your role. Citizen complaints, worker complaint work, worker jobs, and business hiring stay separate so permissions and profiles do not get mixed.</p>
+      </section>
+
+      <div class="ap-section-head">
+        <div>
+          <h3>Choose Your Account Type</h3>
+          <p>Login to an existing account or create the correct new account.</p>
+        </div>
+      </div>
+
+      <section class="ap-role-grid">
+        <article class="ap-role citizen">
+          <div>
+            <div class="ap-role-icon">
+              <svg class="ap-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="8" r="4"></circle>
+                <path d="M4 21a8 8 0 0 1 16 0"></path>
+              </svg>
+            </div>
+
+            <h4>Citizen / User</h4>
+            <p class="ap-role-copy">Report civic complaints, track progress, chat when needed and build your citizen profile.</p>
+
+            <div class="ap-role-points">
+              <div class="ap-point">
+                <svg class="ap-icon" viewBox="0 0 24 24">
+                  <path d="m5 12 4 4L19 6"></path>
+                </svg>
+                <span>Submit and track complaints</span>
+              </div>
+              <div class="ap-point">
+                <svg class="ap-icon" viewBox="0 0 24 24">
+                  <path d="m5 12 4 4L19 6"></path>
+                </svg>
+                <span>Rate completed complaint work</span>
+              </div>
+              <div class="ap-point">
+                <svg class="ap-icon" viewBox="0 0 24 24">
+                  <path d="m5 12 4 4L19 6"></path>
+                </svg>
+                <span>Citizen profile and community features</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="ap-actions">
+            <a class="ap-btn primary" href="{% url 'login' %}">Citizen Login</a>
+            <a class="ap-btn secondary" href="{% url 'login' %}?mode=register">Citizen Register</a>
+          </div>
+        </article>
+
+        <article class="ap-role worker">
+          <div>
+            <div class="ap-role-icon">
+              <svg class="ap-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="8" r="4"></circle>
+                <path d="M4 21a8 8 0 0 1 16 0"></path>
+                <path d="M8 4h8"></path>
+              </svg>
+            </div>
+
+            <h4>Worker</h4>
+            <p class="ap-role-copy">Handle assigned civic complaints and use Job Connect to discover suitable private job opportunities.</p>
+
+            <div class="ap-role-points">
+              <div class="ap-point">
+                <svg class="ap-icon" viewBox="0 0 24 24">
+                  <path d="m5 12 4 4L19 6"></path>
+                </svg>
+                <span>Complaint worker dashboard</span>
+              </div>
+              <div class="ap-point">
+                <svg class="ap-icon" viewBox="0 0 24 24">
+                  <path d="m5 12 4 4L19 6"></path>
+                </svg>
+                <span>Verified worker profile and ratings</span>
+              </div>
+              <div class="ap-point">
+                <svg class="ap-icon" viewBox="0 0 24 24">
+                  <path d="m5 12 4 4L19 6"></path>
+                </svg>
+                <span>Find jobs through Job Connect</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="ap-actions">
+            <a class="ap-btn primary" href="{% url 'worker_login' %}">Worker Login</a>
+            <a class="ap-btn secondary" href="{% url 'worker_register' %}">Worker Register</a>
+          </div>
+        </article>
+
+        <article class="ap-role company">
+          <div>
+            <div class="ap-role-icon">
+              <svg class="ap-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M3 21h18M5 21V8h6v13M13 21V4h6v17"></path>
+                <path d="M7 11h2M7 15h2M15 8h2M15 12h2M15 16h2"></path>
+              </svg>
+            </div>
+
+            <h4>Company</h4>
+            <p class="ap-role-copy">For registered companies, offices and organizations that want to hire suitable workers.</p>
+
+            <div class="ap-role-points">
+              <div class="ap-point">
+                <svg class="ap-icon" viewBox="0 0 24 24">
+                  <path d="m5 12 4 4L19 6"></path>
+                </svg>
+                <span>Separate company account</span>
+              </div>
+              <div class="ap-point">
+                <svg class="ap-icon" viewBox="0 0 24 24">
+                  <path d="m5 12 4 4L19 6"></path>
+                </svg>
+                <span>Business proof and admin verification</span>
+              </div>
+              <div class="ap-point">
+                <svg class="ap-icon" viewBox="0 0 24 24">
+                  <path d="m5 12 4 4L19 6"></path>
+                </svg>
+                <span>Post jobs after approval</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="ap-actions">
+            <a class="ap-btn primary" href="{% url 'company_login' %}">Company Login</a>
+            <a class="ap-btn secondary" href="{% url 'company_register' %}">Company Register</a>
+          </div>
+        </article>
+
+        <article class="ap-role shop">
+          <div>
+            <div class="ap-role-icon">
+              <svg class="ap-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 9h16"></path>
+                <path d="M5 9 7 4h10l2 5"></path>
+                <path d="M5 9v11h14V9"></path>
+                <path d="M9 20v-6h6v6"></path>
+              </svg>
+            </div>
+
+            <h4>Shop Owner</h4>
+            <p class="ap-role-copy">For retail shops, restaurants, warehouses and local businesses looking for trusted workers.</p>
+
+            <div class="ap-role-points">
+              <div class="ap-point">
+                <svg class="ap-icon" viewBox="0 0 24 24">
+                  <path d="m5 12 4 4L19 6"></path>
+                </svg>
+                <span>Separate shop owner account</span>
+              </div>
+              <div class="ap-point">
+                <svg class="ap-icon" viewBox="0 0 24 24">
+                  <path d="m5 12 4 4L19 6"></path>
+                </svg>
+                <span>Shop details and verification proof</span>
+              </div>
+              <div class="ap-point">
+                <svg class="ap-icon" viewBox="0 0 24 24">
+                  <path d="m5 12 4 4L19 6"></path>
+                </svg>
+                <span>Hire workers after approval</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="ap-actions">
+            <a class="ap-btn primary" href="{% url 'shop_login' %}">Shop Login</a>
+            <a class="ap-btn secondary" href="{% url 'shop_register' %}">Shop Register</a>
+          </div>
+        </article>
+      </section>
+
+      <section class="ap-trust-strip">
+        <div class="ap-trust">
+          <svg class="ap-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 3 20 6v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6Z"></path>
+          </svg>
+          <strong>Separate Roles</strong>
+          <small>Citizen, Worker and Employer permissions stay separate.</small>
+        </div>
+
+        <div class="ap-trust">
+          <svg class="ap-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M5 3h14v18H5z"></path>
+            <path d="M8 8h8M8 12h6M8 16h7"></path>
+          </svg>
+          <strong>Business Verification</strong>
+          <small>Company and Shop accounts remain pending until review.</small>
+        </div>
+
+        <div class="ap-trust">
+          <svg class="ap-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="8" r="4"></circle>
+            <path d="M4 21a8 8 0 0 1 16 0"></path>
+          </svg>
+          <strong>Worker Trust</strong>
+          <small>Worker verification, ratings and work history support hiring.</small>
+        </div>
+
+        <div class="ap-trust">
+          <svg class="ap-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 5h16v12H8l-4 4Z"></path>
+          </svg>
+          <strong>Clear Access</strong>
+          <small>Every account type gets its own login and registration flow.</small>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

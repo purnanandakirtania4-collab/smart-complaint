@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Company Login | Smart Complaint</title>
+
+    {% include 'complaints/base_style.html' %}
+    {% include 'complaints/Job_Folder/job_marketplace_style.html' %}
+
+    <style>
+      .bl-page,
+      .bl-page * {
+        box-sizing: border-box;
+      }
+      
+      .bl-page {
+        --bl-navy: #0f2254;
+        --bl-text: #17223b;
+        --bl-muted: #66758d;
+        --bl-line: #d9e5f3;
+        --bl-blue: #1f7cf1;
+        --bl-cyan: #2aa9f5;
+        --bl-green: #0aa874;
+        --bl-green2: #17ba82;
+        width: min(980px, calc(100% - 16px));
+        margin: 0 auto;
+        padding: 14px 0 calc(38px + env(safe-area-inset-bottom, 0px));
+        color: var(--bl-text);
+      }
+      
+      .bl-topbar {
+        position: sticky;
+        top: 7px;
+        z-index: 80;
+        width: min(980px, calc(100% - 16px));
+        min-height: 66px;
+        margin: calc(7px + env(safe-area-inset-top, 0px)) auto 16px;
+        padding: 10px 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        border: 1px solid #d9e5f3;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.97);
+        box-shadow: 0 12px 32px rgba(32, 70, 126, 0.11);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+      }
+      
+      .bl-brand {
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        gap: 11px;
+      }
+      
+      .bl-brand-icon {
+        width: 42px;
+        height: 42px;
+        flex: 0 0 42px;
+        display: grid;
+        place-items: center;
+        border-radius: 13px;
+        color: #fff;
+        box-shadow: 0 9px 22px rgba(31, 124, 241, 0.22);
+      }
+      
+      .bl-brand-icon.company {
+        background: linear-gradient(135deg, var(--bl-blue), var(--bl-cyan));
+      }
+      
+      .bl-brand-icon.shop {
+        background: linear-gradient(135deg, var(--bl-green), var(--bl-green2));
+      }
+      
+      .bl-icon {
+        width: 21px;
+        height: 21px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      
+      .bl-brand h1 {
+        margin: 0;
+        color: var(--bl-navy);
+        font-size: 18px;
+        line-height: 1.15;
+        font-weight: 950;
+      }
+      
+      .bl-brand p {
+        margin: 3px 0 0;
+        color: #68758d;
+        font-size: 10px;
+      }
+      
+      .bl-back {
+        min-height: 40px;
+        padding: 8px 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        border: 1px solid #ccd9eb;
+        border-radius: 11px;
+        background: #fff;
+        color: var(--bl-navy);
+        font-size: 11px;
+        font-weight: 900;
+        text-decoration: none;
+      }
+      
+      .bl-alerts {
+        display: grid;
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+      .bl-alert {
+        padding: 11px 13px;
+        border: 1px solid #cfe0f8;
+        border-radius: 12px;
+        background: #f2f7ff;
+        color: #29486f;
+        font-size: 12px;
+        line-height: 1.45;
+      }
+      .bl-alert.error {
+        border-color: #fecaca;
+        background: #fff1f2;
+        color: #991b1b;
+      }
+      .bl-alert.success {
+        border-color: #bbf7d0;
+        background: #f0fdf4;
+        color: #166534;
+      }
+      .bl-alert.warning {
+        border-color: #fde68a;
+        background: #fffbeb;
+        color: #92400e;
+      }
+      
+      .bl-shell {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 330px;
+        gap: 14px;
+        align-items: stretch;
+      }
+      
+      .bl-card {
+        min-width: 0;
+        border: 1px solid #d8e4f2;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.98);
+        box-shadow: 0 16px 40px rgba(31, 68, 122, 0.1);
+      }
+      
+      .bl-login-card {
+        padding: 24px;
+        min-height: 430px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      
+      .bl-trust-card {
+        padding: 20px;
+      }
+      
+      .bl-kicker {
+        width: fit-content;
+        margin-bottom: 10px;
+        padding: 6px 9px;
+        border-radius: 999px;
+        font-size: 9px;
+        font-weight: 950;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+      }
+      
+      .bl-kicker.company {
+        color: #245da0;
+        background: #edf6ff;
+        border: 1px solid #d5e9ff;
+      }
+      
+      .bl-kicker.shop {
+        color: #0f7756;
+        background: #ecfbf5;
+        border: 1px solid #ccefe2;
+      }
+      
+      .bl-title {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 18px;
+      }
+      
+      .bl-title-icon {
+        width: 40px;
+        height: 40px;
+        flex: 0 0 40px;
+        display: grid;
+        place-items: center;
+        border-radius: 12px;
+      }
+      
+      .bl-title-icon.company {
+        color: var(--bl-blue);
+        background: #eef7ff;
+        border: 1px solid #d5e9ff;
+      }
+      
+      .bl-title-icon.shop {
+        color: var(--bl-green);
+        background: #eefaf6;
+        border: 1px solid #d3efe4;
+      }
+      
+      .bl-title h2 {
+        margin: 0;
+        color: var(--bl-navy);
+        font-size: 25px;
+        line-height: 1.15;
+        font-weight: 950;
+      }
+      
+      .bl-title p {
+        margin: 5px 0 0;
+        color: var(--bl-muted);
+        font-size: 12px;
+        line-height: 1.5;
+      }
+      
+      .bl-field {
+        margin-top: 13px;
+      }
+      .bl-field label {
+        display: block;
+        margin-bottom: 6px;
+        color: #2b476f;
+        font-size: 12px;
+        font-weight: 900;
+      }
+      
+      .bl-input-wrap {
+        position: relative;
+      }
+      
+      .bl-input-icon {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        width: 18px;
+        height: 18px;
+        transform: translateY(-50%);
+        color: #7f93af;
+        pointer-events: none;
+      }
+      
+      .bl-input {
+        width: 100%;
+        height: 49px;
+        padding: 0 13px 0 41px;
+        border: 1px solid #bfd0e7;
+        border-radius: 12px;
+        outline: 0;
+        background: #fff;
+        color: #14213d;
+        font-size: 14px;
+        transition: border-color 0.18s ease, box-shadow 0.18s ease;
+      }
+      
+      .bl-input::placeholder {
+        color: #9caabd;
+        opacity: 1;
+      }
+      
+      .bl-input:focus {
+        border-color: var(--bl-blue);
+        box-shadow: 0 0 0 3px rgba(31, 124, 241, 0.12);
+      }
+      
+      .bl-submit {
+        width: 100%;
+        min-height: 48px;
+        margin-top: 18px;
+        border: 0;
+        border-radius: 12px;
+        color: #fff;
+        font-size: 13px;
+        font-weight: 950;
+        cursor: pointer;
+      }
+      
+      .bl-submit.company {
+        background: linear-gradient(135deg, var(--bl-blue), var(--bl-cyan));
+        box-shadow: 0 10px 24px rgba(31, 124, 241, 0.2);
+      }
+      
+      .bl-submit.shop {
+        background: linear-gradient(135deg, var(--bl-green), var(--bl-green2));
+        box-shadow: 0 10px 24px rgba(10, 168, 116, 0.2);
+      }
+      
+      .bl-register-note {
+        margin-top: 13px;
+        color: #697994;
+        font-size: 11px;
+        text-align: center;
+      }
+      
+      .bl-register-note a {
+        font-weight: 950;
+        text-decoration: none;
+      }
+      
+      .bl-register-note a.company {
+        color: var(--bl-blue);
+      }
+      .bl-register-note a.shop {
+        color: var(--bl-green);
+      }
+      
+      .bl-trust-head {
+        display: flex;
+        align-items: flex-start;
+        gap: 9px;
+        margin-bottom: 13px;
+      }
+      
+      .bl-trust-head .bl-icon {
+        margin-top: 2px;
+        color: var(--bl-blue);
+      }
+      
+      .bl-trust-head h3 {
+        margin: 0;
+        color: var(--bl-navy);
+        font-size: 18px;
+        font-weight: 950;
+      }
+      
+      .bl-trust-head p {
+        margin: 4px 0 0;
+        color: var(--bl-muted);
+        font-size: 10px;
+        line-height: 1.45;
+      }
+      
+      .bl-status-list {
+        display: grid;
+        gap: 9px;
+      }
+      
+      .bl-status {
+        padding: 12px;
+        border: 1px solid #dae6f4;
+        border-radius: 13px;
+        background: #fbfdff;
+      }
+      
+      .bl-status-top {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        margin-bottom: 5px;
+      }
+      
+      .bl-dot {
+        width: 9px;
+        height: 9px;
+        flex: 0 0 9px;
+        border-radius: 50%;
+      }
+      
+      .bl-dot.pending {
+        background: #f59e0b;
+      }
+      .bl-dot.approved {
+        background: #10b981;
+      }
+      .bl-dot.suspended {
+        background: #ef4444;
+      }
+      
+      .bl-status strong {
+        color: #1d365d;
+        font-size: 11px;
+        font-weight: 950;
+      }
+      
+      .bl-status small {
+        color: #687994;
+        font-size: 9px;
+        line-height: 1.5;
+      }
+      
+      .bl-safe {
+        margin-top: 11px;
+        padding: 11px 12px;
+        border: 1px solid #d2e8dc;
+        border-radius: 12px;
+        background: #f3fbf6;
+        color: #2d5e45;
+        font-size: 9px;
+        line-height: 1.55;
+      }
+      
+      @media (max-width: 760px) {
+        .bl-page {
+          width: min(100% - 14px, 980px);
+          padding-top: 8px;
+        }
+        .bl-topbar {
+          width: min(100% - 14px, 980px);
+          top: 5px;
+          min-height: 60px;
+          margin-top: calc(5px + env(safe-area-inset-top, 0px));
+          border-radius: 15px;
+        }
+        .bl-brand-icon {
+          width: 38px;
+          height: 38px;
+          flex-basis: 38px;
+        }
+        .bl-brand h1 {
+          font-size: 15px;
+        }
+        .bl-brand p {
+          font-size: 9px;
+        }
+        .bl-shell {
+          grid-template-columns: 1fr;
+        }
+        .bl-login-card,
+        .bl-trust-card {
+          padding: 16px;
+          border-radius: 16px;
+        }
+        .bl-login-card {
+          min-height: 0;
+        }
+        .bl-title h2 {
+          font-size: 22px;
+        }
+        .bl-input {
+          height: 48px;
+          font-size: 14px;
+        }
+      }
+      
+      @media (max-width: 380px) {
+        .bl-brand p {
+          display: none;
+        }
+        .bl-back span {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="bl-topbar">
+      <div class="bl-brand">
+        <div class="bl-brand-icon company">
+          <svg class="bl-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3 21h18M5 21V8h6v13M13 21V4h6v17"></path>
+            <path d="M7 11h2M7 15h2M15 8h2M15 12h2M15 16h2"></path>
+          </svg>
+        </div>
+        <div>
+          <h1>Company Login</h1>
+          <p>Smart Complaint - Job Connect</p>
+        </div>
+      </div>
+
+      <a class="bl-back" href="{% url 'employer_portal' %}">
+        <svg class="bl-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m15 18-6-6 6-6"></path>
+        </svg>
+        <span>Back</span>
+      </a>
+    </header>
+
+    <main class="bl-page">
+      {% if messages %}
+        <div class="bl-alerts">
+          {% for message in messages %}
+            <div class="bl-alert {{ message.tags }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <section class="bl-shell">
+        <form class="bl-card bl-login-card" method="post">
+          {% csrf_token %}
+
+          <span class="bl-kicker company">Secure Business Access</span>
+
+          <div class="bl-title">
+            <div class="bl-title-icon company">
+              <svg class="bl-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                <path d="m10 17 5-5-5-5M15 12H3"></path>
+              </svg>
+            </div>
+
+            <div>
+              <h2>Company Login</h2>
+              <p>Use your registered company account.</p>
+            </div>
+          </div>
+
+          <div class="bl-field">
+            <label for="username">Username</label>
+            <div class="bl-input-wrap">
+              <svg class="bl-input-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="8" r="4"></circle>
+                <path d="M4 21a8 8 0 0 1 16 0"></path>
+              </svg>
+              <input class="bl-input" id="username" name="username" required autocomplete="username" placeholder="Enter username" />
+            </div>
+          </div>
+
+          <div class="bl-field">
+            <label for="password">Password</label>
+            <div class="bl-input-wrap">
+              <svg class="bl-input-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="5" y="10" width="14" height="10" rx="2"></rect>
+                <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+              </svg>
+              <input class="bl-input" id="password" name="password" type="password" required autocomplete="current-password" placeholder="Enter password" />
+            </div>
+          </div>
+
+          <button class="bl-submit company" type="submit">Company Login</button>
+
+          <div class="bl-register-note">
+            New account?
+            <a class="company" href="{% url 'company_register' %}">Register here</a>
+          </div>
+        </form>
+
+        <aside class="bl-card bl-trust-card">
+          <div class="bl-trust-head">
+            <svg class="bl-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 3 20 6v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6Z"></path>
+              <path d="m8.5 12 2.2 2.2L15.8 9"></path>
+            </svg>
+            <div>
+              <h3>Protected Hiring Access</h3>
+              <p>Verification status is checked by the backend.</p>
+            </div>
+          </div>
+
+          <div class="bl-status-list">
+            <div class="bl-status">
+              <div class="bl-status-top">
+                <span class="bl-dot pending"></span>
+                <strong>Pending Verification</strong>
+              </div>
+              <small>Dashboard access can remain available, but job posting stays locked.</small>
+            </div>
+
+            <div class="bl-status">
+              <div class="bl-status-top">
+                <span class="bl-dot approved"></span>
+                <strong>Approved</strong>
+              </div>
+              <small>Verified hiring features can be enabled after approval.</small>
+            </div>
+
+            <div class="bl-status">
+              <div class="bl-status-top">
+                <span class="bl-dot suspended"></span>
+                <strong>Suspended</strong>
+              </div>
+              <small>Login or hiring access may be blocked by the system.</small>
+            </div>
+          </div>
+
+          <div class="bl-safe">Use only the correct account type. Company accounts and Shop Owner accounts are checked separately during login.</div>
+        </aside>
+      </section>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>My Applications | Smart Complaint</title>
+
+  {% include 'complaints/base_style.html' %}
+  {% include 'complaints/Job_Folder/job_marketplace_style.html' %}
+  
+</head>
+<body>
+
+  <header class="job-topbar">
+    <div class="job-brand">
+      <div class="job-brand-icon">
+        <svg class="job-ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M7 11 4 8l3-3 5 5"></path>
+          <path d="m17 11 3-3-3-3-5 5"></path>
+          <path d="M8.5 12.5 11 15a2 2 0 0 0 3 0l2.5-2.5"></path>
+          <path d="m9 16 1 1a2 2 0 0 0 3 0l1-1"></path>
+        </svg>
+      </div>
+      <div>
+        <h1>Smart Complaint - Job Connect</h1>
+        <p>Jobs for workers. Trusted workers for businesses.</p>
+      </div>
+    </div>
+
+    <div class="job-top-actions">
+      <a class="job-btn secondary hide-mobile" href="{% url 'job_marketplace' %}">
+        <svg class="job-ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m15 18-6-6 6-6"></path>
+        </svg>
+        Back
+      </a>
+      <button class="job-icon-btn" type="button" aria-label="Menu">
+        <svg class="job-ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16"></path>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="job-page">
+    <section class="job-card">
+      <div class="job-section-head">
+        <div class="job-section-title">
+          <svg class="job-ui-icon" viewBox="0 0 24 24"><path d="M5 3h14v18H5z"></path><path d="M8 8h8M8 12h6M8 16h7"></path></svg>
+          <div>
+            <h2>My Applications</h2>
+            <p>Track every job from application to final offer.</p>
+          </div>
+        </div>
+        <a class="job-btn secondary" href="{% url 'worker_jobs' %}">Browse Jobs</a>
+      </div>
+
+      <div class="job-list">
+        <article class="job-card" style="box-shadow:none;background:rgba(255,255,255,.035);">
+          <div class="job-section-head">
+            <div>
+              <h3 class="job-list-title">Cleaning Staff</h3>
+              <div class="job-list-company">ABC Supermarket</div>
+            </div>
+            <span class="job-pill purple">Interview</span>
+          </div>
+
+          <div class="job-status-track">
+            <div class="job-status-step done"><div class="job-status-dot">1</div>Applied</div>
+            <div class="job-status-step done"><div class="job-status-dot">2</div>Shortlisted</div>
+            <div class="job-status-step active"><div class="job-status-dot">3</div>Interview</div>
+            <div class="job-status-step"><div class="job-status-dot">4</div>Offer</div>
+            <div class="job-status-step"><div class="job-status-dot">5</div>Hired</div>
+          </div>
+
+          <div class="job-hero-actions">
+            <a class="job-btn" href="{% url 'job_chat' %}">Open Interview Chat</a>
+            <a class="job-btn secondary" href="{% url 'job_details' %}">View Job</a>
+          </div>
+        </article>
+
+        <article class="job-card" style="box-shadow:none;background:rgba(255,255,255,.035);">
+          <div class="job-section-head">
+            <div>
+              <h3 class="job-list-title">Office Helper</h3>
+              <div class="job-list-company">Tech Solutions Pvt. Ltd.</div>
+            </div>
+            <span class="job-pill orange">Applied</span>
+          </div>
+
+          <div class="job-status-track">
+            <div class="job-status-step active"><div class="job-status-dot">1</div>Applied</div>
+            <div class="job-status-step"><div class="job-status-dot">2</div>Shortlisted</div>
+            <div class="job-status-step"><div class="job-status-dot">3</div>Interview</div>
+            <div class="job-status-step"><div class="job-status-dot">4</div>Offer</div>
+            <div class="job-status-step"><div class="job-status-dot">5</div>Hired</div>
+          </div>
+        </article>
+
+        <article class="job-card" style="box-shadow:none;background:rgba(255,255,255,.035);">
+          <div class="job-section-head">
+            <div>
+              <h3 class="job-list-title">Maintenance Worker</h3>
+              <div class="job-list-company">Green Mall</div>
+            </div>
+            <span class="job-pill green">Offer Received</span>
+          </div>
+
+          <div class="job-status-track">
+            <div class="job-status-step done"><div class="job-status-dot">1</div>Applied</div>
+            <div class="job-status-step done"><div class="job-status-dot">2</div>Shortlisted</div>
+            <div class="job-status-step done"><div class="job-status-dot">3</div>Interview</div>
+            <div class="job-status-step active"><div class="job-status-dot">4</div>Offer</div>
+            <div class="job-status-step"><div class="job-status-dot">5</div>Hired</div>
+          </div>
+
+          <div class="job-hero-actions">
+            <a class="job-btn success" href="{% url 'job_offer' %}">Review Offer</a>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+</body>
+</html>

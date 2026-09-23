@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Applicants | Smart Complaint</title>
+
+  {% include 'complaints/base_style.html' %}
+  {% include 'complaints/Job_Folder/job_marketplace_style.html' %}
+  
+</head>
+<body>
+
+  <header class="job-topbar">
+    <div class="job-brand">
+      <div class="job-brand-icon">
+        <svg class="job-ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M7 11 4 8l3-3 5 5"></path>
+          <path d="m17 11 3-3-3-3-5 5"></path>
+          <path d="M8.5 12.5 11 15a2 2 0 0 0 3 0l2.5-2.5"></path>
+          <path d="m9 16 1 1a2 2 0 0 0 3 0l1-1"></path>
+        </svg>
+      </div>
+      <div>
+        <h1>Smart Complaint - Job Connect</h1>
+        <p>Jobs for workers. Trusted workers for businesses.</p>
+      </div>
+    </div>
+
+    <div class="job-top-actions">
+      <a class="job-btn secondary hide-mobile" href="{% url 'job_marketplace' %}">
+        <svg class="job-ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m15 18-6-6 6-6"></path>
+        </svg>
+        Back
+      </a>
+      <button class="job-icon-btn" type="button" aria-label="Menu">
+        <svg class="job-ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16"></path>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="job-page">
+    <section class="job-card">
+      <div class="job-section-head">
+        <div class="job-section-title">
+          <svg class="job-ui-icon" viewBox="0 0 24 24"><circle cx="8" cy="8" r="3"></circle><circle cx="16" cy="8" r="3"></circle><path d="M2 20a6 6 0 0 1 12 0M10 20a6 6 0 0 1 12 0"></path></svg>
+          <div>
+            <h2>Applicants - Cleaning Staff</h2>
+            <p>Review worker trust signals before shortlisting.</p>
+          </div>
+        </div>
+        <span class="job-pill">12 Applications</span>
+      </div>
+
+      <div class="job-list">
+        <article class="job-applicant-card">
+          <div class="job-avatar">
+            <svg class="job-ui-icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg>
+          </div>
+          <div>
+            <h3 class="job-list-title">Ravi Kumar</h3>
+            <div class="job-meta">
+              <span>Verified Worker</span>
+              <span>4.8 Rating</span>
+              <span>56 Completed Jobs</span>
+              <span>2 Years Experience</span>
+            </div>
+            <div style="margin-top:7px;">
+              <span class="job-pill green">Gold Level</span>
+              <a class="job-linkedin" href="#" style="margin-left:5px;">LinkedIn Profile</a>
+            </div>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <a class="job-btn secondary" href="{% url 'employer_worker_profile' %}">View Profile</a>
+            <a class="job-btn success" href="{% url 'employer_worker_profile' %}">Shortlist</a>
+          </div>
+        </article>
+
+        <article class="job-applicant-card">
+          <div class="job-avatar">
+            <svg class="job-ui-icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg>
+          </div>
+          <div>
+            <h3 class="job-list-title">Suresh Patel</h3>
+            <div class="job-meta">
+              <span>Verified Worker</span>
+              <span>4.6 Rating</span>
+              <span>42 Completed Jobs</span>
+              <span>1.5 Years Experience</span>
+            </div>
+            <div style="margin-top:7px;">
+              <span class="job-pill purple">Silver Level</span>
+            </div>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <a class="job-btn secondary" href="{% url 'employer_worker_profile' %}">View Profile</a>
+            <a class="job-btn success" href="{% url 'employer_worker_profile' %}">Shortlist</a>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+</body>
+</html>

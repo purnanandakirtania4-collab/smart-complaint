@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Find Jobs | Smart Complaint</title>
+
+  {% include 'complaints/base_style.html' %}
+  {% include 'complaints/Job_Folder/job_marketplace_style.html' %}
+  
+</head>
+<body>
+
+  <header class="job-topbar">
+    <div class="job-brand">
+      <div class="job-brand-icon">
+        <svg class="job-ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M7 11 4 8l3-3 5 5"></path>
+          <path d="m17 11 3-3-3-3-5 5"></path>
+          <path d="M8.5 12.5 11 15a2 2 0 0 0 3 0l2.5-2.5"></path>
+          <path d="m9 16 1 1a2 2 0 0 0 3 0l1-1"></path>
+        </svg>
+      </div>
+      <div>
+        <h1>Smart Complaint - Job Connect</h1>
+        <p>Jobs for workers. Trusted workers for businesses.</p>
+      </div>
+    </div>
+
+    <div class="job-top-actions">
+      <a class="job-btn secondary hide-mobile" href="{% url 'job_marketplace' %}">
+        <svg class="job-ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m15 18-6-6 6-6"></path>
+        </svg>
+        Back
+      </a>
+      <button class="job-icon-btn" type="button" aria-label="Menu">
+        <svg class="job-ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16"></path>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="job-page">
+    <section class="job-card" style="margin-bottom:14px;">
+      <div class="job-section-head">
+        <div class="job-section-title">
+          <svg class="job-ui-icon" viewBox="0 0 24 24"><path d="M4 7h16v13H4z"></path><path d="M8 7V4h8v3M4 12h16"></path></svg>
+          <div>
+            <h2>Find Jobs</h2>
+            <p>Recommended jobs based on skill, location and availability.</p>
+          </div>
+        </div>
+        <div style="display:flex;gap:7px;align-items:center;flex-wrap:wrap;">
+          <span class="job-pill green">Available for Jobs</span>
+          <a class="job-btn secondary" href="{% url 'worker_applications' %}">My Applications</a>
+        </div>
+      </div>
+
+      <div class="job-searchbar">
+        <input class="job-input" placeholder="Search jobs, skills or company..." />
+        <select class="job-select">
+          <option>All Job Types</option>
+          <option>Full Time</option>
+          <option>Part Time</option>
+          <option>Contract</option>
+          <option>Daily Work</option>
+        </select>
+        <select class="job-select">
+          <option>All Locations</option>
+          <option>Nearby</option>
+          <option>Same City</option>
+        </select>
+        <button class="job-btn" type="button">
+          <svg class="job-ui-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+          Search
+        </button>
+      </div>
+    </section>
+
+    <section class="job-grid-2">
+      <div class="job-card">
+        <div class="job-section-head">
+          <div class="job-section-title">
+            <svg class="job-ui-icon" viewBox="0 0 24 24"><path d="M4 7h16v13H4z"></path><path d="M8 7V4h8v3M4 12h16"></path></svg>
+            <div>
+              <h3>Recommended Jobs</h3>
+              <p>UI demo data for the new marketplace.</p>
+            </div>
+          </div>
+          <span class="job-pill">6 Jobs</span>
+        </div>
+
+        <div class="job-list">
+          <article class="job-list-card">
+            <div class="job-company-logo">
+              <svg class="job-ui-icon" viewBox="0 0 24 24"><path d="M4 21V7l8-4 8 4v14"></path><path d="M8 10h2M14 10h2M9 21v-4h6v4"></path></svg>
+            </div>
+            <div>
+              <h4 class="job-list-title">Cleaning Staff</h4>
+              <div class="job-list-company">ABC Supermarket</div>
+              <div class="job-meta">
+                <span><svg class="job-ui-icon" viewBox="0 0 24 24"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>City Center</span>
+                <span>Full Time</span>
+                <span>2 Vacancies</span>
+              </div>
+            </div>
+            <div>
+              <div class="job-salary">₹12,000 / month</div>
+              <a class="job-btn secondary" href="{% url 'job_details' %}" style="margin-top:7px;">View Job</a>
+            </div>
+          </article>
+
+          <article class="job-list-card">
+            <div class="job-company-logo">
+              <svg class="job-ui-icon" viewBox="0 0 24 24"><path d="M3 20h18M5 20V8h6v12M13 20V4h6v16"></path></svg>
+            </div>
+            <div>
+              <h4 class="job-list-title">Office Helper</h4>
+              <div class="job-list-company">Tech Solutions Pvt. Ltd.</div>
+              <div class="job-meta">
+                <span><svg class="job-ui-icon" viewBox="0 0 24 24"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>IT Park</span>
+                <span>Full Time</span>
+              </div>
+            </div>
+            <div>
+              <div class="job-salary">₹14,000 / month</div>
+              <a class="job-btn secondary" href="{% url 'job_details' %}" style="margin-top:7px;">View Job</a>
+            </div>
+          </article>
+
+          <article class="job-list-card">
+            <div class="job-company-logo">
+              <svg class="job-ui-icon" viewBox="0 0 24 24"><path d="M4 18h16M6 18V9l6-5 6 5v9M9 18v-5h6v5"></path></svg>
+            </div>
+            <div>
+              <h4 class="job-list-title">Maintenance Worker</h4>
+              <div class="job-list-company">Green Mall</div>
+              <div class="job-meta">
+                <span>Main Road</span>
+                <span>Contract</span>
+                <span>Experience Preferred</span>
+              </div>
+            </div>
+            <div>
+              <div class="job-salary">₹15,000 / month</div>
+              <a class="job-btn secondary" href="{% url 'job_details' %}" style="margin-top:7px;">View Job</a>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <aside class="job-card">
+        <div class="job-section-head">
+          <div class="job-section-title">
+            <svg class="job-ui-icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg>
+            <div>
+              <h3>Your Job Profile</h3>
+              <p>What employers will see when you apply.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="job-profile-head" style="grid-template-columns:70px minmax(0,1fr);">
+          <div class="job-profile-avatar" style="width:70px;height:70px;">
+            <svg class="job-ui-icon" viewBox="0 0 24 24" style="width:30px;height:30px;"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path><path d="M8 5V3h8v2"></path></svg>
+          </div>
+          <div>
+            <h3 class="job-profile-name" style="font-size:18px;">Ravi Kumar</h3>
+            <div class="job-meta">
+              <span>Verified Worker</span>
+              <span>Cleaning & Maintenance</span>
+              <span>4.8 Rating</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="job-grid-3" style="margin-top:14px;">
+          <div class="job-stat"><span>Completed</span><strong>56</strong></div>
+          <div class="job-stat"><span>Experience</span><strong>2y</strong></div>
+          <div class="job-stat"><span>Level</span><strong>Gold</strong></div>
+        </div>
+
+        <div class="job-banner" style="margin-top:14px;">
+          LinkedIn will stay optional. Smart Complaint verification, ratings and completed work
+          remain the primary in-app trust signals.
+        </div>
+
+        <a class="job-linkedin" href="#" style="margin-top:10px;">
+          <svg class="job-ui-icon" viewBox="0 0 24 24"><path d="M7 10v7M7 7v.01M11 17v-4a3 3 0 0 1 6 0v4M11 10v7M4 4h16v16H4z"></path></svg>
+          LinkedIn Profile
+        </a>
+      </aside>
+    </section>
+  </main>
+
+</body>
+</html>

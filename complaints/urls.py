@@ -7,7 +7,8 @@ from . import views
 
 urlpatterns = [
     # USER
-    path("", views.home, name="home"),
+    path("", views.front_page, name="front_page"),
+    path("home/", views.home, name="home"),
     path("login/", views.user_login, name="login"),
     path("register/", views.register, name="register"),
     path("logout/", views.user_logout, name="logout"),
@@ -176,17 +177,41 @@ urlpatterns = [
     # WORKER SUBSCRIPTION
     path("worker-subscription/terms/", views.terms_conditions, name="terms_conditions"),
     path("worker-subscription/payment/", views.worker_subscription_payment, name="worker_subscription_payment"),
-    path(
-        "worker-subscription/sync/",
-        views.worker_subscription_sync,
-        name="worker_subscription_sync",
-    ),
-    path(
-        "worker-subscription/cancel-renewal/",
-        views.worker_subscription_cancel_renewal,
-        name="worker_subscription_cancel_renewal",
-    ),
     path("worker-subscription/webhook/", views.worker_subscription_webhook, name="worker_subscription_webhook"),
+
+
+    # JOB MARKETPLACE
+    path("jobs/", views.job_marketplace, name="job_marketplace"),
+    path("jobs/find/", views.worker_jobs, name="worker_jobs"),
+    path("jobs/details/", views.job_details, name="job_details"),
+    path("jobs/applications/", views.worker_applications, name="worker_applications"),
+
+    # EMPLOYER / COMPANY / SHOP OWNER
+    path("jobs/employer/", views.employer_portal, name="employer_portal"),
+
+    # Legacy aliases - now open the Company / Shop choice page
+    path("jobs/employer/register/", views.employer_register, name="employer_register"),
+    path("jobs/employer/login/", views.employer_login, name="employer_login"),
+
+    # Company account
+    path("jobs/company/register/", views.company_register, name="company_register"),
+    path("jobs/company/login/", views.company_login, name="company_login"),
+
+    # Shop Owner account
+    path("jobs/shop/register/", views.shop_register, name="shop_register"),
+    path("jobs/shop/login/", views.shop_login, name="shop_login"),
+
+    path("jobs/employer/logout/", views.employer_logout, name="employer_logout"),
+    path("jobs/employer/dashboard/", views.employer_dashboard, name="employer_dashboard"),
+    path("jobs/employer/post-job/", views.employer_post_job, name="employer_post_job"),
+    path("jobs/employer/applicants/", views.employer_applicants, name="employer_applicants"),
+    path(
+        "jobs/employer/worker-profile/",
+        views.employer_worker_profile,
+        name="employer_worker_profile",
+    ),
+    path("jobs/offer/", views.job_offer, name="job_offer"),
+    path("jobs/chat/", views.job_chat, name="job_chat"),
 
     # DEVICE / CHAT
     path("save-device-token/", views.save_device_token, name="save_device_token"),

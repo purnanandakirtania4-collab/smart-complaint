@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Business Hiring Portal | Smart Complaint</title>
+
+    {% include 'complaints/base_style.html' %}
+    {% include 'complaints/Job_Folder/job_marketplace_style.html' %}
+
+    <style>
+      .bp-page,
+      .bp-page * {
+        box-sizing: border-box;
+      }
+      
+      .bp-page {
+        --bp-navy: #0f2254;
+        --bp-text: #17223b;
+        --bp-muted: #61708a;
+        --bp-line: #d9e5f3;
+        --bp-blue: #1f7cf1;
+        --bp-cyan: #27a7f5;
+        --bp-green: #0aa874;
+        --bp-green-2: #18bb83;
+        width: min(1120px, calc(100% - 16px));
+        margin: 0 auto;
+        padding: 14px 0 calc(36px + env(safe-area-inset-bottom, 0px));
+        color: var(--bp-text);
+      }
+      
+      .bp-topbar {
+        position: sticky;
+        top: 7px;
+        z-index: 80;
+        width: min(1120px, calc(100% - 16px));
+        min-height: 66px;
+        margin: calc(7px + env(safe-area-inset-top, 0px)) auto 16px;
+        padding: 10px 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        border: 1px solid #d9e5f3;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.97);
+        box-shadow: 0 12px 32px rgba(32, 70, 126, 0.11);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+      }
+      
+      .bp-brand {
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        gap: 11px;
+      }
+      
+      .bp-brand-icon {
+        width: 42px;
+        height: 42px;
+        flex: 0 0 42px;
+        display: grid;
+        place-items: center;
+        border-radius: 13px;
+        color: #fff;
+        background: linear-gradient(135deg, var(--bp-blue), var(--bp-cyan));
+        box-shadow: 0 9px 22px rgba(31, 124, 241, 0.24);
+      }
+      
+      .bp-icon {
+        width: 21px;
+        height: 21px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      
+      .bp-brand h1 {
+        margin: 0;
+        color: var(--bp-navy);
+        font-size: 18px;
+        line-height: 1.15;
+        font-weight: 950;
+      }
+      
+      .bp-brand p {
+        margin: 3px 0 0;
+        color: #68758d;
+        font-size: 10px;
+      }
+      
+      .bp-back {
+        min-height: 40px;
+        padding: 8px 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        border: 1px solid #ccd9eb;
+        border-radius: 11px;
+        background: #fff;
+        color: var(--bp-navy);
+        font-size: 11px;
+        font-weight: 900;
+        text-decoration: none;
+      }
+      
+      .bp-alerts {
+        display: grid;
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+      .bp-alert {
+        padding: 11px 13px;
+        border: 1px solid #cfe0f8;
+        border-radius: 12px;
+        background: #f2f7ff;
+        color: #29486f;
+        font-size: 12px;
+        line-height: 1.45;
+      }
+      .bp-alert.error {
+        border-color: #fecaca;
+        background: #fff1f2;
+        color: #991b1b;
+      }
+      .bp-alert.success {
+        border-color: #bbf7d0;
+        background: #f0fdf4;
+        color: #166534;
+      }
+      .bp-alert.warning {
+        border-color: #fde68a;
+        background: #fffbeb;
+        color: #92400e;
+      }
+      
+      .bp-shell {
+        padding: 22px;
+        border: 1px solid #d8e4f2;
+        border-radius: 22px;
+        background: rgba(255, 255, 255, 0.97);
+        box-shadow: 0 18px 44px rgba(31, 68, 122, 0.1);
+      }
+      
+      .bp-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 14px;
+        margin-bottom: 18px;
+      }
+      
+      .bp-head-left {
+        min-width: 0;
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      
+      .bp-head-icon {
+        width: 38px;
+        height: 38px;
+        flex: 0 0 38px;
+        display: grid;
+        place-items: center;
+        border: 1px solid #d4e8ff;
+        border-radius: 12px;
+        background: #eef7ff;
+        color: var(--bp-blue);
+      }
+      
+      .bp-head h2 {
+        margin: 0;
+        color: var(--bp-navy);
+        font-size: 23px;
+        line-height: 1.15;
+        font-weight: 950;
+      }
+      
+      .bp-head p {
+        margin: 5px 0 0;
+        color: var(--bp-muted);
+        font-size: 12px;
+        line-height: 1.5;
+      }
+      
+      .bp-badge {
+        flex: 0 0 auto;
+        padding: 7px 10px;
+        border: 1px solid #cde2fb;
+        border-radius: 999px;
+        background: #f0f7ff;
+        color: #2d5f9a;
+        font-size: 10px;
+        font-weight: 900;
+      }
+      
+      .bp-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+      
+      .bp-choice {
+        min-width: 0;
+        min-height: 330px;
+        padding: 19px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        border: 1px solid #d9e5f3;
+        border-radius: 18px;
+        overflow: hidden;
+        position: relative;
+      }
+      
+      .bp-choice::before {
+        content: '';
+        position: absolute;
+        inset: 0 auto auto 0;
+        width: 100%;
+        height: 5px;
+      }
+      
+      .bp-choice.company {
+        background: radial-gradient(circle at 92% 6%, rgba(31, 124, 241, 0.13), transparent 33%), #fbfdff;
+      }
+      
+      .bp-choice.company::before {
+        background: linear-gradient(90deg, var(--bp-blue), var(--bp-cyan));
+      }
+      
+      .bp-choice.shop {
+        background: radial-gradient(circle at 92% 6%, rgba(10, 168, 116, 0.13), transparent 33%), #fbfffd;
+      }
+      
+      .bp-choice.shop::before {
+        background: linear-gradient(90deg, var(--bp-green), var(--bp-green-2));
+      }
+      
+      .bp-choice-icon {
+        width: 52px;
+        height: 52px;
+        display: grid;
+        place-items: center;
+        border-radius: 15px;
+        color: #fff;
+        box-shadow: 0 10px 22px rgba(22, 67, 120, 0.15);
+      }
+      
+      .bp-choice.company .bp-choice-icon {
+        background: linear-gradient(135deg, var(--bp-blue), var(--bp-cyan));
+      }
+      
+      .bp-choice.shop .bp-choice-icon {
+        background: linear-gradient(135deg, var(--bp-green), var(--bp-green-2));
+      }
+      
+      .bp-choice h3 {
+        margin: 15px 0 7px;
+        color: var(--bp-navy);
+        font-size: 21px;
+        font-weight: 950;
+      }
+      
+      .bp-choice p {
+        margin: 0;
+        color: #60718d;
+        font-size: 12px;
+        line-height: 1.65;
+      }
+      
+      .bp-mini-list {
+        display: grid;
+        gap: 7px;
+        margin-top: 14px;
+      }
+      
+      .bp-mini-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 7px;
+        color: #435674;
+        font-size: 10px;
+        line-height: 1.45;
+      }
+      
+      .bp-mini-item .bp-icon {
+        width: 15px;
+        height: 15px;
+        flex: 0 0 15px;
+        margin-top: 1px;
+      }
+      
+      .bp-choice.company .bp-mini-item .bp-icon {
+        color: var(--bp-blue);
+      }
+      .bp-choice.shop .bp-mini-item .bp-icon {
+        color: var(--bp-green);
+      }
+      
+      .bp-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 9px;
+        margin-top: 19px;
+      }
+      
+      .bp-btn {
+        min-height: 44px;
+        padding: 9px 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        border-radius: 11px;
+        font-size: 11px;
+        font-weight: 950;
+        text-decoration: none;
+        text-align: center;
+      }
+      
+      .bp-btn.primary.company {
+        background: linear-gradient(135deg, var(--bp-blue), var(--bp-cyan));
+        color: #fff;
+        box-shadow: 0 9px 20px rgba(31, 124, 241, 0.18);
+      }
+      
+      .bp-btn.primary.shop {
+        background: linear-gradient(135deg, var(--bp-green), var(--bp-green-2));
+        color: #fff;
+        box-shadow: 0 9px 20px rgba(10, 168, 116, 0.18);
+      }
+      
+      .bp-btn.secondary {
+        border: 1px solid #cfdced;
+        background: #fff;
+        color: var(--bp-navy);
+      }
+      
+      .bp-note {
+        margin-top: 14px;
+        padding: 12px 13px;
+        display: flex;
+        align-items: flex-start;
+        gap: 9px;
+        border: 1px solid #cbe3f8;
+        border-radius: 13px;
+        background: #f2f9ff;
+        color: #31516f;
+        font-size: 10px;
+        line-height: 1.55;
+      }
+      
+      .bp-note .bp-icon {
+        flex: 0 0 19px;
+        color: var(--bp-blue);
+        margin-top: 1px;
+      }
+      
+      @media (max-width: 760px) {
+        .bp-page {
+          width: min(100% - 14px, 1120px);
+          padding-top: 8px;
+        }
+      
+        .bp-topbar {
+          width: min(100% - 14px, 1120px);
+          top: 5px;
+          min-height: 60px;
+          margin-top: calc(5px + env(safe-area-inset-top, 0px));
+          border-radius: 15px;
+        }
+      
+        .bp-brand-icon {
+          width: 38px;
+          height: 38px;
+          flex-basis: 38px;
+        }
+        .bp-brand h1 {
+          font-size: 15px;
+        }
+        .bp-brand p {
+          font-size: 9px;
+        }
+      
+        .bp-shell {
+          padding: 15px;
+          border-radius: 17px;
+        }
+      
+        .bp-head {
+          display: grid;
+          gap: 10px;
+        }
+      
+        .bp-badge {
+          justify-self: start;
+        }
+      
+        .bp-head h2 {
+          font-size: 20px;
+        }
+      
+        .bp-grid {
+          grid-template-columns: 1fr;
+        }
+      
+        .bp-choice {
+          min-height: 0;
+          padding: 16px;
+        }
+      
+        .bp-actions {
+          grid-template-columns: 1fr;
+        }
+      }
+      
+      @media (max-width: 380px) {
+        .bp-brand p {
+          display: none;
+        }
+        .bp-back span {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="bp-topbar">
+      <div class="bp-brand">
+        <div class="bp-brand-icon">
+          <svg class="bp-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 21V7l8-4 8 4v14"></path>
+            <path d="M8 10h2M14 10h2M9 21v-4h6v4"></path>
+          </svg>
+        </div>
+
+        <div>
+          <h1>Business Hiring Portal</h1>
+          <p>Separate Company and Shop Owner access.</p>
+        </div>
+      </div>
+
+      <a class="bp-back" href="{% url 'job_marketplace' %}">
+        <svg class="bp-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m15 18-6-6 6-6"></path>
+        </svg>
+        <span>Back</span>
+      </a>
+    </header>
+
+    <main class="bp-page">
+      {% if messages %}
+        <div class="bp-alerts">
+          {% for message in messages %}
+            <div class="bp-alert {{ message.tags }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <section class="bp-shell">
+        <div class="bp-head">
+          <div class="bp-head-left">
+            <div class="bp-head-icon">
+              <svg class="bp-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 3 20 6v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6Z"></path>
+                <path d="m8.5 12 2.2 2.2L15.8 9"></path>
+              </svg>
+            </div>
+
+            <div>
+              <h2>Choose Business Account Type</h2>
+              <p>Select the correct account so registration, verification and login stay separate.</p>
+            </div>
+          </div>
+
+          <span class="bp-badge">Verified Hiring Flow</span>
+        </div>
+
+        <div class="bp-grid">
+          <article class="bp-choice company">
+            <div>
+              <div class="bp-choice-icon">
+                <svg class="bp-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M3 21h18M5 21V8h6v13M13 21V4h6v17"></path>
+                  <path d="M7 11h2M7 15h2M15 8h2M15 12h2M15 16h2"></path>
+                </svg>
+              </div>
+
+              <h3>Company</h3>
+              <p>For registered companies, offices and organizations that want to hire workers through Smart Complaint Job Connect.</p>
+
+              <div class="bp-mini-list">
+                <div class="bp-mini-item">
+                  <svg class="bp-icon" viewBox="0 0 24 24">
+                    <path d="m5 12 4 4L19 6"></path>
+                  </svg>
+                  <span>Company registration number required</span>
+                </div>
+                <div class="bp-mini-item">
+                  <svg class="bp-icon" viewBox="0 0 24 24">
+                    <path d="m5 12 4 4L19 6"></path>
+                  </svg>
+                  <span>Authorized person and business proof required</span>
+                </div>
+                <div class="bp-mini-item">
+                  <svg class="bp-icon" viewBox="0 0 24 24">
+                    <path d="m5 12 4 4L19 6"></path>
+                  </svg>
+                  <span>Hiring unlocks after verification approval</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="bp-actions">
+              <a class="bp-btn primary company" href="{% url 'company_register' %}">Company Register</a>
+              <a class="bp-btn secondary" href="{% url 'company_login' %}">Company Login</a>
+            </div>
+          </article>
+
+          <article class="bp-choice shop">
+            <div>
+              <div class="bp-choice-icon">
+                <svg class="bp-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M4 9h16"></path>
+                  <path d="M5 9 7 4h10l2 5"></path>
+                  <path d="M5 9v11h14V9"></path>
+                  <path d="M9 20v-6h6v6"></path>
+                </svg>
+              </div>
+
+              <h3>Shop Owner</h3>
+              <p>For retail shops, restaurants, warehouses and local service businesses looking for suitable workers.</p>
+
+              <div class="bp-mini-list">
+                <div class="bp-mini-item">
+                  <svg class="bp-icon" viewBox="0 0 24 24">
+                    <path d="m5 12 4 4L19 6"></path>
+                  </svg>
+                  <span>Shop owner and business address required</span>
+                </div>
+                <div class="bp-mini-item">
+                  <svg class="bp-icon" viewBox="0 0 24 24">
+                    <path d="m5 12 4 4L19 6"></path>
+                  </svg>
+                  <span>Business verification proof required</span>
+                </div>
+                <div class="bp-mini-item">
+                  <svg class="bp-icon" viewBox="0 0 24 24">
+                    <path d="m5 12 4 4L19 6"></path>
+                  </svg>
+                  <span>Job posting stays locked until approval</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="bp-actions">
+              <a class="bp-btn primary shop" href="{% url 'shop_register' %}">Shop Register</a>
+              <a class="bp-btn secondary" href="{% url 'shop_login' %}">Shop Login</a>
+            </div>
+          </article>
+        </div>
+
+        <div class="bp-note">
+          <svg class="bp-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 3 20 6v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6Z"></path>
+            <path d="m8.5 12 2.2 2.2L15.8 9"></path>
+          </svg>
+          <div>Registration does not automatically create a Verified Employer badge. New accounts remain Pending Verification until admin review.</div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

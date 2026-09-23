@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Employer Login | Smart Complaint</title>
+
+  {% include 'complaints/base_style.html' %}
+  {% include 'complaints/Job_Folder/job_marketplace_style.html' %}
+</head>
+
+<body>
+  <header class="job-topbar">
+    <div class="job-brand">
+      <div class="job-brand-icon">
+        <svg class="job-ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 21V7l8-4 8 4v14"></path>
+          <path d="M8 10h2M14 10h2M9 21v-4h6v4"></path>
+        </svg>
+      </div>
+
+      <div>
+        <h1>Employer Login</h1>
+        <p>Smart Complaint - Job Connect</p>
+      </div>
+    </div>
+
+    <div class="job-top-actions">
+      <a class="job-btn secondary" href="{% url 'job_marketplace' %}">
+        Back
+      </a>
+    </div>
+  </header>
+
+  <main class="job-page">
+    {% if messages %}
+      <div class="job-alerts">
+        {% for message in messages %}
+          <div class="job-alert {{ message.tags }}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <section
+      class="job-grid-2"
+      style="grid-template-columns:minmax(0,1fr) minmax(280px,.75fr);"
+    >
+      <form class="job-card" method="post">
+        {% csrf_token %}
+
+        <div class="job-section-head">
+          <div class="job-section-title">
+            <svg class="job-ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+              <path d="m10 17 5-5-5-5M15 12H3"></path>
+            </svg>
+
+            <div>
+              <h2>Business Account Login</h2>
+              <p>Only Job Connect employer accounts can use this page.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="job-field">
+          <label for="username">Username</label>
+          <input
+            class="job-input"
+            id="username"
+            name="username"
+            required
+            autocomplete="username"
+            placeholder="Employer username"
+          />
+        </div>
+
+        <div class="job-field" style="margin-top:12px;">
+          <label for="password">Password</label>
+          <input
+            class="job-input"
+            id="password"
+            name="password"
+            type="password"
+            required
+            autocomplete="current-password"
+            placeholder="Password"
+          />
+        </div>
+
+        <div class="job-hero-actions">
+          <button class="job-btn success" type="submit">
+            Login as Employer
+          </button>
+        </div>
+
+        <div class="job-auth-note">
+          New business?
+          <a href="{% url 'employer_register' %}">
+            Create Employer Account
+          </a>
+        </div>
+      </form>
+
+      <aside class="job-card">
+        <div class="job-section-title">
+          <svg class="job-ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 3 20 6v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6Z"></path>
+          </svg>
+
+          <div>
+            <h3>Separate Employer Access</h3>
+            <p>Cleaner permissions and safer hiring workflow.</p>
+          </div>
+        </div>
+
+        <div class="job-list" style="margin-top:12px;">
+          <div class="job-trust-item">
+            <strong>Employer Dashboard</strong>
+            <small>Manage business profile and job posts.</small>
+          </div>
+
+          <div class="job-trust-item">
+            <strong>Verification Status</strong>
+            <small>Pending, Approved, Rejected or Suspended stays visible.</small>
+          </div>
+
+          <div class="job-trust-item">
+            <strong>Worker Accounts Stay Separate</strong>
+            <small>Complaint work and hiring permissions do not mix.</small>
+          </div>
+        </div>
+      </aside>
+    </section>
+  </main>
+</body>
+</html>

@@ -17,9 +17,11 @@ from django.contrib.auth import (
     update_session_auth_hash,
 )
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.core.files.storage import default_storage
+from django.core.exceptions import ValidationError
 from django.core.files import File
 from django.contrib.staticfiles import finders
 from django.db import transaction
@@ -47,6 +49,10 @@ from .models import (
     ChatMessage,
     SupportRequest,
     PaymentTransaction,
+    EmployerProfile,
+    JobPost,
+    JobApplication,
+    JobEmployment,
 )
 
 from .firebase_push import send_push_to_user
@@ -212,6 +218,62 @@ def _apply_free_profile_avatar(instance, field_name, avatar_id, filename_prefix)
 
 
 # =========================================================
+# APP FRONT PAGE / ACCOUNT GATEWAY
+# =========================================================
+
+@never_cache
+@ensure_csrf_cookie
+def front_page(request):
+    """
+    Universal Smart Complaint entry page.
+
+    Logged-out visitors choose one of four account types:
+    Citizen, Worker, Company or Shop Owner.
+
+    Logged-in accounts go directly to their own dashboard/home.
+    """
+    admin_redirect = _admin_account_redirect(request)
+    if admin_redirect:
+        return admin_redirect
+
+    if request.user.is_authenticated:
+
+        try:
+            worker = request.user.worker_profile
+
+            if worker.is_approved:
+                return redirect(
+                    'worker_dashboard'
+                )
+
+            return redirect(
+                'worker_login'
+            )
+
+        except WorkerProfile.DoesNotExist:
+            pass
+
+        try:
+            request.user.employer_profile
+
+            return redirect(
+                'employer_dashboard'
+            )
+
+        except EmployerProfile.DoesNotExist:
+            pass
+
+        return redirect(
+            'home'
+        )
+
+    return render(
+        request,
+        'complaints/account_portal.html',
+    )
+
+
+# =========================================================
 # HOME
 # =========================================================
 
@@ -286,6 +348,17 @@ def user_login(request):
             )
 
         except WorkerProfile.DoesNotExist:
+            pass
+
+        try:
+
+            request.user.employer_profile
+
+            return redirect(
+                'employer_dashboard'
+            )
+
+        except EmployerProfile.DoesNotExist:
 
             return redirect(
                 'home'
@@ -343,6 +416,22 @@ def user_login(request):
                 )
 
             except WorkerProfile.DoesNotExist:
+                pass
+
+            try:
+
+                user.employer_profile
+
+                messages.error(
+                    request,
+                    'Employer account detected. Please use Employer Login.'
+                )
+
+                return redirect(
+                    'employer_login'
+                )
+
+            except EmployerProfile.DoesNotExist:
                 pass
 
             login(
@@ -9533,3 +9622,1075 @@ def worker_rewards(request):
         return redirect("worker_login")
     me = _find_worker_row(worker, monthly=False)
     return render(request, "complaints/Worker_Folder/worker_rewards.html", {"me": me, "worker": worker})
+# =========================================================
+# JOB MARKETPLACE - UI ROUTES
+# =========================================================
+
+def job_marketplace(request):
+    """
+    Job Marketplace landing page.
+
+    Backend hiring actions are connected in later steps.
+    """
+    admin_redirect = _admin_account_redirect(request)
+    if admin_redirect:
+        return admin_redirect
+
+    return render(
+        request,
+        'complaints/Job_Folder/job_marketplace.html',
+    )
+
+
+@login_required(login_url='worker_login')
+def worker_jobs(request):
+    """
+    Worker-side Find Jobs UI.
+
+    For now this route renders the approved UI only.
+    Real JobPost queries are connected in the next backend step.
+    """
+    try:
+        worker = request.user.worker_profile
+
+    except WorkerProfile.DoesNotExist:
+        messages.error(
+            request,
+            'Worker access required.'
+        )
+        return redirect(
+            'worker_login'
+        )
+
+    if not worker.is_approved:
+        messages.error(
+            request,
+            'Your worker account is not approved.'
+        )
+        return redirect(
+            'worker_login'
+        )
+
+    return render(
+        request,
+        'complaints/Job_Folder/worker_jobs.html',
+        {
+            'worker': worker,
+        }
+    )
+
+
+@login_required(login_url='worker_login')
+def job_details(request):
+    """
+    Worker-side Job Details UI preview.
+    """
+    try:
+        worker = request.user.worker_profile
+
+    except WorkerProfile.DoesNotExist:
+        messages.error(
+            request,
+            'Worker access required.'
+        )
+        return redirect(
+            'worker_login'
+        )
+
+    if not worker.is_approved:
+        messages.error(
+            request,
+            'Your worker account is not approved.'
+        )
+        return redirect(
+            'worker_login'
+        )
+
+    return render(
+        request,
+        'complaints/Job_Folder/job_details.html',
+        {
+            'worker': worker,
+        }
+    )
+
+
+@login_required(login_url='worker_login')
+def worker_applications(request):
+    """
+    Worker-side application tracking UI preview.
+    """
+    try:
+        worker = request.user.worker_profile
+
+    except WorkerProfile.DoesNotExist:
+        messages.error(
+            request,
+            'Worker access required.'
+        )
+        return redirect(
+            'worker_login'
+        )
+
+    if not worker.is_approved:
+        messages.error(
+            request,
+            'Your worker account is not approved.'
+        )
+        return redirect(
+            'worker_login'
+        )
+
+    return render(
+        request,
+        'complaints/Job_Folder/worker_applications.html',
+        {
+            'worker': worker,
+        }
+    )
+
+
+def employer_portal(request):
+    """
+    Legacy business portal entry.
+
+    Company and Shop Owner access now lives on the universal
+    Smart Complaint account gateway.
+    """
+    return redirect(
+        'front_page'
+    )
+
+
+def employer_register(request):
+    """
+    Legacy employer registration route.
+
+    The new flow first asks whether the account is for a Company
+    or a Shop Owner.
+    """
+    return redirect('employer_portal')
+
+
+def employer_login(request):
+    """
+    Legacy employer login route.
+
+    Company and Shop Owner logins are now separate.
+    """
+    return redirect('employer_portal')
+
+
+def _employer_registration_guard(request):
+    """
+    Employer registration uses a separate account.
+
+    If the user is currently logged in as Worker/Citizen and intentionally
+    opens Company/Shop registration, log out that session and continue to
+    the registration form instead of sending them back to Worker/Home.
+    Existing Employer accounts still go to their Employer Dashboard.
+    """
+    admin_redirect = _admin_account_redirect(request)
+    if admin_redirect:
+        return admin_redirect
+
+    if not request.user.is_authenticated:
+        return None
+
+    try:
+        request.user.employer_profile
+        return redirect('employer_dashboard')
+    except EmployerProfile.DoesNotExist:
+        pass
+
+    # User intentionally opened Company/Shop registration.
+    # Clear the current Citizen/Worker session so a separate employer
+    # account can be created without mixing roles.
+    logout(request)
+
+    messages.info(
+        request,
+        (
+            'Your previous Citizen/Worker session was signed out. '
+            'You can now create a separate Company or Shop Owner account.'
+        )
+    )
+
+    return None
+
+
+def _validate_employer_files(
+    request,
+    verification_document,
+    business_logo,
+):
+    """
+    Validate uploads used for employer verification.
+
+    Returns True when valid, otherwise adds a user-facing message.
+    """
+    if verification_document is None:
+        messages.error(
+            request,
+            'Business verification proof is required.'
+        )
+        return False
+
+    allowed_document_types = {
+        'application/pdf',
+        'image/jpeg',
+        'image/png',
+    }
+
+    if (
+        verification_document.content_type
+        not in allowed_document_types
+    ):
+        messages.error(
+            request,
+            'Verification proof must be PDF, JPG or PNG.'
+        )
+        return False
+
+    if verification_document.size > 5 * 1024 * 1024:
+        messages.error(
+            request,
+            'Verification proof must be less than 5 MB.'
+        )
+        return False
+
+    if business_logo:
+        allowed_logo_types = {
+            'image/jpeg',
+            'image/png',
+            'image/webp',
+        }
+
+        if business_logo.content_type not in allowed_logo_types:
+            messages.error(
+                request,
+                'Business logo must be JPG, PNG or WEBP.'
+            )
+            return False
+
+        if business_logo.size > 3 * 1024 * 1024:
+            messages.error(
+                request,
+                'Business logo must be less than 3 MB.'
+            )
+            return False
+
+    return True
+
+
+def _create_employer_account(
+    request,
+    *,
+    account_kind,
+    template_name,
+):
+    """
+    Shared secure registration backend for Company and Shop Owner.
+
+    Company:
+    - business_type is always "company"
+    - legal registration number is required
+
+    Shop:
+    - business_type is selected from non-company shop categories
+
+    Both:
+    - phone, email, address and verification proof are required
+    - verification_status always starts as pending
+    """
+    guard = _employer_registration_guard(request)
+    if guard:
+        return guard
+
+    if request.method != 'POST':
+        return render(
+            request,
+            template_name,
+            {
+                'form_data': {},
+            }
+        )
+
+    username = request.POST.get(
+        'username',
+        ''
+    ).strip()
+
+    business_name = request.POST.get(
+        'business_name',
+        ''
+    ).strip()
+
+    contact_person = request.POST.get(
+        'contact_person',
+        ''
+    ).strip()
+
+    business_phone = request.POST.get(
+        'business_phone',
+        ''
+    ).strip()
+
+    business_email = request.POST.get(
+        'business_email',
+        ''
+    ).strip().lower()
+
+    address = request.POST.get(
+        'address',
+        ''
+    ).strip()
+
+    city = request.POST.get(
+        'city',
+        ''
+    ).strip()
+
+    state = request.POST.get(
+        'state',
+        ''
+    ).strip()
+
+    pincode = request.POST.get(
+        'pincode',
+        ''
+    ).strip()
+
+    registration_number = request.POST.get(
+        'registration_number',
+        ''
+    ).strip()
+
+    gst_number = request.POST.get(
+        'gst_number',
+        ''
+    ).strip().upper()
+
+    website_url = request.POST.get(
+        'website_url',
+        ''
+    ).strip()
+
+    about = request.POST.get(
+        'about',
+        ''
+    ).strip()
+
+    password = request.POST.get(
+        'password',
+        ''
+    )
+
+    password_confirm = request.POST.get(
+        'password_confirm',
+        ''
+    )
+
+    verification_document = request.FILES.get(
+        'verification_document'
+    )
+
+    business_logo = request.FILES.get(
+        'logo'
+    )
+
+    if account_kind == 'company':
+        business_type = 'company'
+    else:
+        business_type = request.POST.get(
+            'business_type',
+            'retail'
+        ).strip()
+
+        allowed_shop_types = {
+            'retail',
+            'restaurant',
+            'warehouse',
+            'service',
+            'other',
+        }
+
+        if business_type not in allowed_shop_types:
+            messages.error(
+                request,
+                'Please select a valid shop/business type.'
+            )
+            return render(
+                request,
+                template_name,
+                {
+                    'form_data': request.POST,
+                }
+            )
+
+    required_values = [
+        username,
+        business_name,
+        contact_person,
+        business_phone,
+        business_email,
+        address,
+        city,
+        state,
+        pincode,
+        password,
+        password_confirm,
+    ]
+
+    if not all(required_values):
+        messages.error(
+            request,
+            'Please fill all required fields.'
+        )
+        return render(
+            request,
+            template_name,
+            {
+                'form_data': request.POST,
+            }
+        )
+
+    if (
+        account_kind == 'company'
+        and not registration_number
+    ):
+        messages.error(
+            request,
+            'Company registration number is required.'
+        )
+        return render(
+            request,
+            template_name,
+            {
+                'form_data': request.POST,
+            }
+        )
+
+    if password != password_confirm:
+        messages.error(
+            request,
+            'Passwords do not match.'
+        )
+        return render(
+            request,
+            template_name,
+            {
+                'form_data': request.POST,
+            }
+        )
+
+    if User.objects.filter(
+        username__iexact=username
+    ).exists():
+        messages.error(
+            request,
+            'This username is already in use.'
+        )
+        return render(
+            request,
+            template_name,
+            {
+                'form_data': request.POST,
+            }
+        )
+
+    if User.objects.filter(
+        email__iexact=business_email
+    ).exists():
+        messages.error(
+            request,
+            'An account with this email already exists.'
+        )
+        return render(
+            request,
+            template_name,
+            {
+                'form_data': request.POST,
+            }
+        )
+
+    try:
+        validate_password(
+            password,
+            user=User(
+                username=username,
+                email=business_email,
+            ),
+        )
+    except ValidationError as error:
+        messages.error(
+            request,
+            ' '.join(error.messages)
+        )
+        return render(
+            request,
+            template_name,
+            {
+                'form_data': request.POST,
+            }
+        )
+
+    if not _validate_employer_files(
+        request,
+        verification_document,
+        business_logo,
+    ):
+        return render(
+            request,
+            template_name,
+            {
+                'form_data': request.POST,
+            }
+        )
+
+    try:
+        with transaction.atomic():
+            employer_user = User.objects.create_user(
+                username=username,
+                email=business_email,
+                password=password,
+                first_name=contact_person,
+            )
+
+            employer = EmployerProfile.objects.create(
+                user=employer_user,
+                business_name=business_name,
+                business_type=business_type,
+                contact_person=contact_person,
+                business_phone=business_phone,
+                business_email=business_email,
+                address=address,
+                city=city,
+                state=state,
+                pincode=pincode,
+                registration_number=registration_number,
+                gst_number=gst_number,
+                website_url=website_url,
+                about=about,
+                logo=business_logo,
+                verification_document=verification_document,
+                verification_status='pending',
+                is_active=True,
+            )
+
+    except Exception as error:
+        print(
+            'EMPLOYER REGISTRATION ERROR:',
+            error,
+        )
+        messages.error(
+            request,
+            'Account could not be created. Please check the details and try again.'
+        )
+        return render(
+            request,
+            template_name,
+            {
+                'form_data': request.POST,
+            }
+        )
+
+    login(
+        request,
+        employer_user
+    )
+
+    request.session[
+        'smart_complaint_role'
+    ] = 'employer'
+
+    request.session[
+        'employer_account_kind'
+    ] = account_kind
+
+    messages.success(
+        request,
+        (
+            f'{employer.business_name} account created successfully. '
+            'Verification is Pending. Job posting will unlock after approval.'
+        )
+    )
+
+    return redirect(
+        'employer_dashboard'
+    )
+
+
+def company_register(request):
+    return _create_employer_account(
+        request,
+        account_kind='company',
+        template_name='complaints/Job_Folder/company_register.html',
+    )
+
+
+def shop_register(request):
+    return _create_employer_account(
+        request,
+        account_kind='shop',
+        template_name='complaints/Job_Folder/shop_register.html',
+    )
+
+
+def _employer_login_by_kind(
+    request,
+    *,
+    account_kind,
+    template_name,
+):
+    """
+    Dedicated login for Company or Shop Owner accounts.
+    """
+    admin_redirect = _admin_account_redirect(request)
+    if admin_redirect:
+        return admin_redirect
+
+    if request.user.is_authenticated:
+        try:
+            employer = request.user.employer_profile
+
+            is_company = employer.business_type == 'company'
+
+            if (
+                account_kind == 'company'
+                and is_company
+            ):
+                return redirect(
+                    'employer_dashboard'
+                )
+
+            if (
+                account_kind == 'shop'
+                and not is_company
+            ):
+                return redirect(
+                    'employer_dashboard'
+                )
+
+            messages.info(
+                request,
+                'Please log out before switching employer account type.'
+            )
+            return redirect(
+                'employer_dashboard'
+            )
+
+        except EmployerProfile.DoesNotExist:
+            try:
+                request.user.worker_profile
+                return redirect(
+                    'worker_dashboard'
+                )
+            except WorkerProfile.DoesNotExist:
+                return redirect(
+                    'home'
+                )
+
+    if request.method == 'POST':
+        username = request.POST.get(
+            'username',
+            ''
+        ).strip()
+
+        password = request.POST.get(
+            'password',
+            ''
+        )
+
+        if not username or not password:
+            messages.error(
+                request,
+                'Please enter username and password.'
+            )
+            return render(
+                request,
+                template_name,
+            )
+
+        user = authenticate(
+            request,
+            username=username,
+            password=password,
+        )
+
+        if user is None:
+            messages.error(
+                request,
+                'Invalid username or password.'
+            )
+            return render(
+                request,
+                template_name,
+            )
+
+        if user.is_staff or user.is_superuser:
+            login(
+                request,
+                user
+            )
+            return redirect('/admin/')
+
+        try:
+            employer = user.employer_profile
+        except EmployerProfile.DoesNotExist:
+            messages.error(
+                request,
+                'This account is not a Company/Shop employer account.'
+            )
+            return render(
+                request,
+                template_name,
+            )
+
+        is_company = employer.business_type == 'company'
+
+        if (
+            account_kind == 'company'
+            and not is_company
+        ):
+            messages.error(
+                request,
+                'This is a Shop Owner account. Please use Shop Owner Login.'
+            )
+            return redirect(
+                'shop_login'
+            )
+
+        if (
+            account_kind == 'shop'
+            and is_company
+        ):
+            messages.error(
+                request,
+                'This is a Company account. Please use Company Login.'
+            )
+            return redirect(
+                'company_login'
+            )
+
+        if not employer.is_active:
+            messages.error(
+                request,
+                'This employer account is inactive. Please contact support.'
+            )
+            return render(
+                request,
+                template_name,
+            )
+
+        if employer.verification_status == 'suspended':
+            messages.error(
+                request,
+                'This employer account is suspended. Please contact support.'
+            )
+            return render(
+                request,
+                template_name,
+            )
+
+        login(
+            request,
+            user
+        )
+
+        request.session[
+            'smart_complaint_role'
+        ] = 'employer'
+
+        request.session[
+            'employer_account_kind'
+        ] = account_kind
+
+        return redirect(
+            'employer_dashboard'
+        )
+
+    return render(
+        request,
+        template_name,
+    )
+
+
+def company_login(request):
+    return _employer_login_by_kind(
+        request,
+        account_kind='company',
+        template_name='complaints/Job_Folder/company_login.html',
+    )
+
+
+def shop_login(request):
+    return _employer_login_by_kind(
+        request,
+        account_kind='shop',
+        template_name='complaints/Job_Folder/shop_login.html',
+    )
+
+
+def employer_logout(request):
+    logout(
+        request
+    )
+
+    return redirect(
+        'employer_login'
+    )
+
+
+@login_required(login_url='employer_portal')
+def employer_dashboard(request):
+    """
+    Real employer dashboard shell.
+
+    Job posting backend is connected in the next step.
+    """
+    try:
+        employer = request.user.employer_profile
+
+    except EmployerProfile.DoesNotExist:
+        messages.error(
+            request,
+            'Employer access required.'
+        )
+
+        return redirect(
+            'employer_login'
+        )
+
+    if not employer.is_active:
+        logout(
+            request
+        )
+
+        messages.error(
+            request,
+            'This employer account is inactive.'
+        )
+
+        return redirect(
+            'employer_login'
+        )
+
+    active_jobs_count = (
+        JobPost.objects
+        .filter(
+            employer=employer,
+            status='published',
+        )
+        .count()
+    )
+
+    applications_count = (
+        JobApplication.objects
+        .filter(
+            job__employer=employer,
+        )
+        .count()
+    )
+
+    shortlisted_count = (
+        JobApplication.objects
+        .filter(
+            job__employer=employer,
+            status__in=[
+                'shortlisted',
+                'interview',
+                'offer_received',
+            ],
+        )
+        .count()
+    )
+
+    hired_count = (
+        JobEmployment.objects
+        .filter(
+            application__job__employer=employer,
+            status__in=[
+                'active',
+                'completed',
+            ],
+        )
+        .count()
+    )
+
+    recent_jobs = (
+        JobPost.objects
+        .filter(
+            employer=employer,
+        )
+        .annotate(
+            application_count=Count(
+                'applications'
+            )
+        )
+        .order_by(
+            '-created_at'
+        )[:5]
+    )
+
+    return render(
+        request,
+        'complaints/Job_Folder/employer_dashboard.html',
+        {
+            'employer': employer,
+            'active_jobs_count': active_jobs_count,
+            'applications_count': applications_count,
+            'shortlisted_count': shortlisted_count,
+            'hired_count': hired_count,
+            'recent_jobs': recent_jobs,
+        }
+    )
+
+
+@login_required(login_url='employer_portal')
+def employer_post_job(request):
+    """
+    Post Job UI preview.
+
+    Real JobPost creation is connected in the next step.
+    """
+    try:
+        employer = request.user.employer_profile
+
+    except EmployerProfile.DoesNotExist:
+        messages.error(
+            request,
+            'Employer access required.'
+        )
+
+        return redirect(
+            'employer_login'
+        )
+
+    if employer.verification_status != 'approved':
+        messages.warning(
+            request,
+            (
+                'Business verification is required before using hiring actions. '
+                'Your current status is '
+                f'{employer.get_verification_status_display()}.'
+            )
+        )
+        return redirect(
+            'employer_dashboard'
+        )
+
+    return render(
+        request,
+        'complaints/Job_Folder/employer_post_job.html',
+        {
+            'employer': employer,
+        }
+    )
+
+
+@login_required(login_url='employer_portal')
+def employer_applicants(request):
+    """
+    Employer applicants UI preview.
+    """
+    try:
+        employer = request.user.employer_profile
+
+    except EmployerProfile.DoesNotExist:
+        messages.error(
+            request,
+            'Employer access required.'
+        )
+
+        return redirect(
+            'employer_login'
+        )
+
+    if employer.verification_status != 'approved':
+        messages.warning(
+            request,
+            (
+                'Business verification is required before using hiring actions. '
+                'Your current status is '
+                f'{employer.get_verification_status_display()}.'
+            )
+        )
+        return redirect(
+            'employer_dashboard'
+        )
+
+    return render(
+        request,
+        'complaints/Job_Folder/employer_applicants.html',
+        {
+            'employer': employer,
+        }
+    )
+
+
+@login_required(login_url='employer_portal')
+def employer_worker_profile(request):
+    """
+    Employer-facing worker profile UI preview.
+    """
+    try:
+        employer = request.user.employer_profile
+
+    except EmployerProfile.DoesNotExist:
+        messages.error(
+            request,
+            'Employer access required.'
+        )
+
+        return redirect(
+            'employer_login'
+        )
+
+    if employer.verification_status != 'approved':
+        messages.warning(
+            request,
+            'Business verification is required before viewing worker hiring profiles.'
+        )
+        return redirect(
+            'employer_dashboard'
+        )
+
+    return render(
+        request,
+        'complaints/Job_Folder/employer_worker_profile.html',
+        {
+            'employer': employer,
+        }
+    )
+
+def job_offer(request):
+    """
+    Job offer UI preview.
+
+    Offer sending/acceptance is not performed by this UI-only route.
+    """
+    admin_redirect = _admin_account_redirect(request)
+    if admin_redirect:
+        return admin_redirect
+
+    return render(
+        request,
+        'complaints/Job_Folder/job_offer.html',
+    )
+
+
+def job_chat(request):
+    """
+    Job interview chat UI preview.
+
+    Complaint chat remains completely separate.
+    """
+    admin_redirect = _admin_account_redirect(request)
+    if admin_redirect:
+        return admin_redirect
+
+    return render(
+        request,
+        'complaints/Job_Folder/job_chat.html',
+    )

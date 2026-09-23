@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Job Connect | Smart Complaint</title>
+
+    {% include 'complaints/base_style.html' %}
+
+    <style>
+      /* =========================================================
+             JOB CONNECT LANDING PAGE
+             Fully namespaced so global project themes cannot wash out text.
+             ========================================================= */
+      
+      .jm-page,
+      .jm-page *,
+      .jm-topbar,
+      .jm-topbar * {
+        box-sizing: border-box;
+      }
+      
+      :root {
+        --jm-navy: #102457;
+        --jm-text: #18243f;
+        --jm-muted: #62738d;
+        --jm-line: #d7e4f3;
+        --jm-line-strong: #c7d7eb;
+        --jm-blue: #1e7cf2;
+        --jm-sky: #2aa9f6;
+        --jm-purple: #7257e8;
+        --jm-purple-2: #9a7df1;
+        --jm-green: #09a874;
+        --jm-green-2: #18bb83;
+        --jm-bg: #eef4ff;
+        --jm-card: #ffffff;
+        --jm-shadow: 0 16px 42px rgba(31, 68, 122, 0.1);
+        --jm-shadow-soft: 0 9px 24px rgba(31, 68, 122, 0.07);
+      }
+      
+      html,
+      body {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+      }
+      
+      .jm-topbar {
+        position: sticky;
+        top: 6px;
+        z-index: 80;
+        width: min(1160px, calc(100% - 14px));
+        min-height: 66px;
+        margin: calc(6px + env(safe-area-inset-top, 0px)) auto 14px;
+        padding: 10px 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        border: 1px solid var(--jm-line);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.98) !important;
+        box-shadow: 0 12px 32px rgba(31, 70, 126, 0.11);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+      }
+      
+      .jm-brand {
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        gap: 11px;
+      }
+      
+      .jm-brand-icon {
+        width: 42px;
+        height: 42px;
+        flex: 0 0 42px;
+        display: grid;
+        place-items: center;
+        border-radius: 13px;
+        color: #fff !important;
+        background: linear-gradient(135deg, var(--jm-blue), var(--jm-sky));
+        box-shadow: 0 9px 22px rgba(30, 124, 242, 0.23);
+      }
+      
+      .jm-svg {
+        width: 21px;
+        height: 21px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        flex: 0 0 auto;
+      }
+      
+      .jm-brand-copy {
+        min-width: 0;
+      }
+      
+      .jm-brand-copy h1 {
+        margin: 0 !important;
+        color: var(--jm-navy) !important;
+        font-size: 18px !important;
+        line-height: 1.15 !important;
+        font-weight: 950 !important;
+        text-shadow: none !important;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      
+      .jm-brand-copy p {
+        margin: 3px 0 0 !important;
+        color: #687892 !important;
+        font-size: 10px !important;
+        line-height: 1.3 !important;
+        text-shadow: none !important;
+      }
+      
+      .jm-back {
+        min-height: 40px;
+        padding: 8px 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        border: 1px solid var(--jm-line-strong);
+        border-radius: 11px;
+        background: #fff !important;
+        color: var(--jm-navy) !important;
+        font-size: 11px !important;
+        font-weight: 900 !important;
+        text-decoration: none !important;
+        text-shadow: none !important;
+        box-shadow: none !important;
+      }
+      
+      .jm-page {
+        width: min(1160px, calc(100% - 14px));
+        margin: 0 auto;
+        padding: 8px 0 calc(40px + env(safe-area-inset-bottom, 0px));
+      }
+      
+      .jm-hero {
+        position: relative;
+        overflow: hidden;
+        padding: 25px;
+        border: 1px solid var(--jm-line);
+        border-radius: 22px;
+        background: radial-gradient(circle at 90% 12%, rgba(42, 169, 246, 0.16), transparent 31%), radial-gradient(circle at 8% 112%, rgba(114, 87, 232, 0.1), transparent 34%), #fff !important;
+        box-shadow: var(--jm-shadow);
+      }
+      
+      .jm-kicker {
+        width: fit-content;
+        margin-bottom: 11px;
+        padding: 6px 9px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border: 1px solid #cfe4fb;
+        border-radius: 999px;
+        background: #f1f8ff !important;
+        color: #2d619c !important;
+        font-size: 9px !important;
+        font-weight: 950 !important;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        text-shadow: none !important;
+      }
+      
+      .jm-kicker .jm-svg {
+        width: 15px;
+        height: 15px;
+      }
+      
+      .jm-hero h2 {
+        max-width: 830px;
+        margin: 0 !important;
+        color: var(--jm-navy) !important;
+        font-size: clamp(29px, 5vw, 48px) !important;
+        line-height: 1.04 !important;
+        letter-spacing: -0.035em;
+        font-weight: 950 !important;
+        text-shadow: none !important;
+      }
+      
+      .jm-hero p {
+        max-width: 780px;
+        margin: 12px 0 0 !important;
+        color: var(--jm-muted) !important;
+        font-size: 13px !important;
+        line-height: 1.65 !important;
+        text-shadow: none !important;
+      }
+      
+      .jm-hero-actions,
+      .jm-card-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 9px;
+        margin-top: 18px;
+      }
+      
+      .jm-btn {
+        min-height: 43px;
+        padding: 9px 14px;
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        border: 0;
+        border-radius: 11px;
+        color: #fff !important;
+        font-size: 11px !important;
+        font-weight: 950 !important;
+        line-height: 1 !important;
+        text-decoration: none !important;
+        text-shadow: none !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        box-shadow: 0 9px 20px rgba(30, 124, 242, 0.16);
+      }
+      
+      .jm-btn.blue {
+        background: linear-gradient(135deg, var(--jm-blue), var(--jm-sky)) !important;
+      }
+      
+      .jm-btn.purple {
+        background: linear-gradient(135deg, var(--jm-purple), var(--jm-purple-2)) !important;
+        box-shadow: 0 9px 20px rgba(114, 87, 232, 0.17);
+      }
+      
+      .jm-btn.green {
+        background: linear-gradient(135deg, var(--jm-green), var(--jm-green-2)) !important;
+        box-shadow: 0 9px 20px rgba(9, 168, 116, 0.17);
+      }
+      
+      .jm-btn.secondary {
+        border: 1px solid var(--jm-line-strong) !important;
+        background: #fff !important;
+        color: var(--jm-navy) !important;
+        box-shadow: none !important;
+      }
+      
+      .jm-btn:active {
+        transform: scale(0.985);
+      }
+      
+      .jm-role-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+        margin-top: 14px;
+      }
+      
+      .jm-role-card {
+        position: relative;
+        min-height: 280px;
+        padding: 18px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        overflow: hidden;
+        border: 1px solid var(--jm-line);
+        border-radius: 19px;
+        background: #fff !important;
+        box-shadow: var(--jm-shadow-soft);
+      }
+      
+      .jm-role-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+      }
+      
+      .jm-role-card.worker {
+        background: radial-gradient(circle at 92% 7%, rgba(114, 87, 232, 0.12), transparent 35%), #fdfcff !important;
+      }
+      
+      .jm-role-card.worker::before {
+        background: linear-gradient(90deg, var(--jm-purple), var(--jm-purple-2));
+      }
+      
+      .jm-role-card.business {
+        background: radial-gradient(circle at 92% 7%, rgba(9, 168, 116, 0.12), transparent 35%), #fbfffd !important;
+      }
+      
+      .jm-role-card.business::before {
+        background: linear-gradient(90deg, var(--jm-green), var(--jm-green-2));
+      }
+      
+      .jm-role-icon {
+        width: 50px;
+        height: 50px;
+        display: grid;
+        place-items: center;
+        border-radius: 14px;
+        color: #fff !important;
+        box-shadow: 0 9px 20px rgba(22, 67, 120, 0.12);
+      }
+      
+      .worker .jm-role-icon {
+        background: linear-gradient(135deg, var(--jm-purple), var(--jm-purple-2));
+      }
+      
+      .business .jm-role-icon {
+        background: linear-gradient(135deg, var(--jm-green), var(--jm-green-2));
+      }
+      
+      .jm-role-card h3 {
+        margin: 14px 0 6px !important;
+        color: var(--jm-navy) !important;
+        font-size: 21px !important;
+        line-height: 1.2 !important;
+        font-weight: 950 !important;
+        text-shadow: none !important;
+      }
+      
+      .jm-role-card p {
+        margin: 0 !important;
+        color: var(--jm-muted) !important;
+        font-size: 11px !important;
+        line-height: 1.6 !important;
+        text-shadow: none !important;
+      }
+      
+      .jm-points {
+        display: grid;
+        gap: 7px;
+        margin-top: 14px;
+      }
+      
+      .jm-point {
+        display: flex;
+        align-items: flex-start;
+        gap: 7px;
+        color: #435775 !important;
+        font-size: 10px !important;
+        line-height: 1.45 !important;
+        text-shadow: none !important;
+      }
+      
+      .jm-point .jm-svg {
+        width: 15px;
+        height: 15px;
+        margin-top: 1px;
+      }
+      
+      .worker .jm-point .jm-svg {
+        color: var(--jm-purple);
+      }
+      
+      .business .jm-point .jm-svg {
+        color: var(--jm-green);
+      }
+      
+      .jm-trust-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 9px;
+        margin-top: 14px;
+      }
+      
+      .jm-trust {
+        min-width: 0;
+        padding: 13px;
+        border: 1px solid var(--jm-line);
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.96) !important;
+        box-shadow: 0 6px 18px rgba(31, 68, 122, 0.035);
+      }
+      
+      .jm-trust .jm-svg {
+        color: var(--jm-blue) !important;
+      }
+      
+      .jm-trust strong {
+        display: block;
+        margin-top: 7px;
+        color: #1e385f !important;
+        font-size: 11px !important;
+        font-weight: 950 !important;
+        text-shadow: none !important;
+      }
+      
+      .jm-trust small {
+        display: block;
+        margin-top: 4px;
+        color: #697b95 !important;
+        font-size: 9px !important;
+        line-height: 1.45 !important;
+        text-shadow: none !important;
+      }
+      
+      @media (max-width: 780px) {
+        .jm-role-grid {
+          grid-template-columns: 1fr;
+        }
+      
+        .jm-trust-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+      
+      @media (max-width: 600px) {
+        .jm-topbar,
+        .jm-page {
+          width: min(100% - 12px, 1160px);
+        }
+      
+        .jm-topbar {
+          top: 5px;
+          min-height: 60px;
+          margin-top: calc(5px + env(safe-area-inset-top, 0px));
+          border-radius: 15px;
+          padding: 9px 10px;
+        }
+      
+        .jm-brand-icon {
+          width: 38px;
+          height: 38px;
+          flex-basis: 38px;
+        }
+      
+        .jm-brand-copy h1 {
+          max-width: 235px;
+          font-size: 15px !important;
+        }
+      
+        .jm-brand-copy p {
+          font-size: 9px !important;
+        }
+      
+        .jm-back {
+          width: 38px;
+          min-height: 38px;
+          padding: 0;
+        }
+      
+        .jm-back span {
+          display: none;
+        }
+      
+        .jm-page {
+          padding-top: 6px;
+        }
+      
+        .jm-hero {
+          padding: 18px;
+          border-radius: 18px;
+        }
+      
+        .jm-hero h2 {
+          font-size: 29px !important;
+        }
+      
+        .jm-role-card {
+          min-height: 0;
+          padding: 16px;
+          border-radius: 17px;
+        }
+      
+        .jm-card-actions,
+        .jm-hero-actions {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+        }
+      
+        .jm-btn {
+          width: 100%;
+        }
+      }
+      
+      @media (max-width: 390px) {
+        .jm-brand-copy h1 {
+          max-width: 190px;
+        }
+      
+        .jm-brand-copy p {
+          display: none;
+        }
+      
+        .jm-card-actions,
+        .jm-hero-actions,
+        .jm-trust-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="jm-topbar">
+      <div class="jm-brand">
+        <div class="jm-brand-icon">
+          <svg class="jm-svg" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M7 11 4 8l3-3 5 5"></path>
+            <path d="m17 11 3-3-3-3-5 5"></path>
+            <path d="M8.5 12.5 11 15a2 2 0 0 0 3 0l2.5-2.5"></path>
+            <path d="m9 16 1 1a2 2 0 0 0 3 0l1-1"></path>
+          </svg>
+        </div>
+
+        <div class="jm-brand-copy">
+          <h1>Smart Complaint - Job Connect</h1>
+          <p>Jobs for workers. Trusted hiring for businesses.</p>
+        </div>
+      </div>
+
+      <a class="jm-back" href="{% url 'front_page' %}">
+        <svg class="jm-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m15 18-6-6 6-6"></path>
+        </svg>
+        <span>Back</span>
+      </a>
+    </header>
+
+    <main class="jm-page">
+      <section class="jm-hero">
+        <div class="jm-kicker">
+          <svg class="jm-svg" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 3 20 6v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6Z"></path>
+            <path d="m8.5 12 2.2 2.2L15.8 9"></path>
+          </svg>Trusted Job Marketplace
+        </div>
+
+        <h2>Better jobs for workers. Better hiring for businesses.</h2>
+
+        <p>Job Connect gives verified workers a place to find suitable jobs and gives companies or shop owners a safer way to discover workers using clear skills, ratings and work history.</p>
+
+        <div class="jm-hero-actions">
+          <a class="jm-btn purple" href="{% url 'worker_jobs' %}">
+            <svg class="jm-svg" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="8" r="4"></circle>
+              <path d="M4 21a8 8 0 0 1 16 0"></path>
+            </svg>Find Jobs
+          </a>
+
+          <a class="jm-btn green" href="{% url 'employer_portal' %}">
+            <svg class="jm-svg" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 21V7l8-4 8 4v14"></path>
+              <path d="M8 10h2M14 10h2M9 21v-4h6v4"></path>
+            </svg>Hire Workers
+          </a>
+        </div>
+      </section>
+
+      <section class="jm-role-grid">
+        <article class="jm-role-card worker">
+          <div>
+            <div class="jm-role-icon">
+              <svg class="jm-svg" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="8" r="4"></circle>
+                <path d="M4 21a8 8 0 0 1 16 0"></path>
+                <path d="M8 4h8"></path>
+              </svg>
+            </div>
+
+            <h3>I am a Worker</h3>
+            <p>Browse suitable jobs, check salary and work terms, apply with your Smart Complaint worker profile and track every application.</p>
+
+            <div class="jm-points">
+              <div class="jm-point">
+                <svg class="jm-svg" viewBox="0 0 24 24">
+                  <path d="m5 12 4 4L19 6"></path>
+                </svg>
+                <span>Verified worker profile and work history</span>
+              </div>
+              <div class="jm-point">
+                <svg class="jm-svg" viewBox="0 0 24 24">
+                  <path d="m5 12 4 4L19 6"></path>
+                </svg>
+                <span>Clear salary, location and job timing</span>
+              </div>
+              <div class="jm-point">
+                <svg class="jm-svg" viewBox="0 0 24 24">
+                  <path d="m5 12 4 4L19 6"></path>
+                </svg>
+                <span>Application, interview and offer tracking</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="jm-card-actions">
+            <a class="jm-btn purple" href="{% url 'worker_jobs' %}">Browse Jobs</a>
+            <a class="jm-btn secondary" href="{% url 'worker_applications' %}">My Applications</a>
+          </div>
+        </article>
+
+        <article class="jm-role-card business">
+          <div>
+            <div class="jm-role-icon">
+              <svg class="jm-svg" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 21V7l8-4 8 4v14"></path>
+                <path d="M8 10h2M14 10h2M9 21v-4h6v4"></path>
+              </svg>
+            </div>
+
+            <h3>Company / Shop Owner</h3>
+            <p>Create a separate business account, complete verification and hire workers using profile, skills, ratings and previous work signals.</p>
+
+            <div class="jm-points">
+              <div class="jm-point">
+                <svg class="jm-svg" viewBox="0 0 24 24">
+                  <path d="m5 12 4 4L19 6"></path>
+                </svg>
+                <span>Separate Company and Shop Owner accounts</span>
+              </div>
+              <div class="jm-point">
+                <svg class="jm-svg" viewBox="0 0 24 24">
+                  <path d="m5 12 4 4L19 6"></path>
+                </svg>
+                <span>Business proof and admin verification</span>
+              </div>
+              <div class="jm-point">
+                <svg class="jm-svg" viewBox="0 0 24 24">
+                  <path d="m5 12 4 4L19 6"></path>
+                </svg>
+                <span>Post jobs and shortlist workers after approval</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="jm-card-actions">
+            <a class="jm-btn green" href="{% url 'employer_portal' %}">Business Login / Register</a>
+          </div>
+        </article>
+      </section>
+
+      <section class="jm-trust-grid">
+        <div class="jm-trust">
+          <svg class="jm-svg" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 3 20 6v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6Z"></path>
+            <path d="m8.5 12 2.2 2.2L15.8 9"></path>
+          </svg>
+          <strong>Verified Profiles</strong>
+          <small>Worker and employer trust details stay visible before hiring decisions.</small>
+        </div>
+
+        <div class="jm-trust">
+          <svg class="jm-svg" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 5h16v12H8l-4 4Z"></path>
+            <path d="M8 9h8M8 13h5"></path>
+          </svg>
+          <strong>In-App Contact</strong>
+          <small>Interview and hiring conversations can stay inside Smart Complaint.</small>
+        </div>
+
+        <div class="jm-trust">
+          <svg class="jm-svg" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 7h16v12H4z"></path>
+            <path d="M7 11h10M7 15h6"></path>
+          </svg>
+          <strong>Clear Job Terms</strong>
+          <small>Salary, timing, location and job type are shown before applying.</small>
+        </div>
+
+        <div class="jm-trust">
+          <svg class="jm-svg" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M9 18h6M10 22h4"></path>
+            <path d="M8.5 15.5A7 7 0 1 1 15.5 15.5c-.9.7-1.5 1.5-1.5 2.5h-4c0-1-.6-1.8-1.5-2.5Z"></path>
+          </svg>
+          <strong>Better Matching</strong>
+          <small>Skills, location and work history can support better recommendations.</small>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

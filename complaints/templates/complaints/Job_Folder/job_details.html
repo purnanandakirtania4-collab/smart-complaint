@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Job Details | Smart Complaint</title>
+
+  {% include 'complaints/base_style.html' %}
+  {% include 'complaints/Job_Folder/job_marketplace_style.html' %}
+  
+</head>
+<body>
+
+  <header class="job-topbar">
+    <div class="job-brand">
+      <div class="job-brand-icon">
+        <svg class="job-ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M7 11 4 8l3-3 5 5"></path>
+          <path d="m17 11 3-3-3-3-5 5"></path>
+          <path d="M8.5 12.5 11 15a2 2 0 0 0 3 0l2.5-2.5"></path>
+          <path d="m9 16 1 1a2 2 0 0 0 3 0l1-1"></path>
+        </svg>
+      </div>
+      <div>
+        <h1>Smart Complaint - Job Connect</h1>
+        <p>Jobs for workers. Trusted workers for businesses.</p>
+      </div>
+    </div>
+
+    <div class="job-top-actions">
+      <a class="job-btn secondary hide-mobile" href="{% url 'job_marketplace' %}">
+        <svg class="job-ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m15 18-6-6 6-6"></path>
+        </svg>
+        Back
+      </a>
+      <button class="job-icon-btn" type="button" aria-label="Menu">
+        <svg class="job-ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16"></path>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="job-page">
+    <section class="job-grid-2" style="grid-template-columns:minmax(0,1.35fr) minmax(280px,.65fr);">
+      <article class="job-card">
+        <div class="job-section-head">
+          <div>
+            <span class="job-pill green">Hiring Now</span>
+            <h2 style="margin:9px 0 4px;color:#fff;font-size:24px;">Cleaning Staff</h2>
+            <div class="job-list-company">ABC Supermarket</div>
+          </div>
+          <div class="job-salary">₹12,000 / month</div>
+        </div>
+
+        <div class="job-meta" style="margin:12px 0 16px;">
+          <span><svg class="job-ui-icon" viewBox="0 0 24 24"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>City Center, New Town</span>
+          <span>Full Time</span>
+          <span>9 AM - 6 PM</span>
+          <span>2 Vacancies</span>
+        </div>
+
+        <div class="job-card" style="box-shadow:none;background:rgba(255,255,255,.035);">
+          <div class="job-section-title">
+            <svg class="job-ui-icon" viewBox="0 0 24 24"><path d="M5 3h14v18H5z"></path><path d="M8 8h8M8 12h6M8 16h7"></path></svg>
+            <h3>Job Description</h3>
+          </div>
+          <p class="job-muted" style="font-size:11px;">
+            Maintain store cleanliness, assist with basic floor upkeep and support staff with
+            routine cleaning duties. Clear work schedule and weekly off will be shared before joining.
+          </p>
+        </div>
+
+        <div class="job-grid-2" style="margin-top:12px;">
+          <div class="job-card" style="box-shadow:none;background:rgba(255,255,255,.035);">
+            <div class="job-section-title">
+              <svg class="job-ui-icon" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg>
+              <h3>Requirements</h3>
+            </div>
+            <div class="job-meta" style="display:grid;">
+              <span>Basic cleaning experience</span>
+              <span>Punctual and reliable</span>
+              <span>Friendly behavior</span>
+              <span>Government ID verification</span>
+            </div>
+          </div>
+
+          <div class="job-card" style="box-shadow:none;background:rgba(255,255,255,.035);">
+            <div class="job-section-title">
+              <svg class="job-ui-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+              <h3>Schedule</h3>
+            </div>
+            <div class="job-meta" style="display:grid;">
+              <span>Joining: Within 7 days</span>
+              <span>Shift: Day</span>
+              <span>Weekly off: 1 day</span>
+              <span>Interview required</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="job-banner" style="margin-top:12px;">
+          Applying does not automatically accept a job. The employer must shortlist or send an
+          offer, and the worker must accept the final terms.
+        </div>
+
+        <div class="job-hero-actions">
+          <a class="job-btn success" href="{% url 'worker_applications' %}">
+            <svg class="job-ui-icon" viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg>
+            Apply for this Job
+          </a>
+          <button type="button" class="job-btn secondary">
+            <svg class="job-ui-icon" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4-6 4Z"></path></svg>
+            Save Job
+          </button>
+        </div>
+      </article>
+
+      <aside class="job-card">
+        <div class="job-section-head">
+          <div class="job-section-title">
+            <svg class="job-ui-icon" viewBox="0 0 24 24"><path d="M4 21V7l8-4 8 4v14"></path><path d="M8 10h2M14 10h2M9 21v-4h6v4"></path></svg>
+            <div>
+              <h3>ABC Supermarket</h3>
+              <p>Retail Store</p>
+            </div>
+          </div>
+          <span class="job-pill green">Verified</span>
+        </div>
+
+        <div class="job-meta" style="display:grid;gap:9px;">
+          <span>Business profile verified</span>
+          <span>Location verified</span>
+          <span>4.6 Employer Rating</span>
+          <span>18 Workers Hired</span>
+          <span>Member since 2026</span>
+        </div>
+
+        <div class="job-danger-note" style="margin-top:13px;">
+          Never pay money just to apply for a job. Smart Complaint should clearly separate legitimate
+          hiring from any fee or deposit request.
+        </div>
+      </aside>
+    </section>
+  </main>
+
+</body>
+</html>

@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Shop Owner Registration | Smart Complaint</title>
+
+  {% include 'complaints/base_style.html' %}
+  {% include 'complaints/Job_Folder/job_marketplace_style.html' %}
+
+  <style>
+    /* Page-only registration polish.
+       Keeps the shared Job Connect styles untouched. */
+
+    .business-register-page,
+    .business-register-page * {
+      box-sizing: border-box;
+    }
+
+    .business-register-page {
+      --br-navy: #10245b;
+      --br-blue: #1d7cf2;
+      --br-blue-2: #4aa8ff;
+      --br-green: #0f9f6e;
+      --br-text: #12223f;
+      --br-muted: #5e6f8d;
+      --br-line: #d9e5f5;
+      --br-soft: #f5f9ff;
+      --br-card: rgba(255,255,255,.97);
+      width: min(1120px, calc(100% - 20px));
+      margin: 0 auto;
+      padding:
+        calc(16px + env(safe-area-inset-top, 0px))
+        0
+        calc(38px + env(safe-area-inset-bottom, 0px));
+      color: var(--br-text);
+    }
+
+    .br-topbar {
+      position: sticky;
+      top: 8px;
+      z-index: 80;
+      width: min(1120px, calc(100% - 20px));
+      min-height: 66px;
+      margin:
+        calc(8px + env(safe-area-inset-top, 0px))
+        auto
+        16px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border: 1px solid rgba(190, 210, 239, .72);
+      border-radius: 18px;
+      background: rgba(255,255,255,.96);
+      box-shadow: 0 10px 30px rgba(31, 70, 125, .11);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .br-brand {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+    }
+
+    .br-brand-icon {
+      width: 42px;
+      height: 42px;
+      flex: 0 0 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 13px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--br-blue), var(--br-blue-2));
+      box-shadow: 0 9px 22px rgba(29,124,242,.23);
+    }
+
+    .br-icon {
+      width: 21px;
+      height: 21px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .br-brand-copy {
+      min-width: 0;
+    }
+
+    .br-brand-copy h1 {
+      margin: 0;
+      color: var(--br-navy);
+      font-size: 18px;
+      line-height: 1.15;
+      font-weight: 950;
+    }
+
+    .br-brand-copy p {
+      margin: 3px 0 0;
+      color: #64748b;
+      font-size: 10px;
+    }
+
+    .br-back {
+      flex: 0 0 auto;
+      min-height: 40px;
+      padding: 8px 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      border: 1px solid #cddbef;
+      border-radius: 11px;
+      background: #fff;
+      color: var(--br-navy);
+      font-size: 11px;
+      font-weight: 900;
+      text-decoration: none;
+      box-shadow: 0 5px 14px rgba(15,35,80,.06);
+    }
+
+    .br-alerts {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .br-alert {
+      padding: 11px 13px;
+      border: 1px solid #cfe1fb;
+      border-radius: 12px;
+      background: #eef6ff;
+      color: #24466f;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .br-alert.error {
+      border-color: #fecaca;
+      background: #fff1f2;
+      color: #991b1b;
+    }
+
+    .br-alert.success {
+      border-color: #bbf7d0;
+      background: #f0fdf4;
+      color: #166534;
+    }
+
+    .br-alert.warning {
+      border-color: #fde68a;
+      background: #fffbeb;
+      color: #92400e;
+    }
+
+    .br-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 14px;
+      align-items: start;
+    }
+
+    .br-card {
+      min-width: 0;
+      border: 1px solid rgba(194, 211, 235, .80);
+      border-radius: 20px;
+      background: var(--br-card);
+      box-shadow: 0 16px 40px rgba(29, 67, 120, .10);
+    }
+
+    .br-form-card {
+      padding: 22px;
+    }
+
+    .br-side-card {
+      padding: 20px;
+    }
+
+    .br-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .br-title-wrap {
+      min-width: 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .br-title-icon {
+      width: 38px;
+      height: 38px;
+      flex: 0 0 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      color: var(--br-blue);
+      background: #edf6ff;
+      border: 1px solid #d7eaff;
+    }
+
+    .br-title-wrap h2,
+    .br-side-title h3 {
+      margin: 0;
+      color: var(--br-navy);
+      font-weight: 950;
+      line-height: 1.15;
+    }
+
+    .br-title-wrap h2 {
+      font-size: 24px;
+    }
+
+    .br-title-wrap p,
+    .br-side-title p {
+      margin: 5px 0 0;
+      color: var(--br-muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .br-badge {
+      flex: 0 0 auto;
+      padding: 7px 10px;
+      border: 1px solid #fde7ad;
+      border-radius: 999px;
+      background: #fff8df;
+      color: #a16207;
+      font-size: 10px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .br-form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .br-field {
+      min-width: 0;
+    }
+
+    .br-field.full {
+      grid-column: 1 / -1;
+    }
+
+    .br-field label {
+      display: block;
+      margin: 0 0 6px;
+      color: #2a466f;
+      font-size: 12px;
+      line-height: 1.3;
+      font-weight: 900;
+    }
+
+    .br-required {
+      color: #d92d20;
+    }
+
+    .br-input,
+    .br-select,
+    .br-textarea,
+    .br-file {
+      width: 100%;
+      min-width: 0;
+      border: 1px solid #bfd0e7;
+      border-radius: 11px;
+      outline: 0;
+      background: #fff;
+      color: #14213d;
+      font: inherit;
+      transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
+    }
+
+    .br-input,
+    .br-select {
+      height: 47px;
+      padding: 0 12px;
+      font-size: 13px;
+    }
+
+    .br-textarea {
+      min-height: 110px;
+      padding: 12px;
+      resize: vertical;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .br-input::placeholder,
+    .br-textarea::placeholder {
+      color: #9aa9bd;
+      opacity: 1;
+    }
+
+    .br-input:focus,
+    .br-select:focus,
+    .br-textarea:focus,
+    .br-file:focus {
+      border-color: var(--br-blue);
+      box-shadow: 0 0 0 3px rgba(29,124,242,.12);
+    }
+
+    .br-select option {
+      color: #14213d;
+      background: #fff;
+    }
+
+    .br-file {
+      min-height: 48px;
+      padding: 7px 9px;
+      color: #445775;
+      font-size: 11px;
+    }
+
+    .br-file::file-selector-button {
+      min-height: 31px;
+      margin-right: 9px;
+      padding: 5px 10px;
+      border: 1px solid #c7d7ed;
+      border-radius: 8px;
+      background: #f3f8ff;
+      color: #214a7d;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .br-file-help {
+      margin-top: 5px;
+      color: #7688a3;
+      font-size: 10px;
+      line-height: 1.4;
+    }
+
+    .br-proof {
+      margin-top: 16px;
+      padding: 12px 13px;
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      border: 1px solid #c9e2ff;
+      border-radius: 13px;
+      background: #f0f8ff;
+      color: #31557d;
+      font-size: 11px;
+      line-height: 1.55;
+    }
+
+    .br-proof .br-icon {
+      flex: 0 0 20px;
+      color: var(--br-blue);
+      margin-top: 1px;
+    }
+
+    .br-submit-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px 12px;
+      margin-top: 16px;
+    }
+
+    .br-submit {
+      min-height: 46px;
+      padding: 10px 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 0;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #078b61, #12ae7b);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 950;
+      cursor: pointer;
+      box-shadow: 0 10px 24px rgba(15,159,110,.20);
+    }
+
+    .br-login-note {
+      color: #667892;
+      font-size: 11px;
+    }
+
+    .br-login-note a {
+      color: var(--br-blue);
+      font-weight: 900;
+      text-decoration: none;
+    }
+
+    .br-side-title {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      margin-bottom: 13px;
+    }
+
+    .br-side-title .br-icon {
+      color: var(--br-blue);
+      margin-top: 2px;
+    }
+
+    .br-side-title h3 {
+      font-size: 18px;
+    }
+
+    .br-trust-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 10px;
+    }
+
+    .br-trust {
+      min-height: 112px;
+      padding: 13px;
+      border: 1px solid #d7e4f5;
+      border-radius: 14px;
+      background: #fbfdff;
+    }
+
+    .br-trust strong {
+      display: block;
+      margin-bottom: 5px;
+      color: #183764;
+      font-size: 12px;
+      font-weight: 950;
+    }
+
+    .br-trust small {
+      display: block;
+      color: #657894;
+      font-size: 10px;
+      line-height: 1.5;
+    }
+
+    .br-safe-note {
+      margin-top: 12px;
+      padding: 12px;
+      border: 1px solid #d5e9dc;
+      border-radius: 13px;
+      background: #f3fbf6;
+      color: #2e5f45;
+      font-size: 10px;
+      line-height: 1.55;
+    }
+
+    @media (min-width: 1020px) {
+      .br-layout {
+        grid-template-columns: minmax(0, 1fr) 330px;
+      }
+
+      .br-trust-list {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .business-register-page {
+        width: min(100% - 14px, 1120px);
+        padding-top: 8px;
+      }
+
+      .br-topbar {
+        width: min(100% - 14px, 1120px);
+        top: 5px;
+        margin-top: calc(5px + env(safe-area-inset-top, 0px));
+        border-radius: 15px;
+      }
+
+      .br-brand-icon {
+        width: 38px;
+        height: 38px;
+        flex-basis: 38px;
+      }
+
+      .br-brand-copy h1 {
+        font-size: 15px;
+      }
+
+      .br-brand-copy p {
+        font-size: 9px;
+      }
+
+      .br-back {
+        min-height: 36px;
+        padding: 7px 9px;
+        font-size: 10px;
+      }
+
+      .br-form-card,
+      .br-side-card {
+        padding: 15px;
+        border-radius: 16px;
+      }
+
+      .br-head {
+        display: grid;
+        gap: 10px;
+      }
+
+      .br-badge {
+        justify-self: start;
+      }
+
+      .br-title-wrap h2 {
+        font-size: 20px;
+      }
+
+      .br-form-grid,
+      .br-trust-list {
+        grid-template-columns: 1fr;
+      }
+
+      .br-field.full {
+        grid-column: auto;
+      }
+
+      .br-input,
+      .br-select {
+        height: 46px;
+        font-size: 14px;
+      }
+
+      .br-textarea {
+        font-size: 14px;
+      }
+
+      .br-field label {
+        font-size: 12px;
+      }
+
+      .br-submit-row {
+        display: grid;
+      }
+
+      .br-submit {
+        width: 100%;
+      }
+
+      .br-trust {
+        min-height: 0;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .br-brand-copy p {
+        display: none;
+      }
+
+      .br-back span {
+        display: none;
+      }
+
+      .br-title-icon {
+        width: 34px;
+        height: 34px;
+        flex-basis: 34px;
+      }
+    }
+  </style>
+
+</head>
+
+<body>
+  <header class="br-topbar">
+    <div class="br-brand">
+      <div class="br-brand-icon">
+        <svg class="br-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 21V7l8-4 8 4v14"></path>
+          <path d="M8 10h2M14 10h2M9 21v-4h6v4"></path>
+        </svg>
+      </div>
+
+      <div class="br-brand-copy">
+        <h1>Shop Owner Registration</h1>
+        <p>Smart Complaint - Job Connect</p>
+      </div>
+    </div>
+
+    <a class="br-back" href="{% url 'employer_portal' %}">
+      <svg class="br-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="m15 18-6-6 6-6"></path>
+      </svg>
+      <span>Back</span>
+    </a>
+  </header>
+
+  <main class="business-register-page">
+    {% if messages %}
+      <div class="br-alerts">
+        {% for message in messages %}
+          <div class="br-alert {{ message.tags }}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <section class="br-layout">
+      <form
+        class="br-card br-form-card"
+        method="post"
+        enctype="multipart/form-data"
+        autocomplete="off"
+      >
+        {% csrf_token %}
+
+        <div class="br-head">
+          <div class="br-title-wrap">
+            <div class="br-title-icon">
+              <svg class="br-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 3 20 6v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6Z"></path>
+                <path d="m8.5 12 2.2 2.2L15.8 9"></path>
+              </svg>
+            </div>
+
+            <div>
+              <h2>Register Your Shop</h2>
+              <p>Add shop owner and business details.</p>
+            </div>
+          </div>
+
+          <span class="br-badge">Verification Required</span>
+        </div>
+
+        <div class="br-form-grid">
+          <div class="br-field">
+            <label for="username">Login Username <span class="br-required">*</span></label>
+            <input
+              class="br-input"
+              id="username"
+              name="username"
+              maxlength="150"
+              required
+              autocomplete="username"
+              value="{{ form_data.username|default:'' }}"
+              placeholder="Choose username"
+            />
+          </div>
+
+          <div class="br-field">
+            <label for="business_name">Shop / Business Name <span class="br-required">*</span></label>
+            <input
+              class="br-input"
+              id="business_name"
+              name="business_name"
+              maxlength="150"
+              required
+              value="{{ form_data.business_name|default:'' }}"
+              placeholder="Shop / Business Name"
+            />
+          </div>
+
+
+            <div class="br-field">
+              <label for="business_type">Shop / Business Type <span class="br-required">*</span></label>
+              <select class="br-select" id="business_type" name="business_type" required>
+                <option value="retail" {% if form_data.business_type == 'retail' %}selected{% endif %}>Retail Shop</option>
+                <option value="restaurant" {% if form_data.business_type == 'restaurant' %}selected{% endif %}>Restaurant / Food Business</option>
+                <option value="warehouse" {% if form_data.business_type == 'warehouse' %}selected{% endif %}>Warehouse</option>
+                <option value="service" {% if form_data.business_type == 'service' %}selected{% endif %}>Service Business</option>
+                <option value="other" {% if form_data.business_type == 'other' %}selected{% endif %}>Other Local Business</option>
+              </select>
+            </div>
+
+          <div class="br-field">
+            <label for="contact_person">Shop Owner Name <span class="br-required">*</span></label>
+            <input
+              class="br-input"
+              id="contact_person"
+              name="contact_person"
+              maxlength="100"
+              required
+              value="{{ form_data.contact_person|default:'' }}"
+              placeholder="Shop Owner Name"
+            />
+          </div>
+
+          <div class="br-field">
+            <label for="business_phone">Business Phone <span class="br-required">*</span></label>
+            <input
+              class="br-input"
+              id="business_phone"
+              name="business_phone"
+              maxlength="15"
+              required
+              inputmode="tel"
+              value="{{ form_data.business_phone|default:'' }}"
+              placeholder="Phone number"
+            />
+          </div>
+
+          <div class="br-field">
+            <label for="business_email">Business Email <span class="br-required">*</span></label>
+            <input
+              class="br-input"
+              id="business_email"
+              name="business_email"
+              type="email"
+              required
+              autocomplete="email"
+              value="{{ form_data.business_email|default:'' }}"
+              placeholder="business@example.com"
+            />
+          </div>
+
+          <div class="br-field full">
+            <label for="address">Business Address <span class="br-required">*</span></label>
+            <input
+              class="br-input"
+              id="address"
+              name="address"
+              maxlength="500"
+              required
+              value="{{ form_data.address|default:'' }}"
+              placeholder="Full shop / business address"
+            />
+          </div>
+
+          <div class="br-field">
+            <label for="city">City <span class="br-required">*</span></label>
+            <input
+              class="br-input"
+              id="city"
+              name="city"
+              maxlength="100"
+              required
+              value="{{ form_data.city|default:'' }}"
+              placeholder="City"
+            />
+          </div>
+
+          <div class="br-field">
+            <label for="state">State <span class="br-required">*</span></label>
+            <input
+              class="br-input"
+              id="state"
+              name="state"
+              maxlength="100"
+              required
+              value="{{ form_data.state|default:'' }}"
+              placeholder="State"
+            />
+          </div>
+
+          <div class="br-field">
+            <label for="pincode">Pincode <span class="br-required">*</span></label>
+            <input
+              class="br-input"
+              id="pincode"
+              name="pincode"
+              maxlength="10"
+              required
+              inputmode="numeric"
+              value="{{ form_data.pincode|default:'' }}"
+              placeholder="Pincode"
+            />
+          </div>
+
+          <div class="br-field">
+            <label for="registration_number">Registration Number (Optional)</label>
+            <input
+              class="br-input"
+              id="registration_number"
+              name="registration_number"
+              maxlength="100"
+              value="{{ form_data.registration_number|default:'' }}"
+              placeholder="Business registration number"
+            />
+          </div>
+
+          <div class="br-field">
+            <label for="gst_number">GST Number (Optional)</label>
+            <input
+              class="br-input"
+              id="gst_number"
+              name="gst_number"
+              maxlength="30"
+              value="{{ form_data.gst_number|default:'' }}"
+              placeholder="GST number if applicable"
+            />
+          </div>
+
+          <div class="br-field">
+            <label for="website_url">Website (Optional)</label>
+            <input
+              class="br-input"
+              id="website_url"
+              name="website_url"
+              type="url"
+              value="{{ form_data.website_url|default:'' }}"
+              placeholder="https://..."
+            />
+          </div>
+
+          <div class="br-field">
+            <label for="logo">Business Logo (Optional)</label>
+            <input
+              class="br-file"
+              id="logo"
+              name="logo"
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+            />
+            <div class="br-file-help">JPG, PNG or WEBP. Maximum 3 MB.</div>
+          </div>
+
+          <div class="br-field full">
+            <label for="verification_document">
+              Business Verification Proof <span class="br-required">*</span>
+            </label>
+            <input
+              class="br-file"
+              id="verification_document"
+              name="verification_document"
+              type="file"
+              required
+              accept="application/pdf,image/jpeg,image/png"
+            />
+            <div class="br-file-help">PDF, JPG or PNG. Maximum 5 MB.</div>
+          </div>
+
+          <div class="br-field full">
+            <label for="about">About Business</label>
+            <textarea
+              class="br-textarea"
+              id="about"
+              name="about"
+              maxlength="2000"
+              placeholder="Briefly describe the business"
+            >{{ form_data.about|default:'' }}</textarea>
+          </div>
+
+          <div class="br-field">
+            <label for="password">Password <span class="br-required">*</span></label>
+            <input
+              class="br-input"
+              id="password"
+              name="password"
+              type="password"
+              required
+              autocomplete="new-password"
+              placeholder="Create a strong password"
+            />
+          </div>
+
+          <div class="br-field">
+            <label for="password_confirm">Confirm Password <span class="br-required">*</span></label>
+            <input
+              class="br-input"
+              id="password_confirm"
+              name="password_confirm"
+              type="password"
+              required
+              autocomplete="new-password"
+              placeholder="Enter password again"
+            />
+          </div>
+        </div>
+
+        <div class="br-proof">
+          <svg class="br-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 3 20 6v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6Z"></path>
+            <path d="m8.5 12 2.2 2.2L15.8 9"></path>
+          </svg>
+          <div>Business proof is required. GST or registration number can be added when available. The account remains Pending Verification until admin review.</div>
+        </div>
+
+        <div class="br-submit-row">
+          <button class="br-submit" type="submit">
+            <svg class="br-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m5 12 4 4L19 6"></path>
+            </svg>
+            Register & Submit for Verification
+          </button>
+
+          <div class="br-login-note">
+            Already registered?
+            <a href="{% url 'shop_login' %}">Login here</a>
+          </div>
+        </div>
+      </form>
+
+      <aside class="br-card br-side-card">
+        <div class="br-side-title">
+          <svg class="br-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 3 20 6v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6Z"></path>
+            <path d="m8.5 12 2.2 2.2L15.8 9"></path>
+          </svg>
+
+          <div>
+            <h3>Trust & Verification</h3>
+            <p>Hiring remains locked until the business is approved.</p>
+          </div>
+        </div>
+
+        <div class="br-trust-list">
+          <div class="br-trust">
+            <strong>Business Details</strong>
+            <small>Name, contact person, phone, email and address are recorded.</small>
+          </div>
+
+          <div class="br-trust">
+            <strong>Proof Review</strong>
+            <small>Business proof is reviewed before a Verified Employer badge is shown.</small>
+          </div>
+
+          <div class="br-trust">
+            <strong>Admin Approval</strong>
+            <small>Job posting stays locked while verification is Pending or Rejected.</small>
+          </div>
+
+          <div class="br-trust">
+            <strong>Separate Account</strong>
+            <small>Company and Shop Owner access stays separate from Worker/Citizen accounts.</small>
+          </div>
+        </div>
+
+        <div class="br-safe-note">
+          Verification reduces fraud risk, but it should not be presented as a 100% fraud guarantee.
+          Workers should still see clear employer details and report suspicious activity.
+        </div>
+      </aside>
+    </section>
+  </main>
+</body>
+</html>

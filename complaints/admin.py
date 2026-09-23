@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils import timezone
 
 from .models import (
     UserProfile,
@@ -10,6 +11,7 @@ from .models import (
     Notification,
     DeviceToken,
     ChatMessage,
+    EmployerProfile,
 )
 
 
@@ -370,3 +372,181 @@ class ChatMessageAdmin(admin.ModelAdmin):
         "sender__username",
         "message",
     )
+
+
+
+@admin.register(EmployerProfile)
+class EmployerProfileAdmin(admin.ModelAdmin):
+    list_display = (
+        "business_name",
+        "business_type",
+        "contact_person",
+        "city",
+        "verification_status",
+        "is_active",
+        "created_at",
+    )
+
+    list_filter = (
+        "business_type",
+        "verification_status",
+        "is_active",
+        "city",
+        "state",
+    )
+
+    search_fields = (
+        "business_name",
+        "contact_person",
+        "user__username",
+        "business_email",
+        "business_phone",
+        "registration_number",
+        "gst_number",
+        "city",
+        "pincode",
+    )
+
+    readonly_fields = (
+        "created_at",
+        "updated_at",
+        "verified_at",
+    )
+
+    actions = (
+        "approve_selected_employers",
+        "reject_selected_employers",
+        "suspend_selected_employers",
+        "mark_selected_employers_pending",
+    )
+
+    fieldsets = (
+        (
+            "Account",
+            {
+                "fields": (
+                    "user",
+                    "business_name",
+                    "business_type",
+                    "contact_person",
+                    "business_phone",
+                    "business_email",
+                    "logo",
+                )
+            },
+        ),
+        (
+            "Business Address",
+            {
+                "fields": (
+                    "address",
+                    "city",
+                    "state",
+                    "pincode",
+                )
+            },
+        ),
+        (
+            "Business Details",
+            {
+                "fields": (
+                    "registration_number",
+                    "gst_number",
+                    "website_url",
+                    "about",
+                )
+            },
+        ),
+        (
+            "Verification",
+            {
+                "fields": (
+                    "verification_document",
+                    "verification_status",
+                    "verification_note",
+                    "verified_at",
+                    "is_active",
+                )
+            },
+        ),
+        (
+            "System",
+            {
+                "fields": (
+                    "created_at",
+                    "updated_at",
+                )
+            },
+        ),
+    )
+
+    @admin.action(
+        description="Approve selected employers"
+    )
+    def approve_selected_employers(
+        self,
+        request,
+        queryset,
+    ):
+        count = queryset.update(
+            verification_status="approved",
+            verified_at=timezone.now(),
+            is_active=True,
+        )
+        self.message_user(
+            request,
+            f"{count} employer(s) approved.",
+        )
+
+    @admin.action(
+        description="Reject selected employers"
+    )
+    def reject_selected_employers(
+        self,
+        request,
+        queryset,
+    ):
+        count = queryset.update(
+            verification_status="rejected",
+            verified_at=None,
+        )
+        self.message_user(
+            request,
+            f"{count} employer(s) rejected.",
+        )
+
+    @admin.action(
+        description="Suspend selected employers"
+    )
+    def suspend_selected_employers(
+        self,
+        request,
+        queryset,
+    ):
+        count = queryset.update(
+            verification_status="suspended",
+            is_active=False,
+            verified_at=None,
+        )
+        self.message_user(
+            request,
+            f"{count} employer(s) suspended.",
+        )
+
+    @admin.action(
+        description="Move selected employers to Pending Verification"
+    )
+    def mark_selected_employers_pending(
+        self,
+        request,
+        queryset,
+    ):
+        count = queryset.update(
+            verification_status="pending",
+            verified_at=None,
+            is_active=True,
+        )
+        self.message_user(
+            request,
+            f"{count} employer(s) moved to pending verification.",
+        )

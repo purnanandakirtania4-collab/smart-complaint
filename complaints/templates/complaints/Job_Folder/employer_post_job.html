@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Post a Job | Smart Complaint</title>
+
+  {% include 'complaints/base_style.html' %}
+  {% include 'complaints/Job_Folder/job_marketplace_style.html' %}
+  
+</head>
+<body>
+
+  <header class="job-topbar">
+    <div class="job-brand">
+      <div class="job-brand-icon">
+        <svg class="job-ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M7 11 4 8l3-3 5 5"></path>
+          <path d="m17 11 3-3-3-3-5 5"></path>
+          <path d="M8.5 12.5 11 15a2 2 0 0 0 3 0l2.5-2.5"></path>
+          <path d="m9 16 1 1a2 2 0 0 0 3 0l1-1"></path>
+        </svg>
+      </div>
+      <div>
+        <h1>Smart Complaint - Job Connect</h1>
+        <p>Jobs for workers. Trusted workers for businesses.</p>
+      </div>
+    </div>
+
+    <div class="job-top-actions">
+      <a class="job-btn secondary hide-mobile" href="{% url 'job_marketplace' %}">
+        <svg class="job-ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m15 18-6-6 6-6"></path>
+        </svg>
+        Back
+      </a>
+      <button class="job-icon-btn" type="button" aria-label="Menu">
+        <svg class="job-ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16"></path>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="job-page">
+    <section class="job-grid-2" style="grid-template-columns:minmax(0,1fr) minmax(280px,.72fr);">
+      <form class="job-card" action="#" onsubmit="return false;">
+        <div class="job-section-head">
+          <div class="job-section-title">
+            <svg class="job-ui-icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"></path></svg>
+            <div>
+              <h2>Post a Job</h2>
+              <p>Add clear requirements so workers know exactly what they are applying for.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="job-form-grid">
+          <div class="job-field full">
+            <label>Job Title</label>
+            <input class="job-input" placeholder="Example: Cleaning Staff" />
+          </div>
+          <div class="job-field">
+            <label>Job Category</label>
+            <select class="job-select">
+              <option>Cleaning & Maintenance</option>
+              <option>Office Helper</option>
+              <option>Delivery</option>
+              <option>Electrical</option>
+              <option>Plumbing</option>
+              <option>Security</option>
+            </select>
+          </div>
+          <div class="job-field">
+            <label>Job Type</label>
+            <select class="job-select">
+              <option>Full Time</option>
+              <option>Part Time</option>
+              <option>Contract</option>
+              <option>Daily Work</option>
+            </select>
+          </div>
+          <div class="job-field">
+            <label>Salary / Pay</label>
+            <input class="job-input" placeholder="₹12,000 / month" />
+          </div>
+          <div class="job-field">
+            <label>Vacancies</label>
+            <input class="job-input" type="number" value="1" min="1" />
+          </div>
+          <div class="job-field full">
+            <label>Location</label>
+            <input class="job-input" placeholder="Area, city" />
+          </div>
+          <div class="job-field">
+            <label>Work Timing</label>
+            <input class="job-input" placeholder="9 AM - 6 PM" />
+          </div>
+          <div class="job-field">
+            <label>Joining</label>
+            <select class="job-select">
+              <option>Immediately</option>
+              <option>Within 7 days</option>
+              <option>Within 15 days</option>
+              <option>Flexible</option>
+            </select>
+          </div>
+          <div class="job-field full">
+            <label>Requirements</label>
+            <textarea class="job-textarea" placeholder="Skills, experience, behavior, documents..."></textarea>
+          </div>
+          <div class="job-field full">
+            <label>Job Description</label>
+            <textarea class="job-textarea" placeholder="Describe the actual work clearly..."></textarea>
+          </div>
+        </div>
+
+        <div class="job-hero-actions">
+          <button type="button" class="job-btn secondary">Save Draft</button>
+          <a class="job-btn success" href="{% url 'employer_dashboard' %}">Publish Job</a>
+        </div>
+      </form>
+
+      <aside class="job-card">
+        <div class="job-section-head">
+          <div class="job-section-title">
+            <svg class="job-ui-icon" viewBox="0 0 24 24"><path d="M9 18h6M10 22h4"></path><path d="M8.5 15.5A7 7 0 1 1 15.5 15.5c-.9.7-1.5 1.5-1.5 2.5h-4c0-1-.6-1.8-1.5-2.5Z"></path></svg>
+            <div>
+              <h3>Good Job Post</h3>
+              <p>What workers should see before applying.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="job-list">
+          <div class="job-trust-item"><strong>Clear salary</strong><small>Avoid vague “salary after interview” where possible.</small></div>
+          <div class="job-trust-item"><strong>Real location</strong><small>Workers should know where the work happens.</small></div>
+          <div class="job-trust-item"><strong>Real timing</strong><small>Include shift, weekly off and joining expectations.</small></div>
+          <div class="job-trust-item"><strong>No hidden fee</strong><small>Do not charge a worker just to submit an application.</small></div>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+</body>
+</html>

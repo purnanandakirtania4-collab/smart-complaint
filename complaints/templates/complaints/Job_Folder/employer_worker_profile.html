@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Worker Profile | Smart Complaint</title>
+
+  {% include 'complaints/base_style.html' %}
+  {% include 'complaints/Job_Folder/job_marketplace_style.html' %}
+  
+</head>
+<body>
+
+  <header class="job-topbar">
+    <div class="job-brand">
+      <div class="job-brand-icon">
+        <svg class="job-ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M7 11 4 8l3-3 5 5"></path>
+          <path d="m17 11 3-3-3-3-5 5"></path>
+          <path d="M8.5 12.5 11 15a2 2 0 0 0 3 0l2.5-2.5"></path>
+          <path d="m9 16 1 1a2 2 0 0 0 3 0l1-1"></path>
+        </svg>
+      </div>
+      <div>
+        <h1>Smart Complaint - Job Connect</h1>
+        <p>Jobs for workers. Trusted workers for businesses.</p>
+      </div>
+    </div>
+
+    <div class="job-top-actions">
+      <a class="job-btn secondary hide-mobile" href="{% url 'job_marketplace' %}">
+        <svg class="job-ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m15 18-6-6 6-6"></path>
+        </svg>
+        Back
+      </a>
+      <button class="job-icon-btn" type="button" aria-label="Menu">
+        <svg class="job-ui-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16"></path>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="job-page">
+    <section class="job-card">
+      <div class="job-profile-head">
+        <div class="job-profile-avatar">
+          <svg class="job-ui-icon" viewBox="0 0 24 24" style="width:34px;height:34px;"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path><path d="M8 5V3h8v2"></path></svg>
+        </div>
+        <div>
+          <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;">
+            <h2 class="job-profile-name">Ravi Kumar</h2>
+            <span class="job-pill green">Verified Worker</span>
+            <span class="job-pill purple">Gold Level</span>
+          </div>
+          <div class="job-meta">
+            <span>Cleaning & Maintenance</span>
+            <span>City Center</span>
+            <span>Available for Jobs</span>
+          </div>
+          <a class="job-linkedin" href="#" style="margin-top:8px;">
+            <svg class="job-ui-icon" viewBox="0 0 24 24"><path d="M7 10v7M7 7v.01M11 17v-4a3 3 0 0 1 6 0v4M11 10v7M4 4h16v16H4z"></path></svg>
+            LinkedIn Profile
+          </a>
+        </div>
+        <div style="display:flex;gap:7px;flex-wrap:wrap;">
+          <a class="job-btn success" href="{% url 'job_chat' %}">Shortlist</a>
+          <a class="job-btn" href="{% url 'job_chat' %}">Start Interview Chat</a>
+        </div>
+      </div>
+
+      <div class="job-grid-4" style="margin-top:16px;">
+        <div class="job-stat"><span>Rating</span><strong>4.8</strong></div>
+        <div class="job-stat"><span>Completed Work</span><strong>56</strong></div>
+        <div class="job-stat"><span>Experience</span><strong>2 Years</strong></div>
+        <div class="job-stat"><span>Reliability</span><strong>94%</strong></div>
+      </div>
+    </section>
+
+    <section class="job-grid-2" style="margin-top:14px;">
+      <article class="job-card">
+        <div class="job-section-title">
+          <svg class="job-ui-icon" viewBox="0 0 24 24"><path d="M5 3h14v18H5z"></path><path d="M8 8h8M8 12h6M8 16h7"></path></svg>
+          <h3>Worker Profile</h3>
+        </div>
+
+        <div class="job-meta" style="display:grid;gap:10px;margin-top:12px;">
+          <span>Primary skill: Cleaning & Maintenance</span>
+          <span>Secondary skill: Basic facility support</span>
+          <span>Preferred work: Full Time / Contract</span>
+          <span>Preferred location: Same city</span>
+          <span>Expected salary: ₹12,000 - ₹16,000 / month</span>
+        </div>
+      </article>
+
+      <article class="job-card">
+        <div class="job-section-title">
+          <svg class="job-ui-icon" viewBox="0 0 24 24"><path d="M12 3 20 6v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6Z"></path><path d="m8.5 12 2.2 2.2L15.8 9"></path></svg>
+          <h3>Trust Summary</h3>
+        </div>
+
+        <div class="job-meta" style="display:grid;gap:10px;margin-top:12px;">
+          <span>Smart Complaint worker identity verified</span>
+          <span>Work history available inside the platform</span>
+          <span>Ratings from previous work visible</span>
+          <span>LinkedIn is optional and not treated as a verification guarantee</span>
+        </div>
+      </article>
+    </section>
+  </main>
+
+</body>
+</html>

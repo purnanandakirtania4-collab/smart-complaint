@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Worker Login | Smart Complaint</title>
 
     {% include 'complaints/base_style.html' %}
@@ -173,7 +173,7 @@
             </svg>
           </div>
           <h1>Worker Login</h1>
-          <p class="muted">Access your assigned complaint dashboard.</p>
+          <p class="muted">Worker account only. Access complaints and job opportunities.</p>
         </div>
 
         {% if messages %}
@@ -203,17 +203,13 @@
               <path d="M10 17l5-5-5-5"></path>
               <path d="M15 12H3"></path>
               <path d="M14 3h5a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-5"></path>
-            </svg>Login to Dashboard
+            </svg>Worker Login
           </button>
         </form>
 
         <div class="footer-link">
           <span class="muted">New worker?</span>
           <a href="{% url 'worker_register' %}">Create Worker Account</a>
-        </div>
-
-        <div class="footer-link">
-          <a href="{% url 'login' %}">← User Login</a>
         </div>
       </section>
     </main>
