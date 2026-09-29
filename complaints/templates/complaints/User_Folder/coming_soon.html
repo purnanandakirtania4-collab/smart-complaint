@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Coming Soon</title>
+
+    <style>
+      /* ==============================
+                         RESET
+                      ============================== */
+      
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      
+      html {
+        scroll-behavior: smooth;
+      }
+      
+      body {
+        min-height: 100vh;
+        font-family: Inter, Arial, Helvetica, sans-serif;
+        color: #ffffff;
+        background: radial-gradient(circle at 15% 15%, rgba(42, 102, 255, 0.3), transparent 30%), radial-gradient(circle at 85% 20%, rgba(168, 85, 247, 0.28), transparent 32%), radial-gradient(circle at 70% 85%, rgba(6, 182, 212, 0.2), transparent 30%), linear-gradient(135deg, #020617, #07132c 50%, #0b1020);
+      
+        overflow-x: hidden;
+        position: relative;
+      }
+      
+      /* ==============================
+                         BACKGROUND STARS
+                      ============================== */
+      
+      .stars,
+      .stars::before,
+      .stars::after {
+        position: fixed;
+        inset: 0;
+        content: '';
+        pointer-events: none;
+        z-index: 0;
+      }
+      
+      .stars {
+        background-image: radial-gradient(circle, rgba(255, 255, 255, 0.85) 1px, transparent 1px), radial-gradient(circle, rgba(255, 255, 255, 0.35) 1px, transparent 1px), radial-gradient(circle, rgba(103, 232, 249, 0.5) 1px, transparent 1px);
+      
+        background-size: 70px 70px, 110px 110px, 160px 160px;
+      
+        background-position: 0 0, 35px 45px, 80px 25px;
+      
+        opacity: 0.25;
+      }
+      
+      .stars::before {
+        background: radial-gradient(circle at 10% 30%, rgba(59, 130, 246, 0.22), transparent 20%), radial-gradient(circle at 90% 75%, rgba(139, 92, 246, 0.2), transparent 18%);
+      }
+      
+      .stars::after {
+        background: linear-gradient(120deg, transparent 0%, transparent 45%, rgba(255, 255, 255, 0.08) 50%, transparent 55%, transparent 100%);
+      
+        opacity: 0.15;
+        animation: galaxyMove 12s linear infinite;
+      }
+      
+      @keyframes galaxyMove {
+        from {
+          transform: translateX(-15%);
+        }
+      
+        to {
+          transform: translateX(15%);
+        }
+      }
+      
+      /* ==============================
+                         BACKGROUND GLOW BALLS
+                      ============================== */
+      
+      .glow {
+        position: fixed;
+        width: 420px;
+        height: 420px;
+        border-radius: 50%;
+        filter: blur(110px);
+        opacity: 0.25;
+        pointer-events: none;
+        z-index: 0;
+      }
+      
+      .glow-one {
+        top: -150px;
+        left: -120px;
+        background: #2563eb;
+        animation: glowMove1 10s ease-in-out infinite alternate;
+      }
+      
+      .glow-two {
+        bottom: -150px;
+        right: -130px;
+        background: #9333ea;
+        animation: glowMove2 12s ease-in-out infinite alternate;
+      }
+      
+      @keyframes glowMove1 {
+        from {
+          transform: translate(0, 0) scale(1);
+        }
+      
+        to {
+          transform: translate(60px, 40px) scale(1.15);
+        }
+      }
+      
+      @keyframes glowMove2 {
+        from {
+          transform: translate(0, 0) scale(1);
+        }
+      
+        to {
+          transform: translate(-50px, -30px) scale(1.18);
+        }
+      }
+      
+      /* ==============================
+                         PAGE WRAPPER
+                      ============================== */
+      
+      .page-wrapper {
+        width: 100%;
+        min-height: 100vh;
+      
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      
+        padding: 40px 18px;
+      
+        position: relative;
+        z-index: 2;
+      }
+      
+      /* ==============================
+                         MAIN CARD
+                      ============================== */
+      
+      .main-card {
+        width: 100%;
+        max-width: 720px;
+      
+        padding: 38px;
+      
+        border-radius: 28px;
+      
+        background: linear-gradient(145deg, rgba(15, 40, 95, 0.78), rgba(8, 22, 58, 0.78));
+      
+        border: 1px solid rgba(140, 180, 255, 0.25);
+      
+        backdrop-filter: blur(22px);
+        -webkit-backdrop-filter: blur(22px);
+      
+        box-shadow: 0 35px 100px rgba(0, 0, 0, 0.55), 0 0 60px rgba(59, 130, 246, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      
+        position: relative;
+        overflow: hidden;
+      
+        animation: cardEnter 0.8s ease;
+      }
+      
+      @keyframes cardEnter {
+        from {
+          opacity: 0;
+          transform: translateY(35px) scale(0.97);
+        }
+      
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+      
+      .main-card::before {
+        content: '';
+        position: absolute;
+      
+        width: 250px;
+        height: 250px;
+      
+        top: -120px;
+        right: -90px;
+      
+        border-radius: 50%;
+      
+        background: rgba(139, 92, 246, 0.2);
+      
+        filter: blur(45px);
+      }
+      
+      .main-card::after {
+        content: '';
+        position: absolute;
+      
+        width: 220px;
+        height: 220px;
+      
+        bottom: -130px;
+        left: -100px;
+      
+        border-radius: 50%;
+      
+        background: rgba(14, 165, 233, 0.15);
+      
+        filter: blur(45px);
+      }
+      
+      /* ==============================
+                         HERO
+                      ============================== */
+      
+      .hero {
+        text-align: center;
+        position: relative;
+        z-index: 2;
+      }
+      
+      /* ==============================
+                         ROCKET
+                      ============================== */
+      
+      .rocket-area {
+        width: 140px;
+        height: 120px;
+      
+        margin: 0 auto 8px;
+      
+        position: relative;
+      
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .rocket-glow {
+        position: absolute;
+      
+        width: 105px;
+        height: 105px;
+      
+        border-radius: 50%;
+      
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      
+        filter: blur(20px);
+      
+        opacity: 0.65;
+      
+        animation: rocketPulse 2.5s ease-in-out infinite;
+      }
+      
+      .orbit {
+        position: absolute;
+      
+        width: 110px;
+        height: 110px;
+      
+        border-radius: 50%;
+      
+        border: 3px solid rgba(34, 211, 238, 0.55);
+      
+        border-right-color: rgba(168, 85, 247, 0.75);
+        border-bottom-color: transparent;
+      
+        transform: rotate(-20deg);
+      
+        animation: orbitSpin 6s linear infinite;
+      }
+      
+      .rocket {
+        position: relative;
+        z-index: 2;
+      
+        font-size: 74px;
+      
+        transform: rotate(-5deg);
+      
+        filter: drop-shadow(0 10px 10px rgba(0, 0, 0, 0.25)) drop-shadow(0 0 18px rgba(59, 130, 246, 0.45));
+      
+        animation: rocketFloat 3s ease-in-out infinite;
+      }
+      
+      @keyframes rocketFloat {
+        0%,
+        100% {
+          transform: translateY(0) rotate(-5deg);
+        }
+      
+        50% {
+          transform: translateY(-10px) rotate(1deg);
+        }
+      }
+      
+      @keyframes rocketPulse {
+        0%,
+        100% {
+          transform: scale(0.92);
+          opacity: 0.45;
+        }
+      
+        50% {
+          transform: scale(1.12);
+          opacity: 0.75;
+        }
+      }
+      
+      @keyframes orbitSpin {
+        to {
+          transform: rotate(340deg);
+        }
+      }
+      
+      /* ==============================
+                         BADGE
+                      ============================== */
+      
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+      
+        padding: 8px 16px;
+      
+        margin-bottom: 18px;
+      
+        border-radius: 999px;
+      
+        color: #e0f2fe;
+      
+        background: rgba(3, 20, 48, 0.75);
+      
+        border: 1px solid rgba(103, 232, 249, 0.6);
+      
+        box-shadow: inset 0 0 15px rgba(34, 211, 238, 0.07), 0 0 16px rgba(34, 211, 238, 0.1);
+      
+        font-size: 12px;
+        font-weight: 700;
+      
+        letter-spacing: 1px;
+      }
+      
+      .badge-dot {
+        width: 9px;
+        height: 9px;
+      
+        border-radius: 50%;
+      
+        background: #22d3ee;
+      
+        box-shadow: 0 0 8px #22d3ee, 0 0 14px #22d3ee;
+      
+        animation: dotBlink 1.4s infinite;
+      }
+      
+      @keyframes dotBlink {
+        50% {
+          opacity: 0.35;
+        }
+      }
+      
+      /* ==============================
+                         HEADING
+                      ============================== */
+      
+      h1 {
+        font-size: 42px;
+        line-height: 1.12;
+      
+        font-weight: 800;
+      
+        margin-bottom: 14px;
+      
+        letter-spacing: -0.8px;
+      }
+      
+      .gradient-text {
+        background: linear-gradient(90deg, #60a5fa, #22d3ee, #a855f7);
+      
+        -webkit-background-clip: text;
+        background-clip: text;
+      
+        color: transparent;
+      }
+      
+      .hero-description {
+        max-width: 550px;
+      
+        margin: 0 auto 28px;
+      
+        color: #c7d4eb;
+      
+        font-size: 15px;
+      
+        line-height: 1.65;
+      }
+      
+      /* ==============================
+                         STATUS CARD
+                      ============================== */
+      
+      .status-card {
+        margin-top: 12px;
+      
+        padding: 20px;
+      
+        border-radius: 18px;
+      
+        background: linear-gradient(145deg, rgba(15, 45, 98, 0.55), rgba(10, 28, 63, 0.55));
+      
+        border: 1px solid rgba(129, 175, 255, 0.28);
+      
+        box-shadow: inset 0 0 25px rgba(59, 130, 246, 0.05);
+      
+        position: relative;
+        z-index: 2;
+      }
+      
+      .status-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      
+        gap: 15px;
+      
+        margin-bottom: 15px;
+      }
+      
+      .status-title {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+      
+        font-size: 15px;
+        font-weight: 700;
+      
+        color: #f1f5f9;
+      }
+      
+      .status-icon {
+        font-size: 19px;
+      }
+      
+      .status-value {
+        color: #22d3ee;
+      
+        font-weight: 700;
+        font-size: 14px;
+      }
+      
+      .progress-row {
+        display: flex;
+        align-items: center;
+      
+        gap: 12px;
+      }
+      
+      .progress {
+        flex: 1;
+      
+        height: 9px;
+      
+        border-radius: 50px;
+      
+        background: rgba(255, 255, 255, 0.08);
+      
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      
+        overflow: hidden;
+      }
+      
+      .progress-fill {
+        width: 72%;
+        height: 100%;
+      
+        border-radius: inherit;
+      
+        background: linear-gradient(90deg, #9333ea, #2563eb, #22d3ee);
+      
+        position: relative;
+      
+        box-shadow: 0 0 14px rgba(34, 211, 238, 0.45);
+      
+        animation: progressLoad 1.7s ease-out;
+      }
+      
+      .progress-fill::after {
+        content: '';
+      
+        position: absolute;
+      
+        width: 12px;
+        height: 12px;
+      
+        border-radius: 50%;
+      
+        right: -2px;
+        top: 50%;
+      
+        transform: translateY(-50%);
+      
+        background: white;
+      
+        box-shadow: 0 0 6px white, 0 0 15px #22d3ee;
+      }
+      
+      @keyframes progressLoad {
+        from {
+          width: 0;
+        }
+      
+        to {
+          width: 72%;
+        }
+      }
+      
+      .percentage {
+        min-width: 40px;
+      
+        text-align: right;
+      
+        font-size: 14px;
+        font-weight: 800;
+      
+        color: #ffffff;
+      }
+      
+      /* ==============================
+                         DEVELOPMENT STEPS
+                      ============================== */
+      
+      .steps {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+      
+        gap: 10px;
+      
+        margin-top: 18px;
+      }
+      
+      .step {
+        display: flex;
+        align-items: center;
+      
+        gap: 7px;
+      
+        font-size: 12px;
+      
+        color: #a9b8d2;
+      }
+      
+      .step-dot {
+        width: 15px;
+        height: 15px;
+      
+        border-radius: 50%;
+      
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      
+        flex-shrink: 0;
+      
+        font-size: 9px;
+      }
+      
+      .step.complete .step-dot {
+        background: linear-gradient(135deg, #9333ea, #2563eb);
+      
+        color: white;
+      
+        box-shadow: 0 0 10px rgba(147, 51, 234, 0.5);
+      }
+      
+      .step.active .step-dot {
+        background: #22d3ee;
+      
+        box-shadow: 0 0 10px #22d3ee;
+      }
+      
+      .step.future .step-dot {
+        background: #274166;
+      
+        border: 1px solid #3d5b82;
+      }
+      
+      /* ==============================
+                         THANK YOU
+                      ============================== */
+      
+      .thank-section {
+        margin-top: 20px;
+      
+        padding: 20px;
+      
+        border-radius: 18px;
+      
+        background: linear-gradient(145deg, rgba(19, 39, 86, 0.6), rgba(6, 32, 69, 0.55));
+      
+        border: 1px solid rgba(59, 130, 246, 0.28);
+      
+        position: relative;
+        z-index: 2;
+      }
+      
+      .thank-title {
+        text-align: center;
+      
+        margin-bottom: 17px;
+      
+        font-size: 20px;
+      
+        font-weight: 800;
+      
+        background: linear-gradient(90deg, #f472b6, #a78bfa, #22d3ee);
+      
+        -webkit-background-clip: text;
+        background-clip: text;
+      
+        color: transparent;
+      }
+      
+      .language-box {
+        display: grid;
+        grid-template-columns: 90px 1fr;
+      
+        gap: 14px;
+      
+        align-items: start;
+      
+        padding: 16px;
+      
+        margin-bottom: 12px;
+      
+        border-radius: 14px;
+      
+        background: linear-gradient(145deg, rgba(16, 48, 103, 0.55), rgba(8, 29, 68, 0.55));
+      
+        border: 1px solid rgba(104, 159, 245, 0.2);
+      
+        transition: 0.3s ease;
+      }
+      
+      .language-box:last-child {
+        margin-bottom: 0;
+      }
+      
+      .language-box:hover {
+        transform: translateY(-2px);
+      
+        border-color: rgba(103, 232, 249, 0.35);
+      
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      }
+      
+      .language-tag {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      
+        min-height: 36px;
+      
+        padding: 7px 10px;
+      
+        border-radius: 12px;
+      
+        font-size: 12px;
+        font-weight: 700;
+      
+        color: #f1f5f9;
+      
+        background: linear-gradient(135deg, rgba(147, 51, 234, 0.65), rgba(37, 99, 235, 0.65));
+      
+        border: 1px solid rgba(192, 132, 252, 0.35);
+      
+        box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.03);
+      }
+      
+      .language-text {
+        color: #d1dcf0;
+      
+        font-size: 13px;
+      
+        line-height: 1.75;
+      }
+      
+      /* ==============================
+                         QUOTE
+                      ============================== */
+      
+      .quote-box {
+        max-width: 520px;
+      
+        margin: 20px auto 0;
+      
+        padding: 18px 20px;
+      
+        border-radius: 17px;
+      
+        text-align: left;
+      
+        background: linear-gradient(135deg, rgba(5, 57, 111, 0.52), rgba(7, 32, 74, 0.55));
+      
+        border: 1px solid rgba(34, 211, 238, 0.2);
+      
+        display: flex;
+      
+        gap: 14px;
+      
+        position: relative;
+        z-index: 2;
+      }
+      
+      .quote-symbol {
+        font-size: 38px;
+        line-height: 1;
+      
+        color: #22d3ee;
+      
+        font-weight: 900;
+      }
+      
+      .quote-text {
+        color: #d4e4f4;
+      
+        font-size: 13px;
+      
+        line-height: 1.7;
+      }
+      
+      /* ==============================
+                         BUTTONS
+                      ============================== */
+      
+      .buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      
+        gap: 14px;
+      
+        margin-top: 22px;
+      
+        position: relative;
+        z-index: 2;
+      }
+      
+      .btn {
+        min-height: 50px;
+      
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      
+        gap: 9px;
+      
+        border-radius: 13px;
+      
+        border: none;
+      
+        text-decoration: none;
+      
+        font-size: 14px;
+        font-weight: 700;
+      
+        cursor: pointer;
+      
+        transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+      
+        font-family: inherit;
+      }
+      
+      .btn-primary {
+        color: white;
+      
+        background: linear-gradient(90deg, #9333ea, #2563eb, #06b6d4);
+      
+        box-shadow: 0 10px 26px rgba(37, 99, 235, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+      }
+      
+      .btn-primary:hover {
+        transform: translateY(-3px);
+      
+        box-shadow: 0 15px 32px rgba(37, 99, 235, 0.42);
+      }
+      
+      .btn-secondary {
+        color: #f1f5f9;
+      
+        background: linear-gradient(145deg, rgba(20, 49, 101, 0.78), rgba(23, 31, 74, 0.78));
+      
+        border: 1px solid rgba(150, 180, 255, 0.38);
+      }
+      
+      .btn-secondary:hover {
+        transform: translateY(-3px);
+      
+        background: linear-gradient(145deg, rgba(30, 64, 135, 0.85), rgba(37, 44, 96, 0.85));
+      }
+      
+      /* ==============================
+                         FOOTER
+                      ============================== */
+      
+      .footer {
+        margin-top: 22px;
+      
+        text-align: center;
+      
+        color: #95a7c5;
+      
+        font-size: 12px;
+      
+        position: relative;
+        z-index: 2;
+      }
+      
+      /* ==============================
+                         RESPONSIVE
+                      ============================== */
+      
+      @media (max-width: 700px) {
+        .main-card {
+          padding: 30px 20px;
+        }
+      
+        h1 {
+          font-size: 34px;
+        }
+      
+        .steps {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      
+        .language-box {
+          grid-template-columns: 1fr;
+        }
+      
+        .language-tag {
+          width: max-content;
+        }
+      }
+      
+      @media (max-width: 520px) {
+        .page-wrapper {
+          padding: 18px 12px;
+        }
+      
+        .main-card {
+          padding: 26px 15px;
+      
+          border-radius: 24px;
+        }
+      
+        .rocket-area {
+          width: 115px;
+          height: 100px;
+        }
+      
+        .rocket {
+          font-size: 62px;
+        }
+      
+        .rocket-glow {
+          width: 85px;
+          height: 85px;
+        }
+      
+        .orbit {
+          width: 92px;
+          height: 92px;
+        }
+      
+        h1 {
+          font-size: 29px;
+        }
+      
+        .hero-description {
+          font-size: 13px;
+        }
+      
+        .status-card,
+        .thank-section {
+          padding: 16px;
+        }
+      
+        .status-header {
+          align-items: flex-start;
+        }
+      
+        .status-title,
+        .status-value {
+          font-size: 12px;
+        }
+      
+        .steps {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      
+        .step {
+          font-size: 11px;
+        }
+      
+        .thank-title {
+          font-size: 18px;
+        }
+      
+        .language-text {
+          font-size: 12px;
+        }
+      
+        .quote-box {
+          padding: 16px;
+        }
+      
+        .buttons {
+          grid-template-columns: 1fr;
+        }
+      }
+      
+      @media (max-width: 360px) {
+        h1 {
+          font-size: 26px;
+        }
+      
+        .steps {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- BACKGROUND -->
+    <div class="stars"></div>
+
+    <div class="glow glow-one"></div>
+    <div class="glow glow-two"></div>
+
+    <!-- PAGE -->
+    <div class="page-wrapper">
+      <main class="main-card">
+        <!--    =========================
+           HERO
+      ==========================    -->
+
+        <section class="hero">
+          <div class="rocket-area">
+            <div class="rocket-glow"></div>
+
+            <div class="orbit"></div>
+
+            <div class="rocket">🚀</div>
+          </div>
+
+          <div class="badge">
+            <span class="badge-dot"></span>
+
+            FEATURE IN DEVELOPMENT
+          </div>
+
+          <h1>
+            Something
+
+            <span class="gradient-text">Amazing</span>
+
+            is Coming Soon
+          </h1>
+
+          <p class="hero-description">We're currently working on this feature to make your experience even better.
+
+            This feature will be available in a future update.</p>
+        </section>
+
+        <!--    =========================
+           DEVELOPMENT STATUS
+      ==========================    -->
+
+        <section class="status-card">
+          <div class="status-header">
+            <div class="status-title">
+              <span class="status-icon">⚙️</span>
+
+              Development Status
+            </div>
+
+            <div class="status-value">In Progress</div>
+          </div>
+
+          <div class="progress-row">
+            <div class="progress">
+              <div class="progress-fill"></div>
+            </div>
+
+            <div class="percentage">72%</div>
+          </div>
+
+          <div class="steps">
+            <div class="step complete">
+              <span class="step-dot">✓</span>
+
+              <span>Planning</span>
+            </div>
+
+            <div class="step complete">
+              <span class="step-dot">✓</span>
+
+              <span>Development</span>
+            </div>
+
+            <div class="step active">
+              <span class="step-dot"></span>
+
+              <span>Testing</span>
+            </div>
+
+            <div class="step future">
+              <span class="step-dot"></span>
+
+              <span>Launch Soon</span>
+            </div>
+          </div>
+        </section>
+
+        <!--    =========================
+           THANK YOU SECTION
+      ==========================    -->
+
+        <section class="thank-section">
+          <h2 class="thank-title">💗 Thank You for Being With Us</h2>
+
+          <!-- HINDI -->
+
+          <div class="language-box">
+            <div class="language-tag">🇮🇳 हिन्दी</div>
+
+            <p class="language-text">हमारे साथ जुड़ने के लिए आपका दिल से धन्यवाद। ❤️ यह फीचर अभी तैयार किया जा रहा है और भविष्य के अपडेट में उपलब्ध होगा। फिलहाल आप हमारे ऐप में मौजूद बाकी फीचर्स का इस्तेमाल कर सकते हैं। आपका सहयोग और भरोसा हमें हर दिन कुछ बेहतर बनाने के लिए प्रेरित करता है।</p>
+          </div>
+
+          <!-- ENGLISH -->
+
+          <div class="language-box">
+            <div class="language-tag">🇬🇧 English</div>
+
+            <p class="language-text">Thank you for being a part of our journey. ❤️ This feature is currently under development and will be available in a future update. Until then, feel free to explore and enjoy the features already available in our app. Your support motivates us to keep building a better experience for you.</p>
+          </div>
+
+          <!-- ODIA -->
+
+          <div class="language-box">
+            <div class="language-tag">🇮🇳 ଓଡ଼ିଆ</div>
+
+            <p class="language-text">ଆମ ସହିତ ଯୋଡ଼ି ହୋଇଥିବାରୁ ଆପଣଙ୍କୁ ହୃଦୟରୁ ଧନ୍ୟବାଦ। ❤️ ଏହି ଫିଚର୍ ବର୍ତ୍ତମାନ ତିଆରି ହେଉଛି ଏବଂ ଆଗାମୀ ଅପଡେଟ୍‌ରେ ଉପଲବ୍ଧ ହେବ। ସେପର୍ଯ୍ୟନ୍ତ ଆପଣ ଆମ ଆପ୍‌ରେ ଥିବା ଅନ୍ୟ ଫିଚର୍‌ଗୁଡ଼ିକୁ ବ୍ୟବହାର କରିପାରିବେ। ଆପଣଙ୍କ ସମର୍ଥନ ଆମକୁ ଆହୁରି ଭଲ ଅନୁଭବ ତିଆରି କରିବାକୁ ପ୍ରେରଣା ଦେଉଛି।</p>
+          </div>
+        </section>
+
+        <!--    =========================
+           QUOTE
+      ==========================    -->
+
+        <section class="quote-box">
+          <div class="quote-symbol">“</div>
+
+          <div class="quote-text">
+            <div>A small step today, a better experience tomorrow.</div>
+          </div>
+        </section>
+
+        <!--    =========================
+           BUTTONS
+      ==========================    -->
+
+        <div class="buttons">
+          <button class="btn btn-primary" onclick="goBack()">← Go Back</button>
+
+          <a href="{% url 'home' %}" class="home-btn()">Home</a>
+        </div>
+
+        <!--    =========================
+           FOOTER
+      ==========================    -->
+
+        <div class="footer">✨ New features are on the way. Stay tuned! 🚀</div>
+      </main>
+    </div>
+
+    <!--    =========================
+       JAVASCRIPT
+  ==========================    -->
+
+    <script>
+      function goBack() {
+        if (window.history.length > 1) {
+          window.history.back()
+        } else {
+          window.location.href = "{% url 'home' %}"
+        }
+      }
+    </script>
+  </body>
+</html>

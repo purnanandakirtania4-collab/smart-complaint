@@ -1,0 +1,46 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Applicants | Smart Complaint</title>
+    {% include 'complaints/Connect_Folder/marketplace_style.html' %}
+  </head>
+  <body>
+    <header class="cx-topbar">
+      <div class="cx-brand">
+        <div class="cx-brand-mark">A</div>
+        <div>
+          <h1>Applicants</h1><p>{{ business.business_name }}</p>
+        </div>
+      </div><a class="cx-btn cx-btn-soft" href="{% url 'business_dashboard' %}">Dashboard</a>
+    </header>
+    <main class="cx-page">
+      {% if messages %}{% for message in messages %}
+        <div class="cx-message {{ message.tags }}">{{ message }}</div>
+      {% endfor %}{% endif %}
+      <section class="cx-hero">
+        <span class="cx-kicker">Hiring Pipeline</span><h2>Review people interested in your opportunities.</h2><p>The current backend does not yet pass an applicants queryset to this template. The layout below is ready for it when that query is connected.</p>
+      </section>
+      <section class="cx-list">
+        {% for application in applications %}
+          <article class="cx-row">
+            <div class="cx-row-head">
+              <div>
+                <h3>{{ application.worker.user.get_full_name|default:application.worker.user.username }}</h3><p>{{ application.job.title|default:'Opportunity' }} · {{ application.get_status_display|default:application.status }}</p>
+              </div><span class="cx-chip cx-chip-blue">{{ application.status }}</span>
+            </div>
+            <div class="cx-actions">
+              <a class="cx-btn cx-btn-primary" href="{% url 'business_owner_profile' %}">Profile Area</a><a class="cx-btn cx-btn-soft" href="{% url 'job_chat' %}">Chat</a>
+            </div>
+          </article>
+        {% empty %}
+          <div class="cx-empty">
+            <strong>No applicant data yet</strong>Once the backend passes <code>applications</code>, applicants will appear here.
+          </div>
+        {% endfor %}
+      </section>
+    </main>
+  </body>
+</html>

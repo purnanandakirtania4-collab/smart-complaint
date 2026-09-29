@@ -1,0 +1,8 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Offer | Smart Complaint</title>{% include 'complaints/Connect_Folder/marketplace_style.html' %}</head>
+<body>
+<header class="cx-topbar"><div class="cx-brand"><div class="cx-brand-mark">O</div><div><h1>Offer</h1><p>Shared Worker / Shop Owner view</p></div></div><a class="cx-btn cx-btn-soft" href="{% url 'job_marketplace' %}">Marketplace</a></header>
+<main class="cx-page"><section class="cx-hero"><span class="cx-kicker">Opportunity Offer</span><h2>Offer and status area.</h2><p>This route currently renders a shared UI-only offer page. When offer backend actions are connected, this page can display amount, schedule, status, accept/reject controls and history.</p><div class="cx-actions"><a class="cx-btn cx-btn-primary" href="{% url 'job_chat' %}">Discuss in Chat</a><a class="cx-btn cx-btn-soft" href="{% url 'worker_applications' %}">Applications</a></div></section></main>
+</body></html>

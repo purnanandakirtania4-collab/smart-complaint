@@ -1,0 +1,41 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Shop Directory | Smart Complaint</title>
+  {% include 'complaints/Connect_Folder/marketplace_style.html' %}
+  <style>
+    .sd-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin-top:14px}.sd-card{padding:16px;border:1px solid var(--cx-line);border-radius:18px;background:#fff;box-shadow:0 9px 26px rgba(31,68,122,.06)}.sd-head{display:flex;gap:11px;align-items:flex-start}.sd-logo{width:60px;height:60px;flex:0 0 60px;border:1px solid #dbe8f4;border-radius:15px;overflow:hidden;display:grid;place-items:center;background:#f3f8ff;color:var(--cx-blue);font-weight:950;font-size:22px}.sd-logo img{width:100%;height:100%;object-fit:cover}.sd-main{min-width:0;flex:1}.sd-main h3{margin:0;color:var(--cx-navy);font-size:15px;overflow-wrap:anywhere}.sd-main p{margin:4px 0 0;color:var(--cx-muted);font-size:9px}.sd-details{display:grid;gap:8px;margin-top:13px}.sd-detail small{display:block;color:#8a98aa;font-size:8px;font-weight:900;text-transform:uppercase}.sd-detail strong,.sd-detail a{display:block;margin-top:2px;color:#314766;font-size:10px;line-height:1.45;text-decoration:none;overflow-wrap:anywhere}.sd-about{margin-top:11px;padding:10px;border:1px solid #e1ebf5;border-radius:12px;background:#f9fbfe;color:#607089;font-size:9px;line-height:1.55}@media(max-width:900px){.sd-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:560px){.sd-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <header class="cx-topbar"><div class="cx-brand"><div class="cx-brand-mark">S</div><div><h1>Shop Directory</h1><p>Public read-only local business information.</p></div></div><a class="cx-btn cx-btn-soft" href="{% url 'business_connect' %}">Business</a></header>
+  <main class="cx-page">
+    <section class="cx-hero"><span class="cx-kicker">Public Shop Directory</span><h2>Nearby shops and local businesses.</h2><p>Visitors can view registered Shop Owner public information. Editing and account management stay inside the Shop Owner dashboard.</p><div class="cx-actions"><a class="cx-btn cx-btn-green" href="{% url 'buy_marketplace' %}">Open Buy Marketplace</a></div></section>
+
+    <form class="cx-search" method="get">
+      <input class="cx-input" type="search" name="q" value="{{ search_query }}" placeholder="Search shop name, category, city..." autocomplete="off">
+      <select class="cx-select" name="city"><option value="">All cities</option>{% for item in cities %}<option value="{{ item }}" {% if selected_city == item %}selected{% endif %}>{{ item }}</option>{% endfor %}</select>
+      <button class="cx-btn cx-btn-primary" type="submit">Search</button>
+    </form>
+
+    <div class="cx-actions" style="justify-content:space-between"><span class="cx-chip">{{ shops|length }} shop{{ shops|length|pluralize }} found</span>{% if search_query or selected_city %}<a class="cx-btn cx-btn-soft" href="{% url 'shop_directory' %}">Clear filters</a>{% endif %}</div>
+
+    <section class="sd-grid">
+      {% for shop in shops %}
+      <article class="sd-card">
+        <div class="sd-head"><div class="sd-logo">{% if shop.logo %}<img src="{{ shop.logo.url }}" alt="{{ shop.business_name }} logo">{% else %}{{ shop.business_name|first|upper }}{% endif %}</div><div class="sd-main"><h3>{{ shop.business_name }}</h3><p>{{ shop.get_business_type_display|default:shop.business_type }}</p><div class="cx-meta"><span class="cx-chip {% if shop.verification_status == 'approved' %}cx-chip-green{% endif %}">{{ shop.get_verification_status_display|default:shop.verification_status }}</span></div></div></div>
+        <div class="sd-details">
+          <div class="sd-detail"><small>Location</small><strong>{{ shop.address }}, {{ shop.city }}, {{ shop.state }}{% if shop.pincode %} - {{ shop.pincode }}{% endif %}</strong></div>
+          <div class="sd-detail"><small>Business Phone</small><a href="tel:{{ shop.business_phone }}">{{ shop.business_phone }}</a></div>
+          <div class="sd-detail"><small>Business Email</small><a href="mailto:{{ shop.business_email }}">{{ shop.business_email }}</a></div>
+          {% if shop.website_url %}<div class="sd-detail"><small>Website</small><a href="{{ shop.website_url }}" target="_blank" rel="noopener noreferrer">{{ shop.website_url }}</a></div>{% endif %}
+        </div>
+        {% if shop.about %}<div class="sd-about">{{ shop.about|truncatechars:260 }}</div>{% endif %}
+      </article>
+      {% empty %}<div class="cx-empty" style="grid-column:1/-1"><strong>No shop found</strong>Try another shop name, category or city.</div>{% endfor %}
+    </section>
+  </main>
+</body>
+</html>

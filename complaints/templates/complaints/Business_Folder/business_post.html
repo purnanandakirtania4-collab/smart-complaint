@@ -1,0 +1,30 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Post Opportunity | Smart Complaint</title>
+  {% include 'complaints/Connect_Folder/marketplace_style.html' %}
+</head>
+<body>
+  <header class="cx-topbar">
+    <div class="cx-brand"><div class="cx-brand-mark">+</div><div><h1>Post Opportunity</h1><p>{{ business.business_name }}</p></div></div>
+    <a class="cx-btn cx-btn-soft" href="{% url 'business_dashboard' %}">Dashboard</a>
+  </header>
+  <main class="cx-page">
+    {% if messages %}{% for message in messages %}<div class="cx-message {{ message.tags }}">{{ message }}</div>{% endfor %}{% endif %}
+    <section class="cx-hero"><span class="cx-kicker">Hiring</span><h2>Create a work opportunity.</h2><p>This screen is connected to the Shop Owner dashboard. Your current backend view is UI-only, so saving a new JobPost should be added when you connect the JobPost create logic.</p></section>
+    <section class="cx-card" style="margin-top:14px">
+      <div class="cx-form">
+        <div class="cx-field"><label class="cx-label">Title</label><input class="cx-input" type="text" placeholder="e.g. Electrician needed"></div>
+        <div class="cx-field"><label class="cx-label">Location</label><input class="cx-input" type="text" value="{{ business.city }}{% if business.state %}, {{ business.state }}{% endif %}" readonly></div>
+        <div class="cx-field"><label class="cx-label">Work Type</label><select class="cx-select"><option>Full time</option><option>Part time</option><option>Contract</option><option>One-time work</option></select></div>
+        <div class="cx-field"><label class="cx-label">Budget / Salary</label><input class="cx-input" type="text" placeholder="Amount or range"></div>
+        <div class="cx-field cx-field-full"><label class="cx-label">Description</label><textarea class="cx-textarea" placeholder="Describe the work, skills and timing..."></textarea><span class="cx-help">UI is ready; backend create action is intentionally not faked.</span></div>
+      </div>
+      <div class="cx-actions"><a class="cx-btn cx-btn-primary" href="{% url 'job_marketplace' %}">Preview Marketplace</a><a class="cx-btn cx-btn-soft" href="{% url 'business_dashboard' %}">Back</a></div>
+    </section>
+  </main>
+</body>
+</html>

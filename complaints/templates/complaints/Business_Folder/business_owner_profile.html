@@ -1,0 +1,26 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Business Profile | Smart Complaint</title>
+  {% include 'complaints/Connect_Folder/marketplace_style.html' %}
+</head>
+<body>
+  <header class="cx-topbar"><div class="cx-brand"><div class="cx-brand-mark">{{ business.business_name|first|upper }}</div><div><h1>Business Owner Profile</h1><p>{{ business.business_name }}</p></div></div><a class="cx-btn cx-btn-soft" href="{% url 'business_dashboard' %}">Dashboard</a></header>
+  <main class="cx-page">
+    <section class="cx-card">
+      <div style="display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap">
+        <div style="width:92px;height:92px;border:1px solid var(--cx-line);border-radius:20px;overflow:hidden;display:grid;place-items:center;background:#f4f8ff;color:var(--cx-blue);font-size:28px;font-weight:950">{% if business.logo %}<img src="{{ business.logo.url }}" alt="{{ business.business_name }}" style="width:100%;height:100%;object-fit:cover">{% else %}{{ business.business_name|first|upper }}{% endif %}</div>
+        <div style="flex:1;min-width:220px"><h3 style="font-size:22px">{{ business.business_name }}</h3><p>{{ business.contact_person }} · {{ business.get_business_type_display|default:business.business_type }}</p><div class="cx-meta"><span class="cx-chip cx-chip-green">{{ business.get_verification_status_display|default:business.verification_status }}</span><span class="cx-chip">{{ business.city }}, {{ business.state }}</span></div></div>
+      </div>
+      <div class="cx-grid cx-grid-2">
+        <div class="cx-card"><h3>Contact</h3><p>{{ business.business_phone }}<br>{{ business.business_email }}</p></div>
+        <div class="cx-card"><h3>Location</h3><p>{{ business.address }}<br>{{ business.city }}, {{ business.state }}{% if business.pincode %} - {{ business.pincode }}{% endif %}</p></div>
+      </div>
+      {% if business.about %}<div class="cx-card" style="margin-top:13px"><h3>About / Products</h3><p>{{ business.about }}</p></div>{% endif %}
+      <div class="cx-actions"><a class="cx-btn cx-btn-primary" href="{% url 'shop_directory' %}">Public Directory</a><a class="cx-btn cx-btn-green" href="{% url 'buy_marketplace' %}">Buy Page</a><a class="cx-btn cx-btn-danger" href="{% url 'business_logout' %}">Logout</a></div>
+    </section>
+  </main>
+</body>
+</html>

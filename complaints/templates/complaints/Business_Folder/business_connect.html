@@ -1,0 +1,36 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Business Connect | Smart Complaint</title>
+  {% include 'complaints/Connect_Folder/marketplace_style.html' %}
+</head>
+<body>
+  <header class="cx-topbar">
+    <div class="cx-brand"><div class="cx-brand-mark">B</div><div><h1>Business Connect</h1><p>Discover shops or start your Shop Owner account.</p></div></div>
+    <a class="cx-btn cx-btn-soft" href="{% url 'home' %}">Home</a>
+  </header>
+
+  <main class="cx-page">
+    {% if messages %}{% for message in messages %}<div class="cx-message {{ message.tags }}">{{ message }}</div>{% endfor %}{% endif %}
+
+    <section class="cx-hero">
+      <span class="cx-kicker">Local Business Network</span>
+      <h2>Citizens, workers and Shop Owners — one connected place.</h2>
+      <p>Browse verified local shops, open the Buy marketplace, or create a dedicated Shop Owner account to manage your business presence.</p>
+      <div class="cx-actions">
+        <a class="cx-btn cx-btn-primary" href="{% url 'shop_directory' %}">Browse Shops</a>
+        <a class="cx-btn cx-btn-green" href="{% url 'buy_marketplace' %}">Open Buy</a>
+      </div>
+    </section>
+
+    <section class="cx-grid">
+      <article class="cx-card"><h3>Shop Directory</h3><p>See public shop details, contact information and location.</p><div class="cx-actions"><a class="cx-btn cx-btn-primary" href="{% url 'shop_directory' %}">View Directory</a></div></article>
+      <article class="cx-card"><h3>Shop Owner Login</h3><p>Already registered? Open your business dashboard.</p><div class="cx-actions"><a class="cx-btn cx-btn-soft" href="{% url 'shop_login' %}">Login</a></div></article>
+      <article class="cx-card"><h3>Create Shop Account</h3><p>Register your shop and submit verification details.</p><div class="cx-actions"><a class="cx-btn cx-btn-green" href="{% url 'shop_register' %}">Register Shop</a></div></article>
+    </section>
+  </main>
+</body>
+</html>

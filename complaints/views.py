@@ -21,6 +21,7 @@ from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 from django.core.exceptions import ValidationError
 from django.core.files import File
 from django.contrib.staticfiles import finders
@@ -135,87 +136,169 @@ def _citizen_area_guard(request):
 
 
 # =========================================================
-# FREE PROFILE AVATAR HELPERS
+# PROFILE AVATAR HELPERS
 # =========================================================
 
 FREE_PROFILE_AVATARS = {
-    'avatar_01',
-    'avatar_02',
-    'avatar_03',
-    'avatar_04',
-    'avatar_05',
-    'avatar_06',
-    'avatar_07',
-    'avatar_08',
-    'avatar_09',
-    'avatar_10',
-    'avatar_11',
-    'avatar_12',
-    'avatar_13',
-    'avatar_14',
-    'avatar_15',
-    'avatar_16',
-    'avatar_17',
-    'avatar_18',
-    'avatar_19',
-    'avatar_20',
-    'avatar_21',
-    'avatar_22',
-    'avatar_23',
-    'avatar_24',
-    'avatar_25',
-    'avatar_26',
-    'avatar_27',
-    'avatar_28',
-    'avatar_29',
-    'avatar_30',
-    'avatar_31',
-    'avatar_32',
-    'avatar_33',
-    'avatar_34',
-    'avatar_35',
-    'avatar_36',
-    'avatar_37',
-    'avatar_38',
-    'avatar_39',
-    'avatar_40',
+    "avatar_01",
+    "avatar_02",
+    "avatar_03",
+    "avatar_04",
+    "avatar_05",
+    "avatar_06",
+    "avatar_07",
+    "avatar_08",
+    "avatar_09",
+    "avatar_10",
+    "avatar_11",
+    "avatar_12",
+    "avatar_13",
+    "avatar_14",
+    "avatar_15",
+    "avatar_16",
+    "avatar_17",
+    "avatar_18",
+    "avatar_19",
+    "avatar_20",
+    "avatar_21",
+    "avatar_22",
+    "avatar_23",
+    "avatar_24",
+    "avatar_25",
+    "avatar_26",
+    "avatar_27",
+    "avatar_28",
+    "avatar_29",
+    "avatar_30",
+    "avatar_31",
+    "avatar_32",
+    "avatar_33",
+    "avatar_34",
+    "avatar_35",
+    "avatar_36",
+    "avatar_37",
+    "avatar_38",
+    "avatar_39",
+    "avatar_40",
 }
 
 
-def _apply_free_profile_avatar(instance, field_name, avatar_id, filename_prefix):
+PREMIUM_PROFILE_AVATARS = {
+    "premium_01",
+    "premium_02",
+    "premium_03",
+    "premium_04",
+    "premium_05",
+    "premium_06",
+    "premium_07",
+    "premium_08",
+    "premium_09",
+    "premium_10",
+    "premium_11",
+    "premium_12",
+}
+
+
+def _apply_profile_avatar(
+    instance,
+    field_name,
+    avatar_id,
+    filename_prefix,
+    avatar_type="free",
+):
     """
-    Save one of Smart Complaint's bundled free avatars into the existing
-    ImageField. No model/database schema change is required.
+    Save one bundled Smart Complaint avatar
+    into the existing ImageField.
     """
-    if avatar_id not in FREE_PROFILE_AVATARS:
+
+    if avatar_type == "premium":
+
+        allowed_avatars = (
+            PREMIUM_PROFILE_AVATARS
+        )
+
+        folder = "premium"
+
+    else:
+
+        allowed_avatars = (
+            FREE_PROFILE_AVATARS
+        )
+
+        folder = "free"
+
+
+    if avatar_id not in allowed_avatars:
         return False
 
+
     relative_path = (
-        f'complaints/avatars/free/{avatar_id}.png'
+        f"complaints/avatars/"
+        f"{folder}/"
+        f"{avatar_id}.png"
     )
 
-    source_path = finders.find(relative_path)
+
+    source_path = finders.find(
+        relative_path
+    )
+
 
     if not source_path:
         return False
 
-    image_field = getattr(instance, field_name)
+
+    image_field = getattr(
+        instance,
+        field_name
+    )
+
 
     if image_field:
+
         old_name = image_field.name
 
-        if old_name and default_storage.exists(old_name):
-            default_storage.delete(old_name)
+        if (
+            old_name
+            and default_storage.exists(
+                old_name
+            )
+        ):
 
-    with open(source_path, 'rb') as avatar_file:
-        image_field.save(
-            f'{filename_prefix}_{avatar_id}.png',
-            File(avatar_file),
-            save=False,
+            default_storage.delete(
+                old_name
+            )
+
+
+    with open(
+        source_path,
+        "rb",
+    ) as avatar_file:
+
+        avatar_bytes = (
+            avatar_file.read()
         )
 
-    return True
 
+    filename = (
+        f"{filename_prefix}_"
+        f"{avatar_id}.png"
+    )
+
+
+    getattr(
+        instance,
+        field_name
+    ).save(
+        filename,
+        ContentFile(
+            avatar_bytes
+        ),
+        save=False,
+    )
+
+
+    return True
 
 # =========================================================
 # APP FRONT PAGE / ACCOUNT GATEWAY
@@ -227,8 +310,8 @@ def front_page(request):
     """
     Universal Smart Complaint entry page.
 
-    Logged-out visitors choose one of four account types:
-    Citizen, Worker, Company or Shop Owner.
+    Logged-out visitors choose one of three account types:
+    Citizen, Worker or Shop Owner.
 
     Logged-in accounts go directly to their own dashboard/home.
     """
@@ -257,7 +340,7 @@ def front_page(request):
             request.user.employer_profile
 
             return redirect(
-                'employer_dashboard'
+                'business_dashboard'
             )
 
         except EmployerProfile.DoesNotExist:
@@ -355,7 +438,7 @@ def user_login(request):
             request.user.employer_profile
 
             return redirect(
-                'employer_dashboard'
+                'business_dashboard'
             )
 
         except EmployerProfile.DoesNotExist:
@@ -424,11 +507,11 @@ def user_login(request):
 
                 messages.error(
                     request,
-                    'Employer account detected. Please use Employer Login.'
+                    'Shop Owner account detected. Please use Shop Owner Login.'
                 )
 
                 return redirect(
-                    'employer_login'
+                    'shop_login'
                 )
 
             except EmployerProfile.DoesNotExist:
@@ -541,375 +624,6 @@ def register(request):
     return redirect(
         'login'
     )
-
-
-# =========================================================
-# USER PROFILE
-# =========================================================
-
-@login_required(login_url='login')
-def profile(request):
-
-    admin_redirect = _admin_account_redirect(request)
-    if admin_redirect:
-        return admin_redirect
-
-    user = request.user
-
-    # Worker accounts keep using the existing worker profile system.
-    if WorkerProfile.objects.filter(user=user).exists():
-        worker = user.worker_profile
-        return redirect(
-            'worker_profile',
-            worker_id=worker.id,
-        )
-
-    user_profile, created = UserProfile.objects.get_or_create(
-        user=user
-    )
-
-    user_rating_data = (
-        Rating.objects
-        .filter(
-            complaint__user=user,
-            rating_type='worker_to_user'
-        )
-        .aggregate(
-            average=Avg('stars'),
-            total=Count('id')
-        )
-    )
-
-    user_average_rating = user_rating_data['average']
-    user_rating_count = user_rating_data['total']
-
-    if request.method == 'POST':
-
-        first_name = request.POST.get(
-            'first_name',
-            ''
-        ).strip()
-
-        last_name = request.POST.get(
-            'last_name',
-            ''
-        ).strip()
-
-        email = request.POST.get(
-            'email',
-            ''
-        ).strip()
-
-        phone = request.POST.get(
-            'phone',
-            ''
-        ).strip()
-
-        gender = request.POST.get(
-            'gender',
-            ''
-        ).strip()
-
-        photo = request.FILES.get(
-            'photo'
-        )
-
-        free_avatar = request.POST.get(
-            'free_avatar',
-            ''
-        ).strip()
-
-        if not email:
-
-            messages.error(
-                request,
-                'Email address is required.'
-            )
-
-            return redirect(
-                'profile'
-            )
-
-        if (
-            User.objects
-            .filter(
-                email=email
-            )
-            .exclude(
-                id=user.id
-            )
-            .exists()
-        ):
-
-            messages.error(
-                request,
-                'This email is already registered.'
-            )
-
-            return redirect(
-                'profile'
-            )
-
-        if phone and len(phone) > 15:
-
-            messages.error(
-                request,
-                'Phone number is too long.'
-            )
-
-            return redirect(
-                'profile'
-            )
-
-        allowed_genders = {
-            'Male',
-            'Female',
-            'Other',
-            'Prefer not to say',
-            '',
-        }
-
-        if gender not in allowed_genders:
-
-            messages.error(
-                request,
-                'Please select a valid gender.'
-            )
-
-            return redirect(
-                'profile'
-            )
-
-        if photo:
-
-            if photo.size > 5 * 1024 * 1024:
-
-                messages.error(
-                    request,
-                    'Profile photo must be less than 5 MB.'
-                )
-
-                return redirect(
-                    'profile'
-                )
-
-            if not photo.content_type.startswith(
-                'image/'
-            ):
-
-                messages.error(
-                    request,
-                    'Please select a valid image.'
-                )
-
-                return redirect(
-                    'profile'
-                )
-
-            if user_profile.photo:
-
-                old_photo = user_profile.photo.name
-
-                if (
-                    old_photo
-                    and default_storage.exists(old_photo)
-                ):
-
-                    default_storage.delete(
-                        old_photo
-                    )
-
-            user_profile.photo = photo
-
-        elif free_avatar:
-
-            if not _apply_free_profile_avatar(
-                user_profile,
-                'photo',
-                free_avatar,
-                f'user_{user.id}',
-            ):
-
-                messages.error(
-                    request,
-                    'Please select a valid free avatar.'
-                )
-
-                return redirect(
-                    'profile'
-                )
-
-        user.first_name = first_name
-        user.last_name = last_name
-        user.email = email
-        user.save()
-
-        user_profile.phone = phone
-        user_profile.gender = gender
-        user_profile.save()
-
-        messages.success(
-            request,
-            'Profile updated successfully.'
-        )
-
-        return redirect(
-            'profile'
-        )
-
-    lifetime_rows = _user_rows(
-        monthly=False
-    )
-
-    league = next(
-        (
-            row
-            for row in lifetime_rows
-            if row['user'].pk == user.pk
-        ),
-        None,
-    )
-
-    if league is None:
-        league = _find_user_row(
-            user,
-            monthly=False,
-        )
-
-    followers_count = UserFollow.objects.filter(
-        following=user
-    ).count()
-
-    following_count = UserFollow.objects.filter(
-        follower=user
-    ).count()
-
-    network_user_ids = set(
-        UserFollow.objects.filter(
-            follower=user
-        ).values_list(
-            'following_id',
-            flat=True,
-        )
-    )
-
-    network_user_ids.update(
-        UserFollow.objects.filter(
-            following=user
-        ).values_list(
-            'follower_id',
-            flat=True,
-        )
-    )
-
-    network_count = len(
-        network_user_ids
-    )
-
-    following_ids = set(
-        UserFollow.objects.filter(
-            follower=user
-        ).values_list(
-            'following_id',
-            flat=True,
-        )
-    )
-
-    candidate_profiles = list(
-        UserProfile.objects
-        .select_related('user')
-        .filter(
-            user__worker_profile__isnull=True,
-            user__is_staff=False,
-            user__is_superuser=False,
-        )
-        .exclude(
-            user=user
-        )
-        .exclude(
-            user_id__in=following_ids
-        )
-    )
-
-    current_city = (
-        user_profile.city
-        or ''
-    ).strip().lower()
-
-    candidate_profiles.sort(
-        key=lambda item: (
-            0
-            if (
-                current_city
-                and (item.city or '').strip().lower()
-                == current_city
-            )
-            else 1,
-            (
-                item.user.get_full_name()
-                or item.user.username
-            ).lower(),
-        )
-    )
-
-    row_map = {
-        row['user'].pk: row
-        for row in lifetime_rows
-    }
-
-    suggestions = []
-
-    for item in candidate_profiles[:4]:
-
-        suggestion_league = row_map.get(
-            item.user_id
-        )
-
-        if suggestion_league is None:
-            suggestion_league = {
-                'level': _league_level(0),
-                'xp': 0,
-                'resolved': 0,
-            }
-
-        suggestions.append(
-            {
-                'user': item.user,
-                'profile': item,
-                'league': suggestion_league,
-            }
-        )
-
-    achievement_cards = _user_achievement_cards(
-        league
-    )
-
-    unlocked_achievements = [
-        item
-        for item in achievement_cards
-        if item['unlocked']
-    ]
-
-    return render(
-        request,
-        'complaints/User_Folder/profile.html',
-        {
-            'profile_user': user,
-            'user_profile': user_profile,
-            'user_average_rating': user_average_rating,
-            'user_rating_count': user_rating_count,
-            'league': league,
-            'followers_count': followers_count,
-            'following_count': following_count,
-            'network_count': network_count,
-            'suggestions': suggestions,
-            'unlocked_achievements': unlocked_achievements[:4],
-            'unlocked_achievement_count': len(
-                unlocked_achievements
-            ),
-        }
-    )
-
 
 # =========================================================
 # USER COMMUNITY / FOLLOW SYSTEM
@@ -3646,36 +3360,33 @@ def notifications(request):
 
 
 # =========================================================
-# WORKER DETAILS
+# WORKER DETAILS - CITIZEN VIEW
 # =========================================================
 
 @login_required(login_url='login')
 def worker_details(request):
+    """Show only admin-approved workers to authenticated citizen users."""
 
-    admin_redirect = _admin_account_redirect(request)
-    if admin_redirect:
-        return admin_redirect
+    # Keep admin/staff and worker accounts out of the citizen UI.
+    role_redirect = _citizen_area_guard(request)
+    if role_redirect:
+        return role_redirect
 
     workers = (
         WorkerProfile.objects
-        .filter(
-            is_approved=True
-        )
-        .select_related(
-            'user'
-        )
-        .order_by(
-            '-created_at'
-        )
+        .filter(is_approved=True)
+        .select_related('user')
+        .order_by('-created_at')
     )
 
     return render(
         request,
-        'complaints/User_Folder/worker_details.html',
+        'complaints/Connect_Folder/worker_details.html',
         {
-            'workers': workers
-        }
+            'workers': workers,
+        },
     )
+
 
 # =========================================================
 # WORKER PROFILE
@@ -9623,173 +9334,307 @@ def worker_rewards(request):
     me = _find_worker_row(worker, monthly=False)
     return render(request, "complaints/Worker_Folder/worker_rewards.html", {"me": me, "worker": worker})
 # =========================================================
-# JOB MARKETPLACE - UI ROUTES
+# CONNECT / MARKETPLACE
 # =========================================================
 
-def job_marketplace(request):
-    """
-    Job Marketplace landing page.
+SHOP_BUSINESS_TYPES = {
+    'retail',
+    'restaurant',
+    'warehouse',
+    'service',
+    'other',
+}
 
-    Backend hiring actions are connected in later steps.
-    """
+
+def job_marketplace(request):
+    """Shared marketplace landing page."""
     admin_redirect = _admin_account_redirect(request)
     if admin_redirect:
         return admin_redirect
 
     return render(
         request,
-        'complaints/Job_Folder/job_marketplace.html',
+        'complaints/Connect_Folder/marketplace.html',
     )
 
 
 @login_required(login_url='worker_login')
 def worker_jobs(request):
-    """
-    Worker-side Find Jobs UI.
-
-    For now this route renders the approved UI only.
-    Real JobPost queries are connected in the next backend step.
-    """
+    """Worker-side opportunity listing page."""
     try:
         worker = request.user.worker_profile
-
     except WorkerProfile.DoesNotExist:
         messages.error(
             request,
             'Worker access required.'
         )
-        return redirect(
-            'worker_login'
-        )
+        return redirect('worker_login')
 
     if not worker.is_approved:
         messages.error(
             request,
             'Your worker account is not approved.'
         )
-        return redirect(
-            'worker_login'
-        )
+        return redirect('worker_login')
 
     return render(
         request,
-        'complaints/Job_Folder/worker_jobs.html',
+        'complaints/Connect_Folder/worker_opportunities.html',
         {
             'worker': worker,
-        }
+        },
     )
 
 
 @login_required(login_url='worker_login')
 def job_details(request):
-    """
-    Worker-side Job Details UI preview.
-    """
+    """Worker-side opportunity details page."""
     try:
         worker = request.user.worker_profile
-
     except WorkerProfile.DoesNotExist:
         messages.error(
             request,
             'Worker access required.'
         )
-        return redirect(
-            'worker_login'
-        )
+        return redirect('worker_login')
 
     if not worker.is_approved:
         messages.error(
             request,
             'Your worker account is not approved.'
         )
-        return redirect(
-            'worker_login'
-        )
+        return redirect('worker_login')
 
     return render(
         request,
-        'complaints/Job_Folder/job_details.html',
+        'complaints/Connect_Folder/opportunity_details.html',
         {
             'worker': worker,
-        }
+        },
     )
 
 
 @login_required(login_url='worker_login')
 def worker_applications(request):
-    """
-    Worker-side application tracking UI preview.
-    """
+    """Worker-side application tracking page."""
     try:
         worker = request.user.worker_profile
-
     except WorkerProfile.DoesNotExist:
         messages.error(
             request,
             'Worker access required.'
         )
-        return redirect(
-            'worker_login'
-        )
+        return redirect('worker_login')
 
     if not worker.is_approved:
         messages.error(
             request,
             'Your worker account is not approved.'
         )
-        return redirect(
-            'worker_login'
-        )
+        return redirect('worker_login')
 
     return render(
         request,
-        'complaints/Job_Folder/worker_applications.html',
+        'complaints/Connect_Folder/worker_applications.html',
         {
             'worker': worker,
-        }
+        },
     )
 
 
-def employer_portal(request):
-    """
-    Legacy business portal entry.
+def job_offer(request):
+    """Shared job-offer page."""
+    admin_redirect = _admin_account_redirect(request)
+    if admin_redirect:
+        return admin_redirect
 
-    Company and Shop Owner access now lives on the universal
-    Smart Complaint account gateway.
-    """
-    return redirect(
-        'front_page'
+    return render(
+        request,
+        'complaints/Connect_Folder/offer.html',
     )
 
 
-def employer_register(request):
+def job_chat(request):
+    """Shared marketplace chat page."""
+    admin_redirect = _admin_account_redirect(request)
+    if admin_redirect:
+        return admin_redirect
+
+    return render(
+        request,
+        'complaints/Connect_Folder/connect_chat.html',
+    )
+
+
+# =========================================================
+# BUSINESS CONNECT / PUBLIC DIRECTORY
+# =========================================================
+
+@login_required(login_url='login')
+def business_connect(request):
+    """Citizen-facing Business Connect entry page."""
+    role_redirect = _citizen_area_guard(request)
+    if role_redirect:
+        return role_redirect
+
+    if EmployerProfile.objects.filter(
+        user_id=request.user.id,
+        business_type__in=SHOP_BUSINESS_TYPES,
+    ).exists():
+        return redirect('business_dashboard')
+
+    return render(
+        request,
+        'complaints/Business_Folder/business_connect.html',
+    )
+
+
+def shop_directory(request):
     """
-    Legacy employer registration route.
+    Public, read-only directory of active Shop Owner accounts.
 
-    The new flow first asks whether the account is for a Company
-    or a Shop Owner.
+    Only supported shop/business categories are listed. Suspended,
+    rejected and inactive profiles are excluded.
     """
-    return redirect('employer_portal')
+    search_query = request.GET.get(
+        'q',
+        ''
+    ).strip()
+
+    selected_city = request.GET.get(
+        'city',
+        ''
+    ).strip()
+
+    base_shops = (
+        EmployerProfile.objects
+        .filter(
+            is_active=True,
+            business_type__in=SHOP_BUSINESS_TYPES,
+            verification_status__in=[
+                'pending',
+                'approved',
+            ],
+        )
+    )
+
+    cities = list(
+        base_shops
+        .exclude(city__isnull=True)
+        .exclude(city='')
+        .order_by('city')
+        .values_list('city', flat=True)
+        .distinct()
+    )
+
+    shops = base_shops
+
+    if search_query:
+        shops = shops.filter(
+            Q(business_name__icontains=search_query)
+            | Q(business_type__icontains=search_query)
+            | Q(city__icontains=search_query)
+            | Q(state__icontains=search_query)
+            | Q(address__icontains=search_query)
+        )
+
+    if selected_city:
+        shops = shops.filter(
+            city__iexact=selected_city
+        )
+
+    shops = shops.order_by(
+        'business_name',
+        'id',
+    )
+
+    return render(
+        request,
+        'complaints/Business_Folder/shop_directory.html',
+        {
+            'shops': shops,
+            'cities': cities,
+            'search_query': search_query,
+            'selected_city': selected_city,
+        },
+    )
 
 
-def employer_login(request):
+# =========================================================
+# BUY MARKETPLACE
+# =========================================================
+
+def buy_marketplace(request):
     """
-    Legacy employer login route.
+    Public Buy marketplace for approved Shop Owner profiles.
 
-    Company and Shop Owner logins are now separate.
+    The current data model stores shop-level information on EmployerProfile.
+    Until a dedicated Product model is added, the shop's ``about`` field is
+    shown as its product/service details on the Buy page.
     """
-    return redirect('employer_portal')
+    search_query = request.GET.get('q', '').strip()
+    selected_city = request.GET.get('city', '').strip()
+
+    base_shops = (
+        EmployerProfile.objects
+        .select_related('user')
+        .filter(
+            is_active=True,
+            business_type__in=SHOP_BUSINESS_TYPES,
+            verification_status='approved',
+        )
+    )
+
+    cities = list(
+        base_shops
+        .exclude(city__isnull=True)
+        .exclude(city='')
+        .order_by('city')
+        .values_list('city', flat=True)
+        .distinct()
+    )
+
+    shops = base_shops
+
+    if search_query:
+        shops = shops.filter(
+            Q(business_name__icontains=search_query)
+            | Q(business_type__icontains=search_query)
+            | Q(contact_person__icontains=search_query)
+            | Q(city__icontains=search_query)
+            | Q(state__icontains=search_query)
+            | Q(address__icontains=search_query)
+            | Q(about__icontains=search_query)
+        )
+
+    if selected_city:
+        shops = shops.filter(
+            city__iexact=selected_city
+        )
+
+    shops = shops.order_by(
+        'business_name',
+        'id',
+    )
+
+    return render(
+        request,
+        'complaints/Connect_Folder/buy.html',
+        {
+            'shops': shops,
+            'cities': cities,
+            'search_query': search_query,
+            'selected_city': selected_city,
+        },
+    )
 
 
-def _employer_registration_guard(request):
-    """
-    Employer registration uses a separate account.
+# =========================================================
+# SHOP OWNER ACCOUNT
+# =========================================================
 
-    If the user is currently logged in as Worker/Citizen and intentionally
-    opens Company/Shop registration, log out that session and continue to
-    the registration form instead of sending them back to Worker/Home.
-    Existing Employer accounts still go to their Employer Dashboard.
-    """
+def _shop_registration_guard(request):
+    """Keep Shop Owner registration separate from Citizen/Worker sessions."""
     admin_redirect = _admin_account_redirect(request)
     if admin_redirect:
         return admin_redirect
@@ -9798,37 +9643,37 @@ def _employer_registration_guard(request):
         return None
 
     try:
-        request.user.employer_profile
-        return redirect('employer_dashboard')
+        business = request.user.employer_profile
+
+        if business.business_type in SHOP_BUSINESS_TYPES:
+            return redirect('business_dashboard')
+
+        logout(request)
+        return None
+
     except EmployerProfile.DoesNotExist:
         pass
 
-    # User intentionally opened Company/Shop registration.
-    # Clear the current Citizen/Worker session so a separate employer
-    # account can be created without mixing roles.
+    # Shop Owner accounts are separate from Citizen and Worker accounts.
     logout(request)
 
     messages.info(
         request,
         (
-            'Your previous Citizen/Worker session was signed out. '
-            'You can now create a separate Company or Shop Owner account.'
+            'Your previous session was signed out. '
+            'You can now create a separate Shop Owner account.'
         )
     )
 
     return None
 
 
-def _validate_employer_files(
+def _validate_business_files(
     request,
     verification_document,
     business_logo,
 ):
-    """
-    Validate uploads used for employer verification.
-
-    Returns True when valid, otherwise adds a user-facing message.
-    """
+    """Validate Shop Owner verification proof and optional logo uploads."""
     if verification_document is None:
         messages.error(
             request,
@@ -9842,10 +9687,7 @@ def _validate_employer_files(
         'image/png',
     }
 
-    if (
-        verification_document.content_type
-        not in allowed_document_types
-    ):
+    if verification_document.content_type not in allowed_document_types:
         messages.error(
             request,
             'Verification proof must be PDF, JPG or PNG.'
@@ -9883,29 +9725,13 @@ def _validate_employer_files(
     return True
 
 
-def _create_employer_account(
-    request,
-    *,
-    account_kind,
-    template_name,
-):
-    """
-    Shared secure registration backend for Company and Shop Owner.
-
-    Company:
-    - business_type is always "company"
-    - legal registration number is required
-
-    Shop:
-    - business_type is selected from non-company shop categories
-
-    Both:
-    - phone, email, address and verification proof are required
-    - verification_status always starts as pending
-    """
-    guard = _employer_registration_guard(request)
+def shop_register(request):
+    """Create a dedicated Shop Owner account."""
+    guard = _shop_registration_guard(request)
     if guard:
         return guard
+
+    template_name = 'complaints/Connect_Folder/shop_register.html'
 
     if request.method != 'POST':
         return render(
@@ -9913,120 +9739,41 @@ def _create_employer_account(
             template_name,
             {
                 'form_data': {},
-            }
+            },
         )
 
-    username = request.POST.get(
-        'username',
-        ''
-    ).strip()
+    username = request.POST.get('username', '').strip()
+    business_name = request.POST.get('business_name', '').strip()
+    contact_person = request.POST.get('contact_person', '').strip()
+    business_phone = request.POST.get('business_phone', '').strip()
+    business_email = request.POST.get('business_email', '').strip().lower()
+    address = request.POST.get('address', '').strip()
+    city = request.POST.get('city', '').strip()
+    state = request.POST.get('state', '').strip()
+    pincode = request.POST.get('pincode', '').strip()
+    registration_number = request.POST.get('registration_number', '').strip()
+    gst_number = request.POST.get('gst_number', '').strip().upper()
+    website_url = request.POST.get('website_url', '').strip()
+    about = request.POST.get('about', '').strip()
+    password = request.POST.get('password', '')
+    password_confirm = request.POST.get('password_confirm', '')
+    business_type = request.POST.get('business_type', 'retail').strip()
 
-    business_name = request.POST.get(
-        'business_name',
-        ''
-    ).strip()
+    verification_document = request.FILES.get('verification_document')
+    business_logo = request.FILES.get('logo')
 
-    contact_person = request.POST.get(
-        'contact_person',
-        ''
-    ).strip()
-
-    business_phone = request.POST.get(
-        'business_phone',
-        ''
-    ).strip()
-
-    business_email = request.POST.get(
-        'business_email',
-        ''
-    ).strip().lower()
-
-    address = request.POST.get(
-        'address',
-        ''
-    ).strip()
-
-    city = request.POST.get(
-        'city',
-        ''
-    ).strip()
-
-    state = request.POST.get(
-        'state',
-        ''
-    ).strip()
-
-    pincode = request.POST.get(
-        'pincode',
-        ''
-    ).strip()
-
-    registration_number = request.POST.get(
-        'registration_number',
-        ''
-    ).strip()
-
-    gst_number = request.POST.get(
-        'gst_number',
-        ''
-    ).strip().upper()
-
-    website_url = request.POST.get(
-        'website_url',
-        ''
-    ).strip()
-
-    about = request.POST.get(
-        'about',
-        ''
-    ).strip()
-
-    password = request.POST.get(
-        'password',
-        ''
-    )
-
-    password_confirm = request.POST.get(
-        'password_confirm',
-        ''
-    )
-
-    verification_document = request.FILES.get(
-        'verification_document'
-    )
-
-    business_logo = request.FILES.get(
-        'logo'
-    )
-
-    if account_kind == 'company':
-        business_type = 'company'
-    else:
-        business_type = request.POST.get(
-            'business_type',
-            'retail'
-        ).strip()
-
-        allowed_shop_types = {
-            'retail',
-            'restaurant',
-            'warehouse',
-            'service',
-            'other',
-        }
-
-        if business_type not in allowed_shop_types:
-            messages.error(
-                request,
-                'Please select a valid shop/business type.'
-            )
-            return render(
-                request,
-                template_name,
-                {
-                    'form_data': request.POST,
-                }
-            )
+    if business_type not in SHOP_BUSINESS_TYPES:
+        messages.error(
+            request,
+            'Please select a valid shop/business type.'
+        )
+        return render(
+            request,
+            template_name,
+            {
+                'form_data': request.POST,
+            },
+        )
 
     required_values = [
         username,
@@ -10052,23 +9799,7 @@ def _create_employer_account(
             template_name,
             {
                 'form_data': request.POST,
-            }
-        )
-
-    if (
-        account_kind == 'company'
-        and not registration_number
-    ):
-        messages.error(
-            request,
-            'Company registration number is required.'
-        )
-        return render(
-            request,
-            template_name,
-            {
-                'form_data': request.POST,
-            }
+            },
         )
 
     if password != password_confirm:
@@ -10081,12 +9812,10 @@ def _create_employer_account(
             template_name,
             {
                 'form_data': request.POST,
-            }
+            },
         )
 
-    if User.objects.filter(
-        username__iexact=username
-    ).exists():
+    if User.objects.filter(username__iexact=username).exists():
         messages.error(
             request,
             'This username is already in use.'
@@ -10096,12 +9825,10 @@ def _create_employer_account(
             template_name,
             {
                 'form_data': request.POST,
-            }
+            },
         )
 
-    if User.objects.filter(
-        email__iexact=business_email
-    ).exists():
+    if User.objects.filter(email__iexact=business_email).exists():
         messages.error(
             request,
             'An account with this email already exists.'
@@ -10111,7 +9838,7 @@ def _create_employer_account(
             template_name,
             {
                 'form_data': request.POST,
-            }
+            },
         )
 
     try:
@@ -10132,10 +9859,10 @@ def _create_employer_account(
             template_name,
             {
                 'form_data': request.POST,
-            }
+            },
         )
 
-    if not _validate_employer_files(
+    if not _validate_business_files(
         request,
         verification_document,
         business_logo,
@@ -10145,20 +9872,20 @@ def _create_employer_account(
             template_name,
             {
                 'form_data': request.POST,
-            }
+            },
         )
 
     try:
         with transaction.atomic():
-            employer_user = User.objects.create_user(
+            shop_user = User.objects.create_user(
                 username=username,
                 email=business_email,
                 password=password,
                 first_name=contact_person,
             )
 
-            employer = EmployerProfile.objects.create(
-                user=employer_user,
+            business = EmployerProfile.objects.create(
+                user=shop_user,
                 business_name=business_name,
                 business_type=business_type,
                 contact_person=contact_person,
@@ -10180,7 +9907,7 @@ def _create_employer_account(
 
     except Exception as error:
         print(
-            'EMPLOYER REGISTRATION ERROR:',
+            'SHOP OWNER REGISTRATION ERROR:',
             error,
         )
         messages.error(
@@ -10192,125 +9919,66 @@ def _create_employer_account(
             template_name,
             {
                 'form_data': request.POST,
-            }
+            },
         )
 
     login(
         request,
-        employer_user
+        shop_user
     )
 
-    request.session[
-        'smart_complaint_role'
-    ] = 'employer'
-
-    request.session[
-        'employer_account_kind'
-    ] = account_kind
+    request.session['smart_complaint_role'] = 'shop_owner'
 
     messages.success(
         request,
         (
-            f'{employer.business_name} account created successfully. '
-            'Verification is Pending. Job posting will unlock after approval.'
+            f'{business.business_name} account created successfully. '
+            'Verification is Pending. Hiring actions will unlock after approval.'
         )
     )
 
-    return redirect(
-        'employer_dashboard'
-    )
+    return redirect('business_dashboard')
 
 
-def company_register(request):
-    return _create_employer_account(
-        request,
-        account_kind='company',
-        template_name='complaints/Job_Folder/company_register.html',
-    )
-
-
-def shop_register(request):
-    return _create_employer_account(
-        request,
-        account_kind='shop',
-        template_name='complaints/Job_Folder/shop_register.html',
-    )
-
-
-def _employer_login_by_kind(
-    request,
-    *,
-    account_kind,
-    template_name,
-):
-    """
-    Dedicated login for Company or Shop Owner accounts.
-    """
+def shop_login(request):
+    """Login only for Shop Owner accounts."""
     admin_redirect = _admin_account_redirect(request)
     if admin_redirect:
         return admin_redirect
 
+    template_name = 'complaints/Connect_Folder/shop_login.html'
+
     if request.user.is_authenticated:
         try:
-            employer = request.user.employer_profile
+            business = request.user.employer_profile
 
-            is_company = employer.business_type == 'company'
+            if business.business_type in SHOP_BUSINESS_TYPES:
+                return redirect('business_dashboard')
 
-            if (
-                account_kind == 'company'
-                and is_company
-            ):
-                return redirect(
-                    'employer_dashboard'
-                )
-
-            if (
-                account_kind == 'shop'
-                and not is_company
-            ):
-                return redirect(
-                    'employer_dashboard'
-                )
-
-            messages.info(
+            logout(request)
+            messages.error(
                 request,
-                'Please log out before switching employer account type.'
+                'This business account is not a Shop Owner account.'
             )
-            return redirect(
-                'employer_dashboard'
-            )
+            return redirect('shop_login')
 
         except EmployerProfile.DoesNotExist:
             try:
                 request.user.worker_profile
-                return redirect(
-                    'worker_dashboard'
-                )
+                return redirect('worker_dashboard')
             except WorkerProfile.DoesNotExist:
-                return redirect(
-                    'home'
-                )
+                return redirect('home')
 
     if request.method == 'POST':
-        username = request.POST.get(
-            'username',
-            ''
-        ).strip()
-
-        password = request.POST.get(
-            'password',
-            ''
-        )
+        username = request.POST.get('username', '').strip()
+        password = request.POST.get('password', '')
 
         if not username or not password:
             messages.error(
                 request,
                 'Please enter username and password.'
             )
-            return render(
-                request,
-                template_name,
-            )
+            return render(request, template_name)
 
         user = authenticate(
             request,
@@ -10323,10 +9991,7 @@ def _employer_login_by_kind(
                 request,
                 'Invalid username or password.'
             )
-            return render(
-                request,
-                template_name,
-            )
+            return render(request, template_name)
 
         if user.is_staff or user.is_superuser:
             login(
@@ -10336,79 +10001,43 @@ def _employer_login_by_kind(
             return redirect('/admin/')
 
         try:
-            employer = user.employer_profile
+            business = user.employer_profile
         except EmployerProfile.DoesNotExist:
             messages.error(
                 request,
-                'This account is not a Company/Shop employer account.'
+                'This account is not a Shop Owner account.'
             )
-            return render(
-                request,
-                template_name,
-            )
+            return render(request, template_name)
 
-        is_company = employer.business_type == 'company'
-
-        if (
-            account_kind == 'company'
-            and not is_company
-        ):
+        if business.business_type not in SHOP_BUSINESS_TYPES:
             messages.error(
                 request,
-                'This is a Shop Owner account. Please use Shop Owner Login.'
+                'This account is not a Shop Owner account.'
             )
-            return redirect(
-                'shop_login'
-            )
+            return render(request, template_name)
 
-        if (
-            account_kind == 'shop'
-            and is_company
-        ):
+        if not business.is_active:
             messages.error(
                 request,
-                'This is a Company account. Please use Company Login.'
+                'This Shop Owner account is inactive. Please contact support.'
             )
-            return redirect(
-                'company_login'
-            )
+            return render(request, template_name)
 
-        if not employer.is_active:
+        if business.verification_status == 'suspended':
             messages.error(
                 request,
-                'This employer account is inactive. Please contact support.'
+                'This Shop Owner account is suspended. Please contact support.'
             )
-            return render(
-                request,
-                template_name,
-            )
-
-        if employer.verification_status == 'suspended':
-            messages.error(
-                request,
-                'This employer account is suspended. Please contact support.'
-            )
-            return render(
-                request,
-                template_name,
-            )
+            return render(request, template_name)
 
         login(
             request,
             user
         )
 
-        request.session[
-            'smart_complaint_role'
-        ] = 'employer'
+        request.session['smart_complaint_role'] = 'shop_owner'
 
-        request.session[
-            'employer_account_kind'
-        ] = account_kind
-
-        return redirect(
-            'employer_dashboard'
-        )
+        return redirect('business_dashboard')
 
     return render(
         request,
@@ -10416,70 +10045,48 @@ def _employer_login_by_kind(
     )
 
 
-def company_login(request):
-    return _employer_login_by_kind(
-        request,
-        account_kind='company',
-        template_name='complaints/Job_Folder/company_login.html',
-    )
+def business_logout(request):
+    logout(request)
+    return redirect('shop_login')
 
 
-def shop_login(request):
-    return _employer_login_by_kind(
-        request,
-        account_kind='shop',
-        template_name='complaints/Job_Folder/shop_login.html',
-    )
-
-
-def employer_logout(request):
-    logout(
-        request
-    )
-
-    return redirect(
-        'employer_login'
-    )
-
-
-@login_required(login_url='employer_portal')
-def employer_dashboard(request):
-    """
-    Real employer dashboard shell.
-
-    Job posting backend is connected in the next step.
-    """
+def _current_business_owner(request):
+    """Return the logged-in Shop Owner profile, or None."""
     try:
-        employer = request.user.employer_profile
-
+        business = request.user.employer_profile
     except EmployerProfile.DoesNotExist:
+        return None
+
+    if business.business_type not in SHOP_BUSINESS_TYPES:
+        return None
+
+    return business
+
+
+@login_required(login_url='shop_login')
+def business_dashboard(request):
+    """Shop Owner dashboard."""
+    business = _current_business_owner(request)
+
+    if business is None:
         messages.error(
             request,
-            'Employer access required.'
+            'Shop Owner access required.'
         )
+        return redirect('shop_login')
 
-        return redirect(
-            'employer_login'
-        )
-
-    if not employer.is_active:
-        logout(
-            request
-        )
-
+    if not business.is_active:
+        logout(request)
         messages.error(
             request,
-            'This employer account is inactive.'
+            'This Shop Owner account is inactive.'
         )
-
-        return redirect(
-            'employer_login'
-        )
+        return redirect('shop_login')
 
     active_jobs_count = (
         JobPost.objects
         .filter(
-            employer=employer,
+            employer=business,
             status='published',
         )
         .count()
@@ -10488,7 +10095,7 @@ def employer_dashboard(request):
     applications_count = (
         JobApplication.objects
         .filter(
-            job__employer=employer,
+            job__employer=business,
         )
         .count()
     )
@@ -10496,7 +10103,7 @@ def employer_dashboard(request):
     shortlisted_count = (
         JobApplication.objects
         .filter(
-            job__employer=employer,
+            job__employer=business,
             status__in=[
                 'shortlisted',
                 'interview',
@@ -10509,7 +10116,7 @@ def employer_dashboard(request):
     hired_count = (
         JobEmployment.objects
         .filter(
-            application__job__employer=employer,
+            application__job__employer=business,
             status__in=[
                 'active',
                 'completed',
@@ -10521,176 +10128,112 @@ def employer_dashboard(request):
     recent_jobs = (
         JobPost.objects
         .filter(
-            employer=employer,
+            employer=business,
         )
         .annotate(
-            application_count=Count(
-                'applications'
-            )
+            application_count=Count('applications')
         )
-        .order_by(
-            '-created_at'
-        )[:5]
+        .order_by('-created_at')[:5]
     )
 
     return render(
         request,
-        'complaints/Job_Folder/employer_dashboard.html',
+        'complaints/Business_Folder/business_dashboard.html',
         {
-            'employer': employer,
+            'business': business,
+            # Temporary compatibility for existing templates.
+            'employer': business,
             'active_jobs_count': active_jobs_count,
             'applications_count': applications_count,
             'shortlisted_count': shortlisted_count,
             'hired_count': hired_count,
             'recent_jobs': recent_jobs,
-        }
+        },
     )
 
 
-@login_required(login_url='employer_portal')
-def employer_post_job(request):
-    """
-    Post Job UI preview.
+@login_required(login_url='shop_login')
+def business_post(request):
+    """Shop Owner hiring/post page."""
+    business = _current_business_owner(request)
 
-    Real JobPost creation is connected in the next step.
-    """
-    try:
-        employer = request.user.employer_profile
-
-    except EmployerProfile.DoesNotExist:
+    if business is None:
         messages.error(
             request,
-            'Employer access required.'
+            'Shop Owner access required.'
         )
+        return redirect('shop_login')
 
-        return redirect(
-            'employer_login'
-        )
-
-    if employer.verification_status != 'approved':
+    if business.verification_status != 'approved':
         messages.warning(
             request,
             (
                 'Business verification is required before using hiring actions. '
                 'Your current status is '
-                f'{employer.get_verification_status_display()}.'
+                f'{business.get_verification_status_display()}.'
             )
         )
-        return redirect(
-            'employer_dashboard'
-        )
+        return redirect('business_dashboard')
 
     return render(
         request,
-        'complaints/Job_Folder/employer_post_job.html',
+        'complaints/Business_Folder/business_post.html',
         {
-            'employer': employer,
-        }
+            'business': business,
+            'employer': business,
+        },
     )
 
 
-@login_required(login_url='employer_portal')
-def employer_applicants(request):
-    """
-    Employer applicants UI preview.
-    """
-    try:
-        employer = request.user.employer_profile
+@login_required(login_url='shop_login')
+def business_applicants(request):
+    """Shop Owner applicants page."""
+    business = _current_business_owner(request)
 
-    except EmployerProfile.DoesNotExist:
+    if business is None:
         messages.error(
             request,
-            'Employer access required.'
+            'Shop Owner access required.'
         )
+        return redirect('shop_login')
 
-        return redirect(
-            'employer_login'
-        )
-
-    if employer.verification_status != 'approved':
+    if business.verification_status != 'approved':
         messages.warning(
             request,
             (
                 'Business verification is required before using hiring actions. '
                 'Your current status is '
-                f'{employer.get_verification_status_display()}.'
+                f'{business.get_verification_status_display()}.'
             )
         )
-        return redirect(
-            'employer_dashboard'
-        )
+        return redirect('business_dashboard')
 
     return render(
         request,
-        'complaints/Job_Folder/employer_applicants.html',
+        'complaints/Business_Folder/business_applicants.html',
         {
-            'employer': employer,
-        }
+            'business': business,
+            'employer': business,
+        },
     )
 
+@login_required(login_url='shop_login')
+def business_owner_profile(request):
+    """Shop Owner profile page."""
+    business = _current_business_owner(request)
 
-@login_required(login_url='employer_portal')
-def employer_worker_profile(request):
-    """
-    Employer-facing worker profile UI preview.
-    """
-    try:
-        employer = request.user.employer_profile
-
-    except EmployerProfile.DoesNotExist:
+    if business is None:
         messages.error(
             request,
-            'Employer access required.'
+            'Shop Owner access required.'
         )
-
-        return redirect(
-            'employer_login'
-        )
-
-    if employer.verification_status != 'approved':
-        messages.warning(
-            request,
-            'Business verification is required before viewing worker hiring profiles.'
-        )
-        return redirect(
-            'employer_dashboard'
-        )
+        return redirect('shop_login')
 
     return render(
         request,
-        'complaints/Job_Folder/employer_worker_profile.html',
+        'complaints/Business_Folder/business_owner_profile.html',
         {
-            'employer': employer,
-        }
-    )
-
-def job_offer(request):
-    """
-    Job offer UI preview.
-
-    Offer sending/acceptance is not performed by this UI-only route.
-    """
-    admin_redirect = _admin_account_redirect(request)
-    if admin_redirect:
-        return admin_redirect
-
-    return render(
-        request,
-        'complaints/Job_Folder/job_offer.html',
-    )
-
-
-def job_chat(request):
-    """
-    Job interview chat UI preview.
-
-    Complaint chat remains completely separate.
-    """
-    admin_redirect = _admin_account_redirect(request)
-    if admin_redirect:
-        return admin_redirect
-
-    return render(
-        request,
-        'complaints/Job_Folder/job_chat.html',
+            'business': business,
+            'employer': business,
+        },
     )

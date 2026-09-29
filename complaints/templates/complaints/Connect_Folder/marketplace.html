@@ -1,0 +1,20 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Connect Marketplace | Smart Complaint</title>
+  {% include 'complaints/Connect_Folder/marketplace_style.html' %}
+</head>
+<body>
+  <header class="cx-topbar"><div class="cx-brand"><div class="cx-brand-mark">C</div><div><h1>Connect Marketplace</h1><p>Workers and Shop Owners connect here.</p></div></div><a class="cx-btn cx-btn-soft" href="{% url 'home' %}">Home</a></header>
+  <main class="cx-page">
+    <section class="cx-hero"><span class="cx-kicker">Smart Complaint Connect</span><h2>Find work, find workers, discover local shops.</h2><p>This shared area links Worker opportunities, Shop Owner hiring pages, the public business directory and Buy marketplace.</p></section>
+    <section class="cx-grid">
+      <article class="cx-card"><h3>Worker Opportunities</h3><p>Approved workers can browse available opportunity screens.</p><div class="cx-actions"><a class="cx-btn cx-btn-primary" href="{% url 'worker_jobs' %}">Find Work</a><a class="cx-btn cx-btn-soft" href="{% url 'worker_applications' %}">Applications</a></div></article>
+      <article class="cx-card"><h3>Shop Owner</h3><p>Register or login to your dedicated business account.</p><div class="cx-actions"><a class="cx-btn cx-btn-green" href="{% url 'shop_login' %}">Shop Login</a><a class="cx-btn cx-btn-soft" href="{% url 'shop_register' %}">Register</a></div></article>
+      <article class="cx-card"><h3>Buy & Business</h3><p>Browse approved local shops and their public products/services information.</p><div class="cx-actions"><a class="cx-btn cx-btn-primary" href="{% url 'buy_marketplace' %}">Buy</a><a class="cx-btn cx-btn-soft" href="{% url 'shop_directory' %}">Directory</a></div></article>
+    </section>
+  </main>
+</body>
+</html>

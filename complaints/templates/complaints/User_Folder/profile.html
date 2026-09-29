@@ -1,1382 +1,4104 @@
-<!DOCTYPE html>
 {% load static %}
+
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>My Profile | Smart Complaint</title>
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, viewport-fit=cover"
+    >
+
+    <title>
+        My Profile | Smart Complaint
+    </title>
 
     {% include 'complaints/base_style.html' %}
 
+
     <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
         .ui-icon {
             width: 21px;
             height: 21px;
+
             display: inline-block;
-            vertical-align: middle;
+
             fill: none;
             stroke: currentColor;
+
             stroke-width: 2;
             stroke-linecap: round;
             stroke-linejoin: round;
+
             flex-shrink: 0;
         }
 
+
+        /* =====================================================
+           PROFILE
+        ====================================================== */
+
         .profile {
+
             max-width: 720px;
-            margin: 35px auto;
-            padding: 35px;
+
+            margin:
+                35px auto;
+
+            padding:
+                35px;
+
         }
+
 
         .head {
-            text-align: center;
-            margin-bottom: 30px;
-        }
 
-        .avatar {
-            width: 120px;
-            height: 120px;
-            margin: auto;
-            display: grid;
-            place-items: center;
-            overflow: hidden;
-            border: 4px solid #eff6ff;
-            border-radius: 50%;
-            background: #dbeafe;
-            color: #1d4ed8;
-        }
+            text-align:
+                center;
 
-        .avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+            margin-bottom:
+                30px;
 
-        .avatar .ui-icon {
-            width: 50px;
-            height: 50px;
         }
-
-        .head h1 {
-            margin: 14px 0 5px;
-        }
-
-        .username {
-            color: #2563eb;
-            font-weight: 900;
-        }
-
-        .rating-card {
-            max-width: 420px;
-            margin: 20px auto 5px;
-            padding: 18px;
-            text-align: center;
-            border: 1px solid #fde68a;
-            border-radius: 15px;
-            background: #fffbeb;
-        }
-
-        .rating-stars {
-            color: #f59e0b;
-            font-size: 28px;
-        }
-
-        .rating-stars .ui-icon {
-            width: 29px;
-            height: 29px;
-        }
-
-        .rating-number {
-            margin-top: 7px;
-            color: #1e293b;
-            font-size: 19px;
-            font-weight: 900;
-        }
-
-        .rating-count {
-            margin-top: 4px;
-            color: #64748b;
-            font-size: 13px;
-        }
-
-        .photo-section {
-            margin-bottom: 22px;
-            padding: 18px;
-            border: 1px solid #e2e8f0;
-            border-radius: 14px;
-            background: #f8fafc;
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-        }
-
-        .full {
-            grid-column: 1 / -1;
-        }
-
-        .readonly {
-            background: #f1f5f9;
-            cursor: not-allowed;
-        }
-
-        .actions {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-top: 25px;
-        }
-
-        .icon-btn {
-            display: inline-flex !important;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        body.sc-theme-dark .avatar {
-            background: #1e3a5f;
-            border-color: #334155;
-            color: #bfdbfe;
-        }
-
-        body.sc-theme-dark .rating-card,
-        body.sc-theme-dark .photo-section {
-            background: #172033;
-            border-color: #334155;
-        }
-
-        body.sc-theme-dark .rating-number {
-            color: #f8fafc;
-        }
-
-        body.sc-theme-dark .rating-count {
-            color: #cbd5e1;
-        }
-
-        body.sc-theme-glass .profile {
-            background:
-                linear-gradient(
-                    135deg,
-                    rgba(96, 165, 250, 0.13),
-                    rgba(255, 255, 255, 0.075),
-                    rgba(99, 102, 241, 0.08)
-                ) !important;
-            border: 1px solid rgba(191, 219, 254, 0.27) !important;
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-        }
-
-        body.sc-theme-glass .avatar {
-            background: rgba(255, 255, 255, 0.12);
-            border-color: rgba(255, 255, 255, 0.30);
-            color: #ffffff;
-        }
-
-        body.sc-theme-glass .username {
-            color: #bfdbfe;
-        }
-
-        body.sc-theme-glass .rating-card,
-        body.sc-theme-glass .photo-section {
-            background:
-                linear-gradient(
-                    135deg,
-                    rgba(255, 255, 255, 0.11),
-                    rgba(59, 130, 246, 0.06)
-                );
-            border: 1px solid rgba(191, 219, 254, 0.25);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-        }
-
-        body.sc-theme-glass .rating-number {
-            color: #ffffff;
-        }
-
-        body.sc-theme-glass .rating-count {
-            color: rgba(219, 234, 254, 0.74);
-        }
-
-        body.sc-theme-glass .readonly {
-            background: rgba(255, 255, 255, 0.06) !important;
-        }
-
-        @media (max-width: 650px) {
-            .profile {
-                padding: 25px 18px;
-            }
-
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .full {
-                grid-column: auto;
-            }
-        }
-
-        /* ADVANCED PROFILE PHOTO */
-        .avatar-editor{position:relative;width:132px;height:132px;margin:auto}
-        .avatar-editor .avatar{width:120px;height:120px;margin:auto}
-        .avatar-camera{position:absolute;right:0;bottom:6px;width:42px;height:42px;border:3px solid #fff;border-radius:50%;background:linear-gradient(135deg,#0ea5e9,#2563eb);color:#fff;display:grid;place-items:center;cursor:pointer;box-shadow:0 8px 22px rgba(37,99,235,.35);z-index:4}
-        .avatar-camera .ui-icon{width:21px;height:21px}
-        .photo-menu{display:none;width:min(330px,calc(100vw - 48px));margin:14px auto 0;overflow:hidden;text-align:left;border:1px solid rgba(148,163,184,.35);border-radius:16px;background:#fff;box-shadow:0 18px 45px rgba(15,23,42,.2)}
-        .photo-menu.open{display:block}
-        .photo-menu-title{padding:14px 16px;font-size:15px;font-weight:900;border-bottom:1px solid #e2e8f0}
-        .photo-menu-item{width:100%;border:0;border-bottom:1px solid #eef2f7;background:transparent;color:inherit;padding:13px 16px;display:flex;align-items:center;gap:11px;font:inherit;cursor:pointer;text-align:left}
-        .photo-menu-item:last-child{border-bottom:0}.photo-menu-item:hover{background:rgba(59,130,246,.08)}
-        .photo-menu-item .ui-icon{width:20px;height:20px}.premium-mark{margin-left:auto;padding:3px 8px;border-radius:999px;background:#f59e0b;color:#fff;font-size:10px;font-weight:900}
-        .hidden-photo-input{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important}
-        .photo-preview-note{display:none;margin:12px auto 0;max-width:330px;padding:10px 12px;border-radius:11px;background:rgba(37,99,235,.09);font-size:12px;line-height:1.45}
-        .photo-preview-note.show{display:block}
-        body.sc-theme-dark .photo-menu,body.worker-theme-dark .photo-menu{background:#172033;border-color:#334155;color:#f8fafc}
-        body.sc-theme-glass .photo-menu,body.worker-theme-glass .photo-menu{background:rgba(15,23,42,.88);border-color:rgba(191,219,254,.25);color:#fff;backdrop-filter:blur(22px)}
-
-    
-        /* FREE AVATAR PICKER */
-        .avatar-modal-backdrop{
-            display:none;position:fixed;inset:0;z-index:9998;
-            background:rgba(2,6,23,.72);padding:18px;
-            align-items:center;justify-content:center;
-        }
-        .avatar-modal-backdrop.open{display:flex}
-        .avatar-modal{
-            width:min(520px,100%);max-height:82vh;overflow:auto;
-            border:1px solid rgba(148,163,184,.32);border-radius:22px;
-            background:#fff;color:#0f172a;padding:18px;
-            box-shadow:0 28px 80px rgba(2,6,23,.45);
-        }
-        .avatar-modal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
-        .avatar-modal-head h3{margin:0;font-size:19px}
-        .avatar-modal-close{
-            width:38px;height:38px;border:0;border-radius:50%;cursor:pointer;
-            background:#e2e8f0;color:#0f172a;font-size:22px;line-height:1;
-        }
-        .avatar-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-        .avatar-choice{
-            border:2px solid transparent;border-radius:18px;padding:7px;
-            background:rgba(59,130,246,.07);cursor:pointer;transition:.18s ease;
-        }
-        .avatar-choice:hover,.avatar-choice.selected{
-            border-color:#38bdf8;transform:translateY(-2px);
-            box-shadow:0 8px 20px rgba(14,165,233,.20);
-        }
-        .avatar-choice img{display:block;width:100%;aspect-ratio:1;border-radius:14px;object-fit:cover}
-        .avatar-modal-note{margin:14px 2px 0;font-size:12px;opacity:.72;line-height:1.5}
-        body.sc-theme-dark .avatar-modal,body.worker-theme-dark .avatar-modal,
-        body.sc-theme-glass .avatar-modal,body.worker-theme-glass .avatar-modal{
-            background:#111c31;color:#f8fafc;border-color:#334155;
-        }
-        body.sc-theme-dark .avatar-modal-close,body.worker-theme-dark .avatar-modal-close,
-        body.sc-theme-glass .avatar-modal-close,body.worker-theme-glass .avatar-modal-close{
-            background:#263550;color:#fff;
-        }
-
-        .premium-avatar-choice{
-            position:relative;
-            border:1px solid rgba(245,158,11,.42);
-            background:rgba(245,158,11,.06);
-            border-radius:16px;
-            padding:6px;
-            cursor:pointer;
-            transition:.18s ease;
-        }
-        .premium-avatar-choice:hover{
-            transform:translateY(-2px);
-            border-color:#f59e0b;
-            box-shadow:0 10px 24px rgba(245,158,11,.18);
-        }
-        .premium-avatar-choice img{
-            display:block;
-            width:100%;
-            aspect-ratio:1;
-            border-radius:14px;
-            object-fit:cover;
-        }
-        .premium-crown{
-            position:absolute;
-            top:9px;
-            left:9px;
-            width:26px;
-            height:26px;
-            border-radius:9px;
-            display:grid;
-            place-items:center;
-            background:rgba(8,18,38,.88);
-            color:#fbbf24;
-            font-size:15px;
-            box-shadow:0 4px 12px rgba(0,0,0,.28);
-        }
-        .premium-avatar-title{
-            display:flex;
-            align-items:center;
-            gap:8px;
-        }
-        .premium-avatar-title .gold{color:#f59e0b}
-        .premium-upgrade-box{
-            margin-top:14px;
-            padding:13px 14px;
-            border:1px solid rgba(245,158,11,.35);
-            border-radius:14px;
-            background:rgba(245,158,11,.08);
-            font-size:12px;
-            line-height:1.55;
-        }
-
-        @media(max-width:480px){.avatar-grid{grid-template-columns:repeat(4,1fr);gap:8px}.avatar-modal{padding:14px}}
 
 
         /* =====================================================
-           COMMUNITY PROFILE / SOCIAL
-        ===================================================== */
-        .social-summary {
-            display: grid;
-            grid-template-columns: repeat(5, minmax(0, 1fr));
-            gap: 10px;
-            margin: 22px 0;
+           AVATAR
+        ====================================================== */
+
+        .avatar-editor {
+
+            position:
+                relative;
+
+            width:
+                132px;
+
+            height:
+                132px;
+
+            margin:
+                auto;
+
         }
 
-        .social-stat {
-            min-width: 0;
-            padding: 14px 10px;
-            border: 1px solid rgba(148, 163, 184, 0.24);
-            border-radius: 14px;
-            background: rgba(37, 99, 235, 0.06);
-            text-align: center;
+
+        .avatar {
+
+            width:
+                120px;
+
+            height:
+                120px;
+
+            margin:
+                auto;
+
+            display:
+                grid;
+
+            place-items:
+                center;
+
+            overflow:
+                hidden;
+
+            border:
+                4px solid
+                #eff6ff;
+
+            border-radius:
+                50%;
+
+            background:
+                #dbeafe;
+
+            color:
+                #1d4ed8;
+
         }
 
-        .social-stat strong {
-            display: block;
-            color: #1d4ed8;
-            font-size: 19px;
-            font-weight: 950;
+
+        .avatar img {
+
+            width:
+                100%;
+
+            height:
+                100%;
+
+            object-fit:
+                cover;
+
         }
 
-        .social-stat span {
-            display: block;
-            margin-top: 4px;
-            color: #64748b;
-            font-size: 10px;
-            font-weight: 800;
+
+        .avatar .ui-icon {
+
+            width:
+                50px;
+
+            height:
+                50px;
+
         }
 
-        .social-stat-link {
-            color: inherit;
-            text-decoration: none;
-        }
 
-        .league-strip {
-            display: grid;
-            grid-template-columns: auto 1fr auto;
-            align-items: center;
-            gap: 13px;
-            margin: 0 0 18px;
-            padding: 15px;
-            border: 1px solid rgba(99, 102, 241, 0.25);
-            border-radius: 16px;
+        .avatar-camera {
+
+            position:
+                absolute;
+
+            right:
+                0;
+
+            bottom:
+                6px;
+
+            width:
+                42px;
+
+            height:
+                42px;
+
+            display:
+                grid;
+
+            place-items:
+                center;
+
+            border:
+                3px solid
+                #ffffff;
+
+            border-radius:
+                50%;
+
             background:
                 linear-gradient(
                     135deg,
-                    rgba(37, 99, 235, 0.10),
-                    rgba(124, 58, 237, 0.09)
+                    #0ea5e9,
+                    #2563eb
                 );
+
+            color:
+                #ffffff;
+
+            cursor:
+                pointer;
+
+            box-shadow:
+                0 8px 22px
+                rgba(
+                    37,
+                    99,
+                    235,
+                    0.35
+                );
+
+            z-index:
+                4;
+
         }
+
+
+        .avatar-camera .ui-icon {
+
+            width:
+                21px;
+
+            height:
+                21px;
+
+        }
+
+
+        /* =====================================================
+           PHOTO MENU
+        ====================================================== */
+
+        .photo-menu {
+
+            display:
+                none;
+
+            width:
+                min(
+                    330px,
+                    calc(
+                        100vw - 48px
+                    )
+                );
+
+            margin:
+                14px auto 0;
+
+            overflow:
+                hidden;
+
+            text-align:
+                left;
+
+            border:
+                1px solid
+                rgba(
+                    148,
+                    163,
+                    184,
+                    0.35
+                );
+
+            border-radius:
+                16px;
+
+            background:
+                #ffffff;
+
+            box-shadow:
+                0 18px 45px
+                rgba(
+                    15,
+                    23,
+                    42,
+                    0.20
+                );
+
+        }
+
+
+        .photo-menu.open {
+
+            display:
+                block;
+
+        }
+
+
+        .photo-menu-title {
+
+            padding:
+                14px 16px;
+
+            font-size:
+                15px;
+
+            font-weight:
+                900;
+
+            border-bottom:
+                1px solid
+                #e2e8f0;
+
+        }
+
+
+        .photo-menu-item {
+
+            width:
+                100%;
+
+            padding:
+                13px 16px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                11px;
+
+            border:
+                0;
+
+            border-bottom:
+                1px solid
+                #eef2f7;
+
+            background:
+                transparent;
+
+            color:
+                inherit;
+
+            font:
+                inherit;
+
+            cursor:
+                pointer;
+
+            text-align:
+                left;
+
+        }
+
+
+        .photo-menu-item:last-child {
+
+            border-bottom:
+                0;
+
+        }
+
+
+        .photo-menu-item:hover {
+
+            background:
+                rgba(
+                    59,
+                    130,
+                    246,
+                    0.08
+                );
+
+        }
+
+
+        .premium-mark {
+
+            margin-left:
+                auto;
+
+            padding:
+                3px 8px;
+
+            border-radius:
+                999px;
+
+            background:
+                #f59e0b;
+
+            color:
+                #ffffff;
+
+            font-size:
+                10px;
+
+            font-weight:
+                900;
+
+        }
+
+
+        .hidden-photo-input {
+
+            position:
+                absolute !important;
+
+            width:
+                1px !important;
+
+            height:
+                1px !important;
+
+            opacity:
+                0 !important;
+
+            pointer-events:
+                none !important;
+
+        }
+
+
+        .photo-preview-note {
+
+            display:
+                none;
+
+            margin:
+                12px auto 0;
+
+            max-width:
+                360px;
+
+            padding:
+                11px 13px;
+
+            border-radius:
+                11px;
+
+            background:
+                rgba(
+                    37,
+                    99,
+                    235,
+                    0.09
+                );
+
+            font-size:
+                12px;
+
+            line-height:
+                1.5;
+
+        }
+
+
+        .photo-preview-note.show {
+
+            display:
+                block;
+
+        }
+
+
+        /* =====================================================
+           PROFILE TITLE
+        ====================================================== */
+
+        .head h1 {
+
+            margin:
+                14px 0 5px;
+
+        }
+
+
+        .username {
+
+            color:
+                #2563eb;
+
+            font-weight:
+                900;
+
+        }
+
+
+        /* =====================================================
+           PREMIUM STATUS
+        ====================================================== */
+
+        .premium-profile-status {
+
+            max-width:
+                360px;
+
+            margin:
+                13px auto 0;
+
+            padding:
+                9px 12px;
+
+            border-radius:
+                11px;
+
+            font-size:
+                11px;
+
+            font-weight:
+                800;
+
+            line-height:
+                1.45;
+
+        }
+
+
+        .premium-profile-status.active {
+
+            border:
+                1px solid
+                rgba(
+                    34,
+                    197,
+                    94,
+                    0.30
+                );
+
+            background:
+                rgba(
+                    34,
+                    197,
+                    94,
+                    0.09
+                );
+
+        }
+
+
+        .premium-profile-status.free {
+
+            border:
+                1px solid
+                rgba(
+                    245,
+                    158,
+                    11,
+                    0.30
+                );
+
+            background:
+                rgba(
+                    245,
+                    158,
+                    11,
+                    0.08
+                );
+
+        }
+
+
+        /* =====================================================
+           RATING
+        ====================================================== */
+
+        .rating-card {
+
+            max-width:
+                420px;
+
+            margin:
+                20px auto 5px;
+
+            padding:
+                18px;
+
+            text-align:
+                center;
+
+            border:
+                1px solid
+                #fde68a;
+
+            border-radius:
+                15px;
+
+            background:
+                #fffbeb;
+
+        }
+
+
+        .rating-stars {
+
+            color:
+                #f59e0b;
+
+            font-size:
+                28px;
+
+        }
+
+
+        .rating-stars .ui-icon {
+
+            width:
+                29px;
+
+            height:
+                29px;
+
+        }
+
+
+        .rating-number {
+
+            margin-top:
+                7px;
+
+            color:
+                #1e293b;
+
+            font-size:
+                19px;
+
+            font-weight:
+                900;
+
+        }
+
+
+        .rating-count {
+
+            margin-top:
+                4px;
+
+            color:
+                #64748b;
+
+            font-size:
+                13px;
+
+        }
+
+
+        /* =====================================================
+           SOCIAL SUMMARY
+        ====================================================== */
+
+        .social-summary {
+
+            display:
+                grid;
+
+            grid-template-columns:
+                repeat(
+                    5,
+                    minmax(
+                        0,
+                        1fr
+                    )
+                );
+
+            gap:
+                10px;
+
+            margin:
+                22px 0;
+
+        }
+
+
+        .social-stat {
+
+            min-width:
+                0;
+
+            padding:
+                14px 10px;
+
+            border:
+                1px solid
+                rgba(
+                    148,
+                    163,
+                    184,
+                    0.24
+                );
+
+            border-radius:
+                14px;
+
+            background:
+                rgba(
+                    37,
+                    99,
+                    235,
+                    0.06
+                );
+
+            text-align:
+                center;
+
+        }
+
+
+        .social-stat strong {
+
+            display:
+                block;
+
+            color:
+                #1d4ed8;
+
+            font-size:
+                19px;
+
+            font-weight:
+                950;
+
+        }
+
+
+        .social-stat span {
+
+            display:
+                block;
+
+            margin-top:
+                4px;
+
+            color:
+                #64748b;
+
+            font-size:
+                10px;
+
+            font-weight:
+                800;
+
+        }
+
+
+        .social-stat-link {
+
+            color:
+                inherit;
+
+            text-decoration:
+                none;
+
+        }
+
+
+        /* =====================================================
+           LEAGUE
+        ====================================================== */
+
+        .league-strip {
+
+            display:
+                grid;
+
+            grid-template-columns:
+                auto 1fr auto;
+
+            align-items:
+                center;
+
+            gap:
+                13px;
+
+            margin:
+                0 0 18px;
+
+            padding:
+                15px;
+
+            border:
+                1px solid
+                rgba(
+                    99,
+                    102,
+                    241,
+                    0.25
+                );
+
+            border-radius:
+                16px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(
+                        37,
+                        99,
+                        235,
+                        0.10
+                    ),
+                    rgba(
+                        124,
+                        58,
+                        237,
+                        0.09
+                    )
+                );
+
+        }
+
 
         .league-badge {
-            width: 48px;
-            height: 48px;
-            display: grid;
-            place-items: center;
-            border-radius: 14px;
-            background: linear-gradient(135deg, #2563eb, #7c3aed);
-            color: #ffffff;
-            font-weight: 950;
+
+            width:
+                48px;
+
+            height:
+                48px;
+
+            display:
+                grid;
+
+            place-items:
+                center;
+
+            border-radius:
+                14px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #7c3aed
+                );
+
+            color:
+                #ffffff;
+
+            font-weight:
+                950;
+
         }
+
 
         .league-info strong {
-            display: block;
-            color: #172554;
-            font-size: 15px;
+
+            display:
+                block;
+
+            color:
+                #172554;
+
+            font-size:
+                15px;
+
         }
+
 
         .league-info small {
-            color: #64748b;
+
+            color:
+                #64748b;
+
         }
+
 
         .league-xp {
-            color: #7c3aed;
-            font-size: 15px;
-            font-weight: 950;
-            white-space: nowrap;
+
+            color:
+                #7c3aed;
+
+            font-size:
+                15px;
+
+            font-weight:
+                950;
+
+            white-space:
+                nowrap;
+
         }
+
+
+        /* =====================================================
+           SOCIAL ACTIONS
+        ====================================================== */
 
         .profile-social-actions {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 9px;
-            margin-bottom: 22px;
+
+            display:
+                grid;
+
+            grid-template-columns:
+                repeat(
+                    3,
+                    minmax(
+                        0,
+                        1fr
+                    )
+                );
+
+            gap:
+                9px;
+
+            margin-bottom:
+                22px;
+
         }
+
 
         .profile-social-action {
-            min-height: 44px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0 12px;
-            border: 1px solid rgba(99, 102, 241, 0.20);
-            border-radius: 12px;
-            background: rgba(37, 99, 235, 0.07);
-            color: #1d4ed8;
-            text-decoration: none;
-            font-size: 12px;
-            font-weight: 900;
+
+            min-height:
+                44px;
+
+            display:
+                inline-flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            padding:
+                0 12px;
+
+            border:
+                1px solid
+                rgba(
+                    99,
+                    102,
+                    241,
+                    0.20
+                );
+
+            border-radius:
+                12px;
+
+            background:
+                rgba(
+                    37,
+                    99,
+                    235,
+                    0.07
+                );
+
+            color:
+                #1d4ed8;
+
+            text-decoration:
+                none;
+
+            font-size:
+                12px;
+
+            font-weight:
+                900;
+
         }
+
+
+        /* =====================================================
+           FORM
+        ====================================================== */
+
+        .form-grid {
+
+            display:
+                grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            gap:
+                16px;
+
+        }
+
+
+        .full {
+
+            grid-column:
+                1 / -1;
+
+        }
+
+
+        .readonly {
+
+            background:
+                #f1f5f9;
+
+            cursor:
+                not-allowed;
+
+        }
+
+
+        /* =====================================================
+           COMMUNITY
+        ====================================================== */
 
         .profile-community-section {
-            margin: 26px 0 4px;
-            padding-top: 24px;
-            border-top: 1px solid #e2e8f0;
+
+            margin:
+                26px 0 4px;
+
+            padding-top:
+                24px;
+
+            border-top:
+                1px solid
+                #e2e8f0;
+
         }
+
 
         .profile-community-head {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            margin-bottom: 13px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                space-between;
+
+            gap:
+                12px;
+
+            margin-bottom:
+                13px;
+
         }
+
 
         .profile-community-head h2 {
-            margin: 0;
-            font-size: 18px;
+
+            margin:
+                0;
+
+            font-size:
+                18px;
+
         }
+
 
         .profile-community-head a {
-            color: #2563eb;
-            font-size: 12px;
-            font-weight: 900;
-            text-decoration: none;
+
+            color:
+                #2563eb;
+
+            font-size:
+                12px;
+
+            font-weight:
+                900;
+
+            text-decoration:
+                none;
+
         }
+
 
         .people-preview {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 10px;
+
+            display:
+                grid;
+
+            grid-template-columns:
+                repeat(
+                    2,
+                    minmax(
+                        0,
+                        1fr
+                    )
+                );
+
+            gap:
+                10px;
+
         }
+
 
         .person-preview {
-            display: grid;
-            grid-template-columns: 48px minmax(0, 1fr);
-            gap: 10px;
-            align-items: center;
-            padding: 12px;
-            border: 1px solid #e2e8f0;
-            border-radius: 14px;
-            background: #f8fafc;
+
+            display:
+                grid;
+
+            grid-template-columns:
+                48px
+                minmax(
+                    0,
+                    1fr
+                );
+
+            gap:
+                10px;
+
+            align-items:
+                center;
+
+            padding:
+                12px;
+
+            border:
+                1px solid
+                #e2e8f0;
+
+            border-radius:
+                14px;
+
+            background:
+                #f8fafc;
+
         }
+
 
         .person-avatar {
-            width: 46px;
-            height: 46px;
-            display: grid;
-            place-items: center;
-            overflow: hidden;
-            border-radius: 50%;
-            background: #dbeafe;
-            color: #1d4ed8;
-            font-weight: 950;
+
+            width:
+                46px;
+
+            height:
+                46px;
+
+            display:
+                grid;
+
+            place-items:
+                center;
+
+            overflow:
+                hidden;
+
+            border-radius:
+                50%;
+
+            background:
+                #dbeafe;
+
+            color:
+                #1d4ed8;
+
+            font-weight:
+                950;
+
         }
+
 
         .person-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+
+            width:
+                100%;
+
+            height:
+                100%;
+
+            object-fit:
+                cover;
+
         }
+
 
         .person-main {
-            min-width: 0;
+
+            min-width:
+                0;
+
         }
+
 
         .person-name {
-            display: block;
-            overflow: hidden;
-            color: #172554;
-            font-size: 12px;
-            font-weight: 950;
-            text-decoration: none;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+
+            display:
+                block;
+
+            overflow:
+                hidden;
+
+            color:
+                #172554;
+
+            font-size:
+                12px;
+
+            font-weight:
+                950;
+
+            text-decoration:
+                none;
+
+            text-overflow:
+                ellipsis;
+
+            white-space:
+                nowrap;
+
         }
+
 
         .person-meta {
-            margin-top: 3px;
-            color: #64748b;
-            font-size: 10px;
+
+            margin-top:
+                3px;
+
+            color:
+                #64748b;
+
+            font-size:
+                10px;
+
         }
+
 
         .person-follow-form {
-            grid-column: 1 / -1;
+
+            grid-column:
+                1 / -1;
+
         }
+
 
         .person-follow-btn {
-            width: 100%;
-            min-height: 34px;
-            border: 0;
-            border-radius: 9px;
-            background: linear-gradient(135deg, #2563eb, #7c3aed);
-            color: #ffffff;
-            cursor: pointer;
-            font: inherit;
-            font-size: 11px;
-            font-weight: 900;
+
+            width:
+                100%;
+
+            min-height:
+                34px;
+
+            border:
+                0;
+
+            border-radius:
+                9px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #7c3aed
+                );
+
+            color:
+                #ffffff;
+
+            cursor:
+                pointer;
+
+            font:
+                inherit;
+
+            font-size:
+                11px;
+
+            font-weight:
+                900;
+
         }
+
+
+        /* =====================================================
+           ACHIEVEMENTS
+        ====================================================== */
 
         .achievement-preview {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
+
+            display:
+                flex;
+
+            flex-wrap:
+                wrap;
+
+            gap:
+                8px;
+
         }
+
 
         .achievement-mini {
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-            padding: 8px 10px;
-            border: 1px solid rgba(245, 158, 11, 0.24);
-            border-radius: 999px;
-            background: rgba(245, 158, 11, 0.08);
-            color: #92400e;
-            font-size: 10px;
-            font-weight: 900;
+
+            display:
+                inline-flex;
+
+            align-items:
+                center;
+
+            gap:
+                7px;
+
+            padding:
+                8px 10px;
+
+            border:
+                1px solid
+                rgba(
+                    245,
+                    158,
+                    11,
+                    0.24
+                );
+
+            border-radius:
+                999px;
+
+            background:
+                rgba(
+                    245,
+                    158,
+                    11,
+                    0.08
+                );
+
+            color:
+                #92400e;
+
+            font-size:
+                10px;
+
+            font-weight:
+                900;
+
         }
 
+
+        /* =====================================================
+           ACTIONS
+        ====================================================== */
+
+        .actions {
+
+            display:
+                flex;
+
+            justify-content:
+                center;
+
+            gap:
+                10px;
+
+            flex-wrap:
+                wrap;
+
+            margin-top:
+                25px;
+
+        }
+
+
+        .icon-btn {
+
+            display:
+                inline-flex !important;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            gap:
+                8px;
+
+        }
+
+
+        /* =====================================================
+           AVATAR MODAL
+        ====================================================== */
+
+        .avatar-modal-backdrop {
+
+            display:
+                none;
+
+            position:
+                fixed;
+
+            inset:
+                0;
+
+            z-index:
+                99999;
+
+            padding:
+                18px;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            background:
+                rgba(
+                    2,
+                    6,
+                    23,
+                    0.72
+                );
+
+        }
+
+
+        .avatar-modal-backdrop.open {
+
+            display:
+                flex;
+
+        }
+
+
+        .avatar-modal {
+
+            width:
+                min(
+                    560px,
+                    100%
+                );
+
+            max-height:
+                82vh;
+
+            overflow:
+                auto;
+
+            padding:
+                18px;
+
+            border:
+                1px solid
+                rgba(
+                    148,
+                    163,
+                    184,
+                    0.32
+                );
+
+            border-radius:
+                22px;
+
+            background:
+                #ffffff;
+
+            color:
+                #0f172a;
+
+            box-shadow:
+                0 28px 80px
+                rgba(
+                    2,
+                    6,
+                    23,
+                    0.45
+                );
+
+        }
+
+
+        .avatar-modal-head {
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                space-between;
+
+            gap:
+                12px;
+
+            margin-bottom:
+                14px;
+
+        }
+
+
+        .avatar-modal-head h3 {
+
+            margin:
+                0;
+
+            font-size:
+                19px;
+
+        }
+
+
+        .avatar-modal-close {
+
+            width:
+                38px;
+
+            height:
+                38px;
+
+            border:
+                0;
+
+            border-radius:
+                50%;
+
+            background:
+                #e2e8f0;
+
+            color:
+                #0f172a;
+
+            font-size:
+                22px;
+
+            cursor:
+                pointer;
+
+        }
+
+
+        .avatar-grid {
+
+            display:
+                grid;
+
+            grid-template-columns:
+                repeat(
+                    4,
+                    1fr
+                );
+
+            gap:
+                12px;
+
+        }
+
+
+        .avatar-choice,
+        .premium-avatar-choice {
+
+            position:
+                relative;
+
+            width:
+                100%;
+
+            padding:
+                7px;
+
+            border:
+                2px solid
+                transparent;
+
+            border-radius:
+                18px;
+
+            background:
+                rgba(
+                    59,
+                    130,
+                    246,
+                    0.07
+                );
+
+            cursor:
+                pointer;
+
+            transition:
+                0.18s ease;
+
+        }
+
+
+        .premium-avatar-choice {
+
+            border:
+                1px solid
+                rgba(
+                    245,
+                    158,
+                    11,
+                    0.42
+                );
+
+            background:
+                rgba(
+                    245,
+                    158,
+                    11,
+                    0.06
+                );
+
+        }
+
+
+        .avatar-choice:hover,
+        .avatar-choice.selected,
+        .premium-avatar-choice:hover,
+        .premium-avatar-choice.selected {
+
+            border-color:
+                #38bdf8;
+
+            transform:
+                translateY(
+                    -2px
+                );
+
+            box-shadow:
+                0 8px 20px
+                rgba(
+                    14,
+                    165,
+                    233,
+                    0.20
+                );
+
+        }
+
+
+        .premium-avatar-choice:hover,
+        .premium-avatar-choice.selected {
+
+            border-color:
+                #f59e0b;
+
+            box-shadow:
+                0 10px 24px
+                rgba(
+                    245,
+                    158,
+                    11,
+                    0.18
+                );
+
+        }
+
+
+        .avatar-choice img,
+        .premium-avatar-choice img {
+
+            display:
+                block;
+
+            width:
+                100%;
+
+            aspect-ratio:
+                1;
+
+            border-radius:
+                14px;
+
+            object-fit:
+                cover;
+
+        }
+
+
+        .premium-crown {
+
+            position:
+                absolute;
+
+            top:
+                9px;
+
+            left:
+                9px;
+
+            z-index:
+                3;
+
+            width:
+                26px;
+
+            height:
+                26px;
+
+            display:
+                grid;
+
+            place-items:
+                center;
+
+            border-radius:
+                9px;
+
+            background:
+                rgba(
+                    8,
+                    18,
+                    38,
+                    0.88
+                );
+
+            color:
+                #fbbf24;
+
+            font-size:
+                15px;
+
+            box-shadow:
+                0 4px 12px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    0.28
+                );
+
+        }
+
+
+        .premium-avatar-title {
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                8px;
+
+        }
+
+
+        .premium-avatar-title .gold {
+
+            color:
+                #f59e0b;
+
+        }
+
+
+        .avatar-modal-note,
+        .premium-upgrade-box {
+
+            margin:
+                14px 2px 0;
+
+            padding:
+                11px 12px;
+
+            border-radius:
+                12px;
+
+            font-size:
+                12px;
+
+            line-height:
+                1.5;
+
+        }
+
+
+        .avatar-modal-note {
+
+            background:
+                rgba(
+                    37,
+                    99,
+                    235,
+                    0.07
+                );
+
+        }
+
+
+        .premium-upgrade-box {
+
+            border:
+                1px solid
+                rgba(
+                    245,
+                    158,
+                    11,
+                    0.35
+                );
+
+            background:
+                rgba(
+                    245,
+                    158,
+                    11,
+                    0.08
+                );
+
+        }
+
+
+        /* =====================================================
+           DARK THEME
+        ====================================================== */
+
+        body.sc-theme-dark .avatar {
+
+            background:
+                #1e3a5f;
+
+            border-color:
+                #334155;
+
+            color:
+                #bfdbfe;
+
+        }
+
+
+        body.sc-theme-dark .rating-card,
+        body.sc-theme-dark .person-preview,
         body.sc-theme-dark .social-stat,
-        body.sc-theme-dark .league-strip,
-        body.sc-theme-dark .person-preview {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: #334155;
+        body.sc-theme-dark .league-strip {
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.05
+                );
+
+            border-color:
+                #334155;
+
         }
 
-        body.sc-theme-dark .social-stat strong,
-        body.sc-theme-dark .league-info strong,
-        body.sc-theme-dark .person-name {
-            color: #f8fafc;
+
+        body.sc-theme-dark .rating-number,
+        body.sc-theme-dark .person-name,
+        body.sc-theme-dark .league-info strong {
+
+            color:
+                #f8fafc;
+
         }
 
-        body.sc-theme-dark .social-stat span,
-        body.sc-theme-dark .league-info small,
-        body.sc-theme-dark .person-meta {
-            color: #cbd5e1;
+
+        body.sc-theme-dark .rating-count,
+        body.sc-theme-dark .person-meta,
+        body.sc-theme-dark .league-info small {
+
+            color:
+                #cbd5e1;
+
         }
 
+
+        body.sc-theme-dark .photo-menu,
+        body.sc-theme-dark .avatar-modal {
+
+            background:
+                #172033;
+
+            border-color:
+                #334155;
+
+            color:
+                #f8fafc;
+
+        }
+
+
+        /* =====================================================
+           GLASS THEME
+        ====================================================== */
+
+        body.sc-theme-glass .profile {
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(
+                        96,
+                        165,
+                        250,
+                        0.13
+                    ),
+                    rgba(
+                        255,
+                        255,
+                        255,
+                        0.075
+                    ),
+                    rgba(
+                        99,
+                        102,
+                        241,
+                        0.08
+                    )
+                ) !important;
+
+            border:
+                1px solid
+                rgba(
+                    191,
+                    219,
+                    254,
+                    0.27
+                ) !important;
+
+            backdrop-filter:
+                blur(
+                    25px
+                );
+
+            -webkit-backdrop-filter:
+                blur(
+                    25px
+                );
+
+        }
+
+
+        body.sc-theme-glass .avatar {
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.12
+                );
+
+            border-color:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.30
+                );
+
+            color:
+                #ffffff;
+
+        }
+
+
+        body.sc-theme-glass .username {
+
+            color:
+                #bfdbfe;
+
+        }
+
+
+        body.sc-theme-glass .rating-card,
+        body.sc-theme-glass .person-preview,
         body.sc-theme-glass .social-stat,
-        body.sc-theme-glass .league-strip,
-        body.sc-theme-glass .person-preview {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(191, 219, 254, 0.24);
+        body.sc-theme-glass .league-strip {
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.08
+                );
+
+            border-color:
+                rgba(
+                    191,
+                    219,
+                    254,
+                    0.24
+                );
+
         }
 
-        body.sc-theme-glass .social-stat strong,
-        body.sc-theme-glass .league-info strong,
-        body.sc-theme-glass .person-name {
-            color: #ffffff;
+
+        body.sc-theme-glass .rating-number,
+        body.sc-theme-glass .person-name,
+        body.sc-theme-glass .league-info strong {
+
+            color:
+                #ffffff;
+
         }
 
-        body.sc-theme-glass .social-stat span,
-        body.sc-theme-glass .league-info small,
-        body.sc-theme-glass .person-meta {
-            color: rgba(219, 234, 254, 0.76);
+
+        body.sc-theme-glass .rating-count,
+        body.sc-theme-glass .person-meta,
+        body.sc-theme-glass .league-info small {
+
+            color:
+                rgba(
+                    219,
+                    234,
+                    254,
+                    0.76
+                );
+
         }
 
-        @media (max-width: 700px) {
-            .social-summary {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
+
+        body.sc-theme-glass .photo-menu,
+        body.sc-theme-glass .avatar-modal {
+
+            background:
+                rgba(
+                    15,
+                    23,
+                    42,
+                    0.92
+                );
+
+            border-color:
+                rgba(
+                    191,
+                    219,
+                    254,
+                    0.25
+                );
+
+            color:
+                #ffffff;
+
+            backdrop-filter:
+                blur(
+                    22px
+                );
+
+        }
+
+
+        /* =====================================================
+           MOBILE
+        ====================================================== */
+
+        @media (
+            max-width:
+            700px
+        ) {
+
+            .profile {
+
+                padding:
+                    25px 18px;
+
             }
+
+
+            .form-grid {
+
+                grid-template-columns:
+                    1fr;
+
+            }
+
+
+            .full {
+
+                grid-column:
+                    auto;
+
+            }
+
+
+            .social-summary {
+
+                grid-template-columns:
+                    repeat(
+                        2,
+                        minmax(
+                            0,
+                            1fr
+                        )
+                    );
+
+            }
+
 
             .social-stat:first-child {
-                grid-column: 1 / -1;
+
+                grid-column:
+                    1 / -1;
+
             }
+
 
             .profile-social-actions {
-                grid-template-columns: 1fr;
+
+                grid-template-columns:
+                    1fr;
+
             }
+
 
             .people-preview {
-                grid-template-columns: 1fr;
+
+                grid-template-columns:
+                    1fr;
+
             }
+
         }
 
-</style>
+
+        @media (
+            max-width:
+            480px
+        ) {
+
+            .avatar-grid {
+
+                grid-template-columns:
+                    repeat(
+                        4,
+                        1fr
+                    );
+
+                gap:
+                    8px;
+
+            }
+
+
+            .avatar-modal {
+
+                padding:
+                    14px;
+
+            }
+
+        }
+
+    </style>
+
 </head>
 
-<body>
-    {% include 'complaints/User_Folder/navbar.html' %}
 
-    <main class="page">
-        <div class="card profile">
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="message {% if message.tags %}{{ message.tags }}{% endif %}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
+<body>
+
+
+{% include 'complaints/User_Folder/navbar.html' %}
+
+
+<main class="page">
+
+    <div class="card profile">
+
+
+        <!-- =================================================
+             MESSAGES
+        ================================================== -->
+
+        {% if messages %}
+
+            {% for message in messages %}
+
+                <div
+                    class="
+                        message
+                        {% if message.tags %}
+                            {{ message.tags }}
+                        {% endif %}
+                    "
+                >
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+
+        <!-- =================================================
+             PROFILE HEAD
+        ================================================== -->
+
+        <div class="head">
+
+
+            <div class="avatar-editor">
+
+
+                <div
+                    class="avatar"
+                    id="profileAvatar"
+                >
+
+                    {% if user_profile.photo %}
+
+                        <img
+                            src="{{ user_profile.photo.url }}?v={{ user_profile.updated_at|date:'U' }}"
+                            alt="Profile Photo"
+                        >
+
+                    {% else %}
+
+                        <svg
+                            class="ui-icon"
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                        >
+                            <circle
+                                cx="12"
+                                cy="8"
+                                r="4"
+                            ></circle>
+
+                            <path
+                                d="M4.5 21a7.5 7.5 0 0 1 15 0"
+                            ></path>
+                        </svg>
+
+                    {% endif %}
+
+                </div>
+
+
+                <button
+                    class="avatar-camera"
+                    type="button"
+                    id="photoMenuButton"
+                    aria-label="Change profile photo"
+                >
+
+                    <svg
+                        class="ui-icon"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            d="M4 7h3l2-3h6l2 3h3a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z"
+                        ></path>
+
+                        <circle
+                            cx="12"
+                            cy="13"
+                            r="4"
+                        ></circle>
+                    </svg>
+
+                </button>
+
+            </div>
+
+
+            <!-- PHOTO MENU -->
+
+            <div
+                class="photo-menu"
+                id="photoMenu"
+            >
+
+                <div class="photo-menu-title">
+                    Change Profile Photo
+                </div>
+
+
+                <button
+                    type="button"
+                    class="photo-menu-item"
+                    data-a="camera"
+                >
+                    📷 Take Photo
+                </button>
+
+
+                <button
+                    type="button"
+                    class="photo-menu-item"
+                    data-a="gallery"
+                >
+                    🖼 Choose from Gallery
+                </button>
+
+
+                <button
+                    type="button"
+                    class="photo-menu-item"
+                    data-a="avatar"
+                >
+                    🙂 Choose Free Avatar
+                </button>
+
+
+                <button
+                    type="button"
+                    class="photo-menu-item"
+                    data-a="premium"
+                >
+                    👑 Premium Avatars
+
+                    <span class="premium-mark">
+                        PREMIUM
+                    </span>
+                </button>
+
+            </div>
+
+
+            <div
+                class="photo-preview-note"
+                id="photoPreviewNote"
+            ></div>
+
+
+            <!-- PREMIUM STATUS -->
+
+            {% if user_is_premium %}
+
+                <div
+                    class="
+                        premium-profile-status
+                        active
+                    "
+                >
+                    ✓ Citizen Premium active —
+                    Premium DPs are unlocked.
+                </div>
+
+            {% else %}
+
+                <div
+                    class="
+                        premium-profile-status
+                        free
+                    "
+                >
+                    Premium DP requires
+                    Citizen Premium.
+                </div>
+
             {% endif %}
 
-            <div class="head">
 
-                <div class="avatar-editor">
-                    <div class="avatar" id="profileAvatar">
-                        {% if user_profile.photo %}<img src="{{ user_profile.photo.url }}?v={{ user_profile.updated_at|date:'U' }}" alt="Profile Photo">
-                        {% else %}<svg class="ui-icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"></circle><path d="M4.5 21a7.5 7.5 0 0 1 15 0"></path></svg>{% endif %}
+            <h1>
+                My Profile
+            </h1>
+
+
+            <div class="username">
+                @{{ profile_user.username }}
+            </div>
+
+
+            <p class="muted">
+                Manage your personal information
+            </p>
+
+
+            <!-- RATING -->
+
+            <div class="rating-card">
+
+                {% if user_rating_count > 0 %}
+
+                    <div class="rating-stars">
+
+                        <svg
+                            class="ui-icon"
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                        >
+                            <path
+                                d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3l-5.6 2.9 1.1-6.2L3 9.6l6.2-.9L12 3z"
+                            ></path>
+                        </svg>
+
                     </div>
-                    <button class="avatar-camera" type="button" id="photoMenuButton" aria-label="Change profile photo"><svg class="ui-icon" viewBox="0 0 24 24"><path d="M4 7h3l2-3h6l2 3h3a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z"></path><circle cx="12" cy="13" r="4"></circle></svg></button>
-                </div>
-                <div class="photo-menu" id="photoMenu">
-                    <div class="photo-menu-title">Change Profile Photo</div>
-                    <button type="button" class="photo-menu-item" data-a="camera"> Take Photo</button>
-                    <button type="button" class="photo-menu-item" data-a="gallery"> Choose from Gallery</button>
-                    <button type="button" class="photo-menu-item" data-a="avatar"> Choose Free Avatar</button>
-                    <button type="button" class="photo-menu-item" data-a="premium"> Premium Avatars <span class="premium-mark">PRO</span></button>
-                </div>
-                <div class="photo-preview-note" id="photoPreviewNote"></div>
 
 
-                <h1>My Profile</h1>
-                <div class="username">@{{ profile_user.username }}</div>
-                <p class="muted">Manage your personal information</p>
+                    <div class="rating-number">
 
-                <div class="rating-card">
-                    {% if user_rating_count > 0 %}
-                        <div class="rating-stars">
-                            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
-                                <path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3l-5.6 2.9 1.1-6.2L3 9.6l6.2-.9L12 3z"></path>
-                            </svg>
-                        </div>
+                        {{ user_average_rating|floatformat:1 }}
+                        / 5
 
-                        <div class="rating-number">
-                            {{ user_average_rating|floatformat:1 }} / 5
-                        </div>
+                    </div>
 
-                        <div class="rating-count">
-                            {{ user_rating_count }}
-                            {% if user_rating_count == 1 %}Rating{% else %}Ratings{% endif %}
-                        </div>
-                    {% else %}
-                        <div class="rating-stars"></div>
-                        <div class="rating-number">No Rating Yet</div>
-                        <div class="rating-count">
-                            Rating will appear after a worker rates you.
-                        </div>
-                    {% endif %}
-                </div>
+
+                    <div class="rating-count">
+
+                        {{ user_rating_count }}
+
+                        {% if user_rating_count == 1 %}
+
+                            Rating
+
+                        {% else %}
+
+                            Ratings
+
+                        {% endif %}
+
+                    </div>
+
+                {% else %}
+
+                    <div class="rating-stars">
+                        ☆
+                    </div>
+
+
+                    <div class="rating-number">
+                        No Rating Yet
+                    </div>
+
+
+                    <div class="rating-count">
+                        Rating will appear after
+                        a worker rates you.
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             SOCIAL SUMMARY
+        ================================================== -->
+
+        <div class="social-summary">
+
+
+            <div class="social-stat">
+
+                <strong>
+                    {{ league.level.name }}
+                </strong>
+
+                <span>
+                    Citizen League
+                </span>
+
             </div>
 
 
-            <!-- =================================================
-                 COMMUNITY PROFILE
-            ================================================== -->
-            <div class="social-summary">
-                <div class="social-stat">
-                    <strong>{{ league.level.name }}</strong>
-                    <span>Citizen League</span>
-                </div>
+            <div class="social-stat">
 
-                <div class="social-stat">
-                    <strong>{{ league.xp }}</strong>
-                    <span>Lifetime XP</span>
-                </div>
+                <strong>
+                    {{ league.xp }}
+                </strong>
 
-                <div class="social-stat">
-                    <strong>{{ league.resolved }}</strong>
-                    <span>Resolved</span>
-                </div>
+                <span>
+                    Lifetime XP
+                </span>
 
-                <a class="social-stat social-stat-link" href="{% url 'user_followers' %}">
-                    <strong>{{ followers_count }}</strong>
-                    <span>Followers</span>
-                </a>
-
-                <a class="social-stat social-stat-link" href="{% url 'user_following' %}">
-                    <strong>{{ following_count }}</strong>
-                    <span>Following</span>
-                </a>
             </div>
 
-            <div class="league-strip">
-                <div class="league-badge">
-                    {{ league.level.name|first }}
-                </div>
 
-                <div class="league-info">
-                    <strong>{{ league.level.name }} Citizen</strong>
-                    <small>
-                        {{ network_count }} people in your network ·
-                        {{ unlocked_achievement_count }} achievements
-                    </small>
-                </div>
+            <div class="social-stat">
 
-                <div class="league-xp">
-                    {{ league.xp }} XP
-                </div>
+                <strong>
+                    {{ league.resolved }}
+                </strong>
+
+                <span>
+                    Resolved
+                </span>
+
             </div>
 
-            <div class="profile-social-actions">
-                <a
-                    class="profile-social-action"
-                    href="{% url 'public_user_profile' profile_user.username %}"
+
+            <a
+                class="
+                    social-stat
+                    social-stat-link
+                "
+                href="{% url 'user_followers' %}"
+            >
+
+                <strong>
+                    {{ followers_count }}
+                </strong>
+
+                <span>
+                    Followers
+                </span>
+
+            </a>
+
+
+            <a
+                class="
+                    social-stat
+                    social-stat-link
+                "
+                href="{% url 'user_following' %}"
+            >
+
+                <strong>
+                    {{ following_count }}
+                </strong>
+
+                <span>
+                    Following
+                </span>
+
+            </a>
+
+        </div>
+
+
+        <!-- =================================================
+             LEAGUE
+        ================================================== -->
+
+        <div class="league-strip">
+
+
+            <div class="league-badge">
+
+                {{ league.level.name|first }}
+
+            </div>
+
+
+            <div class="league-info">
+
+                <strong>
+
+                    {{ league.level.name }}
+                    Citizen
+
+                </strong>
+
+                <small>
+
+                    {{ network_count }}
+                    people in your network ·
+
+                    {{ unlocked_achievement_count }}
+                    achievements
+
+                </small>
+
+            </div>
+
+
+            <div class="league-xp">
+
+                {{ league.xp }}
+                XP
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             SOCIAL ACTIONS
+        ================================================== -->
+
+        <div class="profile-social-actions">
+
+
+            <a
+                class="profile-social-action"
+                href="{% url 'public_user_profile' profile_user.username %}"
+            >
+                View Public Profile
+            </a>
+
+
+            <a
+                class="profile-social-action"
+                href="{% url 'people_you_may_know' %}"
+            >
+                People You May Know
+            </a>
+
+
+            <a
+                class="profile-social-action"
+                href="{% url 'user_achievements' %}"
+            >
+                Achievements
+            </a>
+
+
+        </div>
+
+
+        <!-- =================================================
+             PROFILE FORM
+        ================================================== -->
+
+        <form
+            method="post"
+            enctype="multipart/form-data"
+            id="profileForm"
+        >
+
+            {% csrf_token %}
+
+
+            <!-- NORMAL GALLERY PHOTO -->
+
+            <input
+                id="galleryPhotoInput"
+                class="hidden-photo-input"
+                type="file"
+                name="photo"
+                accept="image/*"
+            >
+
+
+            <!-- CAMERA -->
+
+            <input
+                id="cameraPhotoInput"
+                class="hidden-photo-input"
+                type="file"
+                accept="image/*"
+                capture="environment"
+            >
+
+
+            <!-- FREE AVATAR -->
+
+            <input
+                id="freeAvatarInput"
+                type="hidden"
+                name="free_avatar"
+                value=""
+            >
+
+
+            <!-- PREMIUM AVATAR -->
+
+            <input
+                id="premiumAvatarInput"
+                type="hidden"
+                name="premium_avatar"
+                value=""
+            >
+
+
+            <div class="form-grid">
+
+
+                <div class="form-group full">
+
+                    <label class="label">
+                        Username
+                    </label>
+
+                    <input
+                        class="input readonly"
+                        value="{{ profile_user.username }}"
+                        readonly
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label class="label">
+                        First Name
+                    </label>
+
+                    <input
+                        class="input"
+                        type="text"
+                        name="first_name"
+                        value="{{ profile_user.first_name }}"
+                        placeholder="First name"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label class="label">
+                        Last Name
+                    </label>
+
+                    <input
+                        class="input"
+                        type="text"
+                        name="last_name"
+                        value="{{ profile_user.last_name }}"
+                        placeholder="Last name"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label class="label">
+                        Email
+                    </label>
+
+                    <input
+                        class="input"
+                        type="email"
+                        name="email"
+                        value="{{ profile_user.email }}"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label class="label">
+                        Phone Number
+                    </label>
+
+                    <input
+                        class="input"
+                        type="tel"
+                        name="phone"
+                        maxlength="15"
+                        value="{{ user_profile.phone }}"
+                        placeholder="Enter phone number"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label class="label">
+                        Gender
+                    </label>
+
+                    <select
+                        class="select"
+                        name="gender"
+                    >
+
+                        <option value="">
+                            Select Gender
+                        </option>
+
+
+                        <option
+                            value="Male"
+                            {% if user_profile.gender == 'Male' %}
+                                selected
+                            {% endif %}
+                        >
+                            Male
+                        </option>
+
+
+                        <option
+                            value="Female"
+                            {% if user_profile.gender == 'Female' %}
+                                selected
+                            {% endif %}
+                        >
+                            Female
+                        </option>
+
+
+                        <option
+                            value="Other"
+                            {% if user_profile.gender == 'Other' %}
+                                selected
+                            {% endif %}
+                        >
+                            Other
+                        </option>
+
+
+                        <option
+                            value="Prefer not to say"
+                            {% if user_profile.gender == 'Prefer not to say' %}
+                                selected
+                            {% endif %}
+                        >
+                            Prefer not to say
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="
+                    btn
+                    btn-primary
+                    icon-btn
+                "
+                style="
+                    width:100%;
+                    margin-top:20px;
+                    font-size:16px;
+                "
+            >
+
+                <svg
+                    class="ui-icon"
+                    viewBox="0 0 24 24"
                 >
-                    View Public Profile
-                </a>
+                    <path
+                        d="M5 3h12l2 2v16H5z"
+                    ></path>
 
-                <a
-                    class="profile-social-action"
-                    href="{% url 'people_you_may_know' %}"
-                >
+                    <path
+                        d="M8 3v6h8V3"
+                    ></path>
+
+                    <path
+                        d="M8 21v-7h8v7"
+                    ></path>
+                </svg>
+
+                Save Profile
+
+            </button>
+
+
+        </form>
+
+
+        <!-- =================================================
+             PEOPLE YOU MAY KNOW
+        ================================================== -->
+
+        <section class="profile-community-section">
+
+
+            <div class="profile-community-head">
+
+                <h2>
                     People You May Know
+                </h2>
+
+                <a href="{% url 'people_you_may_know' %}">
+                    View All
                 </a>
 
-                <a
-                    class="profile-social-action"
-                    href="{% url 'user_achievements' %}"
-                >
-                    Achievements
-                </a>
             </div>
 
-            <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-<input id="galleryPhotoInput" class="hidden-photo-input" type="file" name="photo" accept="image/*">
-<input id="freeAvatarInput" type="hidden" name="free_avatar" value="">
-<input id="cameraPhotoInput" class="hidden-photo-input" type="file" accept="image/*" capture="environment">
-<div class="form-grid">
-                    <div class="form-group full">
-                        <label class="label">Username</label>
-                        <input class="input readonly" value="{{ profile_user.username }}" readonly>
-                    </div>
 
-                    <div class="form-group">
-                        <label class="label">First Name</label>
-                        <input class="input" type="text" name="first_name" value="{{ profile_user.first_name }}" placeholder="First name">
-                    </div>
+            <div class="people-preview">
 
-                    <div class="form-group">
-                        <label class="label">Last Name</label>
-                        <input class="input" type="text" name="last_name" value="{{ profile_user.last_name }}" placeholder="Last name">
-                    </div>
-
-                    <div class="form-group">
-                        <label class="label">Email</label>
-                        <input class="input" type="email" name="email" value="{{ profile_user.email }}" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="label">Phone Number</label>
-                        <input class="input" type="tel" name="phone" maxlength="15" value="{{ user_profile.phone }}" placeholder="Enter phone number">
-                    </div>
-
-                    <div class="form-group">
-                        <label class="label">Gender</label>
-                        <select class="select" name="gender">
-                            <option value="">Select Gender</option>
-                            <option value="Male" {% if user_profile.gender == 'Male' %}selected{% endif %}>Male</option>
-                            <option value="Female" {% if user_profile.gender == 'Female' %}selected{% endif %}>Female</option>
-                            <option value="Other" {% if user_profile.gender == 'Other' %}selected{% endif %}>Other</option>
-                            <option value="Prefer not to say" {% if user_profile.gender == 'Prefer not to say' %}selected{% endif %}>Prefer not to say</option>
-                        </select>
-                    </div>
-                </div>
-
-                <button type="submit" class="btn btn-primary icon-btn" style="width:100%;margin-top:20px;font-size:16px;">
-                    <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M5 3h12l2 2v16H5z"></path>
-                        <path d="M8 3v6h8V3"></path>
-                        <path d="M8 21v-7h8v7"></path>
-                    </svg>
-                    Save Profile
-                </button>
-            </form>
+                {% for item in suggestions %}
 
 
-            <section class="profile-community-section">
-                <div class="profile-community-head">
-                    <h2>People You May Know</h2>
+                    <div class="person-preview">
 
-                    <a href="{% url 'people_you_may_know' %}">
-                        View All
-                    </a>
-                </div>
 
-                <div class="people-preview">
-                    {% for item in suggestions %}
-                        <div class="person-preview">
+                        <a
+                            class="person-avatar"
+                            href="{% url 'public_user_profile' item.user.username %}"
+                            aria-label="Open {{ item.user.username }} profile"
+                        >
+
+                            {% if item.profile.photo %}
+
+                                <img
+                                    src="{{ item.profile.photo.url }}"
+                                    alt="{{ item.user.username }}"
+                                >
+
+                            {% else %}
+
+                                {{ item.user.username|first|upper }}
+
+                            {% endif %}
+
+                        </a>
+
+
+                        <div class="person-main">
+
                             <a
-                                class="person-avatar"
+                                class="person-name"
                                 href="{% url 'public_user_profile' item.user.username %}"
-                                aria-label="Open {{ item.user.username }} profile"
                             >
-                                {% if item.profile.photo %}
-                                    <img
-                                        src="{{ item.profile.photo.url }}"
-                                        alt="{{ item.user.username }}"
-                                    >
-                                {% else %}
-                                    {{ item.user.username|first|upper }}
-                                {% endif %}
+
+                                {{ item.user.get_full_name|default:item.user.username }}
+
                             </a>
 
-                            <div class="person-main">
-                                <a
-                                    class="person-name"
-                                    href="{% url 'public_user_profile' item.user.username %}"
-                                >
-                                    {{ item.user.get_full_name|default:item.user.username }}
-                                </a>
 
-                                <div class="person-meta">
-                                    {{ item.league.level.name }} Citizen
-                                    · {{ item.league.xp }} XP
-                                    {% if item.profile.city %}
-                                        · {{ item.profile.city }}
-                                    {% endif %}
-                                </div>
+                            <div class="person-meta">
+
+                                {{ item.league.level.name }}
+                                Citizen
+
+                                ·
+                                {{ item.league.xp }}
+                                XP
+
+                                {% if item.profile.city %}
+
+                                    ·
+                                    {{ item.profile.city }}
+
+                                {% endif %}
+
                             </div>
 
-                            <form
-                                class="person-follow-form"
-                                method="post"
-                                action="{% url 'toggle_user_follow' item.user.username %}"
+                        </div>
+
+
+                        <form
+                            class="person-follow-form"
+                            method="post"
+                            action="{% url 'toggle_user_follow' item.user.username %}"
+                        >
+
+                            {% csrf_token %}
+
+
+                            <input
+                                type="hidden"
+                                name="source"
+                                value="profile"
                             >
-                                {% csrf_token %}
-                                <input
-                                    type="hidden"
-                                    name="source"
-                                    value="profile"
-                                >
 
-                                <button
-                                    class="person-follow-btn"
-                                    type="submit"
-                                >
-                                    Follow
-                                </button>
-                            </form>
-                        </div>
-                    {% empty %}
-                        <div class="muted">
-                            You are already connected with everyone available right now.
-                        </div>
-                    {% endfor %}
-                </div>
-            </section>
 
-            <section class="profile-community-section">
-                <div class="profile-community-head">
-                    <h2>Achievements</h2>
+                            <button
+                                class="person-follow-btn"
+                                type="submit"
+                            >
+                                Follow
+                            </button>
 
-                    <a href="{% url 'user_achievements' %}">
-                        View All
-                    </a>
-                </div>
+                        </form>
 
-                <div class="achievement-preview">
-                    {% for item in unlocked_achievements %}
-                        <span class="achievement-mini">
-                            <span>{{ item.icon }}</span>
-                            {{ item.title }}
-                        </span>
-                    {% empty %}
-                        <span class="muted">
-                            Complete your first verified resolution to unlock a badge.
-                        </span>
-                    {% endfor %}
-                </div>
-            </section>
 
-            <div class="actions">
-                <a class="btn btn-dark icon-btn" href="{% url 'home' %}">Home</a>
-                <a class="btn btn-danger" href="{% url 'logout' %}">Logout</a>
+                    </div>
+
+
+                {% empty %}
+
+
+                    <div class="muted">
+
+                        You are already connected
+                        with everyone available
+                        right now.
+
+                    </div>
+
+
+                {% endfor %}
+
             </div>
-        </div>
-    </main>
+
+        </section>
 
 
-<div class="avatar-modal-backdrop" id="freeAvatarModal" aria-hidden="true">
-    <div class="avatar-modal" role="dialog" aria-modal="true" aria-labelledby="freeAvatarTitle">
-        <div class="avatar-modal-head">
-            <h3 id="freeAvatarTitle">Choose Free Avatar</h3>
-            <button type="button" class="avatar-modal-close" id="freeAvatarClose" aria-label="Close">×</button>
+        <!-- =================================================
+             ACHIEVEMENTS
+        ================================================== -->
+
+        <section class="profile-community-section">
+
+
+            <div class="profile-community-head">
+
+                <h2>
+                    Achievements
+                </h2>
+
+                <a href="{% url 'user_achievements' %}">
+                    View All
+                </a>
+
+            </div>
+
+
+            <div class="achievement-preview">
+
+                {% for item in unlocked_achievements %}
+
+
+                    <span class="achievement-mini">
+
+                        <span>
+                            {{ item.icon }}
+                        </span>
+
+                        {{ item.title }}
+
+                    </span>
+
+
+                {% empty %}
+
+
+                    <span class="muted">
+
+                        Complete your first verified
+                        resolution to unlock a badge.
+
+                    </span>
+
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             ACTIONS
+        ================================================== -->
+
+        <div class="actions">
+
+            <a
+                class="
+                    btn
+                    btn-dark
+                    icon-btn
+                "
+                href="{% url 'home' %}"
+            >
+                Home
+            </a>
+
+
+            <a
+                class="
+                    btn
+                    btn-danger
+                "
+                href="{% url 'logout' %}"
+            >
+                Logout
+            </a>
+
         </div>
-        <div class="avatar-grid">
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_01">
-                <img src="{% static 'complaints/avatars/free/avatar_01.png' %}" alt="Free avatar 1">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_02">
-                <img src="{% static 'complaints/avatars/free/avatar_02.png' %}" alt="Free avatar 2">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_03">
-                <img src="{% static 'complaints/avatars/free/avatar_03.png' %}" alt="Free avatar 3">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_04">
-                <img src="{% static 'complaints/avatars/free/avatar_04.png' %}" alt="Free avatar 4">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_05">
-                <img src="{% static 'complaints/avatars/free/avatar_05.png' %}" alt="Free avatar 5">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_06">
-                <img src="{% static 'complaints/avatars/free/avatar_06.png' %}" alt="Free avatar 6">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_07">
-                <img src="{% static 'complaints/avatars/free/avatar_07.png' %}" alt="Free avatar 7">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_08">
-                <img src="{% static 'complaints/avatars/free/avatar_08.png' %}" alt="Free avatar 8">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_09">
-                <img src="{% static 'complaints/avatars/free/avatar_09.png' %}" alt="Free avatar 9">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_10">
-                <img src="{% static 'complaints/avatars/free/avatar_10.png' %}" alt="Free avatar 10">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_11">
-                <img src="{% static 'complaints/avatars/free/avatar_11.png' %}" alt="Free avatar 11">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_12">
-                <img src="{% static 'complaints/avatars/free/avatar_12.png' %}" alt="Free avatar 12">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_13">
-                <img src="{% static 'complaints/avatars/free/avatar_13.png' %}" alt="Free avatar 13">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_14">
-                <img src="{% static 'complaints/avatars/free/avatar_14.png' %}" alt="Free avatar 14">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_15">
-                <img src="{% static 'complaints/avatars/free/avatar_15.png' %}" alt="Free avatar 15">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_16">
-                <img src="{% static 'complaints/avatars/free/avatar_16.png' %}" alt="Free avatar 16">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_17">
-                <img src="{% static 'complaints/avatars/free/avatar_17.png' %}" alt="Free avatar 17">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_18">
-                <img src="{% static 'complaints/avatars/free/avatar_18.png' %}" alt="Free avatar 18">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_19">
-                <img src="{% static 'complaints/avatars/free/avatar_19.png' %}" alt="Free avatar 19">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_20">
-                <img src="{% static 'complaints/avatars/free/avatar_20.png' %}" alt="Free avatar 20">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_21">
-                <img src="{% static 'complaints/avatars/free/avatar_21.png' %}" alt="Free avatar 21">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_22">
-                <img src="{% static 'complaints/avatars/free/avatar_22.png' %}" alt="Free avatar 22">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_23">
-                <img src="{% static 'complaints/avatars/free/avatar_23.png' %}" alt="Free avatar 23">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_24">
-                <img src="{% static 'complaints/avatars/free/avatar_24.png' %}" alt="Free avatar 24">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_25">
-                <img src="{% static 'complaints/avatars/free/avatar_25.png' %}" alt="Free avatar 25">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_26">
-                <img src="{% static 'complaints/avatars/free/avatar_26.png' %}" alt="Free avatar 26">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_27">
-                <img src="{% static 'complaints/avatars/free/avatar_27.png' %}" alt="Free avatar 27">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_28">
-                <img src="{% static 'complaints/avatars/free/avatar_28.png' %}" alt="Free avatar 28">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_29">
-                <img src="{% static 'complaints/avatars/free/avatar_29.png' %}" alt="Free avatar 29">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_30">
-                <img src="{% static 'complaints/avatars/free/avatar_30.png' %}" alt="Free avatar 30">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_31">
-                <img src="{% static 'complaints/avatars/free/avatar_31.png' %}" alt="Free avatar 31">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_32">
-                <img src="{% static 'complaints/avatars/free/avatar_32.png' %}" alt="Free avatar 32">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_33">
-                <img src="{% static 'complaints/avatars/free/avatar_33.png' %}" alt="Free avatar 33">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_34">
-                <img src="{% static 'complaints/avatars/free/avatar_34.png' %}" alt="Free avatar 34">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_35">
-                <img src="{% static 'complaints/avatars/free/avatar_35.png' %}" alt="Free avatar 35">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_36">
-                <img src="{% static 'complaints/avatars/free/avatar_36.png' %}" alt="Free avatar 36">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_37">
-                <img src="{% static 'complaints/avatars/free/avatar_37.png' %}" alt="Free avatar 37">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_38">
-                <img src="{% static 'complaints/avatars/free/avatar_38.png' %}" alt="Free avatar 38">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_39">
-                <img src="{% static 'complaints/avatars/free/avatar_39.png' %}" alt="Free avatar 39">
-            </button>
-            <button type="button" class="avatar-choice" data-avatar-id="avatar_40">
-                <img src="{% static 'complaints/avatars/free/avatar_40.png' %}" alt="Free avatar 40">
-            </button>
-        </div>
-        <p class="avatar-modal-note">Select an avatar, then tap Save Profile to apply it permanently.</p>
+
+
     </div>
+
+</main>
+
+
+<!-- =====================================================
+     FREE AVATAR MODAL
+====================================================== -->
+
+<div
+    class="avatar-modal-backdrop"
+    id="freeAvatarModal"
+    aria-hidden="true"
+>
+
+    <div
+        class="avatar-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="freeAvatarTitle"
+    >
+
+        <div class="avatar-modal-head">
+
+            <h3 id="freeAvatarTitle">
+                Choose Free Avatar
+            </h3>
+
+            <button
+                type="button"
+                class="avatar-modal-close"
+                id="freeAvatarClose"
+                aria-label="Close"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="avatar-grid">
+
+            {% for avatar in free_avatar_options %}
+
+                <button
+                    type="button"
+                    class="avatar-choice"
+                    data-avatar-id="{{ avatar.id }}"
+                    aria-label="{{ avatar.label }}"
+                >
+
+                    <img
+                        src="{% static avatar.static_path %}"
+                        alt="{{ avatar.label }}"
+                    >
+
+                </button>
+
+            {% endfor %}
+
+        </div>
+
+
+        <p class="avatar-modal-note">
+
+            Select an avatar,
+            then tap Save Profile
+            to apply it permanently.
+
+        </p>
+
+    </div>
+
 </div>
 
 
-<div class="avatar-modal-backdrop" id="premiumAvatarModal" aria-hidden="true">
-    <div class="avatar-modal" role="dialog" aria-modal="true" aria-labelledby="premiumAvatarTitle">
+<!-- =====================================================
+     PREMIUM AVATAR MODAL
+====================================================== -->
+
+<div
+    class="avatar-modal-backdrop"
+    id="premiumAvatarModal"
+    aria-hidden="true"
+>
+
+    <div
+        class="avatar-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="premiumAvatarTitle"
+    >
+
         <div class="avatar-modal-head">
-            <h3 id="premiumAvatarTitle" class="premium-avatar-title"> Choose <span class="gold">Premium Avatar</span></h3>
-            <button type="button" class="avatar-modal-close" id="premiumAvatarClose" aria-label="Close">×</button>
+
+
+            <h3
+                id="premiumAvatarTitle"
+                class="premium-avatar-title"
+            >
+
+                👑 Choose
+
+                <span class="gold">
+                    Premium Avatar
+                </span>
+
+            </h3>
+
+
+            <button
+                type="button"
+                class="avatar-modal-close"
+                id="premiumAvatarClose"
+                aria-label="Close"
+            >
+                ×
+            </button>
+
+
         </div>
+
+
         <div class="avatar-grid">
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_01" aria-label="Premium avatar 1">
-                <span class="premium-crown"></span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_01.png' %}" alt="Premium avatar 1">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_02" aria-label="Premium avatar 2">
-                <span class="premium-crown"></span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_02.png' %}" alt="Premium avatar 2">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_03" aria-label="Premium avatar 3">
-                <span class="premium-crown"></span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_03.png' %}" alt="Premium avatar 3">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_04" aria-label="Premium avatar 4">
-                <span class="premium-crown"></span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_04.png' %}" alt="Premium avatar 4">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_05" aria-label="Premium avatar 5">
-                <span class="premium-crown"></span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_05.png' %}" alt="Premium avatar 5">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_06" aria-label="Premium avatar 6">
-                <span class="premium-crown"></span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_06.png' %}" alt="Premium avatar 6">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_07" aria-label="Premium avatar 7">
-                <span class="premium-crown"></span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_07.png' %}" alt="Premium avatar 7">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_08" aria-label="Premium avatar 8">
-                <span class="premium-crown"></span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_08.png' %}" alt="Premium avatar 8">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_09" aria-label="Premium avatar 9">
-                <span class="premium-crown"></span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_09.png' %}" alt="Premium avatar 9">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_10" aria-label="Premium avatar 10">
-                <span class="premium-crown"></span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_10.png' %}" alt="Premium avatar 10">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_11" aria-label="Premium avatar 11">
-                <span class="premium-crown"></span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_11.png' %}" alt="Premium avatar 11">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_12" aria-label="Premium avatar 12">
-                <span class="premium-crown"></span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_12.png' %}" alt="Premium avatar 12">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_13" aria-label="Premium avatar 13">
-                <span class="premium-crown"></span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_13.png' %}" alt="Premium avatar 13">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_14" aria-label="Premium avatar 14">
-                <span class="premium-crown"></span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_14.png' %}" alt="Premium avatar 14">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_15" aria-label="Premium avatar 15">
-                <span class="premium-crown"></span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_15.png' %}" alt="Premium avatar 15">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_16" aria-label="Premium avatar 16">
-                <span class="premium-crown"></span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_16.png' %}" alt="Premium avatar 16">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_17" aria-label="Premium avatar 17">
-                <span class="premium-crown"></span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_17.png' %}" alt="Premium avatar 17">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_18" aria-label="Premium avatar 18">
-                <span class="premium-crown"></span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_18.png' %}" alt="Premium avatar 18">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_19" aria-label="Premium avatar 19">
-                <span class="premium-crown"></span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_19.png' %}" alt="Premium avatar 19">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_20" aria-label="Premium avatar 20">
-                <span class="premium-crown"></span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_20.png' %}" alt="Premium avatar 20">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_21" aria-label="Premium avatar 21">
-                <span class="premium-crown"></span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_21.png' %}" alt="Premium avatar 21">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_22" aria-label="Premium avatar 22">
-                <span class="premium-crown"></span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_22.png' %}" alt="Premium avatar 22">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_23" aria-label="Premium avatar 23">
-                <span class="premium-crown"></span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_23.png' %}" alt="Premium avatar 23">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_24" aria-label="Premium avatar 24">
-                <span class="premium-crown"></span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_24.png' %}" alt="Premium avatar 24">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_25" aria-label="Premium avatar 25">
-                <span class="premium-crown"></span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_25.png' %}" alt="Premium avatar 25">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_26" aria-label="Premium avatar 26">
-                <span class="premium-crown"></span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_26.png' %}" alt="Premium avatar 26">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_27" aria-label="Premium avatar 27">
-                <span class="premium-crown"></span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_27.png' %}" alt="Premium avatar 27">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_28" aria-label="Premium avatar 28">
-                <span class="premium-crown"></span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_28.png' %}" alt="Premium avatar 28">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_29" aria-label="Premium avatar 29">
-                <span class="premium-crown"></span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_29.png' %}" alt="Premium avatar 29">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_30" aria-label="Premium avatar 30">
-                <span class="premium-crown"></span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_30.png' %}" alt="Premium avatar 30">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_31" aria-label="Premium avatar 31">
-                <span class="premium-crown"></span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_31.png' %}" alt="Premium avatar 31">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_32" aria-label="Premium avatar 32">
-                <span class="premium-crown"></span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_32.png' %}" alt="Premium avatar 32">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_33" aria-label="Premium avatar 33">
-                <span class="premium-crown"></span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_33.png' %}" alt="Premium avatar 33">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_34" aria-label="Premium avatar 34">
-                <span class="premium-crown"></span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_34.png' %}" alt="Premium avatar 34">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_35" aria-label="Premium avatar 35">
-                <span class="premium-crown"></span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_35.png' %}" alt="Premium avatar 35">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_36" aria-label="Premium avatar 36">
-                <span class="premium-crown"></span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_36.png' %}" alt="Premium avatar 36">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_37" aria-label="Premium avatar 37">
-                <span class="premium-crown"></span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_37.png' %}" alt="Premium avatar 37">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_38" aria-label="Premium avatar 38">
-                <span class="premium-crown"></span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_38.png' %}" alt="Premium avatar 38">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_39" aria-label="Premium avatar 39">
-                <span class="premium-crown"></span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_39.png' %}" alt="Premium avatar 39">
-            </button>
-            <button type="button" class="premium-avatar-choice" data-premium-avatar="premium_avatar_40" aria-label="Premium avatar 40">
-                <span class="premium-crown"></span>
-                <img src="{% static 'complaints/avatars/premium/premium_avatar_40.png' %}" alt="Premium avatar 40">
-            </button>
+
+
+            {% for avatar in premium_avatar_options %}
+
+
+                <button
+                    type="button"
+                    class="premium-avatar-choice"
+                    data-premium-avatar="{{ avatar.id }}"
+                    aria-label="{{ avatar.label }}"
+                >
+
+                    <span class="premium-crown">
+                        ♛
+                    </span>
+
+
+                    <img
+                        src="{% static avatar.static_path %}"
+                        alt="{{ avatar.label }}"
+                    >
+
+
+                </button>
+
+
+            {% endfor %}
+
+
         </div>
+
+
         <div class="premium-upgrade-box">
-             Premium collection preview. Premium avatar selection will unlock with the Premium membership system.
+
+
+            {% if user_is_premium %}
+
+                ✓ Citizen Premium is active.
+                Select any Premium avatar,
+                then tap Save Profile.
+
+            {% else %}
+
+                🔒 Premium avatars are locked.
+                Citizen Premium is required
+                to use them.
+
+            {% endif %}
+
+
         </div>
+
+
     </div>
+
 </div>
+
+
+<!-- =====================================================
+     PROFILE PHOTO JAVASCRIPT
+====================================================== -->
 
 <script>
-(function(){
-    const menuButton = document.getElementById('photoMenuButton');
-    const menu = document.getElementById('photoMenu');
-    const galleryInput = document.getElementById('galleryPhotoInput');
-    const cameraInput = document.getElementById('cameraPhotoInput');
-    const avatarInput = document.getElementById('freeAvatarInput');
-    const avatarPreview = document.getElementById('profileAvatar');
-    const noteBox = document.getElementById('photoPreviewNote');
-    const modal = document.getElementById('freeAvatarModal');
-    const modalClose = document.getElementById('freeAvatarClose');
-    const premiumModal = document.getElementById('premiumAvatarModal');
-    const premiumModalClose = document.getElementById('premiumAvatarClose');
 
-    if (!menuButton || !menu || !galleryInput || !avatarPreview) return;
+(function () {
 
-    function showNote(text){
-        if (!noteBox) return;
-        noteBox.textContent = text;
-        noteBox.classList.add('show');
+    "use strict";
+
+
+    /* ===================================================
+       ELEMENTS
+    ==================================================== */
+
+    const menuButton =
+        document.getElementById(
+            "photoMenuButton"
+        );
+
+
+    const menu =
+        document.getElementById(
+            "photoMenu"
+        );
+
+
+    const galleryInput =
+        document.getElementById(
+            "galleryPhotoInput"
+        );
+
+
+    const cameraInput =
+        document.getElementById(
+            "cameraPhotoInput"
+        );
+
+
+    const freeAvatarInput =
+        document.getElementById(
+            "freeAvatarInput"
+        );
+
+
+    const premiumAvatarInput =
+        document.getElementById(
+            "premiumAvatarInput"
+        );
+
+
+    const avatarPreview =
+        document.getElementById(
+            "profileAvatar"
+        );
+
+
+    const noteBox =
+        document.getElementById(
+            "photoPreviewNote"
+        );
+
+
+    const freeModal =
+        document.getElementById(
+            "freeAvatarModal"
+        );
+
+
+    const freeModalClose =
+        document.getElementById(
+            "freeAvatarClose"
+        );
+
+
+    const premiumModal =
+        document.getElementById(
+            "premiumAvatarModal"
+        );
+
+
+    const premiumModalClose =
+        document.getElementById(
+            "premiumAvatarClose"
+        );
+
+
+    /* ===================================================
+       DJANGO PREMIUM STATUS
+    ==================================================== */
+
+    const isPremium =
+        {{ user_is_premium|yesno:"true,false" }};
+
+
+    const citizenPremiumUrl =
+        "{% url 'citizen_premium' %}";
+
+
+    if (
+        !menuButton
+        ||
+        !menu
+        ||
+        !galleryInput
+        ||
+        !avatarPreview
+    ) {
+        return;
     }
 
-    function previewFile(file){
-        if (!file) return;
 
-        if (!file.type.startsWith('image/')){
-            showNote('Please choose an image file.');
+    /* ===================================================
+       NOTE
+    ==================================================== */
+
+    function showNote(text) {
+
+        if (!noteBox) {
             return;
         }
 
-        if (file.size > 5 * 1024 * 1024){
-            showNote('Maximum photo size is 5 MB.');
+
+        noteBox.textContent =
+            text;
+
+
+        noteBox.classList.add(
+            "show"
+        );
+
+    }
+
+
+    /* ===================================================
+       CLEAR AVATAR VALUES
+    ==================================================== */
+
+    function clearAvatarValues() {
+
+        if (freeAvatarInput) {
+
+            freeAvatarInput.value =
+                "";
+
+        }
+
+
+        if (premiumAvatarInput) {
+
+            premiumAvatarInput.value =
+                "";
+
+        }
+
+    }
+
+
+    /* ===================================================
+       PHOTO PREVIEW
+    ==================================================== */
+
+    function previewFile(file) {
+
+        if (!file) {
             return;
         }
 
-        if (avatarInput) avatarInput.value = '';
 
-        const reader = new FileReader();
-        reader.onload = function(event){
-            avatarPreview.innerHTML =
-                '<img src="' + event.target.result + '" alt="Profile photo preview">';
-            showNote('Photo selected. Save Profile to apply it.');
-        };
-        reader.readAsDataURL(file);
-    }
+        if (
+            !file.type.startsWith(
+                "image/"
+            )
+        ) {
 
-    function openAvatarModal(){
-        if (!modal) return;
-        modal.classList.add('open');
-        modal.setAttribute('aria-hidden', 'false');
-        menu.classList.remove('open');
-    }
+            showNote(
+                "Please choose an image file."
+            );
 
-    function closeAvatarModal(){
-        if (!modal) return;
-        modal.classList.remove('open');
-        modal.setAttribute('aria-hidden', 'true');
-    }
-    function openPremiumAvatarModal(){
-        if (!premiumModal) return;
-        premiumModal.classList.add('open');
-        premiumModal.setAttribute('aria-hidden', 'false');
-        menu.classList.remove('open');
-    }
-
-    function closePremiumAvatarModal(){
-        if (!premiumModal) return;
-        premiumModal.classList.remove('open');
-        premiumModal.setAttribute('aria-hidden', 'true');
-    }
-
-    menuButton.addEventListener('click', function(){
-        menu.classList.toggle('open');
-    });
-
-    menu.querySelectorAll('[data-a]').forEach(function(button){
-        button.addEventListener('click', function(){
-            const action = button.dataset.a;
-
-            if (action === 'gallery'){
-                galleryInput.removeAttribute('capture');
-                galleryInput.click();
-                menu.classList.remove('open');
-            }
-
-            if (action === 'camera'){
-                if (cameraInput) cameraInput.click();
-                menu.classList.remove('open');
-            }
-
-            if (action === 'avatar'){
-                openAvatarModal();
-            }
-
-            if (action === 'premium'){
-                openPremiumAvatarModal();
-            }
-        });
-    });
-
-    galleryInput.addEventListener('change', function(){
-        previewFile(galleryInput.files[0]);
-    });
-
-    if (cameraInput){
-        cameraInput.addEventListener('change', function(){
-            if (!cameraInput.files[0]) return;
-
-            try{
-                const transfer = new DataTransfer();
-                transfer.items.add(cameraInput.files[0]);
-                galleryInput.files = transfer.files;
-            }catch(error){
-                // Some WebViews do not allow assigning FileList.
-            }
-
-            previewFile(cameraInput.files[0]);
-        });
-    }
-
-    if (modalClose) modalClose.addEventListener('click', closeAvatarModal);
-
-    if (premiumModalClose) premiumModalClose.addEventListener('click', closePremiumAvatarModal);
-
-    if (premiumModal){
-        premiumModal.addEventListener('click', function(event){
-            if (event.target === premiumModal) closePremiumAvatarModal();
-        });
-
-        premiumModal.querySelectorAll('.premium-avatar-choice').forEach(function(choice){
-            choice.addEventListener('click', function(){
-                showNote(' This avatar is Premium. Premium membership unlock will be connected in the Premium phase.');
-            });
-        });
-    }
+            return;
+        }
 
 
-    if (modal){
-        modal.addEventListener('click', function(event){
-            if (event.target === modal) closeAvatarModal();
-        });
+        if (
+            file.size
+            > 5 * 1024 * 1024
+        ) {
 
-        modal.querySelectorAll('.avatar-choice').forEach(function(choice){
-            choice.addEventListener('click', function(){
-                const avatarId = choice.dataset.avatarId;
-                const image = choice.querySelector('img');
+            showNote(
+                "Maximum photo size is 5 MB."
+            );
 
-                modal.querySelectorAll('.avatar-choice').forEach(function(item){
-                    item.classList.remove('selected');
-                });
-                choice.classList.add('selected');
+            return;
+        }
 
-                if (avatarInput) avatarInput.value = avatarId;
-                galleryInput.value = '';
-                if (cameraInput) cameraInput.value = '';
+
+        clearAvatarValues();
+
+
+        const reader =
+            new FileReader();
+
+
+        reader.onload =
+            function (event) {
 
                 avatarPreview.innerHTML =
-                    '<img src="' + image.src + '" alt="Selected free avatar">';
+                    '<img src="'
+                    + event.target.result
+                    + '" alt="Profile photo preview">';
 
-                showNote('Free avatar selected. Save Profile to apply it.');
-                closeAvatarModal();
-            });
-        });
+
+                showNote(
+                    "Photo selected. Save Profile to apply it."
+                );
+
+            };
+
+
+        reader.readAsDataURL(
+            file
+        );
+
     }
+
+
+    /* ===================================================
+       FREE MODAL
+    ==================================================== */
+
+    function openFreeAvatarModal() {
+
+        if (!freeModal) {
+            return;
+        }
+
+
+        freeModal.classList.add(
+            "open"
+        );
+
+
+        freeModal.setAttribute(
+            "aria-hidden",
+            "false"
+        );
+
+
+        menu.classList.remove(
+            "open"
+        );
+
+    }
+
+
+    function closeFreeAvatarModal() {
+
+        if (!freeModal) {
+            return;
+        }
+
+
+        freeModal.classList.remove(
+            "open"
+        );
+
+
+        freeModal.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+    }
+
+
+    /* ===================================================
+       PREMIUM MODAL
+    ==================================================== */
+
+    function openPremiumAvatarModal() {
+
+        if (!isPremium) {
+
+            window.location.assign(
+                citizenPremiumUrl
+            );
+
+            return;
+        }
+
+
+        if (!premiumModal) {
+            return;
+        }
+
+
+        premiumModal.classList.add(
+            "open"
+        );
+
+
+        premiumModal.setAttribute(
+            "aria-hidden",
+            "false"
+        );
+
+
+        menu.classList.remove(
+            "open"
+        );
+
+    }
+
+
+    function closePremiumAvatarModal() {
+
+        if (!premiumModal) {
+            return;
+        }
+
+
+        premiumModal.classList.remove(
+            "open"
+        );
+
+
+        premiumModal.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+    }
+
+
+    /* ===================================================
+       CAMERA BUTTON
+    ==================================================== */
+
+    menuButton.addEventListener(
+        "click",
+        function () {
+
+            menu.classList.toggle(
+                "open"
+            );
+
+        }
+    );
+
+
+    /* ===================================================
+       PHOTO MENU
+    ==================================================== */
+
+    menu
+        .querySelectorAll(
+            "[data-a]"
+        )
+        .forEach(
+            function (button) {
+
+                button.addEventListener(
+                    "click",
+                    function () {
+
+                        const action =
+                            button.dataset.a;
+
+
+                        /* -------------------------------
+                           GALLERY
+                        -------------------------------- */
+
+                        if (
+                            action
+                            === "gallery"
+                        ) {
+
+                            galleryInput.removeAttribute(
+                                "capture"
+                            );
+
+
+                            galleryInput.click();
+
+
+                            menu.classList.remove(
+                                "open"
+                            );
+
+
+                            return;
+                        }
+
+
+                        /* -------------------------------
+                           CAMERA
+                        -------------------------------- */
+
+                        if (
+                            action
+                            === "camera"
+                        ) {
+
+                            if (cameraInput) {
+
+                                cameraInput.click();
+
+                            }
+
+
+                            menu.classList.remove(
+                                "open"
+                            );
+
+
+                            return;
+                        }
+
+
+                        /* -------------------------------
+                           FREE AVATAR
+                        -------------------------------- */
+
+                        if (
+                            action
+                            === "avatar"
+                        ) {
+
+                            openFreeAvatarModal();
+
+                            return;
+                        }
+
+
+                        /* -------------------------------
+                           PREMIUM AVATAR
+                        -------------------------------- */
+
+                        if (
+                            action
+                            === "premium"
+                        ) {
+
+                            if (!isPremium) {
+
+                                window.location.assign(
+                                    citizenPremiumUrl
+                                );
+
+                                return;
+                            }
+
+
+                            openPremiumAvatarModal();
+
+                        }
+
+                    }
+                );
+
+            }
+        );
+
+
+    /* ===================================================
+       GALLERY INPUT
+    ==================================================== */
+
+    galleryInput.addEventListener(
+        "change",
+        function () {
+
+            previewFile(
+                galleryInput.files[0]
+            );
+
+        }
+    );
+
+
+    /* ===================================================
+       CAMERA INPUT
+    ==================================================== */
+
+    if (cameraInput) {
+
+        cameraInput.addEventListener(
+            "change",
+            function () {
+
+                if (
+                    !cameraInput.files[0]
+                ) {
+                    return;
+                }
+
+
+                try {
+
+                    const transfer =
+                        new DataTransfer();
+
+
+                    transfer.items.add(
+                        cameraInput.files[0]
+                    );
+
+
+                    galleryInput.files =
+                        transfer.files;
+
+                } catch (error) {
+
+                    console.warn(
+                        "Unable to transfer camera file.",
+                        error
+                    );
+
+                }
+
+
+                previewFile(
+                    cameraInput.files[0]
+                );
+
+            }
+        );
+
+    }
+
+
+    /* ===================================================
+       FREE AVATAR CLOSE
+    ==================================================== */
+
+    if (freeModalClose) {
+
+        freeModalClose.addEventListener(
+            "click",
+            closeFreeAvatarModal
+        );
+
+    }
+
+
+    /* ===================================================
+       PREMIUM AVATAR CLOSE
+    ==================================================== */
+
+    if (premiumModalClose) {
+
+        premiumModalClose.addEventListener(
+            "click",
+            closePremiumAvatarModal
+        );
+
+    }
+
+
+    /* ===================================================
+       FREE MODAL BACKDROP
+    ==================================================== */
+
+    if (freeModal) {
+
+        freeModal.addEventListener(
+            "click",
+            function (event) {
+
+                if (
+                    event.target
+                    === freeModal
+                ) {
+
+                    closeFreeAvatarModal();
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* ===================================================
+       PREMIUM MODAL BACKDROP
+    ==================================================== */
+
+    if (premiumModal) {
+
+        premiumModal.addEventListener(
+            "click",
+            function (event) {
+
+                if (
+                    event.target
+                    === premiumModal
+                ) {
+
+                    closePremiumAvatarModal();
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* ===================================================
+       FREE AVATAR SELECTION
+    ==================================================== */
+
+    if (freeModal) {
+
+        freeModal
+            .querySelectorAll(
+                ".avatar-choice"
+            )
+            .forEach(
+                function (choice) {
+
+                    choice.addEventListener(
+                        "click",
+                        function () {
+
+                            const avatarId =
+                                choice.dataset.avatarId;
+
+
+                            const image =
+                                choice.querySelector(
+                                    "img"
+                                );
+
+
+                            freeModal
+                                .querySelectorAll(
+                                    ".avatar-choice"
+                                )
+                                .forEach(
+                                    function (item) {
+
+                                        item.classList.remove(
+                                            "selected"
+                                        );
+
+                                    }
+                                );
+
+
+                            choice.classList.add(
+                                "selected"
+                            );
+
+
+                            if (
+                                freeAvatarInput
+                            ) {
+
+                                freeAvatarInput.value =
+                                    avatarId;
+
+                            }
+
+
+                            if (
+                                premiumAvatarInput
+                            ) {
+
+                                premiumAvatarInput.value =
+                                    "";
+
+                            }
+
+
+                            galleryInput.value =
+                                "";
+
+
+                            if (cameraInput) {
+
+                                cameraInput.value =
+                                    "";
+
+                            }
+
+
+                            avatarPreview.innerHTML =
+                                '<img src="'
+                                + image.src
+                                + '" alt="Selected free avatar">';
+
+
+                            showNote(
+                                "Free avatar selected. Save Profile to apply it."
+                            );
+
+
+                            closeFreeAvatarModal();
+
+                        }
+                    );
+
+                }
+            );
+
+    }
+
+
+    /* ===================================================
+       PREMIUM AVATAR SELECTION
+    ==================================================== */
+
+    if (premiumModal) {
+
+        premiumModal
+            .querySelectorAll(
+                ".premium-avatar-choice"
+            )
+            .forEach(
+                function (choice) {
+
+                    choice.addEventListener(
+                        "click",
+                        function () {
+
+
+                            /* ---------------------------
+                               SECURITY FRONTEND CHECK
+                            ---------------------------- */
+
+                            if (!isPremium) {
+
+                                window.location.assign(
+                                    citizenPremiumUrl
+                                );
+
+                                return;
+                            }
+
+
+                            const premiumAvatarId =
+                                choice.dataset
+                                    .premiumAvatar;
+
+
+                            const image =
+                                choice.querySelector(
+                                    "img"
+                                );
+
+
+                            premiumModal
+                                .querySelectorAll(
+                                    ".premium-avatar-choice"
+                                )
+                                .forEach(
+                                    function (item) {
+
+                                        item.classList.remove(
+                                            "selected"
+                                        );
+
+                                    }
+                                );
+
+
+                            choice.classList.add(
+                                "selected"
+                            );
+
+
+                            if (
+                                premiumAvatarInput
+                            ) {
+
+                                premiumAvatarInput.value =
+                                    premiumAvatarId;
+
+                            }
+
+
+                            if (
+                                freeAvatarInput
+                            ) {
+
+                                freeAvatarInput.value =
+                                    "";
+
+                            }
+
+
+                            galleryInput.value =
+                                "";
+
+
+                            if (cameraInput) {
+
+                                cameraInput.value =
+                                    "";
+
+                            }
+
+
+                            avatarPreview.innerHTML =
+                                '<img src="'
+                                + image.src
+                                + '" alt="Selected Premium avatar">';
+
+
+                            showNote(
+                                "Premium avatar selected. Save Profile to apply it."
+                            );
+
+
+                            closePremiumAvatarModal();
+
+                        }
+                    );
+
+                }
+            );
+
+    }
+
+
+    /* ===================================================
+       ESCAPE KEY
+    ==================================================== */
+
+    document.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (
+                event.key
+                !== "Escape"
+            ) {
+                return;
+            }
+
+
+            closeFreeAvatarModal();
+
+            closePremiumAvatarModal();
+
+            menu.classList.remove(
+                "open"
+            );
+
+        }
+    );
+
+
+    /* ===================================================
+       OUTSIDE PHOTO MENU CLICK
+    ==================================================== */
+
+    document.addEventListener(
+        "click",
+        function (event) {
+
+            if (
+                menu.contains(
+                    event.target
+                )
+                ||
+                menuButton.contains(
+                    event.target
+                )
+            ) {
+                return;
+            }
+
+
+            menu.classList.remove(
+                "open"
+            );
+
+        }
+    );
+
+
 })();
+
 </script>
 
+
 </body>
+
 </html>

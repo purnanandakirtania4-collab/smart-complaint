@@ -1,0 +1,30 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Register Shop | Smart Complaint</title>{% include 'complaints/Connect_Folder/marketplace_style.html' %}</head>
+<body>
+<header class="cx-topbar"><div class="cx-brand"><div class="cx-brand-mark">+</div><div><h1>Register Shop Owner</h1><p>Create a separate business account.</p></div></div><a class="cx-btn cx-btn-soft" href="{% url 'shop_login' %}">Login</a></header>
+<main class="cx-page">
+{% if messages %}{% for message in messages %}<div class="cx-message {{ message.tags }}">{{ message }}</div>{% endfor %}{% endif %}
+<section class="cx-hero"><span class="cx-kicker">Shop Owner Registration</span><h2>Add your local business to Smart Complaint.</h2><p>Verification proof is required. After registration, your account starts with pending verification.</p></section>
+<section class="cx-card" style="margin-top:14px"><form method="post" enctype="multipart/form-data">{% csrf_token %}<div class="cx-form">
+<div class="cx-field"><label class="cx-label">Username *</label><input class="cx-input" type="text" name="username" value="{{ form_data.username|default:'' }}" required></div>
+<div class="cx-field"><label class="cx-label">Business Name *</label><input class="cx-input" type="text" name="business_name" value="{{ form_data.business_name|default:'' }}" required></div>
+<div class="cx-field"><label class="cx-label">Contact Person *</label><input class="cx-input" type="text" name="contact_person" value="{{ form_data.contact_person|default:'' }}" required></div>
+<div class="cx-field"><label class="cx-label">Business Type *</label><select class="cx-select" name="business_type" required><option value="retail" {% if form_data.business_type == 'retail' %}selected{% endif %}>Retail</option><option value="restaurant" {% if form_data.business_type == 'restaurant' %}selected{% endif %}>Restaurant</option><option value="warehouse" {% if form_data.business_type == 'warehouse' %}selected{% endif %}>Warehouse</option><option value="service" {% if form_data.business_type == 'service' %}selected{% endif %}>Service</option><option value="other" {% if form_data.business_type == 'other' %}selected{% endif %}>Other</option></select></div>
+<div class="cx-field"><label class="cx-label">Business Phone *</label><input class="cx-input" type="tel" name="business_phone" value="{{ form_data.business_phone|default:'' }}" required></div>
+<div class="cx-field"><label class="cx-label">Business Email *</label><input class="cx-input" type="email" name="business_email" value="{{ form_data.business_email|default:'' }}" required></div>
+<div class="cx-field cx-field-full"><label class="cx-label">Address *</label><input class="cx-input" type="text" name="address" value="{{ form_data.address|default:'' }}" required></div>
+<div class="cx-field"><label class="cx-label">City *</label><input class="cx-input" type="text" name="city" value="{{ form_data.city|default:'' }}" required></div>
+<div class="cx-field"><label class="cx-label">State *</label><input class="cx-input" type="text" name="state" value="{{ form_data.state|default:'' }}" required></div>
+<div class="cx-field"><label class="cx-label">Pincode *</label><input class="cx-input" type="text" name="pincode" value="{{ form_data.pincode|default:'' }}" required></div>
+<div class="cx-field"><label class="cx-label">Registration Number</label><input class="cx-input" type="text" name="registration_number" value="{{ form_data.registration_number|default:'' }}"></div>
+<div class="cx-field"><label class="cx-label">GST Number</label><input class="cx-input" type="text" name="gst_number" value="{{ form_data.gst_number|default:'' }}"></div>
+<div class="cx-field"><label class="cx-label">Website</label><input class="cx-input" type="url" name="website_url" value="{{ form_data.website_url|default:'' }}" placeholder="https://..."></div>
+<div class="cx-field"><label class="cx-label">Business Logo</label><input class="cx-input" type="file" name="logo" accept="image/jpeg,image/png,image/webp"><span class="cx-help">JPG/PNG/WEBP, max 3 MB.</span></div>
+<div class="cx-field"><label class="cx-label">Verification Proof *</label><input class="cx-input" type="file" name="verification_document" accept="application/pdf,image/jpeg,image/png" required><span class="cx-help">PDF/JPG/PNG, max 5 MB.</span></div>
+<div class="cx-field cx-field-full"><label class="cx-label">About / Products & Services</label><textarea class="cx-textarea" name="about" placeholder="Tell customers what you sell or provide...">{{ form_data.about|default:'' }}</textarea></div>
+<div class="cx-field"><label class="cx-label">Password *</label><input class="cx-input" type="password" name="password" required></div>
+<div class="cx-field"><label class="cx-label">Confirm Password *</label><input class="cx-input" type="password" name="password_confirm" required></div>
+</div><div class="cx-actions"><button class="cx-btn cx-btn-primary" type="submit">Create Shop Account</button><a class="cx-btn cx-btn-soft" href="{% url 'business_connect' %}">Cancel</a></div></form></section>
+</main></body></html>

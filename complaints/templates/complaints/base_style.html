@@ -1020,120 +1020,495 @@
 
 </style>
 
-
 <script>
 (function () {
     "use strict";
 
-    const THEMES = ["light","dark","glass","royal","royalblue","emerald","rose","sunset","cyber","gold","slate"];
-    const FREE_THEMES = ["light","dark","glass"];
-    const PREMIUM_THEMES = THEMES.filter(function (theme) { return !FREE_THEMES.includes(theme); });
+    const THEMES = [
+        "light",
+        "dark",
+        "glass",
+        "royal",
+        "royalblue",
+        "emerald",
+        "rose",
+        "sunset",
+        "cyber",
+        "gold",
+        "slate"
+    ];
+
+    const FREE_THEMES = [
+        "light",
+        "dark",
+        "glass"
+    ];
+
+    const PREMIUM_THEMES = THEMES.filter(function (theme) {
+        return !FREE_THEMES.includes(theme);
+    });
+
     const USER_KEY = "smartComplaintThemeV2";
     const WORKER_KEY = "workerThemeV2";
+
     const USER_LEGACY_KEY = "smartComplaintLiveThemeV3";
     const WORKER_LEGACY_KEY = "workerLiveThemeV3";
+
     const USER_PREMIUM_KEY = "smartComplaintPremiumThemeAccessV1";
     const WORKER_PREMIUM_KEY = "workerPremiumThemeAccessV1";
 
+
     const colorMap = {
-        blue:{primary:"37, 99, 235",secondary:"14, 165, 233"},
-        indigo:{primary:"79, 70, 229",secondary:"99, 102, 241"},
-        teal:{primary:"13, 148, 136",secondary:"6, 182, 212"},
-        purple:{primary:"124, 58, 237",secondary:"168, 85, 247"},
-        slate:{primary:"71, 85, 105",secondary:"100, 116, 139"}
+        blue: {
+            primary: "37, 99, 235",
+            secondary: "14, 165, 233"
+        },
+
+        indigo: {
+            primary: "79, 70, 229",
+            secondary: "99, 102, 241"
+        },
+
+        teal: {
+            primary: "13, 148, 136",
+            secondary: "6, 182, 212"
+        },
+
+        purple: {
+            primary: "124, 58, 237",
+            secondary: "168, 85, 247"
+        },
+
+        slate: {
+            primary: "71, 85, 105",
+            secondary: "100, 116, 139"
+        }
     };
 
-    function validTheme(theme) { return THEMES.includes(theme) ? theme : "light"; }
-    function isPremiumTheme(theme) { return PREMIUM_THEMES.includes(validTheme(theme)); }
-    function hasPremiumAccess(workerPage) {
-        return localStorage.getItem(workerPage ? WORKER_PREMIUM_KEY : USER_PREMIUM_KEY) === "1";
-    }
-    function allowedTheme(theme, workerPage) {
-        theme = validTheme(theme);
-        return isPremiumTheme(theme) && !hasPremiumAccess(workerPage) ? "glass" : theme;
-    }
-    function setPremiumAccess(workerPage, enabled) {
-        localStorage.setItem(workerPage ? WORKER_PREMIUM_KEY : USER_PREMIUM_KEY, enabled ? "1" : "0");
-        const theme = allowedTheme(savedTheme(workerPage), workerPage);
-        if (theme !== savedTheme(workerPage)) {
-            localStorage.setItem(workerPage ? WORKER_KEY : USER_KEY, theme);
-            localStorage.setItem(workerPage ? WORKER_LEGACY_KEY : USER_LEGACY_KEY, theme);
+
+    function validTheme(theme) {
+
+        if (THEMES.includes(theme)) {
+            return theme;
         }
-        applyTheme(theme, workerPage);
+
+        return "light";
+    }
+
+
+    function isPremiumTheme(theme) {
+
+        return PREMIUM_THEMES.includes(
+            validTheme(theme)
+        );
+    }
+
+
+    function hasPremiumAccess(workerPage) {
+
+        const key = workerPage
+            ? WORKER_PREMIUM_KEY
+            : USER_PREMIUM_KEY;
+
+        return (
+            localStorage.getItem(key) === "1"
+        );
+    }
+
+
+    /*
+     * IMPORTANT:
+     *
+     * Saved premium theme ko automatically White/Glass
+     * me convert nahi karenge.
+     *
+     * Premium access nahi hai to current free theme
+     * wahi rahega.
+     */
+    function allowedSavedTheme(theme, workerPage) {
+
+        theme = validTheme(theme);
+
+        if (
+            isPremiumTheme(theme)
+            && !hasPremiumAccess(workerPage)
+        ) {
+            return "light";
+        }
+
+        return theme;
+    }
+
+
+    function setPremiumAccess(workerPage, enabled) {
+
+        const premiumKey = workerPage
+            ? WORKER_PREMIUM_KEY
+            : USER_PREMIUM_KEY;
+
+        localStorage.setItem(
+            premiumKey,
+            enabled ? "1" : "0"
+        );
+
+        /*
+         * Premium disable hone par existing premium
+         * theme ko safely Light theme par reset karo.
+         */
+        if (!enabled) {
+
+            const currentTheme =
+                getRawSavedTheme(workerPage);
+
+            if (isPremiumTheme(currentTheme)) {
+
+                saveTheme(
+                    "light",
+                    workerPage
+                );
+
+                applyTheme(
+                    "light",
+                    workerPage
+                );
+
+                return enabled;
+            }
+        }
+
+        applySavedTheme();
+
         return enabled;
     }
 
+
     function applyGlobalColor(colorName) {
-        const selected = colorMap[colorName] || colorMap.blue;
-        document.documentElement.style.setProperty("--app-primary-rgb", selected.primary);
-        document.documentElement.style.setProperty("--app-secondary-rgb", selected.secondary);
+
+        const selected =
+            colorMap[colorName]
+            || colorMap.blue;
+
+        document.documentElement.style.setProperty(
+            "--app-primary-rgb",
+            selected.primary
+        );
+
+        document.documentElement.style.setProperty(
+            "--app-secondary-rgb",
+            selected.secondary
+        );
     }
+
 
     function clearThemeClasses() {
-        if (!document.body) return;
+
+        if (!document.body) {
+            return;
+        }
+
         THEMES.forEach(function (theme) {
-            document.body.classList.remove("sc-theme-" + theme, "worker-theme-" + theme);
+
+            document.body.classList.remove(
+                "sc-theme-" + theme
+            );
+
+            document.body.classList.remove(
+                "worker-theme-" + theme
+            );
+
         });
-        document.body.classList.remove("dark-mode", "worker-dark-mode");
+
+        document.body.classList.remove(
+            "dark-mode"
+        );
+
+        document.body.classList.remove(
+            "worker-dark-mode"
+        );
     }
+
 
     function applyTheme(theme, workerPage) {
-        if (!document.body) return;
+
+        if (!document.body) {
+            return;
+        }
+
         theme = validTheme(theme);
+
         clearThemeClasses();
-        document.body.classList.add((workerPage ? "worker-theme-" : "sc-theme-") + theme);
-        document.dispatchEvent(new CustomEvent("smartComplaintThemeChanged", {detail:{theme:theme,workerPage:workerPage}}));
+
+        document.body.classList.add(
+            (
+                workerPage
+                    ? "worker-theme-"
+                    : "sc-theme-"
+            ) + theme
+        );
+
+        document.dispatchEvent(
+            new CustomEvent(
+                "smartComplaintThemeChanged",
+                {
+                    detail: {
+                        theme: theme,
+                        workerPage: workerPage
+                    }
+                }
+            )
+        );
     }
+
+
+    function getRawSavedTheme(workerPage) {
+
+        const primaryKey = workerPage
+            ? WORKER_KEY
+            : USER_KEY;
+
+        const legacyKey = workerPage
+            ? WORKER_LEGACY_KEY
+            : USER_LEGACY_KEY;
+
+        return validTheme(
+            localStorage.getItem(primaryKey)
+            || localStorage.getItem(legacyKey)
+            || "light"
+        );
+    }
+
 
     function savedTheme(workerPage) {
-        const primaryKey = workerPage ? WORKER_KEY : USER_KEY;
-        const legacyKey = workerPage ? WORKER_LEGACY_KEY : USER_LEGACY_KEY;
-        return allowedTheme(localStorage.getItem(primaryKey) || localStorage.getItem(legacyKey) || "light", workerPage);
+
+        return allowedSavedTheme(
+            getRawSavedTheme(workerPage),
+            workerPage
+        );
     }
+
+
+    function saveTheme(theme, workerPage) {
+
+        theme = validTheme(theme);
+
+        const primaryKey = workerPage
+            ? WORKER_KEY
+            : USER_KEY;
+
+        const legacyKey = workerPage
+            ? WORKER_LEGACY_KEY
+            : USER_LEGACY_KEY;
+
+        localStorage.setItem(
+            primaryKey,
+            theme
+        );
+
+        localStorage.setItem(
+            legacyKey,
+            theme
+        );
+
+        return theme;
+    }
+
 
     function applySavedTheme() {
-        if (!document.body) return;
-        const workerPage = document.body.classList.contains("worker-page");
-        const color = localStorage.getItem(workerPage ? "workerGlassColorV2" : "smartComplaintGlassColor") || "blue";
+
+        if (!document.body) {
+            return;
+        }
+
+        const workerPage =
+            document.body.classList.contains(
+                "worker-page"
+            );
+
+        const colorKey = workerPage
+            ? "workerGlassColorV2"
+            : "smartComplaintGlassColor";
+
+        const color =
+            localStorage.getItem(colorKey)
+            || "blue";
+
         applyGlobalColor(color);
-        applyTheme(savedTheme(workerPage), workerPage);
+
+        applyTheme(
+            savedTheme(workerPage),
+            workerPage
+        );
     }
 
+
+    /*
+     * CITIZEN THEME
+     */
     function setUserTheme(theme) {
-        theme = allowedTheme(theme, false);
-        localStorage.setItem(USER_KEY, theme);
-        localStorage.setItem(USER_LEGACY_KEY, theme);
-        applyTheme(theme, false);
+
+        theme = validTheme(theme);
+
+
+        /*
+         * Premium theme + Free Citizen
+         *
+         * Theme ko apply/save MAT karo.
+         * Direct Premium page par bhejo.
+         */
+        if (
+            isPremiumTheme(theme)
+            && !hasPremiumAccess(false)
+        ) {
+
+            window.location.href =
+                "{% url 'citizen_premium' %}";
+
+            return null;
+        }
+
+
+        saveTheme(
+            theme,
+            false
+        );
+
+        applyTheme(
+            theme,
+            false
+        );
+
         return theme;
     }
 
+
+    /*
+     * WORKER THEME
+     *
+     * Worker ka existing behavior alag rakha hai.
+     */
     function setWorkerTheme(theme) {
-        theme = allowedTheme(theme, true);
-        localStorage.setItem(WORKER_KEY, theme);
-        localStorage.setItem(WORKER_LEGACY_KEY, theme);
-        applyTheme(theme, true);
+
+        theme = validTheme(theme);
+
+        if (
+            isPremiumTheme(theme)
+            && !hasPremiumAccess(true)
+        ) {
+
+            document.dispatchEvent(
+                new CustomEvent(
+                    "smartComplaintWorkerPremiumRequired",
+                    {
+                        detail: {
+                            theme: theme
+                        }
+                    }
+                )
+            );
+
+            return null;
+        }
+
+
+        saveTheme(
+            theme,
+            true
+        );
+
+        applyTheme(
+            theme,
+            true
+        );
+
         return theme;
     }
+
 
     window.SmartComplaintTheme = {
-        themes: THEMES.slice(),
-        freeThemes: FREE_THEMES.slice(),
-        premiumThemes: PREMIUM_THEMES.slice(),
-        validTheme: validTheme,
-        isPremiumTheme: isPremiumTheme,
-        hasUserPremiumAccess: function(){ return hasPremiumAccess(false); },
-        hasWorkerPremiumAccess: function(){ return hasPremiumAccess(true); },
-        setUserPremiumAccess: function(enabled){ return setPremiumAccess(false, !!enabled); },
-        setWorkerPremiumAccess: function(enabled){ return setPremiumAccess(true, !!enabled); },
-        applySavedTheme: applySavedTheme,
-        applyGlobalColor: applyGlobalColor,
-        setUserTheme: setUserTheme,
-        setWorkerTheme: setWorkerTheme,
-        getUserTheme: function(){ return savedTheme(false); },
-        getWorkerTheme: function(){ return savedTheme(true); }
+
+        themes:
+            THEMES.slice(),
+
+        freeThemes:
+            FREE_THEMES.slice(),
+
+        premiumThemes:
+            PREMIUM_THEMES.slice(),
+
+        validTheme:
+            validTheme,
+
+        isPremiumTheme:
+            isPremiumTheme,
+
+        hasUserPremiumAccess:
+            function () {
+                return hasPremiumAccess(false);
+            },
+
+        hasWorkerPremiumAccess:
+            function () {
+                return hasPremiumAccess(true);
+            },
+
+        setUserPremiumAccess:
+            function (enabled) {
+                return setPremiumAccess(
+                    false,
+                    !!enabled
+                );
+            },
+
+        setWorkerPremiumAccess:
+            function (enabled) {
+                return setPremiumAccess(
+                    true,
+                    !!enabled
+                );
+            },
+
+        applySavedTheme:
+            applySavedTheme,
+
+        applyGlobalColor:
+            applyGlobalColor,
+
+        setUserTheme:
+            setUserTheme,
+
+        setWorkerTheme:
+            setWorkerTheme,
+
+        getUserTheme:
+            function () {
+                return savedTheme(false);
+            },
+
+        getWorkerTheme:
+            function () {
+                return savedTheme(true);
+            }
+
     };
 
-    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", applySavedTheme);
-    else applySavedTheme();
+
+    /*
+     * Har page load par saved theme automatically apply.
+     */
+    if (
+        document.readyState === "loading"
+    ) {
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            applySavedTheme
+        );
+
+    } else {
+
+        applySavedTheme();
+
+    }
+
 })();
 </script>

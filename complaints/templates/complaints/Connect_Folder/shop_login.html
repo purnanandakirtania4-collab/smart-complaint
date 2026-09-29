@@ -1,0 +1,10 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Shop Owner Login | Smart Complaint</title>{% include 'complaints/Connect_Folder/marketplace_style.html' %}</head>
+<body>
+<header class="cx-topbar"><div class="cx-brand"><div class="cx-brand-mark">S</div><div><h1>Shop Owner Login</h1><p>Dedicated business account access</p></div></div><a class="cx-btn cx-btn-soft" href="{% url 'business_connect' %}">Business</a></header>
+<main class="cx-page" style="max-width:620px">
+{% if messages %}{% for message in messages %}<div class="cx-message {{ message.tags }}">{{ message }}</div>{% endfor %}{% endif %}
+<section class="cx-card"><h3>Login to your shop account</h3><p>Use the username and password created during Shop Owner registration.</p><form method="post" style="margin-top:14px">{% csrf_token %}<div class="cx-form"><div class="cx-field cx-field-full"><label class="cx-label">Username</label><input class="cx-input" type="text" name="username" required autocomplete="username"></div><div class="cx-field cx-field-full"><label class="cx-label">Password</label><input class="cx-input" type="password" name="password" required autocomplete="current-password"></div></div><div class="cx-actions"><button class="cx-btn cx-btn-primary" type="submit">Login</button><a class="cx-btn cx-btn-soft" href="{% url 'shop_register' %}">Create Shop Account</a></div></form></section>
+</main></body></html>

@@ -1,0 +1,49 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Shop Dashboard | Smart Complaint</title>
+  {% include 'complaints/Connect_Folder/marketplace_style.html' %}
+</head>
+<body>
+  <header class="cx-topbar">
+    <div class="cx-brand"><div class="cx-brand-mark">{{ business.business_name|first|upper }}</div><div><h1>{{ business.business_name }}</h1><p>Shop Owner Dashboard</p></div></div>
+    <a class="cx-btn cx-btn-danger" href="{% url 'business_logout' %}">Logout</a>
+  </header>
+
+  <main class="cx-page">
+    {% if messages %}{% for message in messages %}<div class="cx-message {{ message.tags }}">{{ message }}</div>{% endfor %}{% endif %}
+
+    <section class="cx-hero">
+      <span class="cx-kicker">{{ business.get_verification_status_display|default:business.verification_status }}</span>
+      <h2>Welcome, {{ business.contact_person|default:request.user.username }}.</h2>
+      <p>{{ business.business_name }} · {{ business.city }}, {{ business.state }}. Manage your public profile and hiring area from here.</p>
+      <div class="cx-actions">
+        <a class="cx-btn cx-btn-primary" href="{% url 'business_owner_profile' %}">Business Profile</a>
+        <a class="cx-btn cx-btn-green" href="{% url 'business_post' %}">Post Opportunity</a>
+        <a class="cx-btn cx-btn-soft" href="{% url 'shop_directory' %}">Public Directory</a>
+        <a class="cx-btn cx-btn-soft" href="{% url 'buy_marketplace' %}">Buy Marketplace</a>
+      </div>
+    </section>
+
+    <section class="cx-grid">
+      <article class="cx-card"><h3>{{ active_jobs_count|default:0 }}</h3><p>Active opportunities</p></article>
+      <article class="cx-card"><h3>{{ applications_count|default:0 }}</h3><p>Total applications</p></article>
+      <article class="cx-card"><h3>{{ hired_count|default:0 }}</h3><p>Hired / completed</p></article>
+    </section>
+
+    <section class="cx-card" style="margin-top:14px">
+      <div class="cx-row-head"><div><h3>Recent Opportunities</h3><p>Latest posts linked with this Shop Owner account.</p></div><a class="cx-btn cx-btn-soft" href="{% url 'business_applicants' %}">Applicants</a></div>
+      <div class="cx-list">
+        {% for job in recent_jobs %}
+          <div class="cx-row"><div class="cx-row-head"><div><h3>{{ job.title|default:'Opportunity' }}</h3><p>{{ job.location|default:business.city }} · {{ job.application_count|default:0 }} application{{ job.application_count|default:0|pluralize }}</p></div><span class="cx-chip cx-chip-blue">{{ job.get_status_display|default:job.status }}</span></div></div>
+        {% empty %}
+          <div class="cx-empty"><strong>No opportunity yet</strong>Create your first hiring post when your business verification is approved.</div>
+        {% endfor %}
+      </div>
+    </section>
+  </main>
+</body>
+</html>

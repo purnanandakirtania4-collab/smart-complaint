@@ -1,0 +1,8 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Connect Chat | Smart Complaint</title>{% include 'complaints/Connect_Folder/marketplace_style.html' %}<style>.cc-box{height:330px;padding:14px;overflow:auto;border:1px solid var(--cx-line);border-radius:16px;background:#fff}.cc-bubble{max-width:78%;margin:8px 0;padding:10px 12px;border-radius:14px;background:#eff6ff;color:#314766;font-size:10px;line-height:1.5}.cc-compose{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:10px}</style></head>
+<body>
+<header class="cx-topbar"><div class="cx-brand"><div class="cx-brand-mark">C</div><div><h1>Connect Chat</h1><p>Worker ↔ Shop Owner</p></div></div><a class="cx-btn cx-btn-soft" href="{% url 'job_marketplace' %}">Marketplace</a></header>
+<main class="cx-page"><section class="cx-card"><div class="cc-box">{% for message in chat_messages %}<div class="cc-bubble">{{ message.message|default:message.text }}<br><small>{{ message.created_at|date:'d M, H:i' }}</small></div>{% empty %}<div class="cx-empty"><strong>No marketplace chat loaded</strong>This shared route is UI-only right now. Your complaint chat remains a separate backend route.</div>{% endfor %}</div><div class="cc-compose"><input class="cx-input" type="text" placeholder="Message input will activate when marketplace chat backend is connected" disabled><button class="cx-btn cx-btn-primary" type="button" disabled>Send</button></div></section></main>
+</body></html>

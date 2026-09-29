@@ -1,0 +1,17 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Worker Opportunities | Smart Complaint</title>{% include 'complaints/Connect_Folder/marketplace_style.html' %}</head>
+<body>
+<header class="cx-topbar"><div class="cx-brand"><div class="cx-brand-mark">W</div><div><h1>Worker Opportunities</h1><p>Approved Worker area</p></div></div><a class="cx-btn cx-btn-soft" href="{% url 'job_marketplace' %}">Marketplace</a></header>
+<main class="cx-page">
+  {% if messages %}{% for message in messages %}<div class="cx-message {{ message.tags }}">{{ message }}</div>{% endfor %}{% endif %}
+  <section class="cx-hero"><span class="cx-kicker">Find Work</span><h2>Opportunities for verified workers.</h2><p>Logged in as {{ worker.user.get_full_name|default:worker.user.username }}. The current backend view verifies worker access. Add a <code>jobs</code> queryset later to make these cards database-driven.</p></section>
+  <section class="cx-list">
+    {% for job in jobs %}
+      <article class="cx-row"><div class="cx-row-head"><div><h3>{{ job.title|default:'Work Opportunity' }}</h3><p>{{ job.employer.business_name }} · {{ job.location|default:'Location available in details' }}</p></div><span class="cx-chip cx-chip-blue">{{ job.get_status_display|default:job.status }}</span></div><div class="cx-actions"><a class="cx-btn cx-btn-primary" href="{% url 'job_details' %}">View Details</a></div></article>
+    {% empty %}<div class="cx-empty"><strong>No live opportunity data yet</strong>The UI is connected. When the backend passes <code>jobs</code>, listings will show here.</div>{% endfor %}
+  </section>
+  <div class="cx-actions"><a class="cx-btn cx-btn-soft" href="{% url 'worker_applications' %}">My Applications</a></div>
+</main>
+</body></html>
